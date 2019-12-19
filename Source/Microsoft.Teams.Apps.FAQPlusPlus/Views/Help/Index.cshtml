@@ -1,0 +1,57 @@
+﻿@model string;
+<head>
+    <script type="text/javascript" src="~/lib/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="~/lib/microsoft-teams/dist/MicrosoftTeams.min.js"></script>
+</head>
+
+<body class="theme-default">
+    <div class="helpTab">@Html.Raw(Model)</div>
+
+    <script>
+
+        microsoftTeams.initialize();
+
+        let params = getQueryParameters();
+        setTheme(params["theme"]);
+
+        // Parse the query parameters
+        function getQueryParameters() {
+            let queryParams = {};
+            location.search.substr(1).split("&").forEach(function (item) {
+                let s = item.split("="),
+                    k = s[0],
+                    v = s[1] && decodeURIComponent(s[1]);
+                queryParams[k] = v;
+            });
+            return queryParams;
+        }
+
+        // Set appropriate dark/contrast/default theme for the controls based on current theme
+        function setTheme(currentTheme) {
+            if (currentTheme === "dark" || currentTheme === "contrast") {
+                $(".theme-default").addClass("theme-dark-contrast").removeClass("theme-default");
+            }
+            else {
+                $(".theme-dark-contrast").addClass("theme-default").removeClass("theme-dark-contrast");
+            }
+        }
+
+        // Listen for theme changes
+        microsoftTeams.registerOnThemeChangeHandler(setTheme);
+
+    </script>
+</body>
+<style>
+    .helpTab {
+        font-family: 'Segoe UI', Tahoma, Helvetica, sans-serif;
+        font-size: 14px;
+    }
+
+    .theme-dark-contrast {
+        color: #fff;
+    }
+
+    .theme-default {
+        color: #252423;
+    }
+</style>

@@ -1,0 +1,477 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AskAnExpertPlaceholderText" xml:space="preserve">
+    <value>Type your detailed question and supporting details here (500 characters max)</value>
+    <comment>Ask an expert placeholder text.</comment>
+  </data>
+  <data name="AskAnExpertText1" xml:space="preserve">
+    <value>Ask an expert</value>
+    <comment>Title of the ask an expert card.</comment>
+  </data>
+  <data name="AskAnExpertText2" xml:space="preserve">
+    <value>...If my answer isn't satisfactory... I'll connect you to an expert.</value>
+    <comment>Helps the user in understanding there is an expert team to connect to.</comment>
+  </data>
+  <data name="FeedbackText1" xml:space="preserve">
+    <value>Tell my team of experts how I'm doing so they can help me improve.</value>
+    <comment>Text suggests that user is invited to share his feedback on his experience using bot.</comment>
+  </data>
+  <data name="FunctionCardText1" xml:space="preserve">
+    <value>Ask a question</value>
+    <comment>Explains what bot does and possible questions.</comment>
+  </data>
+  <data name="FunctionCardText2" xml:space="preserve">
+    <value>You can ask me a question by typing it in the chat box below  I'll try my best to answer it...</value>
+    <comment>Suggests the user to ask question.</comment>
+  </data>
+  <data name="ShareFeedbackButtonText" xml:space="preserve">
+    <value>Share feedback</value>
+    <comment>Button text for share feedback show card in QnA response card.</comment>
+  </data>
+  <data name="DescriptionText" xml:space="preserve">
+    <value>Description</value>
+    <comment>Description text is the label of description text box.</comment>
+  </data>
+  <data name="FeedbackDescriptionPlaceholderText" xml:space="preserve">
+    <value>Enter your feedback and supporting details here (500 characters max)</value>
+    <comment>Placeholder label where the user enters feedback in the text box.</comment>
+  </data>
+  <data name="FeedbackHeaderText" xml:space="preserve">
+    <value>Share app feedback</value>
+    <comment>Share feedback card title text- bot menu command.</comment>
+  </data>
+  <data name="QuestionLineText" xml:space="preserve">
+    <value>Here is what I have found for your request</value>
+    <comment>Shows user requested question.</comment>
+  </data>
+  <data name="StatusFactTitle" xml:space="preserve">
+    <value>Status: </value>
+    <comment>Status one of the available fact set in notification cards.</comment>
+  </data>
+  <data name="AskAnExpertButtonText" xml:space="preserve">
+    <value>Ask an expert</value>
+    <comment>Action button which invokes ask an expert show card.</comment>
+  </data>
+  <data name="ThankYouTextContent" xml:space="preserve">
+    <value>Thanks for your feedback! I've shared it with the experts. This helps me learn and improve.</value>
+    <comment>The content for the thank you adaptive card which is shown whenever user submits feedback on the app or on a response that is generated by QnA service.</comment>
+  </data>
+  <data name="ChatTextButton" xml:space="preserve">
+    <value>Chat with {0}</value>
+    <comment>Ability to chat directly with end user from SME channel.</comment>
+  </data>
+  <data name="NotificationCardContent" xml:space="preserve">
+    <value>I've shared your question with the related experts. They'll respond to you directly with a chat message.</value>
+    <comment>Confirmation message to the user upon asking question to the expert.</comment>
+  </data>
+  <data name="NotificationCardTitleText" xml:space="preserve">
+    <value>Notification</value>
+    <comment>Confirmation card header text.</comment>
+  </data>
+  <data name="TeamChatHeaderText" xml:space="preserve">
+    <value>Initiate chat with end users</value>
+    <comment>Team carousel chat card header-title of the chat card.</comment>
+  </data>
+  <data name="TeamChatContent" xml:space="preserve">
+    <value>Click chat with user button to initiate a direct chat.</value>
+    <comment>Team carousel chat card content- SME team members can chat directly with the end users.</comment>
+  </data>
+  <data name="TeamNotificationHeaderText" xml:space="preserve">
+    <value>Receive notifications from end users</value>
+    <comment>Team carousel function card content- title of the chat card.</comment>
+  </data>
+  <data name="TeamNotificationContent" xml:space="preserve">
+    <value>You can see what users need help with.</value>
+    <comment>Team carousel function card content- team can take the question from the end users through bot.</comment>
+  </data>
+  <data name="TeamTicketSystemHeaderText" xml:space="preserve">
+    <value>Manage queries</value>
+    <comment>Title of the query carousel card- ticket system.</comment>
+  </data>
+  <data name="TeamTicketSystemContent" xml:space="preserve">
+    <value>Mark requests assigned or closed to keep track of queries.</value>
+    <comment>Team carousel query card content- team can keep track of the user request.</comment>
+  </data>
+  <data name="TakeATeamTourButtonText" xml:space="preserve">
+    <value>Team tour</value>
+    <comment>Action button which gives tour for the team on bot Functionalities.</comment>
+  </data>
+  <data name="WelcomeTeamCardContent" xml:space="preserve">
+    <value>Hello team,   
+
+I am your friendly Q&amp;A bot that helps you provide support to people who interact with me and need more assistance.</value>
+    <comment>Welcome message when bot is added to a new team.</comment>
+  </data>
+  <data name="CustomMessage" xml:space="preserve">
+    <value>I couldn't find anything apt for your request. Do you want me to ask an expert?</value>
+    <comment>Message when user asks random question to the bot.</comment>
+  </data>
+  <data name="QuestionAskedFactTitle" xml:space="preserve">
+    <value>Question asked:</value>
+    <comment>The fact set title for the question asked in the SME Ticket card.</comment>
+  </data>
+  <data name="SubmitButtonText" xml:space="preserve">
+    <value>Submit</value>
+    <comment>Button to submit user activity.</comment>
+  </data>
+  <data name="QuestionForExpertSubHeaderText" xml:space="preserve">
+    <value>**{0}** is requesting support.</value>
+    <comment>Text says that user is asking a question to the expert, {0} placeholder holds the name of the person.</comment>
+  </data>
+  <data name="Resultsfeedbackdetails" xml:space="preserve">
+    <value>Enter feedback for above result</value>
+    <comment>Label for share feedback show card where user enters feedback on the displayed results in QnA response card.</comment>
+  </data>
+  <data name="TeamCustomMessage" xml:space="preserve">
+    <value>Hello, I don't support bot commands in the Team. Here is a quick tour of how I can help.</value>
+    <comment>When SME team member asks bot a questions- a message appears saying that team member is supposed to install the bot in personal scope.</comment>
+  </data>
+  <data name="AssignStatusTitle" xml:space="preserve">
+    <value>Assign to me</value>
+    <comment>Status of the user ticket- assign - for the dropdown</comment>
+  </data>
+  <data name="CloseStatusText" xml:space="preserve">
+    <value>Close</value>
+    <comment>Status of the user Ticket- Close</comment>
+  </data>
+  <data name="ChangeStatusButtonText" xml:space="preserve">
+    <value>Change status</value>
+    <comment>Text on change status button.</comment>
+  </data>
+  <data name="ResponseHeaderText" xml:space="preserve">
+    <value>Here is what I found:</value>
+    <comment>Response header-letting the user know that a response is generated to their request from QnA Maker.</comment>
+  </data>
+  <data name="ClosedFactTitle" xml:space="preserve">
+    <value>Closed: </value>
+    <comment>Closed fact title is one of the available fact set.</comment>
+  </data>
+  <data name="DateCreatedDisplayFactTitle" xml:space="preserve">
+    <value>Created: </value>
+    <comment>Created: one of the available fact set in notification cards- created is the title for created date value.</comment>
+  </data>
+  <data name="ShowCardTitleText" xml:space="preserve">
+    <value>Enter short title here (50 characters max)</value>
+    <comment>Label text where users enters title for his question or feedback. </comment>
+  </data>
+  <data name="KBEntryFactTitle" xml:space="preserve">
+    <value>Knowledge base entry:</value>
+    <comment>Answer from the QnA Maker.</comment>
+  </data>
+  <data name="AppFeedbackText" xml:space="preserve">
+    <value>App feedback</value>
+    <comment>This text is used as title for app feedback type card.</comment>
+  </data>
+  <data name="MandatoryTitleFieldText" xml:space="preserve">
+    <value>Title field is mandatory</value>
+    <comment>Text that suggest users to fill mandatory fields.</comment>
+  </data>
+  <data name="QuestionForExpertText" xml:space="preserve">
+    <value>Question for expert</value>
+    <comment>This text is used as title for question for expert type card.</comment>
+  </data>
+  <data name="ResultsFeedbackText" xml:space="preserve">
+    <value>Results feedback</value>
+    <comment>This text is used as title for results feedback card.</comment>
+  </data>
+  <data name="FeedbackAlertText" xml:space="preserve">
+    <value>**{0}** has shared the feedback</value>
+    <comment>Text in the SME feedback card, The placeholder {0} represents the name of the person sharing the feedback. The placeholder {1} represents the feedback type.</comment>
+  </data>
+  <data name="ShareFeedbackTitleText" xml:space="preserve">
+    <value>Share app feedback</value>
+    <comment>Title text of share feedback user carousel card.</comment>
+  </data>
+  <data name="AskAnExpertDisplayText" xml:space="preserve">
+    <value>Ask an expert</value>
+    <comment>Ask an expert display text: text sent to the bot when ask an expert button is clicked.</comment>
+  </data>
+  <data name="ShareFeedbackDisplayText" xml:space="preserve">
+    <value>Share feedback</value>
+    <comment>Share feedback display text: text sent to the bot when share feedback button is clicked.</comment>
+  </data>
+  <data name="OpenStatusTitle" xml:space="preserve">
+    <value>Unassigned</value>
+    <comment>Status value is open which is used in notification cards to both SME team and user.</comment>
+  </data>
+  <data name="AssignedToStatusValue" xml:space="preserve">
+    <value>Assigned to {0}</value>
+    <comment>"Assigned to" format string, {0} is the name of the assignee</comment>
+  </data>
+  <data name="ClosedByStatusValue" xml:space="preserve">
+    <value>Closed by {0}</value>
+    <comment>"Closed" format string, {0} is the name of the user who closed the ticket</comment>
+  </data>
+  <data name="SMEAssignedStatus" xml:space="preserve">
+    <value>This request is now assigned. Assigned to {0}.</value>
+    <comment>Message posted to the thread when the ticket is assigned. {0} = name of SME who assigned the request.</comment>
+  </data>
+  <data name="SMEClosedStatus" xml:space="preserve">
+    <value>This request is now closed. Closed by {0}.</value>
+    <comment>Message posted to the thread when the ticket is closed. {0} = name of SME who closed the request.</comment>
+  </data>
+  <data name="SMEOpenedStatus" xml:space="preserve">
+    <value>This request is now unassigned. Last updated by {0}. </value>
+    <comment>Message posted to the thread when the ticket is reopened. {0} = name of SME who reopened the request.</comment>
+  </data>
+  <data name="NonApplicableString" xml:space="preserve">
+    <value>N/A</value>
+    <comment>Not applicable is used in scenarios like- ask an expert or share app feedback bot menu command where there is no question and answer from QnA service and to reflect the same in respective fields N/A is used.</comment>
+  </data>
+  <data name="AssignedTicketUserNotification" xml:space="preserve">
+    <value>Your question has been assigned to an expert. They'll respond to you directly with a chat message.</value>
+    <comment>Notification text sent to the user who opened a ticket, when the ticket is assigned to an expert.</comment>
+  </data>
+  <data name="ClosedTicketUserNotification" xml:space="preserve">
+    <value>This request has been closed. Ask an expert again if you still need more assistance.</value>
+    <comment>Notification text sent to the user who opened a ticket, when the ticket is closed.</comment>
+  </data>
+  <data name="ReopenedTicketUserNotification" xml:space="preserve">
+    <value>Your request is open again. An expert will directly send you a chat message.</value>
+    <comment>Notification text sent to the user who opened a ticket, when the ticket is reopened.</comment>
+  </data>
+  <data name="SMEAttentionText" xml:space="preserve">
+    <value>Everyone there is a new request coming in, please see the details below:</value>
+  </data>
+  <data name="GoToOriginalThreadButtonText" xml:space="preserve">
+    <value>Go to original thread</value>
+    <comment>Go to original thread button available on messaging extension card.</comment>
+  </data>
+  <data name="NonSMEErrorText" xml:space="preserve">
+    <value>You don't have access to this app. Please contact your IT admin.</value>
+    <comment>Error message when a user of non-SME team tries to access messaging extension application</comment>
+  </data>
+  <data name="AssignedUserNotificationStatus" xml:space="preserve">
+    <value>Assigned</value>
+    <comment>The status value for the user notification when a ticket is assigned to an expert</comment>
+  </data>
+  <data name="ClosedUserNotificationStatus" xml:space="preserve">
+    <value>Closed</value>
+    <comment>The status value for the user notification when a ticket is closed by an expert.</comment>
+  </data>
+  <data name="CloseStatusTitle" xml:space="preserve">
+    <value>Close</value>
+    <comment>The dropdown text for closing a ticket</comment>
+  </data>
+  <data name="UnassignedStatusValue" xml:space="preserve">
+    <value>Unassigned</value>
+    <comment>The status for the SME ticket which is default</comment>
+  </data>
+  <data name="UnassignedUserNotificationStatus" xml:space="preserve">
+    <value>Unassigned</value>
+    <comment>The status value for the user notification when a ticket is unassigned</comment>
+  </data>
+  <data name="UnassignStatusTitle" xml:space="preserve">
+    <value>Unassign</value>
+    <comment>The dropdown text for unassigning a ticket</comment>
+  </data>
+  <data name="ReassignStatusTitle" xml:space="preserve">
+    <value>Reassign to me</value>
+    <comment>The dropdown text for reassigning a ticket that has been previously closed.</comment>
+  </data>
+  <data name="SMEUserChatMessage" xml:space="preserve">
+    <value>RE: {0}</value>
+    <comment>The {0} is the placeholder for the title that the user had provided when asking an expert.</comment>
+  </data>
+  <data name="AssignToMeActionChoiceTitle" xml:space="preserve">
+    <value>Assign to me</value>
+    <comment>The dropdown choice for "Assign to me" for the SME ticket status is being updated</comment>
+  </data>
+  <data name="CloseActionChoiceTitle" xml:space="preserve">
+    <value>Close</value>
+    <comment>The dropdown choice for "Close" for when the SME ticket status is being updated</comment>
+  </data>
+  <data name="ReopenActionChoiceTitle" xml:space="preserve">
+    <value>Reopen</value>
+    <comment>The dropdown choice for "Reopen" for when the SME ticket status is being updated from the closed status.</comment>
+  </data>
+  <data name="ReopenAssignToMeActionChoiceTitle" xml:space="preserve">
+    <value>Reopen and assign to me</value>
+    <comment>The dropdown choice for "Reopen and assign to me" for when the SME ticket status is being updated from the closed state.</comment>
+  </data>
+  <data name="UnassignActionChoiceTitle" xml:space="preserve">
+    <value>Unassign</value>
+    <comment>The dropdown choice for "Unassign" for when the SME ticket status is being updated</comment>
+  </data>
+  <data name="SMETicketAssignedStatus" xml:space="preserve">
+    <value>Assigned to {0}</value>
+    <comment>This value represents the SME Ticket in the Assigned status - {0} represents the SME User to whom a ticket has been assigned</comment>
+  </data>
+  <data name="SMETicketClosedStatus" xml:space="preserve">
+    <value>Closed</value>
+    <comment>This value represents the SME Ticket in the Closed status</comment>
+  </data>
+  <data name="SMETicketUnassignedStatus" xml:space="preserve">
+    <value>Unassigned</value>
+    <comment>This value represents the SME Ticket in the Unassigned status</comment>
+  </data>
+  <data name="AskAnExpertSubheaderText" xml:space="preserve">
+    <value>The expert will respond to you directly with a chat message.</value>
+    <comment>Ask en expert card subtitle text:lets the user know that SME team member can directly chat with the requester.</comment>
+  </data>
+  <data name="DescriptionFact" xml:space="preserve">
+    <value>Description:</value>
+    <comment>Available factset in user notification and SME facing cards.</comment>
+  </data>
+  <data name="FeedbackRatingRequired" xml:space="preserve">
+    <value>Feedback (Required)</value>
+    <comment>Feedback(Required): label for the feedback rating dropdown.</comment>
+  </data>
+  <data name="HelpfulRatingText" xml:space="preserve">
+    <value>Helpful</value>
+    <comment>Helpful: available feedback rating scale.</comment>
+  </data>
+  <data name="NeedsImprovementRatingText" xml:space="preserve">
+    <value>Needs Improvement</value>
+    <comment>Needs improvement: available feedback rating scale.</comment>
+  </data>
+  <data name="RatingTitle" xml:space="preserve">
+    <value>Rating</value>
+    <comment>Rating fact is used in SME facing feedback card to show the rating submitted by the user from the rating dropdown in share feedback card.</comment>
+  </data>
+  <data name="RatingMandatoryText" xml:space="preserve">
+    <value>Rating is mandatory</value>
+    <comment>Rating is mandatory , a warning message to the user when rating is not submitted in share feedback activity.</comment>
+  </data>
+  <data name="TakeATourButtonText" xml:space="preserve">
+    <value>Take a tour</value>
+    <comment>Take a tour button available for the users on welcome card, through which user can take a tour on bot functionalities in personal scope. </comment>
+  </data>
+  <data name="TitleFact" xml:space="preserve">
+    <value>Title:</value>
+    <comment>Title fact is used to show the title entered by the user for his inquiry.</comment>
+  </data>
+  <data name="TitleRequiredText" xml:space="preserve">
+    <value>Title (Required)</value>
+    <comment>Title(Required): label of the title text box.</comment>
+  </data>
+  <data name="NotHelpfulRatingText" xml:space="preserve">
+    <value>Not helpful</value>
+    <comment>Unhelpful: available feedback rating scale.</comment>
+  </data>
+  <data name="ViewArticleButtonText" xml:space="preserve">
+    <value>View article</value>
+    <comment>The necessary string for the view article button</comment>
+  </data>
+  <data name="SMEFeedbackHeaderText" xml:space="preserve">
+    <value>Feedback</value>
+    <comment>Title text for SME facing feedback card.</comment>
+  </data>
+</root>

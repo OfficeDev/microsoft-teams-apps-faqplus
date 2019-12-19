@@ -1,0 +1,74 @@
+{
+  "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.5/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.5",
+  "version": "1.0.0",
+  "id": "98fc546e-ef74-42cb-8a16-9e7df8c9851f",
+  "packageName": "com.microsoft.teams.faqplus",
+  "developer": {
+    "name": "<<companyName>>",
+    "websiteUrl": "<<websiteUrl>>",
+    "privacyUrl": "<<privacyUrl>>",
+    "termsOfUseUrl": "<<termsOfUseUrl>>"
+  },
+  "icons": {
+    "color": "color.png",
+    "outline": "outline.png"
+  },
+  "name": {
+    "short": "FAQ Plus"
+  },
+  "description": {
+    "short": "A friendly FAQ bot that answers questions and connects you to experts.",
+    "full": "A friendly question and answer bot that answers commonly asked questions. If it can't answer, it will put you in touch with an expert as soon as they are available."
+  },
+  "accentColor": "#64A2CC",
+  "bots": [
+    {
+      "botId": "<<botId>>",
+      "scopes": [
+        "personal",
+        "team"
+      ],
+      "commandLists": [
+        {
+            "scopes": [
+                "personal"
+            ],
+            "commands": [
+                {
+                    "title": "Take a tour",
+                    "description": "Tour of key features"
+                },
+                {
+                    "title": "Ask an expert",
+                    "description": "Connect with an expert"
+                },
+                {
+                    "title": "Share feedback",
+                    "description": "Send feedback"
+                }
+            ]
+        }
+      ],
+      "supportsFiles": false,
+      "isNotificationOnly": false
+    }
+  ],
+  "staticTabs": [
+    {
+      "entityId": "help",
+      "name": "Help",
+      "contentUrl": "https://<<appDomain>>/help?theme={theme}",
+      "scopes": [
+        "personal"
+      ]
+    }
+  ],
+  "permissions": [
+    "identity",
+    "messageTeamMembers"
+  ],
+  "validDomains": [
+    "<<appDomain>>"
+  ]
+}
