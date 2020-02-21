@@ -8,7 +8,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
     using AdaptiveCards;
     using Microsoft.Bot.Schema;
     using Microsoft.Teams.Apps.FAQPlusPlus.Bots;
-    using Microsoft.Teams.Apps.FAQPlusPlus.Models;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Common;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
 
     /// <summary>
@@ -25,14 +26,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <returns>Response card.</returns>
         public static Attachment GetCard(string question, string answer, string userQuestion)
         {
-            AdaptiveCard responseCard = new AdaptiveCard("1.0")
+            AdaptiveCard responseCard = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
             {
                 Body = new List<AdaptiveElement>
                 {
                     new AdaptiveTextBlock
                     {
                         Weight = AdaptiveTextWeight.Bolder,
-                        Text = Resource.ResponseHeaderText,
+                        Text = Strings.ResponseHeaderText,
                         Wrap = true,
                     },
                     new AdaptiveTextBlock
@@ -44,41 +45,41 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     {
                         Text = answer,
                         Wrap = true,
-                    }
+                    },
                 },
                 Actions = new List<AdaptiveAction>
                 {
                     new AdaptiveSubmitAction
                     {
-                        Title = Resource.AskAnExpertButtonText,
+                        Title = Strings.AskAnExpertButtonText,
                         Data = new ResponseCardPayload
                         {
                             MsTeams = new CardAction
                             {
                                 Type = ActionTypes.MessageBack,
-                                DisplayText = Resource.AskAnExpertDisplayText,
-                                Text = FaqPlusPlusBot.AskAnExpert,
+                                DisplayText = Strings.AskAnExpertDisplayText,
+                                Text = Constants.AskAnExpert,
                             },
                             UserQuestion = userQuestion,
                             KnowledgeBaseAnswer = answer,
-                        }
+                        },
                     },
                     new AdaptiveSubmitAction
                     {
-                        Title = Resource.ShareFeedbackButtonText,
+                        Title = Strings.ShareFeedbackButtonText,
                         Data = new ResponseCardPayload
                         {
                             MsTeams = new CardAction
                             {
                                 Type = ActionTypes.MessageBack,
-                                DisplayText = Resource.ShareFeedbackDisplayText,
-                                Text = FaqPlusPlusBot.ShareFeedback,
+                                DisplayText = Strings.ShareFeedbackDisplayText,
+                                Text = Constants.ShareFeedback,
                             },
                             UserQuestion = userQuestion,
                             KnowledgeBaseAnswer = answer,
-                        }
-                    }
-                }
+                        },
+                    },
+                },
             };
 
             return new Attachment

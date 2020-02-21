@@ -141,12 +141,12 @@ You can ask the following questions:
     <comment>Message for help tab when information icon is hovered</comment>
   </data>
   <data name="KnowledgeBaseToolTipHoverMessage" xml:space="preserve">
-    <value>Provide a valid knowledgebase Id which will be used by bot and then click on Ok to add or Edit to modify</value>
-    <comment>Message for knowledgebase Id when information icon is hovered</comment>
+    <value>Provide a valid knowledgebase id which will be used by bot and then click on Ok to add or Edit to modify</value>
+    <comment>Message for knowledgebase id when information icon is hovered</comment>
   </data>
   <data name="TeamIdToolTipHoverMessage" xml:space="preserve">
-    <value>Provide a team Id deeplink which will be used by bot and then click on Ok to add or Edit to modify</value>
-    <comment>Message for team Id when information icon is hovered</comment>
+    <value>Provide a team id deeplink which will be used by bot and then click on Ok to add or Edit to modify</value>
+    <comment>Message for team id when information icon is hovered</comment>
   </data>
   <data name="WelcomeMessageToolTipHoverMessage" xml:space="preserve">
     <value>Provide a welcome message which will be used by bot and then click on Ok to add or Edit to modify</value>

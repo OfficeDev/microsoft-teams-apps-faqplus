@@ -8,13 +8,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
     using AdaptiveCards;
     using Microsoft.Bot.Schema;
     using Microsoft.Teams.Apps.FAQPlusPlus.Bots;
-    using Microsoft.Teams.Apps.FAQPlusPlus.Models;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Common;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
 
     /// <summary>
     ///  This class process Welcome Card, when bot is installed by the user in personal scope.
     /// </summary>
-    public class WelcomeCard
+    public static class WelcomeCard
     {
         /// <summary>
         /// This method will construct the user welcome card when bot is added in personal scope.
@@ -23,7 +24,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <returns>User welcome card.</returns>
         public static Attachment GetCard(string welcomeText)
         {
-            AdaptiveCard userWelcomeCard = new AdaptiveCard("1.0")
+            AdaptiveCard userWelcomeCard = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
             {
                 Body = new List<AdaptiveElement>
                 {
@@ -31,25 +32,25 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     {
                         HorizontalAlignment = AdaptiveHorizontalAlignment.Left,
                         Text = welcomeText,
-                        Wrap = true
-                    }
+                        Wrap = true,
+                    },
                 },
                 Actions = new List<AdaptiveAction>
                 {
                     new AdaptiveSubmitAction
                     {
-                        Title = Resource.TakeATourButtonText,
+                        Title = Strings.TakeATourButtonText,
                         Data = new TeamsAdaptiveSubmitActionData
                         {
                             MsTeams = new CardAction
                             {
                               Type = ActionTypes.MessageBack,
-                              DisplayText = Resource.TakeATourButtonText,
-                              Text = FaqPlusPlusBot.TakeATour
-                            }
+                              DisplayText = Strings.TakeATourButtonText,
+                              Text = Constants.TakeATour,
+                            },
                         },
-                    }
-                }
+                    },
+                },
             };
 
             return new Attachment

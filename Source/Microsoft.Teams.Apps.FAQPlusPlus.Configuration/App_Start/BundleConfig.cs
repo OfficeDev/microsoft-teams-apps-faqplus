@@ -9,7 +9,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration
     /// <summary>
     /// Bundle config for Task Module app.
     /// </summary>
-    public class BundleConfig
+    public static class BundleConfig
     {
         /// <summary>
         /// Register the bundles

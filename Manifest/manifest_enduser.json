@@ -2,7 +2,7 @@
   "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.5/MicrosoftTeams.schema.json",
   "manifestVersion": "1.5",
   "version": "1.0.0",
-  "id": "98fc546e-ef74-42cb-8a16-9e7df8c9851f",
+  "id": "aba30cfc-05df-4002-b956-a70996b12a54",
   "packageName": "com.microsoft.teams.faqplus",
   "developer": {
     "name": "<<companyName>>",
@@ -15,7 +15,7 @@
     "outline": "outline.png"
   },
   "name": {
-    "short": "FAQ Plus"
+    "short": "FAQ Plus [V2]"
   },
   "description": {
     "short": "A friendly FAQ bot that answers questions and connects you to experts.",
@@ -31,23 +31,23 @@
       ],
       "commandLists": [
         {
-            "scopes": [
-                "personal"
-            ],
-            "commands": [
-                {
-                    "title": "Take a tour",
-                    "description": "Tour of key features"
-                },
-                {
-                    "title": "Ask an expert",
-                    "description": "Connect with an expert"
-                },
-                {
-                    "title": "Share feedback",
-                    "description": "Send feedback"
-                }
-            ]
+          "scopes": [
+            "personal"
+          ],
+          "commands": [
+            {
+              "title": "Take a tour",
+              "description": "Tour of key features"
+            },
+            {
+              "title": "Ask an expert",
+              "description": "Connect with an expert"
+            },
+            {
+              "title": "Share feedback",
+              "description": "Send feedback"
+            }
+          ]
         }
       ],
       "supportsFiles": false,

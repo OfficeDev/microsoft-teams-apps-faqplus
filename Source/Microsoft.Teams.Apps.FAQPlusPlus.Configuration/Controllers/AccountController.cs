@@ -11,12 +11,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
     using Microsoft.Owin.Security.OpenIdConnect;
 
     /// <summary>
-    /// Account Controller
+    /// Account Controller which helps to authenticate the user.
     /// </summary>
     public class AccountController : Controller
     {
         /// <summary>
-        /// sign in
+        /// Authenticate the current user.
         /// </summary>
         public void SignIn()
         {
@@ -29,7 +29,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         }
 
         /// <summary>
-        /// sign out
+        /// Sign out the current user.
         /// </summary>
         public void SignOut()
         {
@@ -40,9 +40,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         }
 
         /// <summary>
-        /// callback method
+        /// Callback method to navigate landing page.
         /// </summary>
-        /// <returns> returns view</returns>
+        /// <returns> returns view.</returns>
+        [HttpGet]
         public ActionResult SignOutCallback()
         {
             if (this.Request.IsAuthenticated)
@@ -54,9 +55,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         }
 
         /// <summary>
-        /// Invalid User
+        /// Check if user is valid or not.
         /// </summary>
-        /// <returns>Action Result</returns>
+        /// <returns>Action Result.</returns>
+        [HttpGet]
         public ActionResult InvalidUser()
         {
             this.HttpContext.GetOwinContext().Authentication.SignOut(CookieAuthenticationDefaults.AuthenticationType);

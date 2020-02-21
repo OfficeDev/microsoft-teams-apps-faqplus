@@ -6,7 +6,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Models
     using System.ComponentModel.DataAnnotations;
 
     /// <summary>
-    /// Help tab view model
+    /// Represents HelpTabViewModel object that hold help tab text.
     /// </summary>
     public class HelpTabViewModel
     {

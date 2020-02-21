@@ -15,13 +15,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Controllers
     [Route("/help")]
     public class HelpController : Controller
     {
-        private readonly IConfigurationProvider configurationProvider;
+        private readonly IConfigurationDataProvider configurationProvider;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HelpController"/> class.
         /// </summary>
-        /// <param name="configurationProvider">configurationProvider DI</param>
-        public HelpController(IConfigurationProvider configurationProvider)
+        /// <param name="configurationProvider">Configuration provider dependency injection.</param>
+        public HelpController(IConfigurationDataProvider configurationProvider)
         {
             this.configurationProvider = configurationProvider;
         }
@@ -29,10 +29,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Controllers
         /// <summary>
         /// Display help tab.
         /// </summary>
-        /// <returns>Help tab view</returns>
+        /// <returns>Help tab view.</returns>
         public async Task<ActionResult> Index()
         {
-            string helpTabText = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.HelpTabText);
+            string helpTabText = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.HelpTabText).ConfigureAwait(false);
 
             var marked = new MarkedNet.Marked();
             var helpTabHtml = marked.Parse(helpTabText);

@@ -4,32 +4,32 @@
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
 {
     /// <summary>
-    /// Configuration entity type names
+    /// Configuration entity type names.
     /// </summary>
-    public class ConfigurationEntityTypes
+    public static class ConfigurationEntityTypes
     {
         /// <summary>
-        /// Team entity
+        /// Team entity.
         /// </summary>
         public const string TeamId = "TeamId";
 
         /// <summary>
-        /// Knowledge base entity
+        /// Knowledge base entity.
         /// </summary>
         public const string KnowledgeBaseId = "KnowledgeBaseId";
 
         /// <summary>
-        /// Welcome message entity
+        /// Welcome message entity.
         /// </summary>
         public const string WelcomeMessageText = "WelcomeMessageText";
 
         /// <summary>
-        /// Help tab text entity
+        /// Help tab text entity.
         /// </summary>
         public const string HelpTabText = "HelpTabText";
 
         /// <summary>
-        /// QnaMaker endpoint key entity
+        /// QnaMaker endpoint key entity.
         /// </summary>
         public const string QnAMakerEndpointKey = "QnaMakerEndpointKey";
     }

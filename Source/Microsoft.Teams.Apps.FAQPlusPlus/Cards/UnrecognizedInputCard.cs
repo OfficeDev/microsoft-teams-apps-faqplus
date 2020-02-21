@@ -7,8 +7,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
     using System.Collections.Generic;
     using AdaptiveCards;
     using Microsoft.Bot.Schema;
-    using Microsoft.Teams.Apps.FAQPlusPlus.Bots;
-    using Microsoft.Teams.Apps.FAQPlusPlus.Models;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Common;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
 
     /// <summary>
@@ -23,33 +23,33 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <returns>UnrecognizedInput Card.</returns>
         public static Attachment GetCard(string userQuestion)
         {
-            AdaptiveCard unrecognizedInputCard = new AdaptiveCard("1.0")
+            AdaptiveCard unrecognizedInputCard = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
             {
                 Body = new List<AdaptiveElement>
                 {
                     new AdaptiveTextBlock
                     {
-                        Text = Resource.CustomMessage,
-                        Wrap = true
-                    }
+                        Text = Strings.CustomMessage,
+                        Wrap = true,
+                    },
                 },
                 Actions = new List<AdaptiveAction>
                 {
                     new AdaptiveSubmitAction
                     {
-                        Title = Resource.AskAnExpertButtonText,
+                        Title = Strings.AskAnExpertButtonText,
                         Data = new ResponseCardPayload
                         {
                             MsTeams = new CardAction
                             {
                                 Type = ActionTypes.MessageBack,
-                                DisplayText = Resource.AskAnExpertDisplayText,
-                                Text = FaqPlusPlusBot.AskAnExpert
+                                DisplayText = Strings.AskAnExpertDisplayText,
+                                Text = Constants.AskAnExpert,
                             },
-                            UserQuestion = userQuestion
+                            UserQuestion = userQuestion,
                         },
-                    }
-                }
+                    },
+                },
             };
 
             return new Attachment

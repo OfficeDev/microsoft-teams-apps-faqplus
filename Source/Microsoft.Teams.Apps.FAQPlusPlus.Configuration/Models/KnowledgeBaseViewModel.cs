@@ -11,9 +11,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Models
     public class KnowledgeBaseViewModel
     {
         /// <summary>
-        /// Gets or sets knowledge base Id text box to be used in View
+        /// Gets or sets knowledge base id text box to be used in View.
         /// </summary>
-        [Required(ErrorMessage = "Enter knowledge base ID.")]
+        [Required(ErrorMessage = "Enter knowledge base id.")]
         [MinLength(1)]
         [DataType(DataType.Text)]
         [Display(Name = "Knowledge base ID")]

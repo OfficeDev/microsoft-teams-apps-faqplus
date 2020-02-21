@@ -6,10 +6,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using AdaptiveCards;
     using Microsoft.Bot.Schema;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
-    using Microsoft.Teams.Apps.FAQPlusPlus.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
 
     /// <summary>
@@ -30,7 +30,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         }
 
         /// <summary>
-        /// Gets the ticket that is the basis for the information in this card
+        /// Gets the ticket that is the basis for the information in this card.
         /// </summary>
         protected TicketEntity Ticket => this.ticket;
 
@@ -41,7 +41,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <returns>Returns the attachment that will be sent in a message.</returns>
         public Attachment ToAttachment(DateTimeOffset? localTimestamp)
         {
-            var card = new AdaptiveCard("1.0")
+            var card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
             {
                 Body = new List<AdaptiveElement>
                 {
@@ -54,7 +54,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     },
                     new AdaptiveTextBlock
                     {
-                        Text = string.Format(Resource.QuestionForExpertSubHeaderText, this.Ticket.RequesterName),
+                        Text = string.Format(CultureInfo.InvariantCulture, Strings.QuestionForExpertSubHeaderText, this.Ticket.RequesterName),
                         Wrap = true,
                     },
                     new AdaptiveFactSet
@@ -84,8 +84,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
 
             actionsList.Add(new AdaptiveShowCardAction
             {
-                Title = Resource.ChangeStatusButtonText,
-                Card = new AdaptiveCard("1.0")
+                Title = Strings.ChangeStatusButtonText,
+                Card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
                 {
                     Body = new List<AdaptiveElement>
                     {
@@ -95,18 +95,18 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     {
                         new AdaptiveSubmitAction
                         {
-                            Data = new ChangeTicketStatusPayload { TicketId = this.Ticket.TicketId }
-                        }
+                            Data = new ChangeTicketStatusPayload { TicketId = this.Ticket.TicketId },
+                        },
                     },
-                }
+                },
             });
 
             if (!string.IsNullOrEmpty(this.Ticket.KnowledgeBaseAnswer))
             {
                 actionsList.Add(new AdaptiveShowCardAction
                 {
-                    Title = Resource.ViewArticleButtonText,
-                    Card = new AdaptiveCard("1.0")
+                    Title = Strings.ViewArticleButtonText,
+                    Card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
                     {
                         Body = new List<AdaptiveElement>
                         {
@@ -114,7 +114,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                             {
                                 Text = CardHelper.TruncateStringIfLonger(this.Ticket.KnowledgeBaseAnswer, CardHelper.KnowledgeBaseAnswerMaxDisplayLength),
                                 Wrap = true,
-                            }
+                            },
                         },
                     },
                 });
@@ -126,16 +126,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <summary>
         /// Create an adaptive card action that starts a chat with the user.
         /// </summary>
-        /// <returns>Adaptive card action for starting chat with user</returns>
+        /// <returns>Adaptive card action for starting chat with user.</returns>
         protected AdaptiveAction CreateChatWithUserAction()
         {
-            var messageToSend = string.Format(Resource.SMEUserChatMessage, this.Ticket.Title);
+            var messageToSend = string.Format(CultureInfo.InvariantCulture, Strings.SMEUserChatMessage, this.Ticket.Title);
             var encodedMessage = Uri.EscapeDataString(messageToSend);
 
             return new AdaptiveOpenUrlAction
             {
-                Title = string.Format(Resource.ChatTextButton, this.Ticket.RequesterGivenName),
-                Url = new Uri($"https://teams.microsoft.com/l/chat/0/0?users={Uri.EscapeDataString(this.Ticket.RequesterUserPrincipalName)}&message={encodedMessage}")
+                Title = string.Format(CultureInfo.InvariantCulture, Strings.ChatTextButton, this.Ticket.RequesterGivenName),
+                Url = new Uri($"https://teams.microsoft.com/l/chat/0/0?users={Uri.EscapeDataString(this.Ticket.RequesterUserPrincipalName)}&message={encodedMessage}"),
             };
         }
 
@@ -152,7 +152,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             {
                 factList.Add(new AdaptiveFact
                 {
-                    Title = Resource.DescriptionFact,
+                    Title = Strings.DescriptionFact,
                     Value = this.Ticket.Description,
                 });
             }
@@ -161,14 +161,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             {
                 factList.Add(new AdaptiveFact
                 {
-                    Title = Resource.QuestionAskedFactTitle,
-                    Value = this.Ticket.UserQuestion
+                    Title = Strings.QuestionAskedFactTitle,
+                    Value = this.Ticket.UserQuestion,
                 });
             }
 
             factList.Add(new AdaptiveFact
             {
-                Title = Resource.StatusFactTitle,
+                Title = Strings.StatusFactTitle,
                 Value = CardHelper.GetTicketDisplayStatusForSme(this.Ticket),
             });
 
@@ -176,7 +176,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             {
                 factList.Add(new AdaptiveFact
                 {
-                    Title = Resource.ClosedFactTitle,
+                    Title = Strings.ClosedFactTitle,
                     Value = CardHelper.GetFormattedDateInUserTimeZone(this.Ticket.DateClosed.Value, localTimestamp),
                 });
             }
@@ -194,7 +194,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             {
                 Id = nameof(ChangeTicketStatusPayload.Action),
                 IsMultiSelect = false,
-                Style = AdaptiveChoiceInputStyle.Compact
+                Style = AdaptiveChoiceInputStyle.Compact,
             };
 
             if (this.Ticket.Status == (int)TicketState.Open)
@@ -206,12 +206,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     {
                         new AdaptiveChoice
                         {
-                            Title = Resource.AssignToMeActionChoiceTitle,
+                            Title = Strings.AssignToMeActionChoiceTitle,
                             Value = ChangeTicketStatusPayload.AssignToSelfAction,
                         },
                         new AdaptiveChoice
                         {
-                            Title = Resource.CloseActionChoiceTitle,
+                            Title = Strings.CloseActionChoiceTitle,
                             Value = ChangeTicketStatusPayload.CloseAction,
                         },
                     };
@@ -223,17 +223,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     {
                         new AdaptiveChoice
                         {
-                            Title = Resource.UnassignActionChoiceTitle,
+                            Title = Strings.UnassignActionChoiceTitle,
                             Value = ChangeTicketStatusPayload.ReopenAction,
                         },
                         new AdaptiveChoice
                         {
-                            Title = Resource.AssignToMeActionChoiceTitle,
+                            Title = Strings.AssignToMeActionChoiceTitle,
                             Value = ChangeTicketStatusPayload.AssignToSelfAction,
                         },
                         new AdaptiveChoice
                         {
-                            Title = Resource.CloseActionChoiceTitle,
+                            Title = Strings.CloseActionChoiceTitle,
                             Value = ChangeTicketStatusPayload.CloseAction,
                         },
                     };
@@ -246,12 +246,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 {
                     new AdaptiveChoice
                     {
-                        Title = Resource.ReopenActionChoiceTitle,
+                        Title = Strings.ReopenActionChoiceTitle,
                         Value = ChangeTicketStatusPayload.ReopenAction,
                     },
                     new AdaptiveChoice
                     {
-                        Title = Resource.ReopenAssignToMeActionChoiceTitle,
+                        Title = Strings.ReopenAssignToMeActionChoiceTitle,
                         Value = ChangeTicketStatusPayload.AssignToSelfAction,
                     },
                 };

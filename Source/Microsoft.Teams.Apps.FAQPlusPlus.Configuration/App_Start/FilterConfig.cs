@@ -9,7 +9,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration
     /// <summary>
     /// Filter config for Task Module app.
     /// </summary>
-    public class FilterConfig
+    public static class FilterConfig
     {
         /// <summary>
         /// Register Global Filters
@@ -17,7 +17,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration
         /// <param name="filters">Collection of global filters.</param>
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
-            filters.Add(new ErrorHandler.AiHandleErrorAttribute());
+            filters?.Add(new ErrorHandler.AiHandleErrorAttribute());
         }
     }
 }

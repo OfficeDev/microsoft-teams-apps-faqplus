@@ -15,7 +15,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration
     /// <summary>
     /// Autofac configuration
     /// </summary>
-    public class AutofacConfig
+    public static class AutofacConfig
     {
         /// <summary>
         /// Register Autofac dependencies
@@ -26,9 +26,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration
             var builder = new ContainerBuilder();
             builder.RegisterControllers(Assembly.GetExecutingAssembly());
 
-            builder.Register(c => new ConfigurationProvider(
+            builder.Register(c => new ConfigurationDataProvider(
                  ConfigurationManager.AppSettings["StorageConnectionString"]))
-                .As<ConfigurationProvider>()
+                .As<ConfigurationDataProvider>()
                 .SingleInstance();
 
             var qnaMakerClient = new QnAMakerClient(

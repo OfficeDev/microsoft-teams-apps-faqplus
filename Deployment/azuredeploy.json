@@ -42,7 +42,7 @@
     "appDisplayName": {
       "type": "string",
       "minLength": 1,
-      "defaultValue": "FAQ Plus",
+      "defaultValue": "FAQ Plus V2",
       "metadata": {
         "description": "The app (and bot) display name."
       }
@@ -52,16 +52,16 @@
       "minLength": 1,
       "defaultValue": "A friendly FAQ bot that answers questions and connects you to experts.",
       "metadata": {
-          "description": "The app (and bot) description."
+        "description": "The app (and bot) description."
       }
     },
     "appIconUrl": {
-        "type": "string",
-        "minLength": 1,
-        "defaultValue": "https://raw.githubusercontent.com/OfficeDev/microsoft-teams-faqplusplus-app/master/Manifest/color.png",
-        "metadata": {
-            "description": "The link to the icon for the app. It must resolve to a PNG file."
-        }
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "<<TODO>>",
+      "metadata": {
+        "description": "The link to the icon for the app. It must resolve to a PNG file."
+      }
     },
     "tenantId": {
       "type": "string",
@@ -91,7 +91,7 @@
         "2",
         "3"
       ],
-      "defaultValue": "1",
+      "defaultValue": "2",
       "metadata": {
         "description": "The size of the hosting plan (small, medium, or large)."
       }
@@ -132,7 +132,7 @@
       "metadata": {
         "description": "The URL to the GitHub repository to deploy."
       },
-      "defaultValue": "https://github.com/OfficeDev/microsoft-teams-faqplusplus-app.git"
+      "defaultValue": "<<TODO>>"
     },
     "gitBranch": {
       "type": "string",
@@ -150,6 +150,7 @@
     "hostingPlanName": "[parameters('baseResourceName')]",
     "storageAccountName": "[uniquestring(concat(resourceGroup().id, parameters('baseResourceName')))]",
     "botAppInsightsName": "[parameters('baseResourceName')]",
+    "functionAppName": "[concat(parameters('baseResourceName'), '-function')]",
     "configAppName": "[concat(parameters('baseResourceName'), '-config')]",
     "configAppUrl": "[concat('https://', variables('configAppName'), '.azurewebsites.net')]",
     "configAppInsightsName": "[concat(parameters('baseResourceName'), '-config')]",
@@ -277,6 +278,18 @@
             {
               "name": "SearchIndexingIntervalInMinutes",
               "value": "10"
+            },
+            {
+              "name": "QnAMakerSubscriptionKey",
+              "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts/', variables('qnaMakerAccountName')), '2017-04-18').key1]"
+            },
+            {
+              "name": "QnAMakerApiEndpointUrl",
+              "value": "https://westus.api.cognitive.microsoft.com"
+            },
+            {
+              "name": "ApplicationInsightsLogLevel",
+              "value": "Information"
             }
           ]
         }
@@ -327,6 +340,10 @@
       "sku": {
         "name": "F0"
       },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', variables('botName'))]",
+        "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]"
+      ],
       "kind": "sdk",
       "properties": {
         "displayName": "[parameters('appDisplayName')]",
@@ -502,6 +519,104 @@
     {
       "type": "Microsoft.Web/sites",
       "apiVersion": "2016-08-01",
+      "name": "[variables('functionAppName')]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+      ],
+      "kind": "functionapp",
+      "properties": {
+        "name": "[variables('functionAppName')]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
+        "hostingEnvironment": "",
+        "clientAffinityEnabled": false,
+        "siteConfig": {
+          "alwaysOn": "[not(variables('isSharedPlan'))]",
+          "appSettings": [
+            {
+              "name": "PROJECT",
+              "value": "Source/Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction/Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.csproj"
+            },
+            {
+              "name": "SITE_ROLE",
+              "value": "function"
+            },
+            {
+              "name": "AzureWebJobsStorage",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=',listkeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2015-05-01-preview').key1,';')]"
+            },
+            {
+              "name": "AzureWebJobsDashboard",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=',listkeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2015-05-01-preview').key1,';')]"
+            },
+            {
+              "name": "FUNCTIONS_EXTENSION_VERSION",
+              "value": "~2"
+            },
+            {
+              "name": "FUNCTIONS_WORKER_RUNTIME",
+              "value": "dotnet"
+            },
+            {
+              "name": "QnAMakerApiUrl",
+              "value": "https://westus.api.cognitive.microsoft.com"
+            },
+            {
+              "name": "QnAMakerSubscriptionKey",
+              "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts/', variables('qnaMakerAccountName')), '2017-04-18').key1]"
+            },
+            {
+              "name": "SearchServiceName",
+              "value": "[variables('azureSearchName')]"
+            },
+            {
+              "name": "SearchServiceAdminApiKey",
+              "value": "[listAdminKeys(resourceId('Microsoft.Search/searchServices/', variables('azureSearchName')), '2015-08-19').primaryKey]"
+            },
+            {
+              "name": "SearchServiceQueryApiKey",
+              "value": "[listQueryKeys(resourceId('Microsoft.Search/searchServices/', variables('azureSearchName')), '2015-08-19').value[0].key]"
+            },
+            {
+              "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')),'2015-05-01-preview').key1)]"
+            },
+            {
+              "name": "WEBSITE_CONTENTSHARE",
+              "value": "[toLower(variables('functionAppName'))]"
+            },
+            {
+              "name": "StorageConnectionString",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')),'2015-05-01-preview').key1)]"
+            },
+            {
+              "name": "WEBSITE_NODE_DEFAULT_VERSION",
+              "value": "10.14.1"
+            }
+          ]
+        }
+      },
+      "resources": [
+        {
+          "type": "sourcecontrols",
+          "apiVersion": "2015-08-01",
+          "name": "web",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]"
+          ],
+          "properties": {
+            "RepoUrl": "[parameters('gitRepoUrl')]",
+            "branch": "[parameters('gitBranch')]",
+            "IsManualIntegration": true
+          },
+          "condition": "[not(empty(parameters('gitRepoUrl')))]"
+        }
+      ]
+    },
+    {
+      "type": "Microsoft.Web/sites",
+      "apiVersion": "2016-08-01",
       "name": "[variables('qnaMakerAppServiceName')]",
       "location": "[parameters('location')]",
       "properties": {
@@ -514,12 +629,12 @@
           }
         },
         "name": "[variables('qnaMakerAppServiceName')]",
-        "serverFarmId": "[concat('/subscriptions/', subscription().id,'/resourcegroups/', resourceGroup().name, '/providers/Microsoft.Web/serverfarms/', variables('hostingPlanName'))]",
+        "serverFarmId": "[concat('/subscriptions/', subscription().subscriptionId,'/resourcegroups/', resourceGroup().name, '/providers/Microsoft.Web/serverfarms/', variables('hostingPlanName'))]",
         "hostingEnvironment": ""
       },
       "tags": {
         "isqnamaker": "true",
-        "[concat('hidden-related:', '/subscriptions/', subscription().id,'/resourcegroups/', resourceGroup().name, '/providers/Microsoft.Web/serverfarms/', variables('hostingPlanName'))]": "empty"
+        "[concat('hidden-related:', '/subscriptions/', subscription().subscriptionId,'/resourcegroups/', resourceGroup().name, '/providers/Microsoft.Web/serverfarms/', variables('hostingPlanName'))]": "empty"
       },
       "dependsOn": [
         "[concat('Microsoft.Web/serverfarms/', variables('hostingPlanName'))]"
@@ -570,7 +685,7 @@
       "value": "[parameters('botClientId')]"
     },
     "appDomain": {
-      "type":"string",
+      "type": "string",
       "value": "[variables('botAppDomain')]"
     },
     "configurationAppUrl": {

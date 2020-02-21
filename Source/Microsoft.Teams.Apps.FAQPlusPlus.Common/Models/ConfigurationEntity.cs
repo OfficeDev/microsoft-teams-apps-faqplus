@@ -13,7 +13,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
     public class ConfigurationEntity : TableEntity
     {
         /// <summary>
-        /// Gets or sets data which will be stored in table storage
+        /// Gets or sets data which will be stored in table storage.
         /// </summary>
         [JsonProperty("Data")]
         public string Data { get; set; }

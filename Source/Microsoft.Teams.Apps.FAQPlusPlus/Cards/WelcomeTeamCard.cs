@@ -7,8 +7,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
     using System.Collections.Generic;
     using AdaptiveCards;
     using Microsoft.Bot.Schema;
-    using Microsoft.Teams.Apps.FAQPlusPlus.Bots;
-    using Microsoft.Teams.Apps.FAQPlusPlus.Models;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Common;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
 
     /// <summary>
@@ -22,33 +22,33 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <returns>Team welcome card.</returns>
         public static Attachment GetCard()
         {
-            AdaptiveCard teamWelcomeCard = new AdaptiveCard("1.0")
+            AdaptiveCard teamWelcomeCard = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
             {
                 Body = new List<AdaptiveElement>
                 {
                     new AdaptiveTextBlock
                     {
-                        Text = Resource.WelcomeTeamCardContent,
-                        Wrap = true
-                    }
+                        Text = Strings.WelcomeTeamCardContent,
+                        Wrap = true,
+                    },
                 },
                 Actions = new List<AdaptiveAction>
                 {
                     // Team- take a tour submit action.
                     new AdaptiveSubmitAction
                     {
-                        Title = Resource.TakeATeamTourButtonText,
+                        Title = Strings.TakeATeamTourButtonText,
                         Data = new TeamsAdaptiveSubmitActionData
                         {
                             MsTeams = new CardAction
                             {
                                 Type = ActionTypes.MessageBack,
-                                DisplayText = Resource.TakeATeamTourButtonText,
-                                Text = FaqPlusPlusBot.TeamTour
-                            }
+                                DisplayText = Strings.TakeATeamTourButtonText,
+                                Text = Constants.TeamTour,
+                            },
                         },
-                    }
-                }
+                    },
+                },
             };
 
             return new Attachment

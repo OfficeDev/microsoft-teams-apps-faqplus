@@ -7,18 +7,18 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Models
     using System.ComponentModel.DataAnnotations;
 
     /// <summary>
-    /// Team view model
+    /// Represents TeamViewModel object to store team details.
     /// </summary>
     public class TeamViewModel
     {
         /// <summary>
-        /// Gets or sets team Id textbox to be used in View
+        /// Gets or sets team id textbox to be used in View.
         /// </summary>
-        [Required(ErrorMessage ="Enter team ID.")]
+        [Required(ErrorMessage = "Enter team id.")]
         [MinLength(1)]
         [DataType(DataType.Text)]
-        [Display(Name ="Team ID")]
-        [RegularExpression(@"(\S)+", ErrorMessage = "Enter team ID which should not contain any whitespace.")]
+        [Display(Name = "Team ID")]
+        [RegularExpression(@"(\S)+", ErrorMessage = "Enter team id which should not contain any whitespace.")]
         public string TeamId { get; set; }
     }
 }

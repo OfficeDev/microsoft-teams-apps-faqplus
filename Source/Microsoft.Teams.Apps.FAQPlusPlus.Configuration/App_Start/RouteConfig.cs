@@ -10,7 +10,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration
     /// <summary>
     /// Router Config
     /// </summary>
-    public class RouteConfig
+    public static class RouteConfig
     {
         /// <summary>
         /// Register Routes

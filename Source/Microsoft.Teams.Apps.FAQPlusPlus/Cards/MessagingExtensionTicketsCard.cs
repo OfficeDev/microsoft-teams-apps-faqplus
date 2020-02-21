@@ -1,6 +1,7 @@
 ﻿// <copyright file="MessagingExtensionTicketsCard.cs" company="Microsoft">
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
+
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
 {
     using System;
@@ -23,7 +24,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         {
         }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Return the appropriate set of card actions based on the state and information in the ticket.
+        /// </summary>
+        /// <returns>Adaptive card actions.</returns>
         protected override List<AdaptiveAction> BuildActions()
         {
             List<AdaptiveAction> actions = new List<AdaptiveAction>();
@@ -35,8 +39,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 actions.Add(
                     new AdaptiveOpenUrlAction
                     {
-                        Title = Resource.GoToOriginalThreadButtonText,
-                        Url = new Uri(CreateDeeplinkToThread(this.Ticket.SmeThreadConversationId))
+                        Title = Strings.GoToOriginalThreadButtonText,
+                        Url = new Uri(CreateDeeplinkToThread(this.Ticket.SmeThreadConversationId)),
                     });
             }
 
@@ -44,10 +48,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         }
 
         /// <summary>
-        /// Returns go to original thread uri which will help in opening the original conversation about the ticket
+        /// Returns go to original thread uri which will help in opening the original conversation about the ticket.
         /// </summary>
         /// <param name="threadConversationId">The thread along with message Id stored in storage table.</param>
-        /// <returns>original thread uri.</returns>
+        /// <returns>Original thread uri.</returns>
         private static string CreateDeeplinkToThread(string threadConversationId)
         {
             string[] threadAndMessageId = threadConversationId.Split(";");

@@ -2,6 +2,7 @@
 
 @using (Ajax.BeginForm("ValidateAndSaveKnowledgeBaseIdAsync", "Home", new AjaxOptions { HttpMethod = "POST", OnSuccess = "onSaveSuccess", OnFailure = "onSaveFailure" }, htmlAttributes: new { @class = "formToSubmit" }))
 {
+    @Html.AntiForgeryToken()
     <div class="form-group" data-form-name="knowledgeBase">
         <div class="col-lg-3">
             @Html.LabelFor(model => model.KnowledgeBaseId, htmlAttributes: new { @class = "font-bold" })

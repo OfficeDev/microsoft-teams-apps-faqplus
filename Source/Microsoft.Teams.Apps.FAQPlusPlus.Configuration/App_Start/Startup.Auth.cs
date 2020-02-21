@@ -21,27 +21,45 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration
     /// </summary>
     public partial class Startup
     {
+        /// <summary>
+        /// Client id of the application.
+        /// </summary>
         private static string clientId = ConfigurationManager.AppSettings["ida:ClientId"];
+
+        /// <summary>
+        /// Aad instance.
+        /// </summary>
         private static string aadInstance = EnsureTrailingSlash(ConfigurationManager.AppSettings["ida:AADInstance"]);
+
+        /// <summary>
+        /// Tenant id of the application.
+        /// </summary>
         private static string tenantId = ConfigurationManager.AppSettings["ida:TenantId"];
+
+        /// <summary>
+        /// Post logout redirect url.
+        /// </summary>
         private static string postLogoutRedirectUri = ConfigurationManager.AppSettings["ida:PostLogoutRedirectUri"];
+
+        /// <summary>
+        /// Authority for the aad validation.
+        /// </summary>
         private static string authority = aadInstance + tenantId;
 
         /// <summary>
-        /// Configure Auth
+        /// Configure Authentication to authenticate the user.
         /// </summary>
-        /// <param name="app">App builder</param>
-        /// <param name="container">DI container</param>
+        /// <param name="app">Initializes a new instance of the type app builder.</param>
+        /// <param name="container">dependency injection container.</param>
         public void ConfigureAuth(IAppBuilder app, Autofac.IContainer container)
         {
             app.SetDefaultSignInAsAuthenticationType(CookieAuthenticationDefaults.AuthenticationType);
-
             app.UseCookieAuthentication(new CookieAuthenticationOptions());
 
             var validUpns = ConfigurationManager.AppSettings["ValidUpns"]
               ?.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries)
               ?.Select(s => s.Trim())
-              ?? new string[0];
+              ?? Array.Empty<string>();
 
             app.UseOpenIdConnectAuthentication(new OpenIdConnectAuthenticationOptions("AppLogin")
             {
@@ -56,7 +74,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration
                             .FirstOrDefault(c => c.Type == ClaimTypes.Upn);
                         var upn = upnClaim?.Value;
 
-                        if (upn == null
+                        if (string.IsNullOrWhiteSpace(upn)
                             || !validUpns.Contains(upn, StringComparer.OrdinalIgnoreCase))
                         {
                             context.OwinContext.Response.Redirect("/Account/InvalidUser");
@@ -79,9 +97,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration
             AntiForgeryConfig.UniqueClaimTypeIdentifier = ClaimTypes.Upn;
         }
 
+        /// <summary>
+        /// Verify the trailing slash.
+        /// </summary>
+        /// <param name="value">AAD instance value.</param>
+        /// <returns>AAD instance value with slash if not exist.</returns>
         private static string EnsureTrailingSlash(string value)
         {
-            if (value == null)
+            if (string.IsNullOrWhiteSpace(value))
             {
                 value = string.Empty;
             }

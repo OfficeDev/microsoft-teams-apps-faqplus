@@ -43,7 +43,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Controllers
         {
             // Delegate the processing of the HTTP POST to the adapter.
             // The adapter will invoke the bot.
-            await this.adapter.ProcessAsync(this.Request, this.Response, this.bot);
+            await this.adapter.ProcessAsync(this.Request, this.Response, this.bot).ConfigureAwait(false);
         }
     }
 }

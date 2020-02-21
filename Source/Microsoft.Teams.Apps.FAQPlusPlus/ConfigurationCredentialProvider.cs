@@ -15,9 +15,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
         /// <summary>
         /// Initializes a new instance of the <see cref="ConfigurationCredentialProvider"/> class.
         /// </summary>
-        /// <param name="configuration">Configuration.</param>
+        /// <param name="configuration">Configuration object to fetch the configuration information.</param>
         public ConfigurationCredentialProvider(IConfiguration configuration)
-            : base(configuration["MicrosoftAppId"], configuration["MicrosoftAppPassword"])
+            : base(configuration != null ? configuration["MicrosoftAppId"] : string.Empty, configuration != null ? configuration["MicrosoftAppPassword"] : string.Empty)
         {
         }
     }

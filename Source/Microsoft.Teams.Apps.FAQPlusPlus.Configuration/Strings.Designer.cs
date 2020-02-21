@@ -99,7 +99,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Provide a valid knowledgebase Id which will be used by bot and then click on Ok to add or Edit to modify.
+        ///   Looks up a localized string similar to Provide a valid knowledgebase id which will be used by bot and then click on Ok to add or Edit to modify.
         /// </summary>
         public static string KnowledgeBaseToolTipHoverMessage {
             get {
@@ -108,7 +108,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Provide a team Id deeplink which will be used by bot and then click on Ok to add or Edit to modify.
+        ///   Looks up a localized string similar to Provide a team id deeplink which will be used by bot and then click on Ok to add or Edit to modify.
         /// </summary>
         public static string TeamIdToolTipHoverMessage {
             get {

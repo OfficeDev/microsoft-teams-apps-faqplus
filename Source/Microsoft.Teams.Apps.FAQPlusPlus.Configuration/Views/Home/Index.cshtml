@@ -40,33 +40,33 @@
 
 <script type="text/javascript">
     $(function () {
-        //Display team Id if its saved if yes then perform edit UI changes
+        //Display team id if its saved if yes then perform edit UI changes
         $.ajax({
             type: "GET",
             url: '@Url.Action("GetSavedTeamIdAsync")',
             success: function (result) {
-                if (result != "") {                //Display the default UI when no team Id results are available for display
+                if (result != "") {                //Display the default UI when no team id results are available for display
                     $(".teamIdTextBox").val(result);
                     toggleToEdit("team");
                 }
             },
             error: function (error) {
-                saveFailureIconAndText("teamStorageStatusIcon", "teamStorageStatusMessage", "Unable to display team Id due to HTTP: " + error.status + ", " + error.statusText);
+                saveFailureIconAndText("teamStorageStatusIcon", "teamStorageStatusMessage", "Unable to display team id due to HTTP: " + error.status + ", " + error.statusText);
             }
         });
 
-        //Display knowledgeBase Id if its saved if yes then perform edit UI changes
+        //Display knowledgeBase id if its saved if yes then perform edit UI changes
         $.ajax({
             type: "GET",
             url: '@Url.Action("GetSavedKnowledgeBaseIdAsync")',
             success: function (result) {
-                if (result != "") {                //Display the default UI when no knowledge Id results are available for display
+                if (result != "") {                //Display the default UI when no knowledge id results are available for display
                     $(".knowledgeBaseIdTextBox").val(result);
                     toggleToEdit("knowledgeBase");
                 }
             },
             error: function (error) {
-                saveFailureIconAndText("knowledgeBaseStorageStatusIcon", "knowledgeBaseStorageStatusMessage", "Unable to display knowledge base Id due to HTTP: " + error.status + ", " + error.statusText);
+                saveFailureIconAndText("knowledgeBaseStorageStatusIcon", "knowledgeBaseStorageStatusMessage", "Unable to display knowledge base id due to HTTP: " + error.status + ", " + error.statusText);
             }
         });
 
