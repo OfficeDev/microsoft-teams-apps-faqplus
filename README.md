@@ -9,7 +9,7 @@ urlFragment: microsoft-teams-apps-faqplusv2
 ---
 #  FAQ Plus [Version 2] App Template
 
-| [Documentation](/wiki/Home.md) | [Deployment guide](/wiki/Deployment-Guide.md) | [Architecture](/wiki/Solution-Overview.md) |
+| [Documentation](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Home.md) | [Deployment guide](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Deployment-Guide.md) | [Architecture](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Solution-Overview.md) |
 | ---- | ---- | ---- |
 
 Chatbots are an easy way to provide answers to frequently asked questions by end-users. However, most chatbots fail to engage with end-users in a meaningful way because there is no human in the loop when the chatbot fails. 
@@ -31,9 +31,9 @@ FAQ Plus bot is a friendly Q&A bot that brings a human in the loop when it is un
 
 Members of the experts team will now be able to
 - Added a new QnA pair to the Knowledge base directly using the Messaging extension
-- Perform CRUD operations on the QnA pairs added through the bot
-- View names of individuals who updated a QnA pair
-- Configure the answer to show up as a adaptive card with additional details like Title, Subtitle, Image etc instead of the usual text based answer
+- To edit and delete QnA pairs added through the bot
+- Track history of experts updating QnA pair
+- Configure the answer to show up as a adaptive card with additional details like Title, Subtitle, Image, etc. instead of usual text based answer
 
 ## **Legal Notices**
 
@@ -51,15 +51,15 @@ Please read the license terms applicable to this template [here](https://github.
 
 ## **Getting** **Started**
 
-Begin with the [Solution overview](/wiki/Solution-overview) to read about what the app does and how it works.
+Begin with the [Solution overview](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Solution-overview) to read about what the app does and how it works.
 
-When you're ready to try out FAQ Plus [Version 2], or to use it in your own organization, follow the steps in the [Deployment guide](/wiki/DeployementGuide).
+When you're ready to try out FAQ Plus [Version 2], or to use it in your own organization, follow the steps in the [Deployment guide](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/DeployementGuide).
 
 ## **Feedback**
 
 Thoughts? Questions? Ideas? Share them with us on [Teams UserVoice](https://microsoftteams.uservoice.com/forums/555103-public)!
 
-Please report bugs and other code issues [here](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/issues/new)<TODO> (Page Not Found).
+Please report bugs and other code issues [here](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/issues/new)
 
 ## **Contributing**
 
