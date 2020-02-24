@@ -4,7 +4,7 @@ languages:
 - csharp
 products:
 - office-teams
-description: FAQ Plus bot is a friendly Q&A bot that brings a human in the loop when it is unable to help. One can ask the bot a question and the bot responds with an answer if it's in the knowledge base. If not, the bot allows the end-user to submit a query which then gets posted in a pre-configured team of experts to provide support by acting upon the notifications from within their team itself. 
+description: FAQ Plus bot is a friendly Q&A bot that brings a human in the loop when it is unable to help. One can ask the bot a question and the bot responds with an answer if it's in the knowledge base. If not, the bot allows the end-user to submit a query which then gets posted in a pre-configured team of experts to enable the experts to provide support by acting upon the notifications from within their team itself. 
 urlFragment: microsoft-teams-apps-faqplusv2
 ---
 #  FAQ Plus [Version 2] App Template
@@ -16,7 +16,7 @@ Chatbots are an easy way to provide answers to frequently asked questions by end
 
 FAQ Plus bot is a friendly Q&A bot that brings a human in the loop when it is unable to help. One can ask the bot a question and the bot responds with an answer if it's in the knowledge base. If not, the bot allows the end-user to submit a query which then gets posted in a pre-configured team of experts to provide support by acting upon the notifications from within their team itself.
 
-**Earlier release of FAQ Plus has following features:**
+**FAQ Plus has following features:**
 
 *	An Enduser interacting with FAQ Plus:
 
@@ -27,50 +27,17 @@ FAQ Plus bot is a friendly Q&A bot that brings a human in the loop when it is un
 ![FAQ Plus in action (experts view)](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/FAQPlusExperts.gif)
 
 
-**FAQ Plus [Version 2] (To_Do_Link) provides new features to experts team such as:**
-* Adding/editing/deleting/previewing QnA
-* Viewing update history of QnA
-* View all the existing QnA
-* View the original version of the edited QnA
-* View details of manually added QnA
+**FAQ Plus [Version 2] adds the following new capabilities on top of existing features**
 
-Experts team invoking the task module to add QnA pair:
-
-![Invoking_taskmodule1](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/Invoking_taskmodule1.png)
-
-Experts team configuring the bot to respond with a hero card as an answer to a question:
-
-![Invoking_taskmodule2](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/Invoking_taskmodule2.png)
-
-![Add question screen 1](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/add-question-richcard1.png)
-
-Experts team previewing the QnA pair before saving:
-   
-![Preview_Rich_card](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/Preview_Rich_card.png)
-
-Experts team updating the QnA pair:
-
-![Updating_Question-ui1](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/Updating_Question-ui1.png)
-
-![Updating_Question-ui2](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/Updating_Question-ui2.png)
-
-![Updating_Question-ui4](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/Updating_Question-ui4.png)
-
-Some of the fields are markdown supported and are indicated with "(Markdown supported)" beside the field label:
-   
-![Adding_Markdown-Support-1](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/Adding_Markdown-Support1.png)
-   
-This is how the card will look like when the bot responds with the answer to the Experts team:
-
-![Adding_Markdown-Support-3](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/Adding_Markdown-Support3.png)
-
-This is how the card will look like when the bot responds with the answer to the End-user:
-
-![End-user_Rich_Card](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/End-user_Rich_Card.png)
+Members of the experts team will now be able to
+- Added a new QnA pair to the Knowledge base directly using the Messaging extension
+- Perform CRUD operations on the QnA pairs added through the bot
+- View names of individuals who updated a QnA pair
+- Configure the answer to show up as a adaptive card with additional details like Title, Subtitle, Image etc instead of the usual text based answer
 
 ## **Legal Notices**
 
-Please read the license terms applicable to this template [here](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/blob/master/LICENSE) <TODO> . In addition to these terms, you agree to the following:
+Please read the license terms applicable to this template [here](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/blob/master/LICENSE). In addition to these terms, you agree to the following:
 
  - You are responsible for complying with privacy and security regulations applicable to your app.
  
