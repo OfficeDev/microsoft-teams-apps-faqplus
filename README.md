@@ -30,10 +30,10 @@ FAQ Plus bot is a friendly Q&A bot that brings a human in the loop when it is un
 **FAQ Plus [Version 2] adds the following new capabilities on top of existing features**
 
 Members of the experts team will now be able to
-- Added a new QnA pair to the Knowledge base directly using the Messaging extension
-- To edit and delete QnA pairs added through the bot
-- Track history of experts updating QnA pair
-- Configure the answer to show up as a adaptive card with additional details like Title, Subtitle, Image, etc. instead of usual text based answer
+- add a new QnA pair to the Knowledge base directly using Messaging extension
+- edit and delete QnA pairs added through the bot
+- track history of experts updating QnA pair
+- configure the answer to show up as a adaptive card with additional details like Title, Subtitle, Image, etc. instead of usual text based answer
 
 ## **Legal Notices**
 
