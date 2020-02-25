@@ -82,8 +82,7 @@
             }
           ],
           "context": [
-            "compose",
-            "commandBox"
+            "compose"
           ],
           "initialRun": true
         },
@@ -117,8 +116,7 @@
             }
           ],
           "context": [
-            "compose",
-            "commandBox"
+            "compose"
           ],
           "initialRun": true
         },
@@ -135,8 +133,7 @@
             }
           ],
           "context": [
-            "compose",
-            "commandBox"
+            "compose"
           ],
           "initialRun": true
         },
