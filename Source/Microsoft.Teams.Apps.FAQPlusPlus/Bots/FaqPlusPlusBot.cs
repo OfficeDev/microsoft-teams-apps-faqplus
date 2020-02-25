@@ -1412,7 +1412,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                         answerModel = JsonConvert.DeserializeObject<AnswerModel>(answerData.Answer);
                     }
 
-                    if (!string.IsNullOrEmpty(answerModel?.Title) && !string.IsNullOrEmpty(answerModel?.ImageUrl))
+                    if (!string.IsNullOrEmpty(answerModel?.Title) || !string.IsNullOrEmpty(answerModel?.Subtitle) || !string.IsNullOrEmpty(answerModel?.ImageUrl) || !string.IsNullOrEmpty(answerModel?.RedirectionUrl))
                     {
                         await turnContext.SendActivityAsync(MessageFactory.Attachment(MessagingExtensionQnaCard.GetEndUserRichCard(text, answerData))).ConfigureAwait(false);
                     }

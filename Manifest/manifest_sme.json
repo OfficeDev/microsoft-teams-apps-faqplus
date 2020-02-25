@@ -77,7 +77,8 @@
           "parameters": [
             {
               "name": "searchText",
-              "title": "Search"
+              "title": "Search",
+              "description": "Search tickets"
             }
           ],
           "context": [
@@ -94,7 +95,8 @@
           "parameters": [
             {
               "name": "searchText",
-              "title": "Search"
+              "title": "Search",
+              "description": "Search tickets"
             }
           ],
           "context": [
@@ -111,7 +113,8 @@
           "parameters": [
             {
               "name": "searchText",
-              "title": "Search"
+              "title": "Search",
+              "description": "Search tickets"
             }
           ],
           "context": [

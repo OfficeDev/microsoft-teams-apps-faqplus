@@ -564,7 +564,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 answerModel = JsonConvert.DeserializeObject<AnswerModel>(answerData);
             }
 
-            if (answerModel != null && !string.IsNullOrEmpty(answerModel.Title) && !string.IsNullOrEmpty(answerModel.ImageUrl))
+            if (answerModel != null && (!string.IsNullOrEmpty(answerModel.Title) || !string.IsNullOrEmpty(answerModel.Subtitle) || !string.IsNullOrEmpty(answerModel.ImageUrl) || !string.IsNullOrEmpty(answerModel.RedirectionUrl)))
             {
                 var container = new AdaptiveContainer()
                 {
@@ -589,7 +589,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         },
                         new AdaptiveImage
                         {
-                            Url = new Uri(answerModel.ImageUrl),
+                            Url = !string.IsNullOrEmpty(answerModel?.ImageUrl?.Trim()) ? new Uri(answerModel?.ImageUrl?.Trim()) : default,
                             Size = AdaptiveImageSize.Auto,
                             Style = AdaptiveImageStyle.Default,
                             AltText = answerModel.Title,
@@ -772,6 +772,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         },
                         new AdaptiveTextBlock
                         {
+                            Wrap = true,
                             Text = qnaPairEntity?.Title?.Trim(),
                             Size = AdaptiveTextSize.Large,
                             Weight = AdaptiveTextWeight.Bolder,
@@ -891,6 +892,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     },
                     new AdaptiveTextBlock
                     {
+                        Wrap = true,
                         Text = answerModel?.Title,
                         Size = AdaptiveTextSize.Large,
                         Weight = AdaptiveTextWeight.Bolder,
@@ -902,10 +904,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     },
                     new AdaptiveImage
                     {
-                        Url = new Uri(answerModel?.ImageUrl),
+                        Url = !string.IsNullOrEmpty(answerModel?.ImageUrl?.Trim()) ? new Uri(answerModel?.ImageUrl?.Trim()) : default,
                         Size = AdaptiveImageSize.Auto,
                         Style = AdaptiveImageStyle.Default,
-                        AltText = answerModel?.Title,
+                         AltText = answerModel?.Title,
                     },
                     new AdaptiveTextBlock
                     {
@@ -1137,7 +1139,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 qnaPairEntity.IsHTMLPresent = true;
                 adaptiveCardEditor = AddQuestionForm(qnaPairEntity);
             }
-            else if (!string.IsNullOrEmpty(qnaPairEntity.UpdatedQuestion?.Trim()) && !string.IsNullOrEmpty(qnaPairEntity.Description?.Trim()) && string.IsNullOrEmpty(qnaPairEntity.Title?.Trim()) && string.IsNullOrEmpty(qnaPairEntity.ImageUrl?.Trim()))
+            else if (!string.IsNullOrEmpty(qnaPairEntity.UpdatedQuestion?.Trim()) && !string.IsNullOrEmpty(qnaPairEntity.Description?.Trim()) && string.IsNullOrEmpty(qnaPairEntity.Title?.Trim()) && string.IsNullOrEmpty(qnaPairEntity.ImageUrl?.Trim()) && string.IsNullOrEmpty(qnaPairEntity.Subtitle?.Trim()) && string.IsNullOrEmpty(qnaPairEntity.RedirectionUrl?.Trim()))
             {
                 // Show normal card if only question & answer fields are filled.
                 adaptiveCardEditor = PreviewNormalCard(qnaPairEntity);
@@ -1153,7 +1155,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 qnaPairEntity.IsInvalidRedirectUrl = true;
                 adaptiveCardEditor = AddQuestionForm(qnaPairEntity);
             }
-            else if (!string.IsNullOrEmpty(qnaPairEntity.UpdatedQuestion?.Trim()) && !string.IsNullOrEmpty(qnaPairEntity.Description?.Trim()) && string.IsNullOrEmpty(qnaPairEntity.Title?.Trim()) && string.IsNullOrEmpty(qnaPairEntity.ImageUrl?.Trim()))
+            else if (!string.IsNullOrEmpty(qnaPairEntity.UpdatedQuestion?.Trim()) && !string.IsNullOrEmpty(qnaPairEntity.Description?.Trim()) && string.IsNullOrEmpty(qnaPairEntity.Title?.Trim()) && string.IsNullOrEmpty(qnaPairEntity.ImageUrl?.Trim()) && string.IsNullOrEmpty(qnaPairEntity.Subtitle?.Trim()) && string.IsNullOrEmpty(qnaPairEntity.RedirectionUrl?.Trim()))
             {
                 // Show normal card if only question & answer fields are filled.
                 adaptiveCardEditor = PreviewNormalCard(qnaPairEntity);
