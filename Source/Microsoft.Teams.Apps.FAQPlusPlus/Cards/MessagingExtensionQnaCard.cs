@@ -28,7 +28,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <summary>
         /// Feedback - text that renders share feedback card.
         /// </summary>
-        private const string GoToOriginalThreadUrl = "https://teams.microsoft.com/l/message/19:";
+        private const string GoToOriginalThreadUrl = "https://teams.microsoft.com/l/message/";
 
         /// <summary>
         /// Date format.
@@ -518,7 +518,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
 
                     if (!string.IsNullOrEmpty(conversationId) && !string.IsNullOrEmpty(activityId))
                     {
-                        var threadId = conversationId;
+                        var threadId = HttpUtility.UrlDecode(conversationId);
                         var messageId = activityId;
                         card.Actions.Add(
                             new AdaptiveOpenUrlAction()
