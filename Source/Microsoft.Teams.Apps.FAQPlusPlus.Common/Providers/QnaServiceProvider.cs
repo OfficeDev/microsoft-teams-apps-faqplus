@@ -9,6 +9,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
     using System.Globalization;
     using System.Linq;
     using System.Threading.Tasks;
+    using System.Web;
     using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker;
     using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker.Models;
     using Microsoft.Extensions.Options;
@@ -28,7 +29,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         private readonly IConfigurationDataProvider configurationProvider;
         private readonly IQnAMakerClient qnaMakerClient;
         private readonly IQnAMakerRuntimeClient qnaMakerRuntimeClient;
-        private readonly double scoreThreshold;
 
         /// <summary>
         /// Represents a set of key/value application configuration properties.
@@ -48,7 +48,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
             this.qnaMakerClient = qnaMakerClient;
             this.options = optionsAccessor.CurrentValue;
             this.qnaMakerRuntimeClient = qnaMakerRuntimeClient;
-            this.scoreThreshold = Convert.ToDouble(this.options != null ? this.options.ScoreThreshold : string.Empty, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
@@ -62,7 +61,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
             this.configurationProvider = configurationProvider;
             this.qnaMakerClient = qnaMakerClient;
             this.options = optionsAccessor.CurrentValue;
-            this.scoreThreshold = Convert.ToDouble(this.options != null ? this.options?.ScoreThreshold : string.Empty, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
@@ -94,7 +92,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
                             {
                                 new MetadataDTO() { Name = Constants.MetadataCreatedAt, Value = DateTime.UtcNow.Ticks.ToString(CultureInfo.InvariantCulture) },
                                 new MetadataDTO() { Name = Constants.MetadataCreatedBy, Value = createdBy },
-                                new MetadataDTO() { Name = Constants.MetadataConversationId, Value = conversationId?.Split(':').Last() },
+                                new MetadataDTO() { Name = Constants.MetadataConversationId, Value = HttpUtility.UrlEncode(conversationId) },
                                 new MetadataDTO() { Name = Constants.MetadataActivityReferenceId, Value = activityReferenceId },
                             },
                          },
@@ -194,7 +192,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
             {
                 IsTest = isTestKnowledgeBase,
                 Question = question?.Trim(),
-                ScoreThreshold = this.scoreThreshold,
+                ScoreThreshold = Convert.ToDouble(this.options.ScoreThreshold),
             }).ConfigureAwait(false);
 
             return qnaSearchResult;
@@ -229,7 +227,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         /// <returns>A <see cref="Task"/> of type bool where true represents knowledgebase need to be published while false indicates knowledgebase not need to be published.</returns>
         public async Task<bool> GetPublishStatusAsync(string knowledgeBaseId)
         {
-            KnowledgebaseDTO qnaDocuments = await this.qnaMakerClient.Knowledgebase.GetDetailsAsync(knowledgeBaseId).ConfigureAwait(false);
+            var qnaDocuments = await this.qnaMakerClient.Knowledgebase.GetDetailsAsync(knowledgeBaseId).ConfigureAwait(false);
             if (qnaDocuments != null && qnaDocuments.LastChangedTimestamp != null && qnaDocuments.LastPublishedTimestamp != null)
             {
                 return DateTime.Compare(Convert.ToDateTime(qnaDocuments?.LastChangedTimestamp, CultureInfo.InvariantCulture), Convert.ToDateTime(qnaDocuments?.LastPublishedTimestamp, CultureInfo.InvariantCulture)) > 0;
