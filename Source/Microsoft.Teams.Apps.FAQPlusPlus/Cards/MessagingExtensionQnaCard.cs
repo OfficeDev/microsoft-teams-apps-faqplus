@@ -499,7 +499,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         activityReferenceId = qnaDocument.Metadata.FirstOrDefault(metadata => metadata.Name == Constants.MetadataActivityReferenceId)?.Value;
                         conversationId = qnaDocument.Metadata.FirstOrDefault(metadata => metadata.Name == Constants.MetadataConversationId)?.Value;
                         activityId = activitiesData?.FirstOrDefault(activity => activity.RowKey == activityReferenceId)?.ActivityId;
-                        dateString = string.Format(CultureInfo.InvariantCulture, Strings.DateFormat, "{{DATE(" + createdAt.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'", CultureInfo.InvariantCulture) + ", SHORT)}}", "{{TIME(" + createdAt.ToString("yyyy-MM-dd'T'HH:mm:ss'Z'", CultureInfo.InvariantCulture) + ")}}");
+                        dateString = string.Format(CultureInfo.InvariantCulture, Strings.DateFormat, "{{DATE(" + createdAt.ToString(Rfc3339DateTimeFormat, CultureInfo.InvariantCulture) + ", SHORT)}}", "{{TIME(" + createdAt.ToString(Rfc3339DateTimeFormat, CultureInfo.InvariantCulture) + ")}}");
                         metadataCreatedAt = qnaDocument.Metadata.FirstOrDefault(metadata => metadata.Name == Constants.MetadataCreatedAt)?.Value;
                     }
                     else
