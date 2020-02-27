@@ -26,17 +26,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         private const string FaqPlusQnAFile = "/faqplusqnadata.json";
 
         private readonly IQnaServiceProvider qnaServiceProvider;
-        private readonly string azureWebJobsStorage;
+        private readonly string storageConnectionString;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SearchServiceDataProvider"/> class.
         /// </summary>
         /// <param name="qnaServiceProvider">question and answer ServiceProvider.</param>
-        /// <param name="azureWebJobsStorage">Azure web job storage.</param>
-        public SearchServiceDataProvider(IQnaServiceProvider qnaServiceProvider, string azureWebJobsStorage)
+        /// <param name="storageConnectionString">Azure web job storage.</param>
+        public SearchServiceDataProvider(IQnaServiceProvider qnaServiceProvider, string storageConnectionString)
         {
             this.qnaServiceProvider = qnaServiceProvider;
-            this.azureWebJobsStorage = azureWebJobsStorage;
+            this.storageConnectionString = storageConnectionString;
         }
 
         /// <summary>
@@ -88,7 +88,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         private async Task AddDataToBlobStorageAsync(string jsonData)
         {
             // Retrieve storage account from connection string.
-            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(this.azureWebJobsStorage);
+            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(this.storageConnectionString);
 
             // Create the blob client.
             CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();

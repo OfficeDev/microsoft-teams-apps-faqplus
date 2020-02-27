@@ -32,7 +32,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction
             builder.Services.AddSingleton<IQnaServiceProvider>((provider) => new QnaServiceProvider(
                 provider.GetRequiredService<IConfigurationDataProvider>(), provider.GetRequiredService<IOptionsMonitor<QnAMakerSettings>>(), qnaMakerClient));
             builder.Services.AddSingleton<IConfigurationDataProvider, Common.Providers.ConfigurationDataProvider>();
-            builder.Services.AddSingleton<ISearchServiceDataProvider>((provider) => new SearchServiceDataProvider(provider.GetRequiredService<IQnaServiceProvider>(), Environment.GetEnvironmentVariable("AzureWebJobsStorage")));
+            builder.Services.AddSingleton<ISearchServiceDataProvider>((provider) => new SearchServiceDataProvider(provider.GetRequiredService<IQnaServiceProvider>(), Environment.GetEnvironmentVariable("StorageConnectionString")));
             builder.Services.AddSingleton<IConfigurationDataProvider>(new Common.Providers.ConfigurationDataProvider(Environment.GetEnvironmentVariable("StorageConnectionString")));
             builder.Services.AddSingleton<IKnowledgeBaseSearchService, KnowledgeBaseSearchService>();
             builder.Services.AddSingleton<IKnowledgeBaseSearchService>((provider) => new KnowledgeBaseSearchService(Environment.GetEnvironmentVariable("SearchServiceName"), Environment.GetEnvironmentVariable("SearchServiceQueryApiKey"), Environment.GetEnvironmentVariable("SearchServiceAdminApiKey"), Environment.GetEnvironmentVariable("StorageConnectionString")));

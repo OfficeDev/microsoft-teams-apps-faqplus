@@ -48,7 +48,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         /// Initializes a new instance of the <see cref="ActivityStorageProvider"/> class.
         /// </summary>
         /// <param name="optionsAccessor">A set of key/value application configuration properties.</param>
-        public ActivityStorageProvider(IOptionsMonitor<StorageSettings> optionsAccessor)
+        public ActivityStorageProvider(IOptionsMonitor<KnowledgeBaseSettings> optionsAccessor)
         {
             this.initializeTask = new Lazy<Task>(() => this.InitializeAsync(connectionString: optionsAccessor?.CurrentValue?.StorageConnectionString));
         }

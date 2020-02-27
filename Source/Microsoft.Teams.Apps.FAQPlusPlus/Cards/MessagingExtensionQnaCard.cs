@@ -360,7 +360,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                       Title = Strings.EditButtonText,
                       Data = new AdaptiveSubmitActionData
                       {
-                          MsTeamsCardAction = new CardAction
+                          MsTeams = new CardAction
                           {
                               Type = CardActionType,
                           },
@@ -427,7 +427,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                    Title = Strings.Yes,
                    Data = new AdaptiveSubmitActionData
                    {
-                       MsTeamsCardAction = new CardAction
+                       MsTeams = new CardAction
                        {
                            Type = ActionTypes.MessageBack,
                            Text = Constants.DeleteCommand,
@@ -443,7 +443,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                   Title = Strings.No,
                   Data = new AdaptiveSubmitActionData
                   {
-                      MsTeamsCardAction = new CardAction
+                      MsTeams = new CardAction
                       {
                           Type = ActionTypes.MessageBack,
                           Text = Constants.NoCommand,
@@ -498,7 +498,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     {
                         activityReferenceId = qnaDocument.Metadata.FirstOrDefault(metadata => metadata.Name == Constants.MetadataActivityReferenceId)?.Value;
                         conversationId = qnaDocument.Metadata.FirstOrDefault(metadata => metadata.Name == Constants.MetadataConversationId)?.Value;
-                        activityId = activitiesData?.FirstOrDefault(activity => activity.RowKey == activityReferenceId)?.ActivityId;
+                        activityId = activitiesData?.FirstOrDefault(activity => activity.ActivityReferenceId == activityReferenceId)?.ActivityId;
                         dateString = string.Format(CultureInfo.InvariantCulture, Strings.DateFormat, "{{DATE(" + createdAt.ToString(Rfc3339DateTimeFormat, CultureInfo.InvariantCulture) + ", SHORT)}}", "{{TIME(" + createdAt.ToString(Rfc3339DateTimeFormat, CultureInfo.InvariantCulture) + ")}}");
                         metadataCreatedAt = qnaDocument.Metadata.FirstOrDefault(metadata => metadata.Name == Constants.MetadataCreatedAt)?.Value;
                     }
@@ -849,7 +849,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                           Title = Strings.EditButtonText,
                           Data = new AdaptiveSubmitActionData
                           {
-                              MsTeamsCardAction = new CardAction
+                              MsTeams = new CardAction
                               {
                                   Type = CardActionType,
                               },
@@ -1186,8 +1186,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 adaptiveCardEditor = AddQuestionForm(qnaPairEntity, appBaseUri);
             }
             else if (!string.IsNullOrEmpty(qnaPairEntity.RedirectionUrl?.Trim())
-                && (!Regex.IsMatch(qnaPairEntity.RedirectionUrl?.Trim(), Constants.ValidRedirectUrlPattern)
-                || Regex.IsMatch(qnaPairEntity.RedirectionUrl?.Trim(), Constants.InvalidRedirectUrlDomainPattern)))
+                && !Regex.IsMatch(qnaPairEntity.RedirectionUrl?.Trim(), Constants.ValidRedirectUrlPattern))
             {
                 // Show error if user has entered invalid Redirect URL.
                 qnaPairEntity.IsInvalidRedirectUrl = true;

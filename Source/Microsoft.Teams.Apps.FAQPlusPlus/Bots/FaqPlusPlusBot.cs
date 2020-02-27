@@ -635,7 +635,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             }
 
             this.logger.LogInformation($"Question added by: {turnContext.Activity.From.AadObjectId}");
-            ActivityEntity activityEntity = new ActivityEntity { ActivityId = activityResponse.Id, RowKey = activityReferenceId };
+            ActivityEntity activityEntity = new ActivityEntity { ActivityId = activityResponse.Id, ActivityReferenceId = activityReferenceId };
             bool operationStatus = await this.activityStorageProvider.AddActivityEntityAsync(activityEntity).ConfigureAwait(false);
             if (!operationStatus)
             {

@@ -4,20 +4,13 @@
 
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
 {
-    using Microsoft.Bot.Schema;
     using Newtonsoft.Json;
 
     /// <summary>
     /// Adaptive Card Action class to post question data.
     /// </summary>
-    public class AdaptiveSubmitActionData
+    public class AdaptiveSubmitActionData : TeamsAdaptiveSubmitActionData
     {
-        /// <summary>
-        /// Gets or sets Msteams object.
-        /// </summary>
-        [JsonProperty("msteams")]
-        public CardAction MsTeamsCardAction { get; set; }
-
         /// <summary>
         /// Gets or sets Updated question.
         /// </summary>

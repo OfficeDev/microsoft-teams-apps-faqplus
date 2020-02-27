@@ -31,11 +31,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common
         public const string ValidRedirectUrlPattern = @"^(http|https|)\:\/\/[0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*(:(0-9)*)*(\/?)([a-zA-Z0-9\-\.\?\,\'\/\\\+&%\$#_]*)?([a-zA-Z0-9\-\?\,\'\/\+&%\$#_]+)";
 
         /// <summary>
-        /// Regular expression pattern for invalid redirection ending with extension.
-        /// </summary>
-        public const string InvalidRedirectUrlDomainPattern = @"(.jpeg|.JPEG|.jpg|.JPG|.gif|.GIF|.png|.PNG|.docs|.xls|.exe|.pptx|.dll)$";
-
-        /// <summary>
         /// Name of the QnA metadata property to map with the date and time the item was added.
         /// </summary>
         public const string MetadataCreatedAt = "createdat";

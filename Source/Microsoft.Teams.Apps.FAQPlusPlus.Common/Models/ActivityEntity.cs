@@ -19,11 +19,20 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="ActivityEntity"/> class.
         /// </summary>
-        public ActivityEntity() => this.PartitionKey = ActivityPartitionKey;
+        public ActivityEntity()
+        {
+            this.PartitionKey = ActivityPartitionKey;
+            this.RowKey = this.ActivityReferenceId;
+        }
 
         /// <summary>
         /// Gets or sets activity id.
         /// </summary>
         public string ActivityId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the activity reference id.
+        /// </summary>
+        public string ActivityReferenceId { get; set; }
     }
 }

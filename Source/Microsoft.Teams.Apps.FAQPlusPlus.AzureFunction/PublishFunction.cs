@@ -38,13 +38,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction
         }
 
         /// <summary>
-        /// Function to get the KB and publish KB.
+        /// Function to get and publish QnA Maker knowledge base.
         /// </summary>
         /// <param name="myTimer">Duration of publish operations.</param>
         /// <param name="log">Log.</param>
         /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
         [FunctionName("PublishFunction")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "Not required to create resources for telemetry message.")]
         public async Task Run([TimerTrigger("0 */15 * * * *")]TimerInfo myTimer, ILogger log)
         {
             try

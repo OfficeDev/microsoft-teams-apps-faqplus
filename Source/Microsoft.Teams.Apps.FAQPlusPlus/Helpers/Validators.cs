@@ -67,8 +67,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Helpers
         public static bool IsRedirectionUrlInvalid(AdaptiveSubmitActionData qnaPairEntity)
         {
             return !string.IsNullOrEmpty(qnaPairEntity?.RedirectionUrl?.Trim())
-                && (!Regex.IsMatch(qnaPairEntity?.RedirectionUrl?.Trim(), Constants.ValidRedirectUrlPattern)
-                || Regex.IsMatch(qnaPairEntity?.RedirectionUrl?.Trim(), Constants.InvalidRedirectUrlDomainPattern));
+                && !Regex.IsMatch(qnaPairEntity?.RedirectionUrl?.Trim(), Constants.ValidRedirectUrlPattern);
         }
 
         /// <summary>

@@ -94,7 +94,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Helpers
                 await qnaServiceProvider.DeleteQnaAsync(searchResult.Id.Value).ConfigureAwait(false);
                 logger.LogInformation($"Question deleted by: {activity.Conversation.AadObjectId}");
                 attachment = MessagingExtensionQnaCard.DeletedEntry(activityValue?.OriginalQuestion, searchResult.Answer, activity.From.Name, activityValue?.UpdateHistoryData);
-                ActivityEntity activityEntity = new ActivityEntity { RowKey = searchResult.Metadata.FirstOrDefault(x => x.Name == Constants.MetadataActivityReferenceId)?.Value };
+                ActivityEntity activityEntity = new ActivityEntity { ActivityReferenceId = searchResult.Metadata.FirstOrDefault(x => x.Name == Constants.MetadataActivityReferenceId)?.Value };
 
                 bool operationStatus = await activityStorageProvider.DeleteActivityEntityAsync(activityEntity).ConfigureAwait(false);
                 if (!operationStatus)
