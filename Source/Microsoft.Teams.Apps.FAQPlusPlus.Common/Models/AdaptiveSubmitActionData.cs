@@ -90,14 +90,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         public string OriginalQuestion { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the card is herocard.
+        /// Gets or sets a value indicating whether the qna pair is null or empty.
         /// </summary>
         public bool IsQnaNullOrEmpty { get; set; }
-
-        /// <summary>
-        /// Gets or sets original question.
-        /// </summary>
-        public string AppBaseUrl { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether the html is present in input field.

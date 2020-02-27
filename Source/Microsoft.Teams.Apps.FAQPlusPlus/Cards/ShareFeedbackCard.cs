@@ -40,10 +40,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         {
             var cardPayload = new ShareFeedbackCardPayload
             {
-                Description = payload?.UserQuestion,     // Pre-populate the description with the user's question
-                UserQuestion = payload?.UserQuestion,
+                Description = payload.UserQuestion,     // Pre-populate the description with the user's question
+                UserQuestion = payload.UserQuestion,
                 KnowledgeBaseAnswer = payload?.KnowledgeBaseAnswer,
             };
+
             return GetCard(cardPayload, showValidationErrors: false);
         }
 

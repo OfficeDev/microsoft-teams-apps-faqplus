@@ -20,14 +20,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
     public class ActivityStorageProvider : IActivityStorageProvider
     {
         /// <summary>
-        ///  Represents the partition key.
+        /// Table name which stores activity id of responded card.
         /// </summary>
-        private const string PartitionKey = "PartitionKey";
+        public const string ActivityTableName = "ActivityEntity";
 
         /// <summary>
-        ///  Represents the row key.
+        /// Partition key value of activity entity table storage.
         /// </summary>
-        private const string RowKey = "RowKey";
+        public const string ActivityParitionKey = "ActivityEntity";
 
         /// <summary>
         /// Task for initialization.
@@ -61,8 +61,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         public async Task<IList<ActivityEntity>> GetAsync(string activityReferenceId)
         {
             await this.EnsureInitializedAsync().ConfigureAwait(false);
-            string partitionKeyCondition = TableQuery.GenerateFilterCondition(PartitionKey, QueryComparisons.Equal, Constants.ActivityTableName);
-            string rowKeyCondition = TableQuery.GenerateFilterCondition(RowKey, QueryComparisons.Equal, activityReferenceId);
+            string partitionKeyCondition = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, ActivityParitionKey);
+            string rowKeyCondition = TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.Equal, activityReferenceId);
             string condition = TableQuery.CombineFilters(partitionKeyCondition, TableOperators.And, rowKeyCondition);
             TableQuery<ActivityEntity> query = new TableQuery<ActivityEntity>().Where(condition);
 
@@ -100,7 +100,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         {
             await this.EnsureInitializedAsync().ConfigureAwait(false);
             var activityEntities = new List<ActivityEntity>();
-            var query = new TableQuery<ActivityEntity>().Where(TableQuery.GenerateFilterCondition(PartitionKey, QueryComparisons.Equal, Constants.ActivityTableName));
+            var query = new TableQuery<ActivityEntity>().Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, ActivityParitionKey));
             TableContinuationToken tableContinuationToken = null;
 
             do
@@ -151,7 +151,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         {
             CloudStorageAccount storageAccount = CloudStorageAccount.Parse(connectionString);
             this.cloudTableClient = storageAccount.CreateCloudTableClient();
-            this.cloudTable = this.cloudTableClient.GetTableReference(Constants.ActivityTableName);
+            this.cloudTable = this.cloudTableClient.GetTableReference(ActivityTableName);
             if (!await this.cloudTable.ExistsAsync().ConfigureAwait(false))
             {
                 await this.cloudTable.CreateIfNotExistsAsync().ConfigureAwait(false);

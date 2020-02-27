@@ -72,12 +72,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Helpers
             CancellationToken cancellationToken)
         {
             QnASearchResult searchResult;
-            QnASearchResultList qnaAnswerResponse = default(QnASearchResultList);
-            AdaptiveSubmitActionData activityValue = default(AdaptiveSubmitActionData);
-            Attachment attachment = default(Attachment);
+            Attachment attachment;
+
             var activity = (Activity)turnContext.Activity;
-            activityValue = ((JObject)activity.Value).ToObject<AdaptiveSubmitActionData>();
-            qnaAnswerResponse = await qnaServiceProvider.GenerateAnswerAsync(activityValue?.OriginalQuestion, isTestKnowledgeBase: false).ConfigureAwait(false);
+            var activityValue = ((JObject)activity.Value).ToObject<AdaptiveSubmitActionData>();
+            QnASearchResultList qnaAnswerResponse = await qnaServiceProvider.GenerateAnswerAsync(activityValue?.OriginalQuestion, isTestKnowledgeBase: false).ConfigureAwait(false);
+
             bool isSameQuestion = false;
             searchResult = qnaAnswerResponse.Answers.First();
 
@@ -94,7 +94,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Helpers
                 await qnaServiceProvider.DeleteQnaAsync(searchResult.Id.Value).ConfigureAwait(false);
                 logger.LogInformation($"Question deleted by: {activity.Conversation.AadObjectId}");
                 attachment = MessagingExtensionQnaCard.DeletedEntry(activityValue?.OriginalQuestion, searchResult.Answer, activity.From.Name, activityValue?.UpdateHistoryData);
-                ActivityEntity activityEntity = new ActivityEntity { PartitionKey = Constants.ActivityTableName, RowKey = searchResult.Metadata.FirstOrDefault(x => x.Name == Constants.MetadataActivityReferenceId)?.Value };
+                ActivityEntity activityEntity = new ActivityEntity { RowKey = searchResult.Metadata.FirstOrDefault(x => x.Name == Constants.MetadataActivityReferenceId)?.Value };
+
                 bool operationStatus = await activityStorageProvider.DeleteActivityEntityAsync(activityEntity).ConfigureAwait(false);
                 if (!operationStatus)
                 {
@@ -133,13 +134,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Helpers
         /// <returns>A <see cref="Task"/> of type bool where true represents question is already exist in knowledgebase while false indicates the question does not exist in knowledgebase.</returns>
         public static async Task<bool> QuestionExistsInKbAsync(this IQnaServiceProvider provider, string question)
         {
-            var prodHasQuestion = await provider.HasQuestionAsync(question, isTestKnowledgeBase: false);
+            var prodHasQuestion = await provider.HasQuestionAsync(question, isTestKnowledgeBase: false).ConfigureAwait(false);
             if (prodHasQuestion)
             {
                 return true;
             }
 
-            return await provider.HasQuestionAsync(question, isTestKnowledgeBase: true);
+            return await provider.HasQuestionAsync(question, isTestKnowledgeBase: true).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -151,10 +152,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Helpers
         /// <returns>A <see cref="Task"/> of type bool where true represents question is already exist in knowledgebase while false indicates the question does not exist in knowledgebase.</returns>
         private static async Task<bool> HasQuestionAsync(this IQnaServiceProvider provider, string question, bool isTestKnowledgeBase)
         {
-            var qnaPreviewAnswerResponse = await provider.GenerateAnswerAsync(question, isTestKnowledgeBase);
+            var qnaPreviewAnswerResponse = await provider.GenerateAnswerAsync(question, isTestKnowledgeBase).ConfigureAwait(false);
             var questionAnswerResponse = qnaPreviewAnswerResponse.Answers.FirstOrDefault();
 
-            if (questionAnswerResponse == null || questionAnswerResponse.Questions.Count() == 0)
+            if (questionAnswerResponse == null || questionAnswerResponse.Questions.Count == 0)
             {
                 return false;
             }

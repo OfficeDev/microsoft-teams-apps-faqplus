@@ -51,7 +51,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Helpers
         /// <returns>Boolean value where true represent html tags are present while false represent html tags are not present.</returns>
         public static bool IsContainsHtml(AdaptiveSubmitActionData qnaPairEntity)
         {
-            return Regex.IsMatch(qnaPairEntity?.UpdatedQuestion?.Trim(), HtmlPattern) || Regex.IsMatch(qnaPairEntity?.ImageUrl?.Trim(), HtmlPattern) || Regex.IsMatch(qnaPairEntity?.RedirectionUrl?.Trim(), HtmlPattern) || Regex.IsMatch(qnaPairEntity?.Description?.Trim(), HtmlPattern) || Regex.IsMatch(qnaPairEntity?.Subtitle?.Trim(), HtmlPattern) || Regex.IsMatch(qnaPairEntity?.Title?.Trim(), HtmlPattern);
+            return Regex.IsMatch(qnaPairEntity?.UpdatedQuestion?.Trim(), HtmlPattern)
+                || Regex.IsMatch(qnaPairEntity?.ImageUrl?.Trim(), HtmlPattern)
+                || Regex.IsMatch(qnaPairEntity?.RedirectionUrl?.Trim(), HtmlPattern)
+                || Regex.IsMatch(qnaPairEntity?.Description?.Trim(), HtmlPattern)
+                || Regex.IsMatch(qnaPairEntity?.Subtitle?.Trim(), HtmlPattern)
+                || Regex.IsMatch(qnaPairEntity?.Title?.Trim(), HtmlPattern);
         }
 
         /// <summary>
@@ -61,7 +66,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Helpers
         /// <returns>Boolean value where true represent redirect url is invalid while false represent redirect url is valid.</returns>
         public static bool IsRedirectionUrlInvalid(AdaptiveSubmitActionData qnaPairEntity)
         {
-            return !string.IsNullOrEmpty(qnaPairEntity?.RedirectionUrl?.Trim()) && (!Regex.IsMatch(qnaPairEntity?.RedirectionUrl?.Trim(), Constants.ValidRedirectUrlPattern) || Regex.IsMatch(qnaPairEntity?.RedirectionUrl?.Trim(), Constants.InvalidRedirectUrlDomainPattern));
+            return !string.IsNullOrEmpty(qnaPairEntity?.RedirectionUrl?.Trim())
+                && (!Regex.IsMatch(qnaPairEntity?.RedirectionUrl?.Trim(), Constants.ValidRedirectUrlPattern)
+                || Regex.IsMatch(qnaPairEntity?.RedirectionUrl?.Trim(), Constants.InvalidRedirectUrlDomainPattern));
         }
 
         /// <summary>

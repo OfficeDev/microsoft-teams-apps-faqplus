@@ -25,51 +25,45 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common
         public const string NoCommand = "no";
 
         /// <summary>
-        /// Image url valid pattern validation expression.
+        /// Regular expression pattern for valid redirection url.
+        /// It checks whether the url is valid or not, while adding/editing the qna pair.
         /// </summary>
         public const string ValidRedirectUrlPattern = @"^(http|https|)\:\/\/[0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*(:(0-9)*)*(\/?)([a-zA-Z0-9\-\.\?\,\'\/\\\+&%\$#_]*)?([a-zA-Z0-9\-\?\,\'\/\+&%\$#_]+)";
 
         /// <summary>
-        /// Image redirect url invalid pattern validation expression.
+        /// Regular expression pattern for invalid redirection ending with extension.
         /// </summary>
         public const string InvalidRedirectUrlDomainPattern = @"(.jpeg|.JPEG|.jpg|.JPG|.gif|.GIF|.png|.PNG|.docs|.xls|.exe|.pptx|.dll)$";
 
         /// <summary>
-        /// Table name which stores activity id of responded card.
-        /// </summary>
-        public const string ActivityTableName = "ActivityEntity";
-
-        /// <summary>
-        /// Qna metadata createdat name.
+        /// Name of the QnA metadata property to map with the date and time the item was added.
         /// </summary>
         public const string MetadataCreatedAt = "createdat";
 
         /// <summary>
-        /// Qna metadata createdby name.
+        /// Name of the QnA metadata property to map with the user who created the item.
         /// </summary>
         public const string MetadataCreatedBy = "createdby";
 
         /// <summary>
-        /// Qna metadata conversationid name.
+        /// Name of the QnA metadata property to map with the conversation id of the item.
         /// </summary>
         public const string MetadataConversationId = "conversationid";
 
         /// <summary>
-        /// Qna metadata updatedat name.
+        ///   Name of the QnA metadata property to map with the date and time the item was updated.
         /// </summary>
         public const string MetadataUpdatedAt = "updatedat";
 
         /// <summary>
-        /// Qna metadata updatedby name.
+        /// Name of the QnA metadata property to map with the user who updated the item.
         /// </summary>
         public const string MetadataUpdatedBy = "updatedby";
 
         /// <summary>
-        /// Qna metadata activity reference id name.
+        /// Name of the QnA metadata property to map with the activity reference id for future reference.
         /// </summary>
         public const string MetadataActivityReferenceId = "activityreferenceid";
-
-        // Commands supported by the bot
 
         /// <summary>
         /// TeamTour - text that triggers team tour action.
@@ -97,28 +91,18 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common
         public const string TicketTableName = "Tickets";
 
         /// <summary>
-        /// Partition key for fetching knowledgebase id from table storage.
+        /// Name of column value to map with knowledgebase id in table storage.
         /// </summary>
-        public const string ConfigurationInfoPartitionKey = "ConfigurationInfo";
+        public const string KnowledgeBaseEntityId = "KnowledgeBaseId";
 
         /// <summary>
-        /// Partition key for fetching knowledgebase id from table storage.
-        /// </summary>
-        public const string KnowledgebaseRowKey = "KnowledgeBaseId";
-
-        /// <summary>
-        /// Blob Container Name.
+        /// FAQ Plus blob storage container name.
         /// </summary>
         public const string StorageContainer = "faqplus-search-container";
 
         /// <summary>
-        /// Folder inside blob container.
+        /// FAQ Plus folder name under FAQ Plus blob storage container name.
         /// </summary>
         public const string BlobFolderName = "faqplus-metadata";
-
-        /// <summary>
-        /// Key to get the value from settings.
-        /// </summary>
-        public const string AzureWebJobsStorage = "AzureWebJobsStorage";
     }
 }

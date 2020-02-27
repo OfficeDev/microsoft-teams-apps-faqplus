@@ -9,6 +9,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
     using System.Globalization;
     using System.Linq;
     using System.Threading.Tasks;
+    using System.Web;
     using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker;
     using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker.Models;
     using Microsoft.Extensions.Options;
@@ -28,7 +29,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         private readonly IConfigurationDataProvider configurationProvider;
         private readonly IQnAMakerClient qnaMakerClient;
         private readonly IQnAMakerRuntimeClient qnaMakerRuntimeClient;
-        private readonly double scoreThreshold;
 
         /// <summary>
         /// Represents a set of key/value application configuration properties.
@@ -48,7 +48,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
             this.qnaMakerClient = qnaMakerClient;
             this.options = optionsAccessor.CurrentValue;
             this.qnaMakerRuntimeClient = qnaMakerRuntimeClient;
-            this.scoreThreshold = Convert.ToDouble(this.options != null ? this.options.ScoreThreshold : string.Empty, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
@@ -62,7 +61,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
             this.configurationProvider = configurationProvider;
             this.qnaMakerClient = qnaMakerClient;
             this.options = optionsAccessor.CurrentValue;
-            this.scoreThreshold = Convert.ToDouble(this.options != null ? this.options?.ScoreThreshold : string.Empty, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
@@ -76,10 +74,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         /// <returns>Operation state as task.</returns>
         public async Task<Operation> AddQnaAsync(string question, string combinedDescription, string createdBy, string conversationId, string activityReferenceId)
         {
-            var knowledgeBase = await this.GetKnowledgeBaseAsync(ConfigurationEntityTypes.KnowledgeBaseId).ConfigureAwait(false);
+            var knowledgeBase = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.KnowledgeBaseId).ConfigureAwait(false);
 
             // Update knowledgebase.
-            return await this.qnaMakerClient.Knowledgebase.UpdateAsync(knowledgeBase.Data, new UpdateKbOperationDTO
+            return await this.qnaMakerClient.Knowledgebase.UpdateAsync(knowledgeBase, new UpdateKbOperationDTO
             {
                 // Create JSON of changes.
                 Add = new UpdateKbOperationDTOAdd
@@ -94,7 +92,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
                             {
                                 new MetadataDTO() { Name = Constants.MetadataCreatedAt, Value = DateTime.UtcNow.Ticks.ToString(CultureInfo.InvariantCulture) },
                                 new MetadataDTO() { Name = Constants.MetadataCreatedBy, Value = createdBy },
-                                new MetadataDTO() { Name = Constants.MetadataConversationId, Value = conversationId?.Split(':').Last() },
+                                new MetadataDTO() { Name = Constants.MetadataConversationId, Value = HttpUtility.UrlEncode(conversationId) },
                                 new MetadataDTO() { Name = Constants.MetadataActivityReferenceId, Value = activityReferenceId },
                             },
                          },
@@ -106,7 +104,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         }
 
         /// <summary>
-        /// This method is used to update Qna pair in Kb.
+        /// Update Qna pair in knowledge base.
         /// </summary>
         /// <param name="questionId">Question id.</param>
         /// <param name="answer">Answer text.</param>
@@ -116,7 +114,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         /// <returns>Perfomed action task.</returns>
         public async Task UpdateQnaAsync(int questionId, string answer, string updatedBy, string updatedQuestion, string question)
         {
-            var knowledgeBase = await this.GetKnowledgeBaseAsync(ConfigurationEntityTypes.KnowledgeBaseId).ConfigureAwait(false);
+            var knowledgeBaseId = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.KnowledgeBaseId).ConfigureAwait(false);
             var questions = default(UpdateQnaDTOQuestions);
             if (!string.IsNullOrEmpty(updatedQuestion?.Trim()))
             {
@@ -129,7 +127,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
             }
 
             // Update knowledgebase.
-            await this.qnaMakerClient.Knowledgebase.UpdateAsync(knowledgeBase.Data, new UpdateKbOperationDTO
+            await this.qnaMakerClient.Knowledgebase.UpdateAsync(knowledgeBaseId, new UpdateKbOperationDTO
             {
                 // Create JSON of changes.
                 Add = null,
@@ -165,10 +163,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         /// <returns>Perfomed action task.</returns>
         public async Task DeleteQnaAsync(int questionId)
         {
-            var knowledgeBase = await this.GetKnowledgeBaseAsync(ConfigurationEntityTypes.KnowledgeBaseId).ConfigureAwait(false);
+            var knowledgeBaseId = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.KnowledgeBaseId).ConfigureAwait(false);
 
             // to delete a question and answer based on id.
-            await this.qnaMakerClient.Knowledgebase.UpdateAsync(knowledgeBase.Data, new UpdateKbOperationDTO
+            await this.qnaMakerClient.Knowledgebase.UpdateAsync(knowledgeBaseId, new UpdateKbOperationDTO
             {
                 // Create JSON of changes.
                 Add = null,
@@ -188,13 +186,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         /// <returns>QnaSearchResult result as response.</returns>
         public async Task<QnASearchResultList> GenerateAnswerAsync(string question, bool isTestKnowledgeBase)
         {
-            var knowledgeBase = await this.GetKnowledgeBaseAsync(ConfigurationEntityTypes.KnowledgeBaseId).ConfigureAwait(false);
+            var knowledgeBaseId = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.KnowledgeBaseId).ConfigureAwait(false);
 
-            QnASearchResultList qnaSearchResult = await this.qnaMakerRuntimeClient.Runtime.GenerateAnswerAsync(knowledgeBase.Data, new QueryDTO()
+            QnASearchResultList qnaSearchResult = await this.qnaMakerRuntimeClient.Runtime.GenerateAnswerAsync(knowledgeBaseId, new QueryDTO()
             {
                 IsTest = isTestKnowledgeBase,
                 Question = question?.Trim(),
-                ScoreThreshold = this.scoreThreshold,
+                ScoreThreshold = Convert.ToDouble(this.options.ScoreThreshold),
             }).ConfigureAwait(false);
 
             return qnaSearchResult;
@@ -212,27 +210,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         }
 
         /// <summary>
-        /// Get knowledgebase details based on partition and row key.
-        /// </summary>
-        /// <param name="entityType">Entity type to get it's value from storage table.</param>
-        /// <returns>Configuration entity with storage data.</returns>
-        public async Task<ConfigurationEntity> GetKnowledgeBaseAsync(string entityType)
-        {
-            var configurationEntity = await this.configurationProvider.GetConfigurationData(Constants.ConfigurationInfoPartitionKey, entityType).ConfigureAwait(false);
-            return configurationEntity;
-        }
-
-        /// <summary>
         /// Checks whether knowledgebase need to be published.
         /// </summary>
         /// <param name="knowledgeBaseId">Knowledgebase id.</param>
         /// <returns>A <see cref="Task"/> of type bool where true represents knowledgebase need to be published while false indicates knowledgebase not need to be published.</returns>
         public async Task<bool> GetPublishStatusAsync(string knowledgeBaseId)
         {
-            KnowledgebaseDTO qnaDocuments = await this.qnaMakerClient.Knowledgebase.GetDetailsAsync(knowledgeBaseId).ConfigureAwait(false);
+            var qnaDocuments = await this.qnaMakerClient.Knowledgebase.GetDetailsAsync(knowledgeBaseId).ConfigureAwait(false);
             if (qnaDocuments != null && qnaDocuments.LastChangedTimestamp != null && qnaDocuments.LastPublishedTimestamp != null)
             {
-                return DateTime.Compare(Convert.ToDateTime(qnaDocuments?.LastChangedTimestamp, CultureInfo.InvariantCulture), Convert.ToDateTime(qnaDocuments?.LastPublishedTimestamp, CultureInfo.InvariantCulture)) > 0;
+                return Convert.ToDateTime(qnaDocuments.LastChangedTimestamp) > Convert.ToDateTime(qnaDocuments.LastPublishedTimestamp);
             }
 
             return true;

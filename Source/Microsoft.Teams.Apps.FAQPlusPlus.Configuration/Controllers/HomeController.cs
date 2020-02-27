@@ -24,7 +24,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         private const string TeamIdUnescapedStartString = "19:";
         private const string TeamIdUnescapedEndString = "@thread.skype";
 
-        private readonly ConfigurationDataProvider configurationPovider;
+        private readonly IConfigurationDataProvider configurationPovider;
         private readonly IQnAMakerClient qnaMakerClient;
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         /// </summary>
         /// <param name="configurationPovider">configurationPovider dependency injection.</param>
         /// <param name="qnaMakerClient">qnaMakerClient dependency injection.</param>
-        public HomeController(ConfigurationDataProvider configurationPovider, IQnAMakerClient qnaMakerClient)
+        public HomeController(IConfigurationDataProvider configurationPovider, IQnAMakerClient qnaMakerClient)
         {
             this.configurationPovider = configurationPovider;
             this.qnaMakerClient = qnaMakerClient;
