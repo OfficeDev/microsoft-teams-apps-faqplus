@@ -11,7 +11,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
     using System.Text.RegularExpressions;
     using System.Web;
     using AdaptiveCards;
-
     using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker.Models;
     using Microsoft.Bot.Schema;
     using Microsoft.Bot.Schema.Teams;
@@ -349,9 +348,26 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     });
                 }
 
-                string actionData = string.IsNullOrEmpty(qnaPairEntity.UpdateHistoryData)
-                    ? string.Format("{0}${1}|{2}|{3}", Strings.UpdateHistoryHeadersText, editedBy, actionPerformed == Strings.EntryCreatedByText ? AddAction : EditAction, DateTime.UtcNow.ToString(Rfc3339DateTimeFormat, CultureInfo.InvariantCulture))
-                    : string.Format("{0}${1}|{2}|{3}", qnaPairEntity.UpdateHistoryData, editedBy, actionPerformed == Strings.EntryCreatedByText ? AddAction : EditAction, DateTime.UtcNow.ToString(Rfc3339DateTimeFormat, CultureInfo.InvariantCulture));
+                string actionData = string.Empty;
+                if (string.IsNullOrEmpty(qnaPairEntity.UpdateHistoryData))
+                {
+                    actionData = string.Format(
+                        "{0}${1}|{2}|{3}",
+                        Strings.UpdateHistoryHeadersText,
+                        editedBy,
+                        actionPerformed == Strings.EntryCreatedByText ? AddAction : EditAction,
+                        DateTime.UtcNow.ToString(Rfc3339DateTimeFormat, CultureInfo.InvariantCulture));
+                }
+                else
+                {
+                    qnaPairEntity.UpdateHistoryData = GetLast10HistoryRecord(qnaPairEntity.UpdateHistoryData);
+                    actionData = string.Format(
+                        "{0}${1}|{2}|{3}",
+                        qnaPairEntity.UpdateHistoryData,
+                        editedBy,
+                        actionPerformed == Strings.EntryCreatedByText ? AddAction : EditAction,
+                        DateTime.UtcNow.ToString(Rfc3339DateTimeFormat, CultureInfo.InvariantCulture));
+                }
 
                 card.Body.Add(container);
                 card.Actions.Add(
@@ -839,9 +855,26 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         });
                     }
 
-                    string actionData = string.IsNullOrEmpty(qnaPairEntity.UpdateHistoryData)
-                        ? string.Format("{0}${1}|{2}|{3}", Strings.UpdateHistoryHeadersText, editedBy, actionPerformed == Strings.EntryCreatedByText ? AddAction : EditAction, DateTime.UtcNow.ToString(Rfc3339DateTimeFormat, CultureInfo.InvariantCulture))
-                        : string.Format("{0}${1}|{2}|{3}", qnaPairEntity.UpdateHistoryData, editedBy, actionPerformed == Strings.EntryCreatedByText ? AddAction : EditAction, DateTime.UtcNow.ToString(Rfc3339DateTimeFormat, CultureInfo.InvariantCulture));
+                    string actionData = string.Empty;
+                    if (string.IsNullOrEmpty(qnaPairEntity.UpdateHistoryData))
+                    {
+                        actionData = string.Format(
+                            "{0}${1}|{2}|{3}",
+                            Strings.UpdateHistoryHeadersText,
+                            editedBy,
+                            actionPerformed == Strings.EntryCreatedByText ? AddAction : EditAction,
+                            DateTime.UtcNow.ToString(Rfc3339DateTimeFormat, CultureInfo.InvariantCulture));
+                    }
+                    else
+                    {
+                        qnaPairEntity.UpdateHistoryData = GetLast10HistoryRecord(qnaPairEntity.UpdateHistoryData);
+                        actionData = string.Format(
+                            "{0}${1}|{2}|{3}",
+                            qnaPairEntity.UpdateHistoryData,
+                            editedBy,
+                            actionPerformed == Strings.EntryCreatedByText ? AddAction : EditAction,
+                            DateTime.UtcNow.ToString(Rfc3339DateTimeFormat, CultureInfo.InvariantCulture));
+                    }
 
                     card.Actions.Add(
                       new AdaptiveSubmitAction()
@@ -1199,6 +1232,29 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             }
 
             return adaptiveCardEditor;
+        }
+
+        /// <summary>
+        /// Get the latest 10 update history records.
+        /// </summary>
+        /// <param name="actionsPerformed">action record details in following Name|Action|Date$ format.</param>
+        /// <returns>action record string with latest 10 entries</returns>
+        /// <remarks>method skips the header.</remarks>
+        private static string GetLast10HistoryRecord(string actionsPerformed)
+        {
+            IList<string> userActions = actionsPerformed?.Split("$").ToList();
+
+            if (userActions.Count > 10)
+            {
+                // remove header
+                string header = userActions[0];
+                userActions.Remove(header);
+
+                userActions = userActions.TakeLast(10).ToList();
+                return string.Format("{0}${1}", header, string.Join("$", userActions));
+            }
+
+            return actionsPerformed;
         }
     }
 }
