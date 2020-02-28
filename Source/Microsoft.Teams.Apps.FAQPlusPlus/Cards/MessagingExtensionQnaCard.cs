@@ -11,7 +11,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
     using System.Text.RegularExpressions;
     using System.Web;
     using AdaptiveCards;
-    using Microsoft.AspNetCore.Rewrite.Internal;
     using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker.Models;
     using Microsoft.Bot.Schema;
     using Microsoft.Bot.Schema.Teams;
