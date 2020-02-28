@@ -22,7 +22,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         public ActivityEntity()
         {
             this.PartitionKey = ActivityPartitionKey;
-            this.RowKey = this.ActivityReferenceId;
         }
 
         /// <summary>
@@ -33,6 +32,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         /// <summary>
         /// Gets or sets the activity reference id.
         /// </summary>
-        public string ActivityReferenceId { get; set; }
+        public string ActivityReferenceId
+        {
+            get { return this.RowKey; }
+            set { this.RowKey = value; }
+        }
     }
 }

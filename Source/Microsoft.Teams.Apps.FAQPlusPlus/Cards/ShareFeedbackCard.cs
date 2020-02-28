@@ -1,4 +1,4 @@
-﻿// <copyright file="ShareFeedbackCard.cs" company="Microsoft">
+// <copyright file="ShareFeedbackCard.cs" company="Microsoft">
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 
