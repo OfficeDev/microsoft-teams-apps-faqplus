@@ -57,16 +57,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         private const string CardActionType = "task/fetch";
 
         /// <summary>
-        /// Update history card header text.
-        /// </summary>
-        private const string UpdateHistoryDateHeaderText = "Date";
-
-        /// <summary>
-        /// Show the custom message for Date if question is added manually and metadata is not persent in the knowledgebase.
-        /// </summary>
-        private const string ManuallyAddedQuestionMessage = "Manually added question";
-
-        /// <summary>
         /// Represents the add card action.
         /// </summary>
         private const string AddAction = "Add";
@@ -80,6 +70,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// Represents the edit card action.
         /// </summary>
         private const string DeleteAction = "Delete";
+
+        /// <summary>
+        /// Represents the command text to identify the action.
+        /// </summary>
+        private const string PreviewCardCommandText = "previewcard";
 
         /// <summary>
         /// Add question card task module.
@@ -274,7 +269,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         Title = Strings.PreviewButtonText,
                         Data = new AdaptiveSubmitActionData
                         {
-                            PreviewButtonCommandText = Strings.PreviewButtonCommandText,
+                            PreviewButtonCommandText = PreviewCardCommandText,
                             OriginalQuestion = qnaPairEntity.OriginalQuestion?.Trim(),
                             UpdateHistoryData = qnaPairEntity.UpdateHistoryData,
                         },
@@ -520,7 +515,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     }
                     else
                     {
-                        customMessage = string.IsNullOrEmpty(metadataCreatedAt) ? ManuallyAddedQuestionMessage : string.Empty;
+                        customMessage = string.IsNullOrEmpty(metadataCreatedAt) ? Strings.ManuallyAddedQuestionMessage : string.Empty;
                     }
 
                     var card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
@@ -1108,7 +1103,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 if (userActions[i].Length != 0)
                 {
                     string[] splitValue = userActions[i].Split("|");
-                    var timeStampData = splitValue[2] == UpdateHistoryDateHeaderText ? UpdateHistoryDateHeaderText : string.Format(CultureInfo.InvariantCulture, AdaptiveCardShortDateTimeFormat, splitValue[2], splitValue[2]);
+                    var timeStampData = splitValue[2] == Strings.UpdateHistoryDateHeaderText ? Strings.UpdateHistoryDateHeaderText : string.Format(CultureInfo.InvariantCulture, AdaptiveCardShortDateTimeFormat, splitValue[2], splitValue[2]);
                     userName.Items = new List<AdaptiveElement>
                     {
                         new AdaptiveTextBlock
@@ -1242,7 +1237,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <remarks>method skips the header.</remarks>
         private static string GetLast10HistoryRecord(string actionsPerformed)
         {
-            IList<string> userActions = actionsPerformed?.Split("$").ToList();
+            var userActions = actionsPerformed?.Split("$").ToList();
 
             if (userActions.Count > 10)
             {
@@ -1250,8 +1245,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 string header = userActions[0];
                 userActions.Remove(header);
 
-                userActions = userActions.TakeLast(10).ToList();
-                return string.Format("{0}${1}", header, string.Join("$", userActions));
+                return string.Format("{0}${1}", header, string.Join("$", userActions.TakeLast(10)));
             }
 
             return actionsPerformed;

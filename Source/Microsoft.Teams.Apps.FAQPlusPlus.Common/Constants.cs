@@ -99,5 +99,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common
         /// FAQ Plus folder name under FAQ Plus blob storage container name.
         /// </summary>
         public const string BlobFolderName = "faqplus-metadata";
+
+        /// <summary>
+        /// Represents the command text to identify the action.
+        /// </summary>
+        public const string PreviewCardCommandText = "previewcard";
     }
 }

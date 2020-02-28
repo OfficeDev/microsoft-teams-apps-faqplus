@@ -333,7 +333,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     return await GetTaskModuleResponseAsync(MessagingExtensionQnaCard.AddQuestionForm(postedQuestionData, this.appBaseUri), Strings.EditQuestionSubtitle).ConfigureAwait(false);
                 }
 
-                if (postedQuestionData.PreviewButtonCommandText == Strings.PreviewButtonCommandText)
+                if (postedQuestionData.PreviewButtonCommandText == Constants.PreviewCardCommandText)
                 {
                     // Preview the actual view of the card on preview button click.
                     return await GetTaskModuleResponseAsync(MessagingExtensionQnaCard.PreviewCardResponse(postedQuestionData, this.appBaseUri)).ConfigureAwait(false);
@@ -492,14 +492,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     return await GetMessagingExtensionActionResponseAsync(MessagingExtensionQnaCard.AddQuestionForm(postedQuestionObject, this.appBaseUri), Strings.AddQuestionSubtitle).ConfigureAwait(false);
                 }
 
-                if (postedQuestionObject.PreviewButtonCommandText == Strings.PreviewButtonCommandText)
+                if (postedQuestionObject.PreviewButtonCommandText == Constants.PreviewCardCommandText)
                 {
                     // Preview the actual view of the card on preview button click.
                     return await GetMessagingExtensionActionResponseAsync(MessagingExtensionQnaCard.PreviewCardResponse(postedQuestionObject, this.appBaseUri)).ConfigureAwait(false);
                 }
 
                 // Response of messaging extension action.
-                return await this.RespondToQuestionMessagingExtentionAsync(postedQuestionObject, turnContext, cancellationToken).ConfigureAwait(false);
+                return await this.RespondToQuestionMessagingExtensionAsync(postedQuestionObject, turnContext, cancellationToken).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -1267,7 +1267,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <param name="turnContext">Context object containing information cached for a single turn of conversation with a user.</param>
         /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
         /// <returns>Response of messaging extension action.</returns>
-        private async Task<MessagingExtensionActionResponse> RespondToQuestionMessagingExtentionAsync(
+        private async Task<MessagingExtensionActionResponse> RespondToQuestionMessagingExtensionAsync(
             AdaptiveSubmitActionData postedQnaPairEntity,
             ITurnContext<IInvokeActivity> turnContext,
             CancellationToken cancellationToken)

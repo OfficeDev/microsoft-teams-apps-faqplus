@@ -538,6 +538,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Manually added question.
+        /// </summary>
+        public static string ManuallyAddedQuestionMessage {
+            get {
+                return ResourceManager.GetString("ManuallyAddedQuestionMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Needs Improvement.
         /// </summary>
         public static string NeedsImprovementRatingText {
@@ -597,15 +606,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         public static string OptionalFieldDisplayText {
             get {
                 return ResourceManager.GetString("OptionalFieldDisplayText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to previewcard.
-        /// </summary>
-        public static string PreviewButtonCommandText {
-            get {
-                return ResourceManager.GetString("PreviewButtonCommandText", resourceCulture);
             }
         }
         
@@ -1056,6 +1056,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         public static string UpdateHistoryButtonText {
             get {
                 return ResourceManager.GetString("UpdateHistoryButtonText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Date.
+        /// </summary>
+        public static string UpdateHistoryDateHeaderText {
+            get {
+                return ResourceManager.GetString("UpdateHistoryDateHeaderText", resourceCulture);
             }
         }
         
