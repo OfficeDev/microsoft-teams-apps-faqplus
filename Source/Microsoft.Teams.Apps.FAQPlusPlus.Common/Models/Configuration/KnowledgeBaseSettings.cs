@@ -7,8 +7,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models.Configuration
     /// <summary>
     /// Provides  settings related to KnowledgeBaseSearchService.
     /// </summary>
-    public class KnowledgeBaseSettings : StorageSettings
+    public class KnowledgeBaseSettings
     {
+        /// <summary>
+        /// Gets or sets storage connection string.
+        /// </summary>
+        public string StorageConnectionString { get; set; }
+
         /// <summary>
         /// Gets or sets search service name.
         /// </summary>

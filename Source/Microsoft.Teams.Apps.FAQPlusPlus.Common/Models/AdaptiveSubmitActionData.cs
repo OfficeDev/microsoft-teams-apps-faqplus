@@ -4,20 +4,13 @@
 
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
 {
-    using Microsoft.Bot.Schema;
     using Newtonsoft.Json;
 
     /// <summary>
     /// Adaptive Card Action class to post question data.
     /// </summary>
-    public class AdaptiveSubmitActionData
+    public class AdaptiveSubmitActionData : TeamsAdaptiveSubmitActionData
     {
-        /// <summary>
-        /// Gets or sets Msteams object.
-        /// </summary>
-        [JsonProperty("msteams")]
-        public CardAction MsTeamsCardAction { get; set; }
-
         /// <summary>
         /// Gets or sets Updated question.
         /// </summary>
@@ -90,14 +83,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         public string OriginalQuestion { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the card is herocard.
+        /// Gets or sets a value indicating whether the qna pair is null or empty.
         /// </summary>
         public bool IsQnaNullOrEmpty { get; set; }
-
-        /// <summary>
-        /// Gets or sets original question.
-        /// </summary>
-        public string AppBaseUrl { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether the html is present in input field.
