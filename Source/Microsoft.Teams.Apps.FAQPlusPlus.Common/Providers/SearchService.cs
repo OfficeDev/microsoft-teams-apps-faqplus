@@ -6,11 +6,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
 {
     using System;
     using System.Collections.Generic;
-    using System.Globalization;
     using System.Threading.Tasks;
-    using Microsoft.ApplicationInsights;
+    using Microsoft.ApplicationInsights.DataContracts;
     using Microsoft.Azure.Search;
     using Microsoft.Azure.Search.Models;
+    using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models.Configuration;
@@ -29,11 +29,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         private const int DefaultSearchResultCount = 25;
 
         private readonly Lazy<Task> initializeTask;
-        private readonly TelemetryClient telemetryClient;
         private readonly SearchServiceClient searchServiceClient;
         private readonly SearchIndexClient searchIndexClient;
         private readonly ITicketsProvider ticketProvider;
         private readonly int searchIndexingIntervalInMinutes;
+        private readonly ILogger<SearchService> logger;
 
         /// <summary>
         /// Represents a set of key/value application configuration properties.
@@ -44,24 +44,27 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         /// Initializes a new instance of the <see cref="SearchService"/> class.
         /// </summary>
         /// <param name="optionsAccessor">A set of key/value application configuration properties.</param>
-        /// <param name="telemetryClient">TelemetryClient provided by dependency injection.</param>
         /// <param name="ticketProvider"> TicketsProvider provided by dependency injection.</param>
-        public SearchService(IOptionsMonitor<KnowledgeBaseSettings> optionsAccessor, TelemetryClient telemetryClient, ITicketsProvider ticketProvider)
+        /// <param name="logger">Instance to send logs to the Application Insights service.</param>
+        public SearchService(
+            IOptionsMonitor<KnowledgeBaseSettings> optionsAccessor,
+            ITicketsProvider ticketProvider,
+            ILogger<SearchService> logger)
         {
-            this.telemetryClient = telemetryClient;
             this.options = optionsAccessor.CurrentValue;
-            string searchServiceValue = this.options != null ? this.options.SearchServiceName : string.Empty;
+            string searchServiceValue = this.options.SearchServiceName;
             this.searchServiceClient = new SearchServiceClient(
                 searchServiceValue,
-                new SearchCredentials(this.options != null ? this.options.SearchServiceAdminApiKey : string.Empty));
+                new SearchCredentials(this.options.SearchServiceAdminApiKey));
             this.searchIndexClient = new SearchIndexClient(
                 searchServiceValue,
                 TicketsIndexName,
-                new SearchCredentials(this.options != null ? this.options.SearchServiceQueryApiKey : string.Empty));
-            this.searchIndexingIntervalInMinutes = Convert.ToInt32(this.options != null ? this.options.SearchIndexingIntervalInMinutes : "0", CultureInfo.InvariantCulture);
+                new SearchCredentials(this.options.SearchServiceQueryApiKey));
+            this.searchIndexingIntervalInMinutes = Convert.ToInt32(this.options.SearchIndexingIntervalInMinutes);
 
             this.initializeTask = new Lazy<Task>(() => this.InitializeAsync(this.options.StorageConnectionString));
             this.ticketProvider = ticketProvider;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -129,8 +132,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
             }
             catch (Exception ex)
             {
-                this.telemetryClient.TrackTrace($"Failed to initialize Azure Search Service: {ex.Message}", ApplicationInsights.DataContracts.SeverityLevel.Error);
-                this.telemetryClient.TrackException(ex);
+                this.logger.LogError(ex, $"Failed to initialize Azure Search Service: {ex.Message}", SeverityLevel.Error);
+                throw;
             }
         }
 

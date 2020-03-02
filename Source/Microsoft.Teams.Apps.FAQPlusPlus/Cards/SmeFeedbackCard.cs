@@ -24,7 +24,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// This method will construct the card for SME team which will have the
         /// feedback details given by the user.
         /// </summary>
-        /// <param name="data">User activity payload</param>
+        /// <param name="data">User activity payload.</param>
         /// <param name="userDetails">User details.</param>
         /// <returns>Sme facing feedback notification card.</returns>
         public static Attachment GetCard(ShareFeedbackCardPayload data, TeamsChannelAccount userDetails)
@@ -77,6 +77,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     Weight = AdaptiveTextWeight.Bolder,
                     Wrap = true,
                 });
+
                 smeFeedbackCard.Body.Add(new AdaptiveTextBlock()
                 {
                     Text = CardHelper.TruncateStringIfLonger(data.Description, CardHelper.DescriptionMaxDisplayLength),
@@ -99,6 +100,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         },
                     },
                 });
+
                 smeFeedbackCard.Actions.AddRange(new List<AdaptiveAction>
                 {
                     new AdaptiveShowCardAction

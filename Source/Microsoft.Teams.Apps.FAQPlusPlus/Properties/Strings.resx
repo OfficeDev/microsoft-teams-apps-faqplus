@@ -471,10 +471,6 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <value>Open article</value>
     <comment>Open article button text, which will show on adaptiver rich card if redirection url field is filled while adding/editing the QnA pair.</comment>
   </data>
-  <data name="PreviewButtonCommandText" xml:space="preserve">
-    <value>previewcard</value>
-    <comment>Preview button command text to identify the action.</comment>
-  </data>
   <data name="BackButtonCommandText" xml:space="preserve">
     <value>BackButton</value>
     <comment>Back button command text to identify the performed action.</comment>
@@ -584,5 +580,13 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
   </data>
   <data name="SuggestedText" xml:space="preserve">
     <value>The optional fields below can be used to add additional details to the answer.</value>
+  </data>
+  <data name="ManuallyAddedQuestionMessage" xml:space="preserve">
+    <value>Manually added question</value>
+    <comment>Question answer pair added manually in QnA Maker</comment>
+  </data>
+  <data name="UpdateHistoryDateHeaderText" xml:space="preserve">
+    <value>Date</value>
+    <comment>Date header text in update history adaptive card text.</comment>
   </data>
 </root>

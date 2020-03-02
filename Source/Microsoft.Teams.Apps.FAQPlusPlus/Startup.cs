@@ -82,11 +82,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
                 qnAMakerSettings.ScoreThreshold = this.Configuration["ScoreThreshold"];
             });
 
-            services.Configure<StorageSettings>(storageSettings =>
-            {
-                storageSettings.StorageConnectionString = this.Configuration["StorageConnectionString"];
-            });
-
             services.Configure<BotSettings>(botSettings =>
             {
                 botSettings.AccessCacheExpiryInDays = Convert.ToInt32(this.Configuration["AccessCacheExpiryInDays"]);
@@ -111,7 +106,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
                 provider.GetRequiredService<IOptionsMonitor<QnAMakerSettings>>(),
                 qnaMakerClient,
                 new QnAMakerRuntimeClient(new EndpointKeyServiceClientCredentials(endpointKey)) { RuntimeEndpoint = this.Configuration["QnAMakerHostUrl"] }));
-            services.AddSingleton<IActivityStorageProvider>((provider) => new ActivityStorageProvider(provider.GetRequiredService<IOptionsMonitor<StorageSettings>>()));
+            services.AddSingleton<IActivityStorageProvider>((provider) => new ActivityStorageProvider(provider.GetRequiredService<IOptionsMonitor<KnowledgeBaseSettings>>()));
             services.AddSingleton<IKnowledgeBaseSearchService>((provider) => new KnowledgeBaseSearchService(this.Configuration["SearchServiceName"], this.Configuration["SearchServiceQueryApiKey"], this.Configuration["SearchServiceAdminApiKey"], this.Configuration["StorageConnectionString"]));
 
             services.AddSingleton<ISearchService, SearchService>();

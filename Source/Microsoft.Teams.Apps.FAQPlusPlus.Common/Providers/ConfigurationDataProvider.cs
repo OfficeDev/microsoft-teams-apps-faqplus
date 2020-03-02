@@ -11,14 +11,19 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
     using Microsoft.WindowsAzure.Storage.Table;
 
     /// <summary>
-    /// ConfigurationProvider which will help in fetching and storing information in storage table.
+    /// ConfigurationProvider used to store and fetch configuration values stored in azure table storage.
     /// </summary>
     public class ConfigurationDataProvider : IConfigurationDataProvider
     {
         /// <summary>
-        /// Table name/partition key where configuration app details will be saved and get the details using partition key.
+        /// Configuration info table name.
         /// </summary>
         private const string ConfigurationTableName = "ConfigurationInfo";
+
+        /// <summary>
+        /// Partition key of Confiugration info table.
+        /// </summary>
+        private const string ConfigurationPartitionKey = "ConfigurationInfo";
 
         private readonly Lazy<Task> initializeTask;
         private CloudTable configurationCloudTable;
@@ -42,7 +47,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         {
             var configurationEntity = new ConfigurationEntity()
             {
-                PartitionKey = ConfigurationTableName,
+                PartitionKey = ConfigurationPartitionKey,
                 RowKey = entityType,
                 Data = updatedData,
             };
@@ -58,37 +63,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         public async Task<string> GetSavedEntityDetailAsync(string entityType)
         {
             await this.EnsureInitializedAsync().ConfigureAwait(false);
-            var searchOperation = TableOperation.Retrieve<ConfigurationEntity>(ConfigurationTableName, entityType);
+            var searchOperation = TableOperation.Retrieve<ConfigurationEntity>(ConfigurationPartitionKey, entityType);
             TableResult searchResult = await this.configurationCloudTable.ExecuteAsync(searchOperation).ConfigureAwait(false);
             var result = (ConfigurationEntity)searchResult.Result;
             return result?.Data ?? string.Empty;
-        }
-
-        /// <summary>
-        /// This method returns the configuration data from storage table.
-        /// </summary>
-        /// <param name="partitionKey">Partition key of the table.</param>
-        /// <param name="rowKey">Row key of the table.</param>
-        /// <returns>Configuration entity object.</returns>
-        public async Task<ConfigurationEntity> GetConfigurationData(string partitionKey, string rowKey)
-        {
-            await this.EnsureInitializedAsync().ConfigureAwait(false);
-            TableOperation retrieveOperation = TableOperation.Retrieve<ConfigurationEntity>(partitionKey, rowKey);
-            TableResult result = await this.configurationCloudTable.ExecuteAsync(retrieveOperation).ConfigureAwait(false);
-            return result?.Result as ConfigurationEntity;
-        }
-
-        /// <summary>
-        /// Get or create table.
-        /// </summary>
-        /// <returns>Cloud table.</returns>
-        public async Task<CloudTable> GetOrCreateTableAsync()
-        {
-            CloudStorageAccount cloudStorageAccount = CloudStorageAccount.Parse(Environment.GetEnvironmentVariable(Constants.AzureWebJobsStorage));
-            CloudTableClient tableClient = cloudStorageAccount.CreateCloudTableClient();
-            CloudTable cloudTable = tableClient.GetTableReference(ConfigurationTableName);
-            await cloudTable.CreateIfNotExistsAsync().ConfigureAwait(false);
-            return cloudTable;
         }
 
         /// <summary>

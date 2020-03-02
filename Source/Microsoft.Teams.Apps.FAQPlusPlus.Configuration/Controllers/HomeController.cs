@@ -4,8 +4,8 @@
 
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
 {
-    using System;
     using System.Net;
+    using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using System.Web;
     using System.Web.Mvc;
@@ -19,12 +19,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
     [Authorize]
     public class HomeController : Controller
     {
-        private const string TeamIdEscapedStartString = "19%3a";
-        private const string TeamIdEscapedEndString = "%40thread.skype";
-        private const string TeamIdUnescapedStartString = "19:";
-        private const string TeamIdUnescapedEndString = "@thread.skype";
-
-        private readonly ConfigurationDataProvider configurationPovider;
+        private readonly IConfigurationDataProvider configurationPovider;
         private readonly IQnAMakerClient qnaMakerClient;
 
         /// <summary>
@@ -32,7 +27,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         /// </summary>
         /// <param name="configurationPovider">configurationPovider dependency injection.</param>
         /// <param name="qnaMakerClient">qnaMakerClient dependency injection.</param>
-        public HomeController(ConfigurationDataProvider configurationPovider, IQnAMakerClient qnaMakerClient)
+        public HomeController(IConfigurationDataProvider configurationPovider, IQnAMakerClient qnaMakerClient)
         {
             this.configurationPovider = configurationPovider;
             this.qnaMakerClient = qnaMakerClient;
@@ -228,27 +223,20 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         /// Based on deep link URL received find team id and return it to that it can be saved.
         /// </summary>
         /// <param name="teamIdDeepLink">team id deep link.</param>
-        /// <returns>team id as string.</returns>
+        /// <returns>team id decoded string.</returns>
         private static string ParseTeamIdFromDeepLink(string teamIdDeepLink)
         {
-            int startEscapedIndex = teamIdDeepLink.IndexOf(TeamIdEscapedStartString, StringComparison.OrdinalIgnoreCase);
-            int endEscapedIndex = teamIdDeepLink.IndexOf(TeamIdEscapedEndString, StringComparison.OrdinalIgnoreCase);
+            // team id regex match
+            // for a pattern like https://teams.microsoft.com/l/team/19%3a64c719819fb1412db8a28fd4a30b581a%40thread.tacv2/conversations?groupId=53b4782c-7c98-4449-993a-441870d10af9&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47
+            // regex checks for 19%3a64c719819fb1412db8a28fd4a30b581a%40thread.tacv2
+            var match = Regex.Match(teamIdDeepLink, @"teams.microsoft.com/l/team/(\S+)/");
 
-            int startUnescapedIndex = teamIdDeepLink.IndexOf(TeamIdUnescapedStartString, StringComparison.OrdinalIgnoreCase);
-            int endUnescapedIndex = teamIdDeepLink.IndexOf(TeamIdUnescapedEndString, StringComparison.OrdinalIgnoreCase);
-
-            string teamID = string.Empty;
-
-            if (startEscapedIndex > -1 && endEscapedIndex > -1)
+            if (!match.Success)
             {
-                teamID = HttpUtility.UrlDecode(teamIdDeepLink.Substring(startEscapedIndex, endEscapedIndex - startEscapedIndex + TeamIdEscapedEndString.Length));
-            }
-            else if (startUnescapedIndex > -1 && endUnescapedIndex > -1)
-            {
-                teamID = teamIdDeepLink.Substring(startUnescapedIndex, endUnescapedIndex - startUnescapedIndex + TeamIdUnescapedEndString.Length);
+                return string.Empty;
             }
 
-            return teamID;
+            return HttpUtility.UrlDecode(match.Groups[1].Value);
         }
 
         /// <summary>

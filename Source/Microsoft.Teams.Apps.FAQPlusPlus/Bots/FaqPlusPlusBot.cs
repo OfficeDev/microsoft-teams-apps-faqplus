@@ -86,7 +86,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         private readonly BotFrameworkAdapter botAdapter;
         private readonly IMemoryCache accessCache;
         private readonly int accessCacheExpiryInDays;
-        private readonly string appBaseUrl;
+        private readonly string appBaseUri;
         private readonly IKnowledgeBaseSearchService knowledgeBaseSearchService;
         private readonly ILogger<FaqPlusPlusBot> logger;
         private IQnaServiceProvider qnaServiceProvider;
@@ -125,15 +125,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             this.qnaServiceProvider = qnaServiceProvider;
             this.activityStorageProvider = activityStorageProvider;
             this.searchService = searchService;
-            this.appId = this.options != null ? this.options.MicrosoftAppId : string.Empty;
+            this.appId = this.options.MicrosoftAppId;
             this.botAdapter = botAdapter;
             this.accessCache = memoryCache;
             this.logger = logger;
-
-            if (this.options != null)
-            {
-                this.accessCacheExpiryInDays = this.options.AccessCacheExpiryInDays;
-            }
+            this.accessCacheExpiryInDays = this.options.AccessCacheExpiryInDays;
 
             if (this.accessCacheExpiryInDays <= 0)
             {
@@ -141,7 +137,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 this.logger.LogInformation($"Configuration option is not present or out of range for AccessCacheExpiryInDays and the default value is set to: {this.accessCacheExpiryInDays}", SeverityLevel.Information);
             }
 
-            this.appBaseUrl = this.options != null ? this.options.AppBaseUri : string.Empty;
+            this.appBaseUri = this.options.AppBaseUri;
             this.knowledgeBaseSearchService = knowledgeBaseSearchService;
         }
 
@@ -152,7 +148,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
         /// <returns>A task that represents the work queued to execute.</returns>
         /// <remarks>
-        /// Reference link: https://docs.microsoft.com/en-us/dotnet/api/microsoft.bot.builder.activityhandler.onturnasync?view=botbuilder-dotnet-stable
+        /// Reference link: https://docs.microsoft.com/en-us/dotnet/api/microsoft.bot.builder.activityhandler.onturnasync?view=botbuilder-dotnet-stable.
         /// </remarks>
         public override Task OnTurnAsync(
             ITurnContext turnContext,
@@ -190,7 +186,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
         /// <returns>A task that represents the work queued to execute.</returns>
         /// <remarks>
-        /// Reference link: https://docs.microsoft.com/en-us/dotnet/api/microsoft.bot.builder.activityhandler.onmessageactivityasync?view=botbuilder-dotnet-stable
+        /// Reference link: https://docs.microsoft.com/en-us/dotnet/api/microsoft.bot.builder.activityhandler.onmessageactivityasync?view=botbuilder-dotnet-stable.
         /// </remarks>
         protected override async Task OnMessageActivityAsync(
             ITurnContext<IMessageActivity> turnContext,
@@ -227,6 +223,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             {
                 await turnContext.SendActivityAsync(Strings.ErrorMessage).ConfigureAwait(false);
                 this.logger.LogError(ex, $"Error processing message: {ex.Message}", SeverityLevel.Error);
+                throw;
             }
         }
 
@@ -237,7 +234,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>A task that represents the work queued to execute.</returns>
         /// <remarks>
-        /// Reference link: https://docs.microsoft.com/en-us/dotnet/api/microsoft.bot.builder.teams.teamsactivityhandler.onconversationupdateactivityasync?view=botbuilder-dotnet-stable
+        /// Reference link: https://docs.microsoft.com/en-us/dotnet/api/microsoft.bot.builder.teams.teamsactivityhandler.onconversationupdateactivityasync?view=botbuilder-dotnet-stable.
         /// </remarks>
         protected override async Task OnConversationUpdateActivityAsync(
             ITurnContext<IConversationUpdateActivity> turnContext,
@@ -273,6 +270,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             catch (Exception ex)
             {
                 this.logger.LogError(ex, $"Error processing conversationUpdate: {ex.Message}", SeverityLevel.Error);
+                throw;
             }
         }
 
@@ -284,7 +282,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
         /// <returns>A task that represents the work queued to execute.</returns>
         /// <remarks>
-        /// Reference link: https://docs.microsoft.com/en-us/dotnet/api/microsoft.bot.builder.teams.teamsactivityhandler.onteamstaskmodulefetchasync?view=botbuilder-dotnet-stable
+        /// Reference link: https://docs.microsoft.com/en-us/dotnet/api/microsoft.bot.builder.teams.teamsactivityhandler.onteamstaskmodulefetchasync?view=botbuilder-dotnet-stable.
         /// </remarks>
         protected override Task<TaskModuleResponse> OnTeamsTaskModuleFetchAsync(
             ITurnContext<IInvokeActivity> turnContext,
@@ -293,11 +291,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         {
             try
             {
-                this.logger.LogInformation($"Testttt information {turnContext.Activity.From.AadObjectId}");
-
                 var postedValues = JsonConvert.DeserializeObject<AdaptiveSubmitActionData>(JObject.Parse(taskModuleRequest?.Data?.ToString()).ToString());
-                postedValues.AppBaseUrl = this.appBaseUrl;
-                var adaptiveCardEditor = MessagingExtensionQnaCard.AddQuestionForm(postedValues);
+                var adaptiveCardEditor = MessagingExtensionQnaCard.AddQuestionForm(postedValues, this.appBaseUri);
                 return GetTaskModuleResponseAsync(adaptiveCardEditor, Strings.EditQuestionSubtitle);
             }
             catch (Exception ex)
@@ -316,7 +311,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
         /// <returns>A task that represents the work queued to execute.</returns>
         /// <remarks>
-        /// Reference link: https://docs.microsoft.com/en-us/dotnet/api/microsoft.bot.builder.teams.teamsactivityhandler.onteamstaskmodulesubmitasync?view=botbuilder-dotnet-stable
+        /// Reference link: https://docs.microsoft.com/en-us/dotnet/api/microsoft.bot.builder.teams.teamsactivityhandler.onteamstaskmodulesubmitasync?view=botbuilder-dotnet-stable.
         /// </remarks>
         protected override async Task<TaskModuleResponse> OnTeamsTaskModuleSubmitAsync(
             ITurnContext<IInvokeActivity> turnContext,
@@ -332,25 +327,40 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     return default;
                 }
 
-                postedQuestionData.AppBaseUrl = this.appBaseUrl;
                 if (postedQuestionData.BackButtonCommandText == Strings.BackButtonCommandText)
                 {
                     // Populates the prefilled data on task module for adaptive card form fields on back button click.
-                    return await GetTaskModuleResponseAsync(MessagingExtensionQnaCard.AddQuestionForm(postedQuestionData), Strings.EditQuestionSubtitle).ConfigureAwait(false);
+                    return await GetTaskModuleResponseAsync(MessagingExtensionQnaCard.AddQuestionForm(postedQuestionData, this.appBaseUri), Strings.EditQuestionSubtitle).ConfigureAwait(false);
                 }
 
-                if (postedQuestionData.PreviewButtonCommandText == Strings.PreviewButtonCommandText)
+                if (postedQuestionData.PreviewButtonCommandText == Constants.PreviewCardCommandText)
                 {
                     // Preview the actual view of the card on preview button click.
-                    return await GetTaskModuleResponseAsync(MessagingExtensionQnaCard.PreviewCardResponse(postedQuestionData)).ConfigureAwait(false);
+                    return await GetTaskModuleResponseAsync(MessagingExtensionQnaCard.PreviewCardResponse(postedQuestionData, this.appBaseUri)).ConfigureAwait(false);
                 }
 
                 return await this.RespondToQuestionTaskModuleAsync(postedQuestionData, turnContext).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
-                this.logger.LogError(ex, "Error while submit event is received from the user.");
-                await turnContext.SendActivityAsync(Strings.ErrorMessage).ConfigureAwait(false);
+                // Check if knowledge base is empty and has not published yet when sme user is trying to edit the qna pair.
+                if (((ErrorResponseException)ex?.InnerException)?.Response.StatusCode == HttpStatusCode.BadRequest)
+                {
+                    var knowledgeBaseId = await this.configurationProvider.GetSavedEntityDetailAsync(Constants.KnowledgeBaseEntityId).ConfigureAwait(false);
+                    var hasPublished = await this.qnaServiceProvider.GetInitialPublishedStatusAsync(knowledgeBaseId).ConfigureAwait(false);
+
+                    // Check if knowledge base has not published yet.
+                    if (!hasPublished)
+                    {
+                        this.logger.LogError(ex, "Error while fetching the qna pair: knowledge base may be empty or it has not published yet.");
+                        await turnContext.SendActivityAsync("Please wait for some time, updates to this question will be available in short time.").ConfigureAwait(false);
+                    }
+                }
+                else
+                {
+                    this.logger.LogError(ex, "Error while submit event is received from the user.");
+                    await turnContext.SendActivityAsync(Strings.ErrorMessage).ConfigureAwait(false);
+                }
             }
 
             return default;
@@ -364,7 +374,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
         /// <returns>Messaging extension response object to fill compose extension section.</returns>
         /// <remarks>
-        /// https://docs.microsoft.com/en-us/dotnet/api/microsoft.bot.builder.teams.teamsactivityhandler.onteamsmessagingextensionqueryasync?view=botbuilder-dotnet-stable
+        /// https://docs.microsoft.com/en-us/dotnet/api/microsoft.bot.builder.teams.teamsactivityhandler.onteamsmessagingextensionqueryasync?view=botbuilder-dotnet-stable.
         /// </remarks>
         protected override async Task<MessagingExtensionResponse> OnTeamsMessagingExtensionQueryAsync(
             ITurnContext<IInvokeActivity> turnContext,
@@ -412,7 +422,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
         /// <returns>Response of messaging extension action.</returns>
         /// <remarks>
-        /// Reference link: https://docs.microsoft.com/en-us/dotnet/api/microsoft.bot.builder.teams.teamsactivityhandler.onteamsmessagingextensionfetchtaskasync?view=botbuilder-dotnet-stable
+        /// Reference link: https://docs.microsoft.com/en-us/dotnet/api/microsoft.bot.builder.teams.teamsactivityhandler.onteamsmessagingextensionfetchtaskasync?view=botbuilder-dotnet-stable.
         /// </remarks>
         protected override Task<MessagingExtensionActionResponse> OnTeamsMessagingExtensionFetchTaskAsync(
             ITurnContext<IInvokeActivity> turnContext,
@@ -442,12 +452,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     });
                 }
 
-                var postedQnaPairEntity = new AdaptiveSubmitActionData()
-                {
-                    AppBaseUrl = this.appBaseUrl,
-                };
-
-                var adaptiveCardEditor = MessagingExtensionQnaCard.AddQuestionForm(postedQnaPairEntity);
+                var adaptiveCardEditor = MessagingExtensionQnaCard.AddQuestionForm(new AdaptiveSubmitActionData(), this.appBaseUri);
                 return GetMessagingExtensionActionResponseAsync(adaptiveCardEditor, Strings.AddQuestionSubtitle);
             }
             catch (Exception ex)
@@ -466,7 +471,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
         /// <returns>Response of messaging extension action.</returns>
         /// <remarks>
-        /// Reference link: https://docs.microsoft.com/en-us/dotnet/api/microsoft.bot.builder.teams.teamsactivityhandler.onteamsmessagingextensionsubmitactionasync?view=botbuilder-dotnet-stable
+        /// Reference link: https://docs.microsoft.com/en-us/dotnet/api/microsoft.bot.builder.teams.teamsactivityhandler.onteamsmessagingextensionsubmitactionasync?view=botbuilder-dotnet-stable.
         /// </remarks>
         protected override async Task<MessagingExtensionActionResponse> OnTeamsMessagingExtensionSubmitActionAsync(
             ITurnContext<IInvokeActivity> turnContext,
@@ -481,21 +486,20 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     return default;
                 }
 
-                postedQuestionObject.AppBaseUrl = this.appBaseUrl;
                 if (postedQuestionObject.BackButtonCommandText == Strings.BackButtonCommandText)
                 {
                     // Populates the prefilled data on task module for adaptive card form fields on back button click.
-                    return await GetMessagingExtensionActionResponseAsync(MessagingExtensionQnaCard.AddQuestionForm(postedQuestionObject), Strings.AddQuestionSubtitle).ConfigureAwait(false);
+                    return await GetMessagingExtensionActionResponseAsync(MessagingExtensionQnaCard.AddQuestionForm(postedQuestionObject, this.appBaseUri), Strings.AddQuestionSubtitle).ConfigureAwait(false);
                 }
 
-                if (postedQuestionObject.PreviewButtonCommandText == Strings.PreviewButtonCommandText)
+                if (postedQuestionObject.PreviewButtonCommandText == Constants.PreviewCardCommandText)
                 {
                     // Preview the actual view of the card on preview button click.
-                    return await GetMessagingExtensionActionResponseAsync(MessagingExtensionQnaCard.PreviewCardResponse(postedQuestionObject)).ConfigureAwait(false);
+                    return await GetMessagingExtensionActionResponseAsync(MessagingExtensionQnaCard.PreviewCardResponse(postedQuestionObject, this.appBaseUri)).ConfigureAwait(false);
                 }
 
                 // Response of messaging extension action.
-                return await this.RespondToQuestionMessagingExtentionAsync(postedQuestionObject, turnContext, cancellationToken).ConfigureAwait(false);
+                return await this.RespondToQuestionMessagingExtensionAsync(postedQuestionObject, turnContext, cancellationToken).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -581,7 +585,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             try
             {
                 // Check if question exist in the production/test knowledgebase & exactly the same question.
-                var hasQuestionExist = await this.qnaServiceProvider.QuestionExistsInKbAsync(qnaPairEntity.UpdatedQuestion);
+                var hasQuestionExist = await this.qnaServiceProvider.QuestionExistsInKbAsync(qnaPairEntity.UpdatedQuestion).ConfigureAwait(false);
 
                 // Question already exist in knowledgebase.
                 if (hasQuestionExist)
@@ -591,7 +595,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     qnaPairEntity.IsQuestionAlreadyExists = true;
 
                     // Messaging extension response object.
-                    return await GetMessagingExtensionActionResponseAsync(MessagingExtensionQnaCard.AddQuestionForm(qnaPairEntity)).ConfigureAwait(false);
+                    return await GetMessagingExtensionActionResponseAsync(MessagingExtensionQnaCard.AddQuestionForm(qnaPairEntity, this.appBaseUri)).ConfigureAwait(false);
                 }
             }
             catch (Exception ex)
@@ -599,8 +603,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 // Check if exception is not related to empty kb then add the qna pair otherwise throw it.
                 if (((ErrorResponseException)ex).Response.StatusCode == HttpStatusCode.BadRequest)
                 {
-                    var configurationEntity = await this.configurationProvider.GetConfigurationData(Constants.ConfigurationInfoPartitionKey, Constants.KnowledgebaseRowKey).ConfigureAwait(false);
-                    var knowledgeBaseId = configurationEntity.Data;
+                    var knowledgeBaseId = await this.configurationProvider.GetSavedEntityDetailAsync(Constants.KnowledgeBaseEntityId).ConfigureAwait(false);
                     var hasPublished = await this.qnaServiceProvider.GetInitialPublishedStatusAsync(knowledgeBaseId).ConfigureAwait(false);
 
                     // Check if knowledge base has not published yet.
@@ -632,7 +635,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             }
 
             this.logger.LogInformation($"Question added by: {turnContext.Activity.From.AadObjectId}");
-            ActivityEntity activityEntity = new ActivityEntity { ActivityId = activityResponse.Id, PartitionKey = Constants.ActivityTableName, RowKey = activityReferenceId };
+            ActivityEntity activityEntity = new ActivityEntity { ActivityId = activityResponse.Id, ActivityReferenceId = activityReferenceId };
             bool operationStatus = await this.activityStorageProvider.AddActivityEntityAsync(activityEntity).ConfigureAwait(false);
             if (!operationStatus)
             {
@@ -670,7 +673,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             else
             {
                 // Check if question exist in the production/test knowledgebase & exactly the same question.
-                var hasQuestionExist = await this.qnaServiceProvider.QuestionExistsInKbAsync(postedQnaPairEntity.UpdatedQuestion);
+                var hasQuestionExist = await this.qnaServiceProvider.QuestionExistsInKbAsync(postedQnaPairEntity.UpdatedQuestion).ConfigureAwait(false);
 
                 // Edit the question if it doesn't exist in the test knowledgebse.
                 if (hasQuestionExist)
@@ -693,7 +696,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 if (postedQnaPairEntity.IsQuestionAlreadyExists)
                 {
                     // Response with question already exist(in test knowledgebase).
-                    qnaAdaptiveCard = MessagingExtensionQnaCard.AddQuestionForm(postedQnaPairEntity);
+                    qnaAdaptiveCard = MessagingExtensionQnaCard.AddQuestionForm(postedQnaPairEntity, this.appBaseUri);
                 }
             }
 
@@ -781,13 +784,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
                 case Constants.TakeATour:
                     this.logger.LogInformation("Sending user tour card");
-                    var userTourCards = TourCarousel.GetUserTourCards(this.appBaseUrl);
+                    var userTourCards = TourCarousel.GetUserTourCards(this.appBaseUri);
                     await turnContext.SendActivityAsync(MessageFactory.Carousel(userTourCards)).ConfigureAwait(false);
                     break;
 
                 default:
                     this.logger.LogInformation("Sending input to QnAMaker");
-                    await this.GetQuestionAnswerReplyAsync(turnContext, text);
+                    await this.GetQuestionAnswerReplyAsync(turnContext, text).ConfigureAwait(false);
                     break;
             }
         }
@@ -822,7 +825,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 {
                     case Constants.TeamTour:
                         this.logger.LogInformation("Sending team tour card");
-                        var teamTourCards = TourCarousel.GetTeamTourCards(this.appBaseUrl);
+                        var teamTourCards = TourCarousel.GetTeamTourCards(this.appBaseUri);
                         await turnContext.SendActivityAsync(MessageFactory.Carousel(teamTourCards)).ConfigureAwait(false);
                         break;
 
@@ -833,7 +836,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
                     case Constants.DeleteCommand:
                         this.logger.LogInformation($"Delete card submit in channel {message.Value?.ToString()}");
-                        await QnaHelper.DeleteQnaPair(turnContext, this.qnaServiceProvider, this.activityStorageProvider, this.logger, cancellationToken);
+                        await QnaHelper.DeleteQnaPair(turnContext, this.qnaServiceProvider, this.activityStorageProvider, this.logger, cancellationToken).ConfigureAwait(false);
                         break;
 
                     case Constants.NoCommand:
@@ -850,8 +853,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 // Check if expert user is trying to delete the question and knowledge base has not published yet.
                 if (((ErrorResponseException)ex).Response.StatusCode == HttpStatusCode.BadRequest)
                 {
-                    var configurationEntity = await this.configurationProvider.GetConfigurationData(Constants.ConfigurationInfoPartitionKey, Constants.KnowledgebaseRowKey).ConfigureAwait(false);
-                    var knowledgeBaseId = configurationEntity.Data;
+                    var knowledgeBaseId = await this.configurationProvider.GetSavedEntityDetailAsync(Constants.KnowledgeBaseEntityId).ConfigureAwait(false);
                     var hasPublished = await this.qnaServiceProvider.GetInitialPublishedStatusAsync(knowledgeBaseId).ConfigureAwait(false);
 
                     // Check if knowledge base has not published yet.
@@ -903,7 +905,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
                 case AskAnExpertCard.AskAnExpertSubmitText:
                     this.logger.LogInformation("Received question for expert");
-                    newTicket = await AdaptiveCardHelper.AskAnExpertSubmitText(message, turnContext, cancellationToken, this.ticketsProvider);
+                    newTicket = await AdaptiveCardHelper.AskAnExpertSubmitText(message, turnContext, cancellationToken, this.ticketsProvider).ConfigureAwait(false);
                     if (newTicket != null)
                     {
                         smeTeamCard = new SmeTicketCard(newTicket).ToAttachment(message?.LocalTimestamp);
@@ -914,7 +916,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
                 case ShareFeedbackCard.ShareFeedbackSubmitText:
                     this.logger.LogInformation("Received app feedback");
-                    smeTeamCard = await AdaptiveCardHelper.ShareFeedbackSubmitText(message, turnContext, cancellationToken);
+                    smeTeamCard = await AdaptiveCardHelper.ShareFeedbackSubmitText(message, turnContext, cancellationToken).ConfigureAwait(false);
                     if (smeTeamCard != null)
                     {
                         await turnContext.SendActivityAsync(MessageFactory.Text(Strings.ThankYouTextContent)).ConfigureAwait(false);
@@ -1265,7 +1267,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <param name="turnContext">Context object containing information cached for a single turn of conversation with a user.</param>
         /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
         /// <returns>Response of messaging extension action.</returns>
-        private async Task<MessagingExtensionActionResponse> RespondToQuestionMessagingExtentionAsync(
+        private async Task<MessagingExtensionActionResponse> RespondToQuestionMessagingExtensionAsync(
             AdaptiveSubmitActionData postedQnaPairEntity,
             ITurnContext<IInvokeActivity> turnContext,
             CancellationToken cancellationToken)
@@ -1274,7 +1276,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             if (Validators.IsContainsHtml(postedQnaPairEntity) || Validators.IsQnaFieldsNullOrEmpty(postedQnaPairEntity))
             {
                 // Returns the card with validation errors on add QnA task module.
-                return await GetMessagingExtensionActionResponseAsync(MessagingExtensionQnaCard.AddQuestionForm(Validators.HtmlAndQnaEmptyValidation(postedQnaPairEntity))).ConfigureAwait(false);
+                return await GetMessagingExtensionActionResponseAsync(MessagingExtensionQnaCard.AddQuestionForm(Validators.HtmlAndQnaEmptyValidation(postedQnaPairEntity), this.appBaseUri)).ConfigureAwait(false);
             }
 
             if (Validators.IsRichCard(postedQnaPairEntity))
@@ -1282,7 +1284,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 // While adding the new entry in knowledgebase,if user has entered invalid Image URL or Redirect URL then show the error message to user.
                 if (Validators.IsImageUrlInvalid(postedQnaPairEntity) || Validators.IsRedirectionUrlInvalid(postedQnaPairEntity))
                 {
-                    return await GetMessagingExtensionActionResponseAsync(MessagingExtensionQnaCard.AddQuestionForm(Validators.ValidateImageAndRedirectionUrls(postedQnaPairEntity))).ConfigureAwait(false);
+                    return await GetMessagingExtensionActionResponseAsync(MessagingExtensionQnaCard.AddQuestionForm(Validators.ValidateImageAndRedirectionUrls(postedQnaPairEntity), this.appBaseUri)).ConfigureAwait(false);
                 }
 
                 // Return the rich card as response to user if he has filled title & image URL while adding the new entry in knowledgebase.
@@ -1307,7 +1309,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             if (Validators.IsContainsHtml(postedQnaPairEntity) || Validators.IsQnaFieldsNullOrEmpty(postedQnaPairEntity))
             {
                 // Returns the card with validation errors on add QnA task module.
-                return await GetTaskModuleResponseAsync(MessagingExtensionQnaCard.AddQuestionForm(Validators.HtmlAndQnaEmptyValidation(postedQnaPairEntity))).ConfigureAwait(false);
+                return await GetTaskModuleResponseAsync(MessagingExtensionQnaCard.AddQuestionForm(Validators.HtmlAndQnaEmptyValidation(postedQnaPairEntity), this.appBaseUri)).ConfigureAwait(false);
             }
 
             if (Validators.IsRichCard(postedQnaPairEntity))
@@ -1315,7 +1317,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 if (Validators.IsImageUrlInvalid(postedQnaPairEntity) || Validators.IsRedirectionUrlInvalid(postedQnaPairEntity))
                 {
                     // Show the error message on task module response for edit QnA pair, if user has entered invalid image or redirection url.
-                    return await GetTaskModuleResponseAsync(MessagingExtensionQnaCard.AddQuestionForm(Validators.ValidateImageAndRedirectionUrls(postedQnaPairEntity))).ConfigureAwait(false);
+                    return await GetTaskModuleResponseAsync(MessagingExtensionQnaCard.AddQuestionForm(Validators.ValidateImageAndRedirectionUrls(postedQnaPairEntity), this.appBaseUri)).ConfigureAwait(false);
                 }
 
                 string combinedDescription = QnaHelper.BuildCombinedDescriptionAsync(postedQnaPairEntity);
@@ -1332,7 +1334,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 }
                 else
                 {
-                    var hasQuestionExist = await this.qnaServiceProvider.QuestionExistsInKbAsync(postedQnaPairEntity.UpdatedQuestion);
+                    var hasQuestionExist = await this.qnaServiceProvider.QuestionExistsInKbAsync(postedQnaPairEntity.UpdatedQuestion).ConfigureAwait(false);
                     if (hasQuestionExist)
                     {
                         // Shows the error message on task module, if question already exist.
@@ -1366,7 +1368,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 }
                 else
                 {
-                    var hasQuestionExist = await this.qnaServiceProvider.QuestionExistsInKbAsync(postedQnaPairEntity.UpdatedQuestion);
+                    var hasQuestionExist = await this.qnaServiceProvider.QuestionExistsInKbAsync(postedQnaPairEntity.UpdatedQuestion).ConfigureAwait(false);
                     if (hasQuestionExist)
                     {
                         // Shows the error message on task module, if question already exist.
@@ -1431,8 +1433,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 // Check if knowledge base is empty and has not published yet when end user is asking a question to bot.
                 if (((ErrorResponseException)ex).Response.StatusCode == HttpStatusCode.BadRequest)
                 {
-                    var configurationEntity = await this.configurationProvider.GetConfigurationData(Constants.ConfigurationInfoPartitionKey, Constants.KnowledgebaseRowKey).ConfigureAwait(false);
-                    var knowledgeBaseId = configurationEntity.Data;
+                    var knowledgeBaseId = await this.configurationProvider.GetSavedEntityDetailAsync(Constants.KnowledgeBaseEntityId).ConfigureAwait(false);
                     var hasPublished = await this.qnaServiceProvider.GetInitialPublishedStatusAsync(knowledgeBaseId).ConfigureAwait(false);
 
                     // Check if knowledge base has not published yet.

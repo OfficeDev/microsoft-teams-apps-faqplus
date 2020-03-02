@@ -48,13 +48,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         Task<QnASearchResultList> GenerateAnswerAsync(string question, bool isTestKnowledgeBase);
 
         /// <summary>
-        /// Get knowledgebase details.
-        /// </summary>
-        /// <param name="rowKey">Row key to get it's value from storage table.</param>
-        /// <returns>Kb details.</returns>
-        Task<ConfigurationEntity> GetKnowledgeBaseAsync(string rowKey);
-
-        /// <summary>
         /// This method is used to update Qna pair in Kb.
         /// </summary>
         /// <param name="questionId">Question id.</param>
