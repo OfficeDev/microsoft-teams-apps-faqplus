@@ -10,7 +10,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
     /// <summary>
     /// Represents configuration entity used for storage and retrieval.
     /// </summary>
-    public class ConfigurationEntity : TableEntity
+    internal class ConfigurationEntity : TableEntity
     {
         /// <summary>
         /// Gets or sets data which will be stored in table storage.

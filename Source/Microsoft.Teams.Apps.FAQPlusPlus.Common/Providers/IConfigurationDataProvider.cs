@@ -26,19 +26,5 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         /// <param name="entityType">EntityType received from view based on which appropriate row data will be fetched.</param>
         /// <returns><see cref="Task"/>Already saved entity detail.</returns>
         Task<string> GetSavedEntityDetailAsync(string entityType);
-
-        /// <summary>
-        /// This method returns the configuration data from storage table.
-        /// </summary>
-        /// <param name="partitionKey">Partition key of the table.</param>
-        /// <param name="rowKey">Row key of the table.</param>
-        /// <returns>Configuration entity object.</returns>
-        Task<ConfigurationEntity> GetConfigurationData(string partitionKey, string rowKey);
-
-        /// <summary>
-        /// Get or create table.
-        /// </summary>
-        /// <returns>Cloud table object.</returns>
-        Task<CloudTable> GetOrCreateTableAsync();
     }
 }

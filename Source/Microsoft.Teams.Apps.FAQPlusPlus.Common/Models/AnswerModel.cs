@@ -7,7 +7,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
     using Newtonsoft.Json;
 
     /// <summary>
-    /// Adaptive Card Action class to post answer data.
+    /// Represents the FAQPlus QnA Maker answer response model.
     /// </summary>
     public class AnswerModel
     {

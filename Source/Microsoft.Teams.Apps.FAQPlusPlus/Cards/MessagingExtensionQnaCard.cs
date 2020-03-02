@@ -31,14 +31,20 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         private const string GoToOriginalThreadUrl = "https://teams.microsoft.com/l/message/";
 
         /// <summary>
-        /// Date format.
+        /// Short date and time format to support adaptive card text feature.
         /// </summary>
-        private const string DateFormat = "{{{{DATE({0}, SHORT)}}}} {{{{TIME({1})}}}}";
+        /// <remarks>
+        /// refer adaptive card text feature https://docs.microsoft.com/en-us/adaptive-cards/authoring-cards/text-features#datetime-formatting-and-localization
+        /// </remarks>
+        private const string AdaptiveCardShortDateTimeFormat = "{{{{DATE({0}, SHORT)}}}} {{{{TIME({1})}}}}";
 
         /// <summary>
-        /// Date time format.
+        /// Date time format to support adaptive card text feature.
         /// </summary>
-        private const string DateTimeFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'";
+        /// <remarks>
+        /// refer adaptive card text feature https://docs.microsoft.com/en-us/adaptive-cards/authoring-cards/text-features#datetime-formatting-and-localization
+        /// </remarks>
+        private const string Rfc3339DateTimeFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'";
 
         /// <summary>
         /// Truncate the lenth of answer to show in thumbnail card.
@@ -49,16 +55,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// Truncate the lenth of answer to show in thumbnail card.
         /// </summary>
         private const string CardActionType = "task/fetch";
-
-        /// <summary>
-        /// Update history card header text.
-        /// </summary>
-        private const string UpdateHistoryDateHeaderText = "Date";
-
-        /// <summary>
-        /// Show the custom message for Date if question is added manually and metadata is not persent in the knowledgebase.
-        /// </summary>
-        private const string ManuallyAddedQuestionMessage = "Manually added question";
 
         /// <summary>
         /// Represents the add card action.
@@ -76,16 +72,25 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         private const string DeleteAction = "Delete";
 
         /// <summary>
+        /// Represents the command text to identify the action.
+        /// </summary>
+        private const string PreviewCardCommandText = "previewcard";
+
+        /// <summary>
         /// Add question card task module.
         /// </summary>
         /// <param name="qnaPairEntity">Qna pair entity that contains question and answer information.</param>
+        /// <param name="appBaseUri">Application base uri.</param>
         /// <returns>Rich card as attachment.</returns>
-        public static Attachment AddQuestionForm(AdaptiveSubmitActionData qnaPairEntity = null)
+        public static Attachment AddQuestionForm(AdaptiveSubmitActionData qnaPairEntity, string appBaseUri)
         {
             AdaptiveCard card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0));
-            var container = new AdaptiveContainer()
+
+            if (qnaPairEntity != null)
             {
-                Items = new List<AdaptiveElement>
+                var container = new AdaptiveContainer()
+                {
+                    Items = new List<AdaptiveElement>
                     {
                         new AdaptiveTextBlock
                         {
@@ -97,7 +102,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                             Id = "updatedquestion",
                             MaxLength = 100,
                             Style = AdaptiveTextInputStyle.Text,
-                            Value = qnaPairEntity?.UpdatedQuestion?.Trim(),
+                            Value = qnaPairEntity.UpdatedQuestion?.Trim(),
                             Placeholder = Strings.QuestionPlaceholderText,
                         },
                         new AdaptiveTextBlock
@@ -111,7 +116,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                             IsMultiline = true,
                             MaxLength = 500,
                             Style = AdaptiveTextInputStyle.Text,
-                            Value = qnaPairEntity?.Description?.Trim(),
+                            Value = qnaPairEntity.Description?.Trim(),
                             Placeholder = Strings.DescriptionPlaceholderText,
                         },
                         new AdaptiveColumnSet
@@ -125,7 +130,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                         {
                                             new AdaptiveImage
                                             {
-                                                Url = new Uri(string.Format("{0}/content/InformationIcon.png", qnaPairEntity.AppBaseUrl)),
+                                                Url = new Uri(string.Format("{0}/content/InformationIcon.png", appBaseUri)),
                                                 AltText = "Info icon",
                                             },
                                         },
@@ -163,7 +168,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                             Id = "title",
                             MaxLength = 50,
                             Style = AdaptiveTextInputStyle.Text,
-                            Value = qnaPairEntity?.Title?.Trim(),
+                            Value = qnaPairEntity.Title?.Trim(),
                             Placeholder = Strings.TitlePlaceholderText,
                         },
                         new AdaptiveTextBlock
@@ -174,9 +179,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         new AdaptiveTextInput
                         {
                             Id = "subtitle",
-                            MaxLength = 20,
+                            MaxLength = 50,
                             Style = AdaptiveTextInputStyle.Text,
-                            Value = qnaPairEntity?.Subtitle?.Trim(),
+                            Value = qnaPairEntity.Subtitle?.Trim(),
                             Placeholder = Strings.SubtitlePlaceholderText,
                         },
                         new AdaptiveTextBlock
@@ -189,7 +194,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                             Id = "imageurl",
                             MaxLength = 200,
                             Style = AdaptiveTextInputStyle.Text,
-                            Value = qnaPairEntity?.ImageUrl?.Trim(),
+                            Value = qnaPairEntity.ImageUrl?.Trim(),
                             Placeholder = Strings.ImageUrlPlaceholderText,
                         },
                         new AdaptiveTextBlock
@@ -202,84 +207,85 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                             Id = "redirectionurl",
                             MaxLength = 200,
                             Style = AdaptiveTextInputStyle.Text,
-                            Value = qnaPairEntity?.RedirectionUrl?.Trim(),
+                            Value = qnaPairEntity.RedirectionUrl?.Trim(),
                             Placeholder = Strings.RedirectionUrlPlaceholderText,
                         },
                     },
-            };
+                };
 
-            if (qnaPairEntity.IsQnaNullOrEmpty)
-            {
-                string errorMessageText;
-                errorMessageText = string.IsNullOrWhiteSpace(qnaPairEntity?.UpdatedQuestion?.Trim()) ? Strings.EmptyQuestionErrorText : Strings.EmptyDescriptionErrorText;
-                container.Items.Add(new AdaptiveTextBlock
+                if (qnaPairEntity.IsQnaNullOrEmpty)
                 {
-                    Text = errorMessageText,
-                    Size = AdaptiveTextSize.Small,
-                    Color = AdaptiveTextColor.Attention,
-                });
-            }
-            else if (qnaPairEntity.IsHTMLPresent)
-            {
-                container.Items.Add(new AdaptiveTextBlock
-                {
-                    Text = Strings.HTMLErrorText,
-                    Size = AdaptiveTextSize.Small,
-                    Color = AdaptiveTextColor.Attention,
-                });
-            }
-            else if (qnaPairEntity.IsQuestionAlreadyExists)
-            {
-                container.Items.Add(new AdaptiveTextBlock
-                {
-                    Text = Strings.QuestionAlreadyExistsErrorText,
-                    Size = AdaptiveTextSize.Small,
-                    Color = AdaptiveTextColor.Attention,
-                });
-            }
-            else if (qnaPairEntity.IsInvalidImageUrl)
-            {
-                container.Items.Add(new AdaptiveTextBlock
-                {
-                    Text = Strings.InvalidImageUrlErrorText,
-                    Size = AdaptiveTextSize.Small,
-                    Color = AdaptiveTextColor.Attention,
-                });
-            }
-            else if (qnaPairEntity.IsInvalidRedirectUrl)
-            {
-                container.Items.Add(new AdaptiveTextBlock
-                {
-                    Text = Strings.InvalidRedirectUrlText,
-                    Size = AdaptiveTextSize.Small,
-                    Color = AdaptiveTextColor.Attention,
-                });
-            }
-
-            card.Body.Add(container);
-
-            card.Actions.Add(
-                new AdaptiveSubmitAction()
-                {
-                    Title = Strings.PreviewButtonText,
-                    Data = new AdaptiveSubmitActionData
+                    string errorMessageText;
+                    errorMessageText = string.IsNullOrWhiteSpace(qnaPairEntity.UpdatedQuestion?.Trim()) ? Strings.EmptyQuestionErrorText : Strings.EmptyDescriptionErrorText;
+                    container.Items.Add(new AdaptiveTextBlock
                     {
-                        PreviewButtonCommandText = Strings.PreviewButtonCommandText,
-                        OriginalQuestion = qnaPairEntity?.OriginalQuestion?.Trim(),
-                        UpdateHistoryData = qnaPairEntity?.UpdateHistoryData,
-                    },
-                });
-
-            card.Actions.Add(
-                new AdaptiveSubmitAction()
+                        Text = errorMessageText,
+                        Size = AdaptiveTextSize.Small,
+                        Color = AdaptiveTextColor.Attention,
+                    });
+                }
+                else if (qnaPairEntity.IsHTMLPresent)
                 {
-                    Title = Strings.SaveButtonText,
-                    Data = new AdaptiveSubmitActionData
+                    container.Items.Add(new AdaptiveTextBlock
                     {
-                        OriginalQuestion = qnaPairEntity?.OriginalQuestion?.Trim(),
-                        UpdateHistoryData = qnaPairEntity?.UpdateHistoryData,
-                    },
-                });
+                        Text = Strings.HTMLErrorText,
+                        Size = AdaptiveTextSize.Small,
+                        Color = AdaptiveTextColor.Attention,
+                    });
+                }
+                else if (qnaPairEntity.IsQuestionAlreadyExists)
+                {
+                    container.Items.Add(new AdaptiveTextBlock
+                    {
+                        Text = Strings.QuestionAlreadyExistsErrorText,
+                        Size = AdaptiveTextSize.Small,
+                        Color = AdaptiveTextColor.Attention,
+                    });
+                }
+                else if (qnaPairEntity.IsInvalidImageUrl)
+                {
+                    container.Items.Add(new AdaptiveTextBlock
+                    {
+                        Text = Strings.InvalidImageUrlErrorText,
+                        Size = AdaptiveTextSize.Small,
+                        Color = AdaptiveTextColor.Attention,
+                    });
+                }
+                else if (qnaPairEntity.IsInvalidRedirectUrl)
+                {
+                    container.Items.Add(new AdaptiveTextBlock
+                    {
+                        Text = Strings.InvalidRedirectUrlText,
+                        Size = AdaptiveTextSize.Small,
+                        Color = AdaptiveTextColor.Attention,
+                    });
+                }
+
+                card.Body.Add(container);
+
+                card.Actions.Add(
+                    new AdaptiveSubmitAction()
+                    {
+                        Title = Strings.PreviewButtonText,
+                        Data = new AdaptiveSubmitActionData
+                        {
+                            PreviewButtonCommandText = PreviewCardCommandText,
+                            OriginalQuestion = qnaPairEntity.OriginalQuestion?.Trim(),
+                            UpdateHistoryData = qnaPairEntity.UpdateHistoryData,
+                        },
+                    });
+
+                card.Actions.Add(
+                    new AdaptiveSubmitAction()
+                    {
+                        Title = Strings.SaveButtonText,
+                        Data = new AdaptiveSubmitActionData
+                        {
+                            OriginalQuestion = qnaPairEntity.OriginalQuestion?.Trim(),
+                            UpdateHistoryData = qnaPairEntity.UpdateHistoryData,
+                        },
+                    });
+            }
 
             var adaptiveCardAttachment = new Attachment()
             {
@@ -300,21 +306,23 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         public static Attachment ShowNormalCard(AdaptiveSubmitActionData qnaPairEntity, string editedBy, string actionPerformed = "")
         {
             AdaptiveCard card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0));
-            var container = new AdaptiveContainer()
+            if (qnaPairEntity != null)
             {
-                Items = new List<AdaptiveElement>
+                var container = new AdaptiveContainer()
+                {
+                    Items = new List<AdaptiveElement>
                     {
                         new AdaptiveTextBlock
                         {
                             Size = AdaptiveTextSize.Default,
                             Wrap = true,
-                            Text = string.Format(CultureInfo.InvariantCulture, Strings.QuestionTitle, qnaPairEntity?.UpdatedQuestion?.Trim()),
+                            Text = string.Format(CultureInfo.InvariantCulture, Strings.QuestionTitle, qnaPairEntity.UpdatedQuestion?.Trim()),
                         },
                         new AdaptiveTextBlock
                         {
                             Size = AdaptiveTextSize.Default,
                             Wrap = true,
-                            Text = string.IsNullOrWhiteSpace(qnaPairEntity?.Description?.Trim()) ? qnaPairEntity?.Description?.Trim() : $"{Strings.AnswerTitle} {qnaPairEntity?.Description?.Trim()}",
+                            Text = $"{Strings.AnswerTitle} {qnaPairEntity.Description?.Trim()}",
                         },
                         new AdaptiveTextBlock
                         {
@@ -323,57 +331,75 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                             Text = actionPerformed + " " + editedBy,
                         },
                     },
-            };
+                };
 
-            if (qnaPairEntity.IsTestKnowledgeBase)
-            {
-                container.Items.Add(new AdaptiveTextBlock
+                if (qnaPairEntity.IsTestKnowledgeBase)
                 {
-                    Size = AdaptiveTextSize.Small,
-                    Wrap = true,
-                    Text = $"**{Strings.WaitMessageAnswer}**",
-                });
-            }
+                    container.Items.Add(new AdaptiveTextBlock
+                    {
+                        Size = AdaptiveTextSize.Small,
+                        Wrap = true,
+                        Text = $"**{Strings.WaitMessageAnswer}**",
+                    });
+                }
 
-            string actionData = string.IsNullOrEmpty(qnaPairEntity?.UpdateHistoryData)
-                ? string.Format("{0}${1}|{2}|{3}", Strings.UpdateHistoryHeadersText, editedBy, actionPerformed == Strings.EntryCreatedByText ? AddAction : EditAction, DateTime.UtcNow.ToString(DateTimeFormat, CultureInfo.InvariantCulture))
-                : string.Format("{0}${1}|{2}|{3}", qnaPairEntity?.UpdateHistoryData, editedBy, actionPerformed == Strings.EntryCreatedByText ? AddAction : EditAction, DateTime.UtcNow.ToString(DateTimeFormat, CultureInfo.InvariantCulture));
+                string actionData = string.Empty;
+                if (string.IsNullOrEmpty(qnaPairEntity.UpdateHistoryData))
+                {
+                    actionData = string.Format(
+                        "{0}${1}|{2}|{3}",
+                        Strings.UpdateHistoryHeadersText,
+                        editedBy,
+                        actionPerformed == Strings.EntryCreatedByText ? AddAction : EditAction,
+                        DateTime.UtcNow.ToString(Rfc3339DateTimeFormat, CultureInfo.InvariantCulture));
+                }
+                else
+                {
+                    qnaPairEntity.UpdateHistoryData = GetLast10HistoryRecord(qnaPairEntity.UpdateHistoryData);
+                    actionData = string.Format(
+                        "{0}${1}|{2}|{3}",
+                        qnaPairEntity.UpdateHistoryData,
+                        editedBy,
+                        actionPerformed == Strings.EntryCreatedByText ? AddAction : EditAction,
+                        DateTime.UtcNow.ToString(Rfc3339DateTimeFormat, CultureInfo.InvariantCulture));
+                }
 
-            card.Body.Add(container);
-            card.Actions.Add(
-              new AdaptiveSubmitAction()
-              {
-                  Title = Strings.EditButtonText,
-                  Data = new AdaptiveSubmitActionData
+                card.Body.Add(container);
+                card.Actions.Add(
+                  new AdaptiveSubmitAction()
                   {
-                      MsTeamsCardAction = new CardAction
+                      Title = Strings.EditButtonText,
+                      Data = new AdaptiveSubmitActionData
                       {
-                          Type = CardActionType,
+                          MsTeams = new CardAction
+                          {
+                              Type = CardActionType,
+                          },
+                          OriginalQuestion = qnaPairEntity.UpdatedQuestion?.Trim(),
+                          UpdatedQuestion = qnaPairEntity.UpdatedQuestion?.Trim(),
+                          Description = qnaPairEntity.Description?.Trim(),
+                          Title = qnaPairEntity.Title?.Trim(),
+                          Subtitle = qnaPairEntity.Subtitle?.Trim(),
+                          ImageUrl = qnaPairEntity.ImageUrl,
+                          RedirectionUrl = qnaPairEntity.RedirectionUrl,
+                          UpdateHistoryData = actionData,
                       },
-                      OriginalQuestion = qnaPairEntity?.UpdatedQuestion?.Trim(),
-                      UpdatedQuestion = qnaPairEntity?.UpdatedQuestion?.Trim(),
-                      Description = qnaPairEntity?.Description?.Trim(),
-                      Title = qnaPairEntity?.Title?.Trim(),
-                      Subtitle = qnaPairEntity?.Subtitle?.Trim(),
-                      ImageUrl = qnaPairEntity?.ImageUrl,
-                      RedirectionUrl = qnaPairEntity?.RedirectionUrl,
-                      UpdateHistoryData = actionData,
-                  },
-              });
+                  });
 
-            card.Actions.Add(
-                new AdaptiveShowCardAction()
-                {
-                    Title = Strings.DeleteButtonText,
-                    Card = DeleteEntry(qnaPairEntity?.UpdatedQuestion?.Trim(), actionData),
-                });
+                card.Actions.Add(
+                    new AdaptiveShowCardAction()
+                    {
+                        Title = Strings.DeleteButtonText,
+                        Card = DeleteEntry(qnaPairEntity.UpdatedQuestion?.Trim(), actionData),
+                    });
 
-            card.Actions.Add(
-               new AdaptiveShowCardAction()
-               {
-                   Title = Strings.UpdateHistoryButtonText,
-                   Card = UpdateHistory(actionData),
-               });
+                card.Actions.Add(
+                   new AdaptiveShowCardAction()
+                   {
+                       Title = Strings.UpdateHistoryButtonText,
+                       Card = UpdateHistory(actionData),
+                   });
+            }
 
             var adaptiveCardAttachment = new Attachment()
             {
@@ -412,7 +438,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                    Title = Strings.Yes,
                    Data = new AdaptiveSubmitActionData
                    {
-                       MsTeamsCardAction = new CardAction
+                       MsTeams = new CardAction
                        {
                            Type = ActionTypes.MessageBack,
                            Text = Constants.DeleteCommand,
@@ -428,7 +454,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                   Title = Strings.No,
                   Data = new AdaptiveSubmitActionData
                   {
-                      MsTeamsCardAction = new CardAction
+                      MsTeams = new CardAction
                       {
                           Type = ActionTypes.MessageBack,
                           Text = Constants.NoCommand,
@@ -456,9 +482,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     string customMessage = string.Empty;
 
                     DateTime createdAt = default;
-                    if (qnaDocument?.Metadata?.Count > 1)
+                    if (qnaDocument.Metadata.Count > 1)
                     {
-                        var createdAtvalue = qnaDocument?.Metadata?.FirstOrDefault(metadata => metadata.Name == Constants.MetadataCreatedAt)?.Value;
+                        var createdAtvalue = qnaDocument.Metadata.FirstOrDefault(metadata => metadata.Name == Constants.MetadataCreatedAt)?.Value;
                         createdAt = createdAtvalue != null ? new DateTime(long.Parse(createdAtvalue, CultureInfo.InvariantCulture)) : default;
                     }
 
@@ -479,41 +505,41 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
 
                     string metadataCreatedAt = string.Empty;
 
-                    if (qnaDocument?.Metadata?.Count > 1)
+                    if (qnaDocument.Metadata.Count > 1)
                     {
-                        activityReferenceId = qnaDocument.Metadata?.FirstOrDefault(metadata => metadata.Name == Constants.MetadataActivityReferenceId)?.Value;
-                        conversationId = qnaDocument.Metadata?.FirstOrDefault(metadata => metadata.Name == Constants.MetadataConversationId)?.Value;
-                        activityId = activitiesData?.FirstOrDefault(activity => activity.RowKey == activityReferenceId)?.ActivityId;
-                        dateString = string.Format(CultureInfo.InvariantCulture, Strings.DateFormat, "{{DATE(" + createdAt.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'", CultureInfo.InvariantCulture) + ", SHORT)}}", "{{TIME(" + createdAt.ToString("yyyy-MM-dd'T'HH:mm:ss'Z'", CultureInfo.InvariantCulture) + ")}}");
-                        metadataCreatedAt = qnaDocument?.Metadata?.FirstOrDefault(metadata => metadata.Name == Constants.MetadataCreatedAt)?.Value;
+                        activityReferenceId = qnaDocument.Metadata.FirstOrDefault(metadata => metadata.Name == Constants.MetadataActivityReferenceId)?.Value;
+                        conversationId = qnaDocument.Metadata.FirstOrDefault(metadata => metadata.Name == Constants.MetadataConversationId)?.Value;
+                        activityId = activitiesData?.FirstOrDefault(activity => activity.ActivityReferenceId == activityReferenceId)?.ActivityId;
+                        dateString = string.Format(CultureInfo.InvariantCulture, Strings.DateFormat, "{{DATE(" + createdAt.ToString(Rfc3339DateTimeFormat, CultureInfo.InvariantCulture) + ", SHORT)}}", "{{TIME(" + createdAt.ToString(Rfc3339DateTimeFormat, CultureInfo.InvariantCulture) + ")}}");
+                        metadataCreatedAt = qnaDocument.Metadata.FirstOrDefault(metadata => metadata.Name == Constants.MetadataCreatedAt)?.Value;
                     }
                     else
                     {
-                        customMessage = string.IsNullOrEmpty(metadataCreatedAt) ? ManuallyAddedQuestionMessage : string.Empty;
+                        customMessage = string.IsNullOrEmpty(metadataCreatedAt) ? Strings.ManuallyAddedQuestionMessage : string.Empty;
                     }
 
                     var card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
                     {
                         Body = new List<AdaptiveElement>
-                    {
-                        new AdaptiveTextBlock
                         {
-                            Text = string.Format(CultureInfo.InvariantCulture, Strings.QuestionTitle, qnaDocument?.Questions[0]),
-                            Size = AdaptiveTextSize.Default,
-                            Wrap = true,
+                            new AdaptiveTextBlock
+                            {
+                                Text = string.Format(CultureInfo.InvariantCulture, Strings.QuestionTitle, qnaDocument.Questions[0]),
+                                Size = AdaptiveTextSize.Default,
+                                Wrap = true,
+                            },
+                            new AdaptiveTextBlock
+                            {
+                                Text = $"{Strings.AnswerTitle} {answer}",
+                                Size = AdaptiveTextSize.Default,
+                                Wrap = true,
+                            },
+                            new AdaptiveTextBlock
+                            {
+                                Text = dateString,
+                                Wrap = true,
+                            },
                         },
-                        new AdaptiveTextBlock
-                        {
-                            Text = string.IsNullOrEmpty(answer) ? string.Empty : $"{Strings.AnswerTitle} {answer}",
-                            Size = AdaptiveTextSize.Default,
-                            Wrap = true,
-                        },
-                        new AdaptiveTextBlock
-                        {
-                            Text = dateString,
-                            Wrap = true,
-                        },
-                    },
                     };
 
                     if (!string.IsNullOrEmpty(conversationId) && !string.IsNullOrEmpty(activityId))
@@ -564,7 +590,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 answerModel = JsonConvert.DeserializeObject<AnswerModel>(answerData);
             }
 
-            if (answerModel != null && (!string.IsNullOrEmpty(answerModel.Title) || !string.IsNullOrEmpty(answerModel.Subtitle) || !string.IsNullOrEmpty(answerModel.ImageUrl) || !string.IsNullOrEmpty(answerModel.RedirectionUrl)))
+            if (answerModel != null && (!string.IsNullOrEmpty(answerModel.Title)
+                || !string.IsNullOrEmpty(answerModel.Subtitle)
+                || !string.IsNullOrEmpty(answerModel.ImageUrl)
+                || !string.IsNullOrEmpty(answerModel.RedirectionUrl)))
             {
                 var container = new AdaptiveContainer()
                 {
@@ -646,8 +675,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             }
 
             string actionData = string.IsNullOrEmpty(oldActions)
-                ? string.Format("{0}${1}|{2}|{3}", Strings.UpdateHistoryHeadersText, deletedBy, DeleteAction, DateTime.UtcNow.ToString(DateTimeFormat, CultureInfo.InvariantCulture))
-                : string.Format("{0}${1}|{2}|{3}", oldActions, deletedBy, DeleteAction, DateTime.UtcNow.ToString(DateTimeFormat, CultureInfo.InvariantCulture));
+                ? string.Format("{0}${1}|{2}|{3}", Strings.UpdateHistoryHeadersText, deletedBy, DeleteAction, DateTime.UtcNow.ToString(Rfc3339DateTimeFormat, CultureInfo.InvariantCulture))
+                : string.Format("{0}${1}|{2}|{3}", oldActions, deletedBy, DeleteAction, DateTime.UtcNow.ToString(Rfc3339DateTimeFormat, CultureInfo.InvariantCulture));
 
             card.Actions.Add(
               new AdaptiveShowCardAction()
@@ -677,183 +706,206 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             AdaptiveCard card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0));
             string answer = string.Empty;
 
-            if (Validators.IsValidJSON(qnaPairEntity?.Description))
+            if (qnaPairEntity != null)
             {
-                var answerModel = JsonConvert.DeserializeObject<AnswerModel>(qnaPairEntity?.Description);
-                answer = answerModel.Description;
-            }
-            else
-            {
-                answer = qnaPairEntity?.Description;
-            }
-
-            if (qnaPairEntity != null && qnaPairEntity.IsPreviewCard)
-            {
-                var container = new AdaptiveContainer()
+                if (Validators.IsValidJSON(qnaPairEntity.Description))
                 {
-                    Items = new List<AdaptiveElement>
+                    var answerModel = JsonConvert.DeserializeObject<AnswerModel>(qnaPairEntity.Description);
+                    answer = answerModel.Description;
+                }
+                else
                 {
-                    new AdaptiveTextBlock
-                    {
-                        Text = qnaPairEntity?.Title?.Trim(),
-                        Size = AdaptiveTextSize.Large,
-                        Weight = AdaptiveTextWeight.Bolder,
-                    },
-                    new AdaptiveTextBlock
-                    {
-                        Text = qnaPairEntity?.Subtitle?.Trim(),
-                        Size = AdaptiveTextSize.Medium,
-                    },
-                    new AdaptiveImage
-                    {
-                        Url = !string.IsNullOrEmpty(qnaPairEntity?.ImageUrl?.Trim()) ? new Uri(qnaPairEntity?.ImageUrl?.Trim()) : default,
-                        Size = AdaptiveImageSize.Auto,
-                        Style = AdaptiveImageStyle.Default,
-                        AltText = qnaPairEntity?.Title?.Trim(),
-                    },
-                    new AdaptiveTextBlock
-                    {
-                        Text = qnaPairEntity?.Description?.Trim(),
-                        Size = AdaptiveTextSize.Small,
-                        Wrap = true,
-                    },
-                },
-                };
+                    answer = qnaPairEntity.Description;
+                }
 
-                card.Body.Add(container);
-
-                if (!string.IsNullOrEmpty(qnaPairEntity?.RedirectionUrl))
+                if (qnaPairEntity.IsPreviewCard)
                 {
-                    card.Actions.Add(
-                        new AdaptiveOpenUrlAction
+                    var container = new AdaptiveContainer()
+                    {
+                        Items = new List<AdaptiveElement>
                         {
-                            Title = Strings.OpenArticle,
-                            Url = new Uri(qnaPairEntity?.RedirectionUrl),
+                            new AdaptiveTextBlock
+                            {
+                                Text = qnaPairEntity.Title?.Trim(),
+                                Size = AdaptiveTextSize.Large,
+                                Weight = AdaptiveTextWeight.Bolder,
+                                Wrap = true,
+                            },
+                            new AdaptiveTextBlock
+                            {
+                                Text = qnaPairEntity.Subtitle?.Trim(),
+                                Size = AdaptiveTextSize.Medium,
+                                Wrap = true,
+                            },
+                            new AdaptiveImage
+                            {
+                                Url = !string.IsNullOrEmpty(qnaPairEntity.ImageUrl?.Trim()) ? new Uri(qnaPairEntity.ImageUrl?.Trim()) : default,
+                                Size = AdaptiveImageSize.Auto,
+                                Style = AdaptiveImageStyle.Default,
+                                AltText = qnaPairEntity.Title?.Trim(),
+                            },
+                            new AdaptiveTextBlock
+                            {
+                                Text = qnaPairEntity.Description?.Trim(),
+                                Size = AdaptiveTextSize.Small,
+                                Wrap = true,
+                            },
+                        },
+                    };
+
+                    card.Body.Add(container);
+
+                    if (!string.IsNullOrEmpty(qnaPairEntity.RedirectionUrl))
+                    {
+                        card.Actions.Add(
+                            new AdaptiveOpenUrlAction
+                            {
+                                Title = Strings.OpenArticle,
+                                Url = new Uri(qnaPairEntity.RedirectionUrl),
+                            });
+                    }
+
+                    card.Actions.Add(
+                        new AdaptiveSubmitAction()
+                        {
+                            Title = Strings.BackButtonText,
+                            Data = new AdaptiveSubmitActionData
+                            {
+                                BackButtonCommandText = Strings.BackButtonCommandText,
+                                UpdatedQuestion = qnaPairEntity.UpdatedQuestion?.Trim(),
+                                OriginalQuestion = qnaPairEntity.OriginalQuestion?.Trim(),
+                                Description = qnaPairEntity.Description?.Trim(),
+                                Title = qnaPairEntity.Title?.Trim(),
+                                Subtitle = qnaPairEntity.Subtitle?.Trim(),
+                                ImageUrl = qnaPairEntity.ImageUrl,
+                                RedirectionUrl = qnaPairEntity.RedirectionUrl,
+                                UpdateHistoryData = qnaPairEntity.UpdateHistoryData,
+                            },
                         });
                 }
-
-                card.Actions.Add(
-                    new AdaptiveSubmitAction()
+                else
+                {
+                    var container = new AdaptiveContainer()
                     {
-                        Title = Strings.BackButtonText,
-                        Data = new AdaptiveSubmitActionData
+                        Items = new List<AdaptiveElement>
                         {
-                            BackButtonCommandText = Strings.BackButtonCommandText,
-                            UpdatedQuestion = qnaPairEntity?.UpdatedQuestion?.Trim(),
-                            OriginalQuestion = qnaPairEntity?.OriginalQuestion?.Trim(),
-                            Description = qnaPairEntity?.Description?.Trim(),
-                            Title = qnaPairEntity?.Title?.Trim(),
-                            Subtitle = qnaPairEntity?.Subtitle?.Trim(),
-                            ImageUrl = qnaPairEntity?.ImageUrl,
-                            RedirectionUrl = qnaPairEntity?.RedirectionUrl,
-                            UpdateHistoryData = qnaPairEntity?.UpdateHistoryData,
+                            new AdaptiveTextBlock
+                            {
+                                Size = AdaptiveTextSize.Default,
+                                Wrap = true,
+                                Text = string.Format(CultureInfo.InvariantCulture, Strings.QuestionTitle, qnaPairEntity.UpdatedQuestion?.Trim()),
+                            },
+                            new AdaptiveTextBlock
+                            {
+                                Size = AdaptiveTextSize.Default,
+                                Wrap = true,
+                                Text = string.IsNullOrWhiteSpace(qnaPairEntity.Description)
+                                ? qnaPairEntity.Description
+                                : $"{Strings.AnswerTitle} {answer}",
+                            },
+                            new AdaptiveTextBlock
+                            {
+                                Wrap = true,
+                                Text = qnaPairEntity.Title?.Trim(),
+                                Size = AdaptiveTextSize.Large,
+                                Weight = AdaptiveTextWeight.Bolder,
+                            },
+                            new AdaptiveTextBlock
+                            {
+                                Wrap = true,
+                                Text = qnaPairEntity.Subtitle?.Trim(),
+                                Size = AdaptiveTextSize.Medium,
+                            },
+                            new AdaptiveImage
+                            {
+                                Url = !string.IsNullOrEmpty(qnaPairEntity.ImageUrl?.Trim()) ? new Uri(qnaPairEntity.ImageUrl?.Trim()) : default,
+                                Size = AdaptiveImageSize.Auto,
+                                Style = AdaptiveImageStyle.Default,
+                                AltText = qnaPairEntity.Title?.Trim(),
+                            },
+                            new AdaptiveTextBlock
+                            {
+                                Text = qnaPairEntity.Description?.Trim(),
+                                Size = AdaptiveTextSize.Small,
+                                Wrap = true,
+                            },
+                            new AdaptiveTextBlock
+                            {
+                                Size = AdaptiveTextSize.Small,
+                                Wrap = true,
+                                Text = actionPerformed + " " + editedBy,
+                            },
                         },
-                    });
-            }
-            else
-            {
-                var container = new AdaptiveContainer()
-                {
-                    Items = new List<AdaptiveElement>
-                {
-                        new AdaptiveTextBlock
-                        {
-                            Size = AdaptiveTextSize.Default,
-                            Wrap = true,
-                            Text = string.Format(CultureInfo.InvariantCulture, Strings.QuestionTitle, qnaPairEntity?.UpdatedQuestion?.Trim()),
-                        },
-                        new AdaptiveTextBlock
-                        {
-                            Size = AdaptiveTextSize.Default,
-                            Wrap = true,
-                            Text = string.IsNullOrWhiteSpace(qnaPairEntity?.Description)
-                            ? qnaPairEntity?.Description
-                            : $"{Strings.AnswerTitle} {answer}",
-                        },
-                        new AdaptiveTextBlock
-                        {
-                            Wrap = true,
-                            Text = qnaPairEntity?.Title?.Trim(),
-                            Size = AdaptiveTextSize.Large,
-                            Weight = AdaptiveTextWeight.Bolder,
-                        },
-                        new AdaptiveTextBlock
-                        {
-                            Text = qnaPairEntity?.Subtitle?.Trim(),
-                            Size = AdaptiveTextSize.Medium,
-                        },
-                        new AdaptiveImage
-                        {
-                            Url = !string.IsNullOrEmpty(qnaPairEntity?.ImageUrl?.Trim()) ? new Uri(qnaPairEntity?.ImageUrl?.Trim()) : default,
-                            Size = AdaptiveImageSize.Auto,
-                            Style = AdaptiveImageStyle.Default,
-                            AltText = qnaPairEntity?.Title?.Trim(),
-                        },
-                        new AdaptiveTextBlock
-                        {
-                            Text = qnaPairEntity?.Description?.Trim(),
-                            Size = AdaptiveTextSize.Small,
-                            Wrap = true,
-                        },
-                        new AdaptiveTextBlock
+                    };
+
+                    card.Body.Add(container);
+
+                    if (qnaPairEntity.IsTestKnowledgeBase)
+                    {
+                        container.Items.Add(new AdaptiveTextBlock
                         {
                             Size = AdaptiveTextSize.Small,
                             Wrap = true,
-                            Text = actionPerformed + " " + editedBy,
-                        },
-                },
-                };
+                            Text = $"**{Strings.WaitMessageAnswer}**",
+                        });
+                    }
 
-                card.Body.Add(container);
-
-                if (qnaPairEntity.IsTestKnowledgeBase)
-                {
-                    container.Items.Add(new AdaptiveTextBlock
+                    string actionData = string.Empty;
+                    if (string.IsNullOrEmpty(qnaPairEntity.UpdateHistoryData))
                     {
-                        Size = AdaptiveTextSize.Small,
-                        Wrap = true,
-                        Text = $"**{Strings.WaitMessageAnswer}**",
-                    });
-                }
+                        actionData = string.Format(
+                            "{0}${1}|{2}|{3}",
+                            Strings.UpdateHistoryHeadersText,
+                            editedBy,
+                            actionPerformed == Strings.EntryCreatedByText ? AddAction : EditAction,
+                            DateTime.UtcNow.ToString(Rfc3339DateTimeFormat, CultureInfo.InvariantCulture));
+                    }
+                    else
+                    {
+                        qnaPairEntity.UpdateHistoryData = GetLast10HistoryRecord(qnaPairEntity.UpdateHistoryData);
+                        actionData = string.Format(
+                            "{0}${1}|{2}|{3}",
+                            qnaPairEntity.UpdateHistoryData,
+                            editedBy,
+                            actionPerformed == Strings.EntryCreatedByText ? AddAction : EditAction,
+                            DateTime.UtcNow.ToString(Rfc3339DateTimeFormat, CultureInfo.InvariantCulture));
+                    }
 
-                string actionData = string.IsNullOrEmpty(qnaPairEntity?.UpdateHistoryData)
-                    ? string.Format("{0}${1}|{2}|{3}", Strings.UpdateHistoryHeadersText, editedBy, actionPerformed == Strings.EntryCreatedByText ? AddAction : EditAction, DateTime.UtcNow.ToString(DateTimeFormat, CultureInfo.InvariantCulture))
-                    : string.Format("{0}${1}|{2}|{3}", qnaPairEntity?.UpdateHistoryData, editedBy, actionPerformed == Strings.EntryCreatedByText ? AddAction : EditAction, DateTime.UtcNow.ToString(DateTimeFormat, CultureInfo.InvariantCulture));
-
-                card.Actions.Add(
-                  new AdaptiveSubmitAction()
-                  {
-                      Title = Strings.EditButtonText,
-                      Data = new AdaptiveSubmitActionData
+                    card.Actions.Add(
+                      new AdaptiveSubmitAction()
                       {
-                          MsTeamsCardAction = new CardAction
+                          Title = Strings.EditButtonText,
+                          Data = new AdaptiveSubmitActionData
                           {
-                              Type = CardActionType,
+                              MsTeams = new CardAction
+                              {
+                                  Type = CardActionType,
+                              },
+                              OriginalQuestion = qnaPairEntity.UpdatedQuestion?.Trim(),
+                              UpdatedQuestion = qnaPairEntity.UpdatedQuestion?.Trim(),
+                              Description = qnaPairEntity.Description?.Trim(),
+                              Title = qnaPairEntity.Title?.Trim(),
+                              Subtitle = qnaPairEntity.Subtitle?.Trim(),
+                              ImageUrl = qnaPairEntity.ImageUrl,
+                              RedirectionUrl = qnaPairEntity.RedirectionUrl,
+                              UpdateHistoryData = actionData,
                           },
-                          OriginalQuestion = qnaPairEntity?.UpdatedQuestion?.Trim(),
-                          UpdatedQuestion = qnaPairEntity?.UpdatedQuestion?.Trim(),
-                          Description = qnaPairEntity?.Description?.Trim(),
-                          Title = qnaPairEntity?.Title?.Trim(),
-                          Subtitle = qnaPairEntity?.Subtitle?.Trim(),
-                          ImageUrl = qnaPairEntity?.ImageUrl,
-                          RedirectionUrl = qnaPairEntity?.RedirectionUrl,
-                          UpdateHistoryData = actionData,
-                      },
-                  });
+                      });
 
-                card.Actions.Add(
-                    new AdaptiveShowCardAction()
-                    {
-                        Title = Strings.DeleteButtonText,
-                        Card = DeleteEntry(qnaPairEntity?.UpdatedQuestion?.Trim(), actionData),
-                    });
+                    card.Actions.Add(
+                        new AdaptiveShowCardAction()
+                        {
+                            Title = Strings.DeleteButtonText,
+                            Card = DeleteEntry(qnaPairEntity.UpdatedQuestion?.Trim(), actionData),
+                        });
 
-                card.Actions.Add(
-                   new AdaptiveShowCardAction()
-                   {
-                       Title = Strings.UpdateHistoryButtonText,
-                       Card = UpdateHistory(actionData),
-                   });
+                    card.Actions.Add(
+                       new AdaptiveShowCardAction()
+                       {
+                           Title = Strings.UpdateHistoryButtonText,
+                           Card = UpdateHistory(actionData),
+                       });
+                }
             }
 
             var adaptiveCardAttachment = new Attachment()
@@ -907,7 +959,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         Url = !string.IsNullOrEmpty(answerModel?.ImageUrl?.Trim()) ? new Uri(answerModel?.ImageUrl?.Trim()) : default,
                         Size = AdaptiveImageSize.Auto,
                         Style = AdaptiveImageStyle.Default,
-                         AltText = answerModel?.Title,
+                        AltText = answerModel?.Title,
                     },
                     new AdaptiveTextBlock
                     {
@@ -978,41 +1030,45 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         public static Attachment PreviewNormalCard(AdaptiveSubmitActionData qnaPairEntity)
         {
             AdaptiveCard card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0));
-            var container = new AdaptiveContainer()
+
+            if (qnaPairEntity != null)
             {
-                Items = new List<AdaptiveElement>
+                var container = new AdaptiveContainer()
+                {
+                    Items = new List<AdaptiveElement>
                     {
                         new AdaptiveTextBlock
                         {
                             Size = AdaptiveTextSize.Default,
                             Wrap = true,
-                            Text = qnaPairEntity?.UpdatedQuestion?.Trim(),
+                            Text = qnaPairEntity.UpdatedQuestion?.Trim(),
                         },
                         new AdaptiveTextBlock
                         {
                             Size = AdaptiveTextSize.Default,
                             Wrap = true,
-                            Text = qnaPairEntity?.Description?.Trim(),
+                            Text = qnaPairEntity.Description?.Trim(),
                         },
                     },
-            };
-            card.Body.Add(container);
+                };
+                card.Body.Add(container);
 
-            card.Actions.Add(
-                    new AdaptiveSubmitAction()
-                    {
-                        Title = Strings.BackButtonText,
-                        Data = new AdaptiveSubmitActionData
+                card.Actions.Add(
+                        new AdaptiveSubmitAction()
                         {
-                            BackButtonCommandText = Strings.BackButtonCommandText,
-                            UpdatedQuestion = qnaPairEntity?.UpdatedQuestion?.Trim(),
-                            OriginalQuestion = qnaPairEntity?.OriginalQuestion?.Trim(),
-                            Description = qnaPairEntity?.Description?.Trim(),
-                            Subtitle = qnaPairEntity?.Subtitle?.Trim(),
-                            RedirectionUrl = qnaPairEntity?.RedirectionUrl,
-                            UpdateHistoryData = qnaPairEntity?.UpdateHistoryData?.Trim(),
-                        },
-                    });
+                            Title = Strings.BackButtonText,
+                            Data = new AdaptiveSubmitActionData
+                            {
+                                BackButtonCommandText = Strings.BackButtonCommandText,
+                                UpdatedQuestion = qnaPairEntity.UpdatedQuestion?.Trim(),
+                                OriginalQuestion = qnaPairEntity.OriginalQuestion?.Trim(),
+                                Description = qnaPairEntity.Description?.Trim(),
+                                Subtitle = qnaPairEntity.Subtitle?.Trim(),
+                                RedirectionUrl = qnaPairEntity.RedirectionUrl,
+                                UpdateHistoryData = qnaPairEntity.UpdateHistoryData?.Trim(),
+                            },
+                        });
+            }
 
             var adaptiveCardAttachment = new Attachment()
             {
@@ -1047,7 +1103,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 if (userActions[i].Length != 0)
                 {
                     string[] splitValue = userActions[i].Split("|");
-                    var timeStampData = splitValue[2] == UpdateHistoryDateHeaderText ? UpdateHistoryDateHeaderText : string.Format(CultureInfo.InvariantCulture, DateFormat, splitValue[2], splitValue[2]);
+                    var timeStampData = splitValue[2] == Strings.UpdateHistoryDateHeaderText ? Strings.UpdateHistoryDateHeaderText : string.Format(CultureInfo.InvariantCulture, AdaptiveCardShortDateTimeFormat, splitValue[2], splitValue[2]);
                     userName.Items = new List<AdaptiveElement>
                     {
                         new AdaptiveTextBlock
@@ -1087,7 +1143,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 }
             }
 
-            card.Body = updatedHistoryData;
+            // Get top 10 records including header values.
+            card.Body = updatedHistoryData.Count > 11 ? updatedHistoryData.Take(11).ToList() : updatedHistoryData;
             return card;
         }
 
@@ -1123,42 +1180,45 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         ///  Construct the card with validation errors while previewing it.
         /// </summary>
         /// <param name = "qnaPairEntity" >Qna pair entity that contains question and answer information.</param>
+        /// <param name="appBaseUri">Application base uri.</param>
         /// <returns>Preview card attachment.</returns>
-        public static Attachment PreviewCardResponse(AdaptiveSubmitActionData qnaPairEntity)
+        public static Attachment PreviewCardResponse(AdaptiveSubmitActionData qnaPairEntity, string appBaseUri)
         {
             Attachment adaptiveCardEditor = new Attachment();
 
             if (Validators.IsQnaFieldsNullOrEmpty(qnaPairEntity))
             {
                 qnaPairEntity.IsQnaNullOrEmpty = true;
-                adaptiveCardEditor = AddQuestionForm(qnaPairEntity);
+                adaptiveCardEditor = AddQuestionForm(qnaPairEntity, appBaseUri);
             }
             else if (Validators.IsContainsHtml(qnaPairEntity))
             {
-                // Show error if user has added HTML tags in Question, ImageURL, RedirectURL, description fields:
+                // Show error if user has added HTML tags in Question, ImageURL, RedirectURL, description fields.
                 qnaPairEntity.IsHTMLPresent = true;
-                adaptiveCardEditor = AddQuestionForm(qnaPairEntity);
+                adaptiveCardEditor = AddQuestionForm(qnaPairEntity, appBaseUri);
             }
-            else if (!string.IsNullOrEmpty(qnaPairEntity.UpdatedQuestion?.Trim()) && !string.IsNullOrEmpty(qnaPairEntity.Description?.Trim()) && string.IsNullOrEmpty(qnaPairEntity.Title?.Trim()) && string.IsNullOrEmpty(qnaPairEntity.ImageUrl?.Trim()) && string.IsNullOrEmpty(qnaPairEntity.Subtitle?.Trim()) && string.IsNullOrEmpty(qnaPairEntity.RedirectionUrl?.Trim()))
+            else if (!string.IsNullOrEmpty(qnaPairEntity.UpdatedQuestion?.Trim())
+                && !string.IsNullOrEmpty(qnaPairEntity.Description?.Trim())
+                && string.IsNullOrEmpty(qnaPairEntity.Title?.Trim())
+                && string.IsNullOrEmpty(qnaPairEntity.ImageUrl?.Trim())
+                && string.IsNullOrEmpty(qnaPairEntity.Subtitle?.Trim())
+                && string.IsNullOrEmpty(qnaPairEntity.RedirectionUrl?.Trim()))
             {
                 // Show normal card if only question & answer fields are filled.
                 adaptiveCardEditor = PreviewNormalCard(qnaPairEntity);
             }
-            else if (!string.IsNullOrEmpty(qnaPairEntity.ImageUrl) && Validators.IsImageUrlInvalid(qnaPairEntity))
+            else if (!string.IsNullOrEmpty(qnaPairEntity.ImageUrl)
+                && Validators.IsImageUrlInvalid(qnaPairEntity))
             {
                 qnaPairEntity.IsInvalidImageUrl = true;
-                adaptiveCardEditor = AddQuestionForm(qnaPairEntity);
+                adaptiveCardEditor = AddQuestionForm(qnaPairEntity, appBaseUri);
             }
-            else if (!string.IsNullOrEmpty(qnaPairEntity.RedirectionUrl?.Trim()) && (!Regex.IsMatch(qnaPairEntity.RedirectionUrl?.Trim(), Constants.ValidRedirectUrlPattern) || Regex.IsMatch(qnaPairEntity.RedirectionUrl?.Trim(), Constants.InvalidRedirectUrlDomainPattern)))
+            else if (!string.IsNullOrEmpty(qnaPairEntity.RedirectionUrl?.Trim())
+                && !Regex.IsMatch(qnaPairEntity.RedirectionUrl?.Trim(), Constants.ValidRedirectUrlPattern))
             {
                 // Show error if user has entered invalid Redirect URL.
                 qnaPairEntity.IsInvalidRedirectUrl = true;
-                adaptiveCardEditor = AddQuestionForm(qnaPairEntity);
-            }
-            else if (!string.IsNullOrEmpty(qnaPairEntity.UpdatedQuestion?.Trim()) && !string.IsNullOrEmpty(qnaPairEntity.Description?.Trim()) && string.IsNullOrEmpty(qnaPairEntity.Title?.Trim()) && string.IsNullOrEmpty(qnaPairEntity.ImageUrl?.Trim()) && string.IsNullOrEmpty(qnaPairEntity.Subtitle?.Trim()) && string.IsNullOrEmpty(qnaPairEntity.RedirectionUrl?.Trim()))
-            {
-                // Show normal card if only question & answer fields are filled.
-                adaptiveCardEditor = PreviewNormalCard(qnaPairEntity);
+                adaptiveCardEditor = AddQuestionForm(qnaPairEntity, appBaseUri);
             }
             else
             {
@@ -1167,6 +1227,28 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             }
 
             return adaptiveCardEditor;
+        }
+
+        /// <summary>
+        /// Get the latest 10 update history records.
+        /// </summary>
+        /// <param name="actionsPerformed">action record details in following Name|Action|Date$ format.</param>
+        /// <returns>action record string with latest 10 entries</returns>
+        /// <remarks>method skips the header.</remarks>
+        private static string GetLast10HistoryRecord(string actionsPerformed)
+        {
+            var userActions = actionsPerformed?.Split("$").ToList();
+
+            if (userActions.Count > 10)
+            {
+                // remove header
+                string header = userActions[0];
+                userActions.Remove(header);
+
+                return string.Format("{0}${1}", header, string.Join("$", userActions.TakeLast(10)));
+            }
+
+            return actionsPerformed;
         }
     }
 }

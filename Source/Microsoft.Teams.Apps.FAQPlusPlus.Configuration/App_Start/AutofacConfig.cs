@@ -28,7 +28,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration
 
             builder.Register(c => new ConfigurationDataProvider(
                  ConfigurationManager.AppSettings["StorageConnectionString"]))
-                .As<ConfigurationDataProvider>()
+                .As<IConfigurationDataProvider>()
                 .SingleInstance();
 
             var qnaMakerClient = new QnAMakerClient(

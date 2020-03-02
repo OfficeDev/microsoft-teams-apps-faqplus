@@ -15,6 +15,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
     /// </summary>
     public class KnowledgeBaseSearchService : IKnowledgeBaseSearchService
     {
+        /// <summary>
+        /// Search index name for knowledge base search service.
+        /// </summary>
+        private const string KnowledgeBaseSearchIndexName = "teams-faqplus-index";
+
+        /// <summary>
+        /// Data source name for knowledge base search service.
+        /// </summary>
+        private const string KnowledgeBaseDataSourceName = "faqplus-datasource";
+
         private const int TopCount = 50;
         private readonly string indexName;
         private readonly string dataSourceName;
@@ -34,8 +44,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         /// <param name="storageConnectionString">Storage connection string.</param>
         public KnowledgeBaseSearchService(string searchServiceName, string searchServiceQueryApiKey, string searchServiceAdminApiKey, string storageConnectionString)
         {
-            this.indexName = "teams-faqplus-index";
-            this.dataSourceName = "faqplus-datasource";
+            this.indexName = KnowledgeBaseSearchIndexName;
+            this.dataSourceName = KnowledgeBaseDataSourceName;
             this.searchServiceName = searchServiceName;
             this.searchServiceQueryApiKey = searchServiceQueryApiKey;
             this.searchServiceAdminApiKey = searchServiceAdminApiKey;
