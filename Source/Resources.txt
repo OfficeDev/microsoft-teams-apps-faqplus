@@ -1,3 +1,0 @@
-App Service (Contains config app)
-
-Storage Account (for storing teams id info)

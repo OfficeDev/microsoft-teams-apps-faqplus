@@ -274,6 +274,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Models\KnowledgeBaseViewModel.cs" />
     <Compile Include="Models\HelpTabViewModel.cs" />
     <Compile Include="Models\TeamViewModel.cs" />
@@ -287,11 +288,11 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include=".gitignore" />
     <Content Include="Content\customizableStyle.css" />
     <Content Include="Content\spinner.css" />
     <Content Include="Global.asax" />
     <Content Include="libman.json" />
-    <Content Include="lib\bootstrap\dist\fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -323,10 +324,6 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Connected Services\Application Insights\ConnectedService.json" />
-    <Content Include="lib\bootstrap\dist\fonts\glyphicons-halflings-regular.eot" />
-    <Content Include="lib\bootstrap\dist\fonts\glyphicons-halflings-regular.ttf" />
-    <Content Include="lib\bootstrap\dist\fonts\glyphicons-halflings-regular.woff" />
-    <Content Include="lib\bootstrap\dist\fonts\glyphicons-halflings-regular.woff2" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
