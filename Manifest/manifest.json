@@ -1,0 +1,169 @@
+{
+  "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.5/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.5",
+  "version": "1.0.0",
+  "id": "165dc594-e36a-488f-a8ba-20fcebacad86",
+  "packageName": "com.microsoft.teams.faqplus.experts",
+  "developer": {
+    "name": "Kat Hopkins",
+    "websiteUrl": "https://kahopkin.sharepoint.com/",
+    "privacyUrl": "https://kahopkin.sharepoint.com/SitePages/PrivacyStatement.aspx",
+    "termsOfUseUrl": "https://kahopkin.sharepoint.com/SitePages/ServicesAgreement.aspx"
+  },
+  "icons": {
+    "color": "color.png",
+    "outline": "outline.png"
+  },
+  "name": {
+    "short": "ISV Checklist FAQ (Experts)"
+  },
+  "description": {
+    "short": "A ISV Checklist FAQ+[V2] bot that answers questions and connects you to experts.",
+    "full": "A ISV Checklist FAQ+[V2] question and answer bot that answers commonly asked questions. If it can't answer, it will put you in touch with an expert as soon as they are available."
+  },
+  "accentColor": "#64A2CC",
+  "bots": [
+    {
+      "botId": "cfd9ff41-a7c2-4a77-85ea-93df8a1ae8d1",
+      "scopes": [
+        "personal",
+        "team"
+      ],
+      "commandLists": [
+        {
+          "scopes": [
+            "personal"
+          ],
+          "commands": [
+            {
+              "title": "SME - Take a tour",
+              "description": "SME - Tour of key features"
+            },
+            {
+              "title": "Ask an SME",
+              "description": "Connect with an SME expert"
+            },
+            {
+              "title": "Share feedback",
+              "description": "Send feedback"
+            }
+          ]
+        }
+      ],
+      "supportsFiles": false,
+      "isNotificationOnly": false
+    }
+  ],
+  "staticTabs": [
+    {
+      "entityId": "help",
+      "name": "Help",
+      "contentUrl": "https://ISVChecklistFaqBot.azurewebsites.net/help?theme={theme}",
+      "scopes": [
+        "personal"
+      ]
+    }
+  ],
+  "composeExtensions": [
+    {
+      "botId": "cfd9ff41-a7c2-4a77-85ea-93df8a1ae8d1",
+      "canUpdateConfiguration": false,
+      "commands": [
+        {
+          "id": "recents",
+          "type": "query",
+          "title": "Recent",
+          "description": "Search recent Checklist QNA",
+          "parameters": [
+            {
+              "name": "searchText",
+              "title": "Search",
+              "description": "Search Checklist QNA"
+            }
+          ],
+          "context": [
+            "compose"
+          ],
+          "initialRun": true
+        },
+        {
+          "id": "openrequests",
+          "type": "query",
+          "title": "Unassigned",
+          "description": "Search unassigned requests not yet assigned to an expert",
+          "parameters": [
+            {
+              "name": "searchText",
+              "title": "Search",
+              "description": "Search Checklist QNA"
+            }
+          ],
+          "context": [
+            "compose"
+          ],
+          "initialRun": true
+        },
+        {
+          "id": "assignedrequests",
+          "type": "query",
+          "title": "Assigned",
+          "description": "Search Checklist QNAs assigned to an expert",
+          "parameters": [
+            {
+              "name": "searchText",
+              "title": "Search",
+              "description": "Search Checklist QNA"
+            }
+          ],
+          "context": [
+            "compose"
+          ],
+          "initialRun": true
+        },
+        {
+          "id": "kbquestions",
+          "type": "query",
+          "title": "ISV Knowledge base",
+          "description": "Search recent requests",
+          "parameters": [
+            {
+              "name": "searchText",
+              "title": "Search",
+              "description": "Search KB QnA pairs"
+            }
+          ],
+          "context": [
+            "compose"
+          ],
+          "initialRun": true
+        },
+        {
+          "id": "addquestion",
+          "type": "action",
+          "title": "Add new question",
+          "description": "Add a new QNA pair",
+          "initialRun": true,
+          "fetchTask": true,
+          "context": [
+            "compose",
+            "message"
+          ],
+          "parameters": [
+            {
+              "name": "addquestion",
+              "title": "Add a question",
+              "description": "Add a new qna pair"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "permissions": [
+    "identity",
+    "messageTeamMembers"
+  ],
+  "validDomains": [
+    "ISVChecklistFaqBot.azurewebsites.net"
+  ]
+}
