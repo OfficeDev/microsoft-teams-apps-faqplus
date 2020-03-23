@@ -5,17 +5,17 @@
   "id": "165dc594-e36a-488f-a8ba-20fcebacad86",
   "packageName": "com.microsoft.teams.faqplus.experts",
   "developer": {
-    "name": "<<companyName>>",
-    "websiteUrl": "<<websiteUrl>>",
-    "privacyUrl": "<<privacyUrl>>",
-    "termsOfUseUrl": "<<termsOfUseUrl>>"
+    "name": "Kat Hopkins",
+    "websiteUrl": "https://m365x388302.sharepoint.com/",
+    "privacyUrl": "https://m365x388302.sharepoint.com/SitePages/PrivacyStatement.aspx",
+    "termsOfUseUrl": "https://m365x388302.sharepoint.com/SitePages/ServicesAgreement.aspx"
   },
   "icons": {
     "color": "color.png",
     "outline": "outline.png"
   },
   "name": {
-    "short": "FAQ Plus [V2] (Experts Team)"
+    "short": "ISV FAQ+[V2] (Experts Team)"
   },
   "description": {
     "short": "A friendly FAQ bot that answers questions and connects you to experts.",
@@ -24,7 +24,7 @@
   "accentColor": "#64A2CC",
   "bots": [
     {
-      "botId": "<<botId>>",
+      "botId": "37aa651b-ac8a-4b7f-9157-20de018f3245",
       "scopes": [
         "personal",
         "team"
@@ -58,7 +58,7 @@
     {
       "entityId": "help",
       "name": "Help",
-      "contentUrl": "https://<<appDomain>>/help?theme={theme}",
+      "contentUrl": "https://ISVFAQBase.azurewebsites.net/help?theme={theme}",
       "scopes": [
         "personal"
       ]
@@ -66,7 +66,7 @@
   ],
   "composeExtensions": [
     {
-      "botId": "<<botId>>",
+      "botId": "37aa651b-ac8a-4b7f-9157-20de018f3245",
       "canUpdateConfiguration": false,
       "commands": [
         {
@@ -164,6 +164,6 @@
     "messageTeamMembers"
   ],
   "validDomains": [
-    "<<appDomain>>"
+    "IsvChecklistFaq.azurewebsites.net"
   ]
 }

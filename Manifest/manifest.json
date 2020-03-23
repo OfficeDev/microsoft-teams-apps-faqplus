@@ -2,29 +2,29 @@
   "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.5/MicrosoftTeams.schema.json",
   "manifestVersion": "1.5",
   "version": "1.0.0",
-  "id": "165dc594-e36a-488f-a8ba-20fcebacad86",
-  "packageName": "com.microsoft.teams.faqplus.experts",
+  "id": "aba30cfc-05df-4002-b956-a70996b12a54",
+  "packageName": "com.microsoft.teams.faqplus",
   "developer": {
     "name": "Kat Hopkins",
-    "websiteUrl": "https://kahopkin.sharepoint.com/",
-    "privacyUrl": "https://kahopkin.sharepoint.com/SitePages/PrivacyStatement.aspx",
-    "termsOfUseUrl": "https://kahopkin.sharepoint.com/SitePages/ServicesAgreement.aspx"
+    "websiteUrl": "https://m365x388302.sharepoint.com/",
+    "privacyUrl": "https://m365x388302.sharepoint.com/SitePages/PrivacyStatement.aspx",
+    "termsOfUseUrl": "https://m365x388302.sharepoint.com/SitePages/ServicesAgreement.aspx"
   },
   "icons": {
     "color": "color.png",
     "outline": "outline.png"
   },
   "name": {
-    "short": "ISV Checklist FAQ (Experts)"
+    "short": "EndUser ISV FAQ+[V2]"
   },
   "description": {
-    "short": "A ISV Checklist FAQ+[V2] bot that answers questions and connects you to experts.",
-    "full": "A ISV Checklist FAQ+[V2] question and answer bot that answers commonly asked questions. If it can't answer, it will put you in touch with an expert as soon as they are available."
+    "short": "EndUser ISV FAQ bot that answers questions and connects to experts",
+    "full": "EndUser ISV question and answer bot that answers commonly asked questions. If it can't answer, it will put you in touch with an expert as soon as they are available."
   },
   "accentColor": "#64A2CC",
   "bots": [
     {
-      "botId": "cfd9ff41-a7c2-4a77-85ea-93df8a1ae8d1",
+      "botId": "37aa651b-ac8a-4b7f-9157-20de018f3245",
       "scopes": [
         "personal",
         "team"
@@ -36,12 +36,12 @@
           ],
           "commands": [
             {
-              "title": "SME - Take a tour",
-              "description": "SME - Tour of key features"
+              "title": "Take a tour",
+              "description": "Tour of key features"
             },
             {
-              "title": "Ask an SME",
-              "description": "Connect with an SME expert"
+              "title": "Ask an expert",
+              "description": "Connect with an expert"
             },
             {
               "title": "Share feedback",
@@ -58,104 +58,9 @@
     {
       "entityId": "help",
       "name": "Help",
-      "contentUrl": "https://ISVChecklistFaqBot.azurewebsites.net/help?theme={theme}",
+      "contentUrl": "https://IsvChecklistFaq.azurewebsites.net/help?theme={theme}",
       "scopes": [
         "personal"
-      ]
-    }
-  ],
-  "composeExtensions": [
-    {
-      "botId": "cfd9ff41-a7c2-4a77-85ea-93df8a1ae8d1",
-      "canUpdateConfiguration": false,
-      "commands": [
-        {
-          "id": "recents",
-          "type": "query",
-          "title": "Recent",
-          "description": "Search recent Checklist QNA",
-          "parameters": [
-            {
-              "name": "searchText",
-              "title": "Search",
-              "description": "Search Checklist QNA"
-            }
-          ],
-          "context": [
-            "compose"
-          ],
-          "initialRun": true
-        },
-        {
-          "id": "openrequests",
-          "type": "query",
-          "title": "Unassigned",
-          "description": "Search unassigned requests not yet assigned to an expert",
-          "parameters": [
-            {
-              "name": "searchText",
-              "title": "Search",
-              "description": "Search Checklist QNA"
-            }
-          ],
-          "context": [
-            "compose"
-          ],
-          "initialRun": true
-        },
-        {
-          "id": "assignedrequests",
-          "type": "query",
-          "title": "Assigned",
-          "description": "Search Checklist QNAs assigned to an expert",
-          "parameters": [
-            {
-              "name": "searchText",
-              "title": "Search",
-              "description": "Search Checklist QNA"
-            }
-          ],
-          "context": [
-            "compose"
-          ],
-          "initialRun": true
-        },
-        {
-          "id": "kbquestions",
-          "type": "query",
-          "title": "ISV Knowledge base",
-          "description": "Search recent requests",
-          "parameters": [
-            {
-              "name": "searchText",
-              "title": "Search",
-              "description": "Search KB QnA pairs"
-            }
-          ],
-          "context": [
-            "compose"
-          ],
-          "initialRun": true
-        },
-        {
-          "id": "addquestion",
-          "type": "action",
-          "title": "Add new question",
-          "description": "Add a new QNA pair",
-          "initialRun": true,
-          "fetchTask": true,
-          "context": [
-            "compose",
-            "message"
-          ],
-          "parameters": [
-            {
-              "name": "addquestion",
-              "title": "Add a question",
-              "description": "Add a new qna pair"
-            }
-          ]
-        }
       ]
     }
   ],
@@ -164,6 +69,6 @@
     "messageTeamMembers"
   ],
   "validDomains": [
-    "ISVChecklistFaqBot.azurewebsites.net"
+    "IsvChecklistFaq.azurewebsites.net"
   ]
 }
