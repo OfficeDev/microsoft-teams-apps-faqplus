@@ -89,7 +89,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         private readonly string appBaseUri;
         private readonly IKnowledgeBaseSearchService knowledgeBaseSearchService;
         private readonly ILogger<FaqPlusPlusBot> logger;
-        private IQnaServiceProvider qnaServiceProvider;
+        private readonly IQnaServiceProvider qnaServiceProvider;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FaqPlusPlusBot"/> class.
@@ -1067,11 +1067,19 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// </summary>
         /// <param name="turnContext">Context object containing information cached for a single turn of conversation with a user.</param>
         /// <returns>A task that represents the work queued to execute.</returns>
-        private Task SendTypingIndicatorAsync(ITurnContext turnContext)
+        private async Task SendTypingIndicatorAsync(ITurnContext turnContext)
         {
-            var typingActivity = turnContext.Activity.CreateReply();
-            typingActivity.Type = ActivityTypes.Typing;
-            return turnContext.SendActivityAsync(typingActivity);
+            try
+            {
+                var typingActivity = turnContext.Activity.CreateReply();
+                typingActivity.Type = ActivityTypes.Typing;
+                await turnContext.SendActivityAsync(typingActivity);
+            }
+            catch (Exception ex)
+            {
+                // Do not fail on errors sending the typing indicator
+                this.logger.LogWarning(ex, "Failed to send a typing indicator");
+            }
         }
 
         /// <summary>
