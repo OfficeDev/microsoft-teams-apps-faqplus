@@ -20,6 +20,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
     using Microsoft.Teams.Apps.FAQPlusPlus.Bots;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models.Configuration;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Dialogs;
 
     /// <summary>
     /// This a Startup class for this Bot.
@@ -112,7 +113,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
             services.AddSingleton<ISearchService, SearchService>();
             services.AddSingleton<IMemoryCache, MemoryCache>();
             services.AddTransient(sp => (BotFrameworkAdapter)sp.GetRequiredService<IBotFrameworkHttpAdapter>());
-            services.AddTransient<IBot, FaqPlusPlusBot>();
+
+            services.AddSingleton<IStorage, MemoryStorage>();
+            // You can inspect the UserState
+            services.AddSingleton<UserState>();
+            // You can inspect the ConversationState
+            services.AddSingleton<ConversationState>();
+            services.AddSingleton<QnAMakerMultiturnDialog>();
+            services.AddTransient<IBot, FaqPlusPlusBot<QnAMakerMultiturnDialog>>();
 
             // Create the telemetry middleware(used by the telemetry initializer) to track conversation events
             services.AddSingleton<TelemetryLoggerMiddleware>();

@@ -13,6 +13,7 @@
     <PackageReference Include="Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker" Version="1.1.0" />
     <PackageReference Include="Microsoft.Azure.Search" Version="10.1.0" />
     <PackageReference Include="Microsoft.Bot.Builder.Ai.QnA" Version="4.5.2" />
+    <PackageReference Include="Microsoft.Bot.Builder.Dialogs" Version="4.9.1" />
     <PackageReference Include="Microsoft.Bot.Builder.Integration.AspNet.Core" Version="4.6.3" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.1.2" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="2.1.1" />

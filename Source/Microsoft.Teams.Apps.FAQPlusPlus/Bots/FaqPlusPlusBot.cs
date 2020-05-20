@@ -14,6 +14,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
     using Microsoft.ApplicationInsights.DataContracts;
     using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker.Models;
     using Microsoft.Bot.Builder;
+    using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Builder.Teams;
     using Microsoft.Bot.Connector.Authentication;
     using Microsoft.Bot.Schema;
@@ -35,7 +36,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
     /// <summary>
     /// Class that handles the teams activity of Faq Plus bot and messaging extension.
     /// </summary>
-    public class FaqPlusPlusBot : TeamsActivityHandler
+    /// <typeparam name="T">dialog</typeparam>
+    public class FaqPlusPlusBot<T> : TeamsActivityHandler
+        where T : Dialog
     {
         /// <summary>
         ///  Default access cache expiry in days to check if user using the app is a valid SME or not.
@@ -88,11 +91,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         private readonly int accessCacheExpiryInDays;
         private readonly string appBaseUri;
         private readonly IKnowledgeBaseSearchService knowledgeBaseSearchService;
-        private readonly ILogger<FaqPlusPlusBot> logger;
+        private readonly ILogger<FaqPlusPlusBot<T>> logger;
         private readonly IQnaServiceProvider qnaServiceProvider;
+        private readonly Dialog dialog;
+        private readonly BotState conversationState;
+        private readonly BotState userState;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FaqPlusPlusBot"/> class.
+        /// Initializes a new instance of the <see cref="FaqPlusPlusBot{T}"/> class.
         /// </summary>
         /// <param name="configurationProvider">Configuration Provider.</param>
         /// <param name="microsoftAppCredentials">Microsoft app credentials to use.</param>
@@ -105,6 +111,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <param name="knowledgeBaseSearchService">KnowledgeBaseSearchService dependency injection.</param>
         /// <param name="optionsAccessor">A set of key/value application configuration properties for FaqPlusPlus bot.</param>
         /// <param name="logger">Instance to send logs to the Application Insights service.</param>
+        /// <param name="conversationState">conversation sate cache</param>
+        /// <param name="userState">user state cache</param>
+        /// <param name="dialog">Instance to handle multiturn conversation</param>
         public FaqPlusPlusBot(
             Common.Providers.IConfigurationDataProvider configurationProvider,
             MicrosoftAppCredentials microsoftAppCredentials,
@@ -116,7 +125,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             IMemoryCache memoryCache,
             IKnowledgeBaseSearchService knowledgeBaseSearchService,
             IOptionsMonitor<BotSettings> optionsAccessor,
-            ILogger<FaqPlusPlusBot> logger)
+            ILogger<FaqPlusPlusBot<T>> logger,
+            ConversationState conversationState,
+            UserState userState,
+            T dialog)
         {
             this.configurationProvider = configurationProvider;
             this.microsoftAppCredentials = microsoftAppCredentials;
@@ -139,6 +151,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
             this.appBaseUri = this.options.AppBaseUri;
             this.knowledgeBaseSearchService = knowledgeBaseSearchService;
+            this.dialog = dialog;
+            this.conversationState = conversationState;
+            this.userState = userState;
         }
 
         /// <summary>
@@ -150,7 +165,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <remarks>
         /// Reference link: https://docs.microsoft.com/en-us/dotnet/api/microsoft.bot.builder.activityhandler.onturnasync?view=botbuilder-dotnet-stable.
         /// </remarks>
-        public override Task OnTurnAsync(
+        public override async Task OnTurnAsync(
             ITurnContext turnContext,
             CancellationToken cancellationToken = default)
         {
@@ -159,7 +174,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 if (turnContext != null & !this.IsActivityFromExpectedTenant(turnContext))
                 {
                     this.logger.LogInformation($"Unexpected tenant id {turnContext?.Activity.Conversation.TenantId}", SeverityLevel.Warning);
-                    return Task.CompletedTask;
+                    return;
                 }
 
                 // Get the current culture info to use in resource files
@@ -170,12 +185,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     CultureInfo.CurrentCulture = CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo(locale);
                 }
 
-                return base.OnTurnAsync(turnContext, cancellationToken);
+                await base.OnTurnAsync(turnContext, cancellationToken);
+
+                // Save any state changes that might have occurred during the turn.
+                await this.conversationState.SaveChangesAsync(turnContext, false, cancellationToken);
+                await this.userState.SaveChangesAsync(turnContext, false, cancellationToken);
             }
             catch (Exception ex)
             {
                 this.logger.LogError(ex, "Error at OnTurnAsync()");
-                return base.OnTurnAsync(turnContext, cancellationToken);
+                await base.OnTurnAsync(turnContext, cancellationToken);
             }
         }
 
@@ -763,6 +782,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         {
             if (!string.IsNullOrEmpty(message.ReplyToId) && (message.Value != null) && ((JObject)message.Value).HasValues)
             {
+                if (Validators.IsValidJSON(message.Value.ToString()))
+                {
+                    ResponseCardPayload playload= JsonConvert.DeserializeObject<ResponseCardPayload>(message.Value.ToString());
+                    if (playload != null && playload.IsMultiturn)
+                    {
+                        this.logger.LogInformation("Sending input to QnAMaker");
+                        await this.GetQuestionAnswerReplyAsync(turnContext, message?.Text, cancellationToken).ConfigureAwait(false);
+                        return;
+                    }
+                }
+
                 this.logger.LogInformation("Card submit in 1:1 chat");
                 await this.OnAdaptiveCardSubmitInPersonalChatAsync(message, turnContext, cancellationToken).ConfigureAwait(false);
                 return;
@@ -790,7 +820,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
                 default:
                     this.logger.LogInformation("Sending input to QnAMaker");
-                    await this.GetQuestionAnswerReplyAsync(turnContext, text).ConfigureAwait(false);
+                    await this.GetQuestionAnswerReplyAsync(turnContext, text, cancellationToken).ConfigureAwait(false);
                     break;
             }
         }
@@ -1403,38 +1433,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// </summary>
         /// <param name="turnContext">Context object containing information cached for a single turn of conversation with a user.</param>
         /// <param name="text">Text message.</param>
+        /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
         /// <returns>A task that represents the work queued to execute.</returns>
         private async Task GetQuestionAnswerReplyAsync(
             ITurnContext<IMessageActivity> turnContext,
-            string text)
+            string text,
+            CancellationToken cancellationToken)
         {
             try
             {
-                var queryResult = await this.qnaServiceProvider.GenerateAnswerAsync(question: text, isTestKnowledgeBase: false).ConfigureAwait(false);
-
-                if (queryResult.Answers.First().Id != -1)
-                {
-                    var answerData = queryResult.Answers.First();
-                    AnswerModel answerModel = new AnswerModel();
-
-                    if (Validators.IsValidJSON(answerData.Answer))
-                    {
-                        answerModel = JsonConvert.DeserializeObject<AnswerModel>(answerData.Answer);
-                    }
-
-                    if (!string.IsNullOrEmpty(answerModel?.Title) || !string.IsNullOrEmpty(answerModel?.Subtitle) || !string.IsNullOrEmpty(answerModel?.ImageUrl) || !string.IsNullOrEmpty(answerModel?.RedirectionUrl))
-                    {
-                        await turnContext.SendActivityAsync(MessageFactory.Attachment(MessagingExtensionQnaCard.GetEndUserRichCard(text, answerData))).ConfigureAwait(false);
-                    }
-                    else
-                    {
-                        await turnContext.SendActivityAsync(MessageFactory.Attachment(ResponseCard.GetCard(answerData.Questions.FirstOrDefault(), answerData.Answer, text))).ConfigureAwait(false);
-                    }
-                }
-                else
-                {
-                    await turnContext.SendActivityAsync(MessageFactory.Attachment(UnrecognizedInputCard.GetCard(text))).ConfigureAwait(false);
-                }
+                await this.dialog.RunAsync(turnContext, this.conversationState.CreateProperty<DialogState>(nameof(DialogState)), cancellationToken);
             }
             catch (Exception ex)
             {

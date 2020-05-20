@@ -44,8 +44,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         /// </summary>
         /// <param name="question">Question text.</param>
         /// <param name="isTestKnowledgeBase">Prod or test.</param>
+        /// <param name="context">multiturn context</param>
         /// <returns>QnaSearchResult object as response.</returns>
-        Task<QnASearchResultList> GenerateAnswerAsync(string question, bool isTestKnowledgeBase);
+        Task<QnASearchResultList> GenerateAnswerAsync(string question, bool isTestKnowledgeBase, QueryDTOContext context = null);
 
         /// <summary>
         /// This method is used to update Qna pair in Kb.

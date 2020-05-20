@@ -6,6 +6,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
 {
     using System.Collections.Generic;
     using AdaptiveCards;
+    using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker.Models;
     using Microsoft.Bot.Schema;
     using Microsoft.Teams.Apps.FAQPlusPlus.Bots;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common;
@@ -34,11 +35,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     {
                         Weight = AdaptiveTextWeight.Bolder,
                         Text = Strings.ResponseHeaderText,
-                        Wrap = true,
-                    },
-                    new AdaptiveTextBlock
-                    {
-                        Text = question,
                         Wrap = true,
                     },
                     new AdaptiveTextBlock
@@ -80,6 +76,58 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         },
                     },
                 },
+            };
+
+            return new Attachment
+            {
+                ContentType = AdaptiveCard.ContentType,
+                Content = responseCard,
+            };
+        }
+
+
+        /// <summary>
+        /// Construct the response card - when user asks a question to QnA Maker through bot.
+        /// </summary>
+        /// <param name="question">Knowledgebase question, from QnA Maker service.</param>
+        /// <param name="answer">Knowledgebase answer, from QnA Maker service.</param>
+        /// <param name="promts">multiturn prompts</param>
+        /// <returns>Response card.</returns>
+        public static Attachment GetMultiturnCard(string question, string answer, IList<PromptDTO> promts)
+        {
+            List<AdaptiveAction> actions = new List<AdaptiveAction>();
+
+            foreach (PromptDTO prompt in promts)
+            {
+                actions.Add(new AdaptiveSubmitAction
+                {
+                    Title = prompt.DisplayText,
+                    Data = new ResponseCardPayload
+                    {
+                        MsTeams = new CardAction
+                        {
+                            Type = ActionTypes.MessageBack,
+                            DisplayText = prompt.DisplayText,
+                            Text = prompt.DisplayText,
+                        },
+                        UserQuestion = question,
+                        KnowledgeBaseAnswer = answer,
+                        IsMultiturn = true,
+                    },
+                });
+            }
+
+            AdaptiveCard responseCard = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
+            {
+                Body = new List<AdaptiveElement>
+                {
+                    new AdaptiveTextBlock
+                    {
+                        Text = answer,
+                        Wrap = true,
+                    },
+                },
+                Actions = actions,
             };
 
             return new Attachment
