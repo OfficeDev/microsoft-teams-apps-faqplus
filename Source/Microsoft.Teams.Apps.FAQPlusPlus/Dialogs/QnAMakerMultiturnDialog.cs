@@ -25,6 +25,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Dialogs
         private const string QnAMakerDialogName = "qnamaker-multiturn-dialog";
         private const string CurrentQuery = "currentQuery";
         private const string QnAContextData = "qnaContextData";
+        private const string QnAPromptsData = "qnaPromptsData";
+        private const string PreviousQnAId = "prevQnAId";
 
         private readonly IQnaServiceProvider qnaServiceProvider;
 
@@ -43,7 +45,24 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Dialogs
         }
 
         /// <summary>
-        /// 1
+        /// Get context information cached for signal step
+        /// </summary>
+        /// <param name="dialogContext"> Context object containing information cached for a single step of conversation dialog with a user.</param>
+        /// <returns>A dictionary stored in dialogcontext</returns>
+        private static Dictionary<string, object> GetDialogOptionsValue(DialogContext dialogContext)
+        {
+            var dialogOptions = new Dictionary<string, object>();
+
+            if (dialogContext.ActiveDialog.State["options"] != null)
+            {
+                dialogOptions = dialogContext.ActiveDialog.State["options"] as Dictionary<string, object>;
+            }
+
+            return dialogOptions;
+        }
+
+        /// <summary>
+        /// Call QnA maker
         /// </summary>
         /// <param name="stepContext">Context object containing information cached for a single step of conversation dialog with a user.</param>
         /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
@@ -51,10 +70,27 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Dialogs
         private async Task<DialogTurnResult> CallGenerateAnswerAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             stepContext.Values[CurrentQuery] = stepContext.Context.Activity.Text;
-            QueryDTOContext context = stepContext.Options as QueryDTOContext;
+
+            var dialogOptions = GetDialogOptionsValue(stepContext);
+
+            QueryDTOContext context = dialogOptions.ContainsKey(QnAContextData) ? dialogOptions[QnAContextData] as QueryDTOContext : null;
+
+            int? qnaId = 0;
+            if (dialogOptions.ContainsKey(QnAPromptsData))
+            {
+                var promptsData = dialogOptions[QnAPromptsData] as Dictionary<string, int?>;
+                if (promptsData.TryGetValue(stepContext.Context.Activity.Text.ToLower(), out var currentQnAID))
+                {
+                    qnaId = currentQnAID;
+                }
+            }
 
             // Calling QnAMaker to get response.
-            var response = await this.qnaServiceProvider.GenerateAnswerAsync(question: stepContext.Context.Activity.Text, isTestKnowledgeBase: false, context).ConfigureAwait(false);
+            var response = await this.qnaServiceProvider.GenerateAnswerAsync(question: stepContext.Context.Activity.Text, isTestKnowledgeBase: false, qnaId, context).ConfigureAwait(false);
+
+            // Resetting previous query.
+            dialogOptions[PreviousQnAId] = -1;
+            stepContext.ActiveDialog.State["options"] = dialogOptions;
 
             // move to next step with top qna response.
             return await stepContext.NextAsync(response, cancellationToken).ConfigureAwait(false);
@@ -73,10 +109,23 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Dialogs
                 var answer = response.Answers.First();
                 if (answer.Context != null && answer.Context.Prompts != null && answer.Context.Prompts.Count() > 0)
                 {
-                    var previousContextData = stepContext.Values.ContainsKey(QnAContextData) ? stepContext.Values[QnAContextData] as QueryDTOContext : new QueryDTOContext();
+                    var dialogOptions = GetDialogOptionsValue(stepContext);
+
+                    var previousContextData = dialogOptions.ContainsKey(QnAContextData) ? dialogOptions[QnAContextData] as QueryDTOContext : new QueryDTOContext();
                     previousContextData.PreviousQnaId = answer.Id.ToString();
                     previousContextData.PreviousUserQuery = stepContext.Values[CurrentQuery].ToString();
-                    stepContext.Values[QnAContextData] = previousContextData;
+                    dialogOptions[QnAContextData] = previousContextData;
+
+                    var promptsData = new Dictionary<string, int?>();
+                    foreach (var prompt in answer.Context.Prompts)
+                    {
+                        promptsData[prompt.DisplayText.ToLower()] = prompt.QnaId;
+                    }
+
+                    dialogOptions[QnAPromptsData] = promptsData;
+                    dialogOptions[PreviousQnAId] = answer.Id;
+
+                    stepContext.ActiveDialog.State["options"] = dialogOptions;
 
                     // Get multi-turn prompts card activity.
                     await stepContext.Context.SendActivityAsync(MessageFactory.Attachment(ResponseCard.GetMultiturnCard(answer.Questions.First(), answer.Answer, answer.Context.Prompts))).ConfigureAwait(false);
@@ -99,11 +148,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Dialogs
             var queryResult = stepContext.Result as QnASearchResultList;
             string reply = stepContext.Context.Activity.Text;
 
-            var previousContextData = stepContext.Values.ContainsKey(QnAContextData) ? stepContext.Values[QnAContextData] as QueryDTOContext : new QueryDTOContext();
-            var previousQnAId = Convert.ToInt32(previousContextData.PreviousQnaId);
+
+            var dialogOptions = GetDialogOptionsValue(stepContext);
+            var previousQnAId = Convert.ToInt32(dialogOptions[PreviousQnAId]);
             if (previousQnAId > 0)
             {
-                return await stepContext.ReplaceDialogAsync(QnAMakerDialogName, previousContextData, cancellationToken).ConfigureAwait(false);
+                return await stepContext.ReplaceDialogAsync(QnAMakerDialogName, dialogOptions, cancellationToken).ConfigureAwait(false);
             }
 
             if (queryResult.Answers.First().Id != -1)
