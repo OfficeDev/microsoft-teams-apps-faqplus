@@ -589,4 +589,16 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <value>Date</value>
     <comment>Date header text in update history adaptive card text.</comment>
   </data>
+  <data name="SubjectSelectionHeaderText" xml:space="preserve">
+    <value>In order to narrow down your question, please select a subject:</value>
+    <comment>SubjectSelection header-letting the user know that they need to select a subject.</comment>
+  </data>
+  <data name="SubjectSelectionGreetingText" xml:space="preserve">
+    <value>Hi, I am your lovely Dolphin, I'm glad to help.</value>
+    <comment>SubjectSelection greeting message show before the header</comment>
+  </data>
+  <data name="SubjectSelectionMessageBack" xml:space="preserve">
+    <value>Got it, you can ask me anything about "{0}"</value>
+    <comment>The message send back to user afte they select an subject</comment>
+  </data>
 </root>

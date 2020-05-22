@@ -29,12 +29,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Dialogs
         private const string PreviousQnAId = "prevQnAId";
 
         private readonly IQnaServiceProvider qnaServiceProvider;
+        private readonly BotState conversationState;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="QnAMakerMultiturnDialog"/> class.
         /// </summary>
         /// <param name="qSP">Instantce of IQnaServiceProvider</param>
-        public QnAMakerMultiturnDialog(IQnaServiceProvider qSP)
+        public QnAMakerMultiturnDialog(IQnaServiceProvider qSP, ConversationState conversationState)
             : base(nameof(QnAMakerMultiturnDialog))
         {
             this.AddDialog(new WaterfallDialog(QnAMakerDialogName)
@@ -42,6 +43,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Dialogs
                 .AddStep(this.CheckForMultiTurnPrompt)
                 .AddStep(this.DisplayQnAResult));
             this.qnaServiceProvider = qSP;
+            this.conversationState = conversationState;
         }
 
         /// <summary>
@@ -69,6 +71,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Dialogs
         /// <returns>4</returns>
         private async Task<DialogTurnResult> CallGenerateAnswerAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
+
+            var conversationStateAccessors = this.conversationState.CreateProperty<ConversationInfo>(nameof(ConversationInfo));
+            var conInfo = await conversationStateAccessors.GetAsync(stepContext.Context, () => new ConversationInfo(), cancellationToken);
+
+            List<MetadataDTO> metadata = new List<MetadataDTO>();
+            if (conInfo != null)
+            {
+                metadata.Add(new MetadataDTO("project", conInfo.SubjectSelected));
+            }
+
             stepContext.Values[CurrentQuery] = stepContext.Context.Activity.Text;
 
             var dialogOptions = GetDialogOptionsValue(stepContext);
@@ -86,7 +98,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Dialogs
             }
 
             // Calling QnAMaker to get response.
-            var response = await this.qnaServiceProvider.GenerateAnswerAsync(question: stepContext.Context.Activity.Text, isTestKnowledgeBase: false, qnaId, context).ConfigureAwait(false);
+            var response = await this.qnaServiceProvider.GenerateAnswerAsync(question: stepContext.Context.Activity.Text, isTestKnowledgeBase: false, qnaId, context, metadata).ConfigureAwait(false);
+            if (response.Answers.First().Id == -1)
+            {
+                List<MetadataDTO> metadataChitCat = new List<MetadataDTO>();
+                metadataChitCat.Add(new MetadataDTO("editorial", "chitchat"));
+                response = await this.qnaServiceProvider.GenerateAnswerAsync(question: stepContext.Context.Activity.Text, isTestKnowledgeBase: false, qnaId, context, metadataChitCat).ConfigureAwait(false);
+            }
 
             // Resetting previous query.
             dialogOptions[PreviousQnAId] = -1;
