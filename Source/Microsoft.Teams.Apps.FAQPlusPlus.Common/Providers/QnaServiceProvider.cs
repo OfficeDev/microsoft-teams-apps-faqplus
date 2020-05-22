@@ -185,13 +185,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         /// <param name="isTestKnowledgeBase">Prod or test.</param>
         /// <param name="qnaID">Id of QnA</param>
         /// <param name="context">multiturn should have context.</param>
+        /// <param name="metadata"> metadata to narrow the search. </param>
         /// <returns>QnaSearchResult result as response.</returns>
-        public async Task<QnASearchResultList> GenerateAnswerAsync(string question, bool isTestKnowledgeBase, int? qnaID, QueryDTOContext context = null)
+        public async Task<QnASearchResultList> GenerateAnswerAsync(string question, bool isTestKnowledgeBase, int? qnaID, QueryDTOContext context = null, List<MetadataDTO> metadata = null)
         {
             var knowledgeBaseId = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.KnowledgeBaseId).ConfigureAwait(false);
-
-            List<MetadataDTO> filters = new List<MetadataDTO>();
-            //filters.Add(new MetadataDTO("md","two"));
             QnASearchResultList qnaSearchResult = await this.qnaMakerRuntimeClient.Runtime.GenerateAnswerAsync(knowledgeBaseId, new QueryDTO()
             {
                 QnaId = qnaID.ToString(),
@@ -199,7 +197,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
                 Question = question?.Trim(),
                 ScoreThreshold = Convert.ToDouble(this.options.ScoreThreshold),
                 Context = context,
-                //StrictFilters = filters,
+                StrictFilters = metadata,
             }).ConfigureAwait(false);
 
             return qnaSearchResult;

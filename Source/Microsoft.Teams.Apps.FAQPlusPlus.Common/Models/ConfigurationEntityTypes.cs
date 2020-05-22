@@ -32,5 +32,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         /// QnaMaker endpoint key entity.
         /// </summary>
         public const string QnAMakerEndpointKey = "QnaMakerEndpointKey";
+
+        /// <summary>
+        /// Subjects entity.
+        /// </summary>
+        public const string Subjects = "Subjects";
     }
 }

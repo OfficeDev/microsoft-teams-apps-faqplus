@@ -81,6 +81,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common
         public const string ShareFeedback = "share feedback";
 
         /// <summary>
+        /// SelectASubject - select a subject to narrow down question.
+        /// </summary>
+        public const string SelectASubject = "select a subject";
+
+        /// <summary>
         /// Table name where SME activity details from bot will be saved.
         /// </summary>
         public const string TicketTableName = "Tickets";
