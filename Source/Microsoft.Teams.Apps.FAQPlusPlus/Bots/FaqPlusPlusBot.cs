@@ -797,7 +797,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
                     // Subject selection
                     SubjectSelectionCardPayload subjectPlayload = JsonConvert.DeserializeObject<SubjectSelectionCardPayload>(message.Value.ToString());
-                    if (subjectPlayload != null)
+                    if (subjectPlayload != null && subjectPlayload.Subject != null)
                     {
                         this.logger.LogInformation($"User select subject{subjectPlayload.Subject}");
                         var conversationStateAccessors = this.conversationState.CreateProperty<ConversationInfo>(nameof(ConversationInfo));
