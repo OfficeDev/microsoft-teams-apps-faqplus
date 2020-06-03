@@ -601,4 +601,8 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <value>Got it, you can ask me anything about "{0}"</value>
     <comment>The message send back to user afte they select an subject</comment>
   </data>
+  <data name="SubjectFact" xml:space="preserve">
+    <value>Subject:</value>
+    <comment>Available factset in user notification and SME facing cards.</comment>
+  </data>
 </root>

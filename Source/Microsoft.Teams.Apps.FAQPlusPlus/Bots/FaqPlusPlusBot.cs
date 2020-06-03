@@ -800,8 +800,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     if (subjectPlayload != null && subjectPlayload.Subject != null)
                     {
                         this.logger.LogInformation($"User select subject{subjectPlayload.Subject}");
-                        var conversationStateAccessors = this.conversationState.CreateProperty<ConversationInfo>(nameof(ConversationInfo));
-                        var conInfo = await conversationStateAccessors.GetAsync(turnContext, () => new ConversationInfo(), cancellationToken);
+                        var conInfo = await this.GetConversationInfoAsync(turnContext, cancellationToken);
                         conInfo.SubjectSelected = subjectPlayload.Subject;
                         await this.conversationState.SaveChangesAsync(turnContext, false, cancellationToken);
 
@@ -846,8 +845,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     break;
 
                 default:
-                    var conversationStateAccessors = this.conversationState.CreateProperty<ConversationInfo>(nameof(ConversationInfo));
-                    var conInfo = await conversationStateAccessors.GetAsync(turnContext, () => new ConversationInfo(), cancellationToken);
+                    var conInfo = await this.GetConversationInfoAsync(turnContext, cancellationToken);
 
                     // If no subject selected, prompt for subject
                     if (conInfo.SubjectSelected == null)
@@ -963,6 +961,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             Attachment smeTeamCard = null;      // Notification to SME team
             Attachment userCard = null;         // Acknowledgement to the user
             TicketEntity newTicket = null;      // New ticket
+            ConversationInfo conInfo;
+
+
 
             switch (message?.Text)
             {
@@ -981,6 +982,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 case AskAnExpertCard.AskAnExpertSubmitText:
                     this.logger.LogInformation("Received question for expert");
                     newTicket = await AdaptiveCardHelper.AskAnExpertSubmitText(message, turnContext, cancellationToken, this.ticketsProvider).ConfigureAwait(false);
+                    conInfo = await this.GetConversationInfoAsync(turnContext, cancellationToken);
+                    newTicket.Subject = conInfo.SubjectSelected;
                     if (newTicket != null)
                     {
                         smeTeamCard = new SmeTicketCard(newTicket).ToAttachment(message?.LocalTimestamp);
@@ -991,7 +994,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
                 case ShareFeedbackCard.ShareFeedbackSubmitText:
                     this.logger.LogInformation("Received app feedback");
-                    smeTeamCard = await AdaptiveCardHelper.ShareFeedbackSubmitText(message, turnContext, cancellationToken).ConfigureAwait(false);
+                    conInfo = await this.GetConversationInfoAsync(turnContext, cancellationToken);
+                    smeTeamCard = await AdaptiveCardHelper.ShareFeedbackSubmitText(message, conInfo.SubjectSelected, turnContext, cancellationToken).ConfigureAwait(false);
                     if (smeTeamCard != null)
                     {
                         await turnContext.SendActivityAsync(MessageFactory.Text(Strings.ThankYouTextContent)).ConfigureAwait(false);
@@ -1510,5 +1514,20 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 throw;
             }
         }
+
+        /// <summary>
+        /// Get current conversation info
+        /// </summary>
+        /// <returns>conversation info</returns>
+        private async Task<ConversationInfo> GetConversationInfoAsync(
+            ITurnContext turnContext,
+            CancellationToken cancellationToken)
+        {
+            var conversationStateAccessors = this.conversationState.CreateProperty<ConversationInfo>(nameof(ConversationInfo));
+            var conInfo = await conversationStateAccessors.GetAsync(turnContext, () => new ConversationInfo(), cancellationToken);
+            return conInfo;
+        }
     }
+
+
 }

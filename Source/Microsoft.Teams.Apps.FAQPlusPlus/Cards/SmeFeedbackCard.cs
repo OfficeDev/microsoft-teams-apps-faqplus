@@ -25,9 +25,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// feedback details given by the user.
         /// </summary>
         /// <param name="data">User activity payload.</param>
+        /// <param name="subjectSelected">Subject user selected</param>
         /// <param name="userDetails">User details.</param>
         /// <returns>Sme facing feedback notification card.</returns>
-        public static Attachment GetCard(ShareFeedbackCardPayload data, TeamsChannelAccount userDetails)
+        public static Attachment GetCard(ShareFeedbackCardPayload data, string subjectSelected, TeamsChannelAccount userDetails)
         {
             // Constructing adaptive card that is sent to SME team.
             AdaptiveCard smeFeedbackCard = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
@@ -67,6 +68,25 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                    },
                },
             };
+
+
+            // Description fact is available in the card only when user enters description text.
+            if (!string.IsNullOrWhiteSpace(subjectSelected))
+            {
+                smeFeedbackCard.Body.Insert(2, new AdaptiveTextBlock()
+                {
+                    Text = Strings.SubjectFact,
+                    Weight = AdaptiveTextWeight.Bolder,
+                    Wrap = true,
+                });
+
+                smeFeedbackCard.Body.Insert(3, new AdaptiveTextBlock()
+                {
+                    Text = subjectSelected,
+                    Spacing = AdaptiveSpacing.None,
+                    Wrap = true,
+                });
+            }
 
             // Description fact is available in the card only when user enters description text.
             if (!string.IsNullOrWhiteSpace(data.Description))

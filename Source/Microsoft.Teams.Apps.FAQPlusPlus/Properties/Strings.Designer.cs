@@ -880,6 +880,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Subject:.
+        /// </summary>
+        public static string SubjectFact {
+            get {
+                return ResourceManager.GetString("SubjectFact", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Hi, I am your lovely Dolphin, I&apos;m glad to help..
         /// </summary>
         public static string SubjectSelectionGreetingText {

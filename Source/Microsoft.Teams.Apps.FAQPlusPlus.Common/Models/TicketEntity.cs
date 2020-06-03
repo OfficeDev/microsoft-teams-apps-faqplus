@@ -50,6 +50,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         public DateTime DateCreated { get; set; }
 
         /// <summary>
+        /// Gets or sets the created date of ticket.
+        /// </summary>
+        [IsSortable]
+        [JsonProperty("Subject")]
+        public string Subject { get; set; }
+
+        /// <summary>
         /// Gets or sets the display name of the user that created the ticket.
         /// </summary>
         [IsSearchable]
