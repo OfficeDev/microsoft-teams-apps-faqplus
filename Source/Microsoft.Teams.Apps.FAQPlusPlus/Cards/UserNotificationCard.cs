@@ -104,6 +104,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 Value = CardHelper.GetUserTicketDisplayStatus(this.ticket),
             });
 
+            if (!string.IsNullOrEmpty(ticket.Subject))
+            {
+                factList.Add(new AdaptiveFact
+                {
+                    Title = Strings.SubjectFact,
+                    Value = ticket.Subject,
+                });
+            }
+
             factList.Add(new AdaptiveFact
             {
                 Title = Strings.TitleFact,

@@ -148,6 +148,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         {
             List<AdaptiveFact> factList = new List<AdaptiveFact>();
 
+            if (!string.IsNullOrEmpty(this.Ticket.Subject))
+            {
+                factList.Add(new AdaptiveFact
+                {
+                    Title = Strings.SubjectFact,
+                    Value = this.Ticket.Subject,
+                });
+            }
+
             if (!string.IsNullOrEmpty(this.Ticket.Description))
             {
                 factList.Add(new AdaptiveFact
