@@ -12,6 +12,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
     using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers;
+    using Newtonsoft.Json;
+    using Newtonsoft.Json.Linq;
 
     /// <summary>
     /// Home Controller
@@ -217,6 +219,50 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
             }
 
             return await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.HelpTabText).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Save or update help tab text to be used by bot in table storage which is received from View.
+        /// </summary>
+        /// <param name="subjects">help tab text.</param>
+        /// <returns>View.</returns>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> SaveSubjectsAsync(string subjects)
+        {
+            try
+            {
+                JToken.Parse(subjects);
+            }
+            catch (JsonReaderException jex)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Subjects must be json format");
+            }
+
+            bool saved = await this.configurationPovider.UpsertEntityAsync(subjects, ConfigurationEntityTypes.Subjects).ConfigureAwait(false);
+            if (saved)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.OK);
+            }
+            else
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Sorry, unable to save the subjects due to an internal error. Try again.");
+            }
+        }
+
+        /// <summary>
+        /// Get already saved subjects from table storage.
+        /// </summary>
+        /// <returns>subjects json.</returns>
+        public async Task<string> GetSavedSubjectsAsync()
+        {
+            var helpText = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.Subjects).ConfigureAwait(false);
+            if (string.IsNullOrWhiteSpace(helpText))
+            {
+                await this.SaveHelpTabTextAsync(Strings.DefaultSubjects).ConfigureAwait(false);
+            }
+
+            return await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.Subjects).ConfigureAwait(false);
         }
 
         /// <summary>

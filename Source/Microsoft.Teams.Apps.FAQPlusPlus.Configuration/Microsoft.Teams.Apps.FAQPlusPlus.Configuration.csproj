@@ -276,6 +276,7 @@
     </Compile>
     <Compile Include="Models\KnowledgeBaseViewModel.cs" />
     <Compile Include="Models\HelpTabViewModel.cs" />
+    <Compile Include="Models\SubjectsViewModel.cs" />
     <Compile Include="Models\TeamViewModel.cs" />
     <Compile Include="Models\WelcomeMessageViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -332,6 +333,7 @@
     </None>
     <Content Include="Views\Home\_HelpTab.cshtml" />
     <Content Include="Views\Shared\_Spinner.cshtml" />
+    <Content Include="Views\Home\_Subjects.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Strings.resx">
