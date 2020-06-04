@@ -76,6 +76,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {&quot;Project&quot;:&quot;ForHonor,Liberty,ACK,APEX,Orpheus,Yutu&quot;,&quot;Other&quot;:&quot;IT,HR&quot;}.
+        /// </summary>
+        public static string DefaultSubjects {
+            get {
+                return ResourceManager.GetString("DefaultSubjects", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Hi, I&apos;m your friendly Q&amp;A bot. You can ask me questions, and I&apos;ll do my best to answer. If I can&apos;t help, I&apos;ll connect you to an expert.
         ///
         ///You can ask the following questions:
@@ -104,6 +113,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration {
         public static string KnowledgeBaseToolTipHoverMessage {
             get {
                 return ResourceManager.GetString("KnowledgeBaseToolTipHoverMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Provide options show in subject selection card in json format and then click on Ok to add or Edit to modify.
+        /// </summary>
+        public static string SubjectsToolTipHoverMessage {
+            get {
+                return ResourceManager.GetString("SubjectsToolTipHoverMessage", resourceCulture);
             }
         }
         

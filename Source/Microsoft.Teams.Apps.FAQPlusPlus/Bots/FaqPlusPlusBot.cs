@@ -196,7 +196,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             catch (Exception ex)
             {
                 this.logger.LogError(ex, "Error at OnTurnAsync()");
-                await base.OnTurnAsync(turnContext, cancellationToken);
+                //await base.OnTurnAsync(turnContext, cancellationToken);
             }
         }
 
@@ -962,8 +962,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             Attachment userCard = null;         // Acknowledgement to the user
             TicketEntity newTicket = null;      // New ticket
             ConversationInfo conInfo;
-
-
 
             switch (message?.Text)
             {

@@ -127,6 +127,10 @@ My key features:
 * Share feedback</value>
     <comment>Default help static tab text to be stored in configuration app</comment>
   </data>
+  <data name="DefaultSubjects" xml:space="preserve">
+    <value>{"Project":"ForHonor,Liberty,ACK,APEX,Orpheus,Yutu","Other":"IT,HR"}</value>
+    <comment>Default subjects in json format to be stored in configuration app</comment>
+  </data>
   <data name="DefaultWelcomeMessage" xml:space="preserve">
     <value>Hi, I'm your friendly Q&amp;A bot. You can ask me questions, and I'll do my best to answer. If I can't help, I'll connect you to an expert.
 
@@ -143,6 +147,10 @@ You can ask the following questions:
   <data name="KnowledgeBaseToolTipHoverMessage" xml:space="preserve">
     <value>Provide a valid knowledgebase id which will be used by bot and then click on Ok to add or Edit to modify</value>
     <comment>Message for knowledgebase id when information icon is hovered</comment>
+  </data>
+  <data name="SubjectsToolTipHoverMessage" xml:space="preserve">
+    <value>Provide options show in subject selection card in json format and then click on Ok to add or Edit to modify</value>
+    <comment>Message for subjects message when information icon is hovered</comment>
   </data>
   <data name="TeamIdToolTipHoverMessage" xml:space="preserve">
     <value>Provide a team id deeplink which will be used by bot and then click on Ok to add or Edit to modify</value>
