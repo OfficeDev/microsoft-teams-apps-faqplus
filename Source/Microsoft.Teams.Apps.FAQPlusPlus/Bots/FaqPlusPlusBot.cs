@@ -154,8 +154,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             this.dialog = dialog;
             this.conversationState = conversationState;
             this.userState = userState;
-
-
         }
 
         /// <summary>
@@ -782,6 +780,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             ITurnContext<IMessageActivity> turnContext,
             CancellationToken cancellationToken)
         {
+            ConversationInfo conInfo = null;
             if (!string.IsNullOrEmpty(message.ReplyToId) && (message.Value != null) && ((JObject)message.Value).HasValues)
             {
                 if (Validators.IsValidJSON(message.Value.ToString()))
@@ -800,7 +799,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     if (subjectPlayload != null && subjectPlayload.Subject != null)
                     {
                         this.logger.LogInformation($"User select subject{subjectPlayload.Subject}");
-                        var conInfo = await this.GetConversationInfoAsync(turnContext, cancellationToken);
+                        conInfo = await this.GetConversationInfoAsync(turnContext, cancellationToken);
                         conInfo.SubjectSelected = subjectPlayload.Subject;
                         await this.conversationState.SaveChangesAsync(turnContext, false, cancellationToken);
 
@@ -839,13 +838,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     if (Validators.IsValidJSON(subject))
                     {
                         Subject sub = JsonConvert.DeserializeObject<Subject>(subject);
-                        await turnContext.SendActivityAsync(MessageFactory.Carousel(SubjectSelectionCard.GetCards(sub, this.appBaseUri))).ConfigureAwait(false);
+                        conInfo = await this.GetConversationInfoAsync(turnContext, cancellationToken);
+                        await turnContext.SendActivityAsync(MessageFactory.Carousel(SubjectSelectionCard.GetCards(sub, conInfo.SubjectSelected, this.appBaseUri))).ConfigureAwait(false);
                     }
 
                     break;
 
                 default:
-                    var conInfo = await this.GetConversationInfoAsync(turnContext, cancellationToken);
+                    conInfo = await this.GetConversationInfoAsync(turnContext, cancellationToken);
 
                     // If no subject selected, prompt for subject
                     if (conInfo.SubjectSelected == null)
@@ -855,7 +855,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                         if (Validators.IsValidJSON(subject))
                         {
                             Subject sub = JsonConvert.DeserializeObject<Subject>(subject);
-                            await turnContext.SendActivityAsync(MessageFactory.Carousel(SubjectSelectionCard.GetCards(sub, this.appBaseUri))).ConfigureAwait(false);
+                            conInfo = await this.GetConversationInfoAsync(turnContext, cancellationToken);
+                            await turnContext.SendActivityAsync(MessageFactory.Carousel(SubjectSelectionCard.GetCards(sub, conInfo.SubjectSelected, this.appBaseUri))).ConfigureAwait(false);
                         }
                     }
                     else

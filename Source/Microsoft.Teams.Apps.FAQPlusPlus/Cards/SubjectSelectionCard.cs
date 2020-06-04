@@ -22,30 +22,54 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// Construct the subject selection card - select subject before asking question.
         /// </summary>
         /// <param name="subjects">the array of subjects</param>
+        /// <param name="currentSubject">current selected subject</param>
         /// <param name="appBaseUri">The base URI where the app is hosted.</param>
         /// <returns>Response card.</returns>
-        public static IEnumerable<Attachment> GetCards(Subject subjects, string appBaseUri)
+        public static IEnumerable<Attachment> GetCards(Subject subjects, string currentSubject, string appBaseUri)
         {
             List<AdaptiveAction> projectActions = new List<AdaptiveAction>();
             if (subjects?.Project != null)
             {
                 foreach (string subject in subjects.Project.Split(","))
                 {
-                    projectActions.Add(
-                        new AdaptiveSubmitAction
-                        {
-                            Title = subject,
-                            Data = new SubjectSelectionCardPayload
-                            {
-                                MsTeams = new CardAction
-                                {
-                                    Type = ActionTypes.MessageBack,
-                                    DisplayText = subject,
-                                    Text = subject,
-                                },
-                                Subject = subject.Trim(),
-                            },
-                        });
+                    if (subject == currentSubject)
+                    {
+                        projectActions.Add(
+                       new AdaptiveSubmitAction
+                       {
+                           Title = subject,
+                           Data = new SubjectSelectionCardPayload
+                           {
+                               MsTeams = new CardAction
+                               {
+                                   Type = ActionTypes.MessageBack,
+                                   DisplayText = subject,
+                                   Text = subject,
+                                   Image = appBaseUri + "/content/Star.png",
+                               },
+                               Subject = subject.Trim(),
+                           },
+                       });
+                    }
+                    else
+                    {
+                        projectActions.Add(
+                       new AdaptiveSubmitAction
+                       {
+                           Title = subject,
+                           Data = new SubjectSelectionCardPayload
+                           {
+                               MsTeams = new CardAction
+                               {
+                                   Type = ActionTypes.MessageBack,
+                                   DisplayText = subject,
+                                   Text = subject,
+                               },
+                               Subject = subject.Trim(),
+                           },
+                       });
+                    }
+
                 }
             }
 
@@ -80,7 +104,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             {
                 foreach (string subject in subjects.Other.Split(","))
                 {
-                    otherActions.Add(
+                    if (subject == currentSubject)
+                    {
+                        otherActions.Add(
                         new AdaptiveSubmitAction
                         {
                             Title = subject,
@@ -91,10 +117,30 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                     Type = ActionTypes.MessageBack,
                                     DisplayText = subject,
                                     Text = subject,
+                                    Image = appBaseUri + "/content/Star.png",
                                 },
                                 Subject = subject.Trim(),
                             },
                         });
+                    }
+                    else
+                    {
+                        otherActions.Add(
+                       new AdaptiveSubmitAction
+                       {
+                           Title = subject,
+                           Data = new SubjectSelectionCardPayload
+                           {
+                               MsTeams = new CardAction
+                               {
+                                   Type = ActionTypes.MessageBack,
+                                   DisplayText = subject,
+                                   Text = subject,
+                               },
+                               Subject = subject.Trim(),
+                           },
+                       });
+                    }
                 }
             }
 
