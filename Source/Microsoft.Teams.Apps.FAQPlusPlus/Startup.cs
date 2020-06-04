@@ -11,6 +11,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker;
     using Microsoft.Bot.Builder;
+    using Microsoft.Bot.Builder.Azure;
     using Microsoft.Bot.Builder.Integration.AspNet.Core;
     using Microsoft.Bot.Connector.Authentication;
     using Microsoft.Extensions.Caching.Memory;
@@ -114,9 +115,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
             services.AddSingleton<IMemoryCache, MemoryCache>();
             services.AddTransient(sp => (BotFrameworkAdapter)sp.GetRequiredService<IBotFrameworkHttpAdapter>());
 
-            services.AddSingleton<IStorage, MemoryStorage>();
+            AzureBlobStorage storage = new AzureBlobStorage(this.Configuration["StorageConnectionString"], Common.Constants.ConversationStorageContainer);
+            services.AddSingleton<IStorage>(storage);
+
             // You can inspect the UserState
             services.AddSingleton<UserState>();
+
             // You can inspect the ConversationState
             services.AddSingleton<ConversationState>();
             services.AddSingleton<QnAMakerMultiturnDialog>();
