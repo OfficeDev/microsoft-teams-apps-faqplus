@@ -1,0 +1,183 @@
+{
+    "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.6/MicrosoftTeams.schema.json",
+    "manifestVersion": "1.6",
+    "version": "1.0.0",
+    "showLoadingIndicator": false,
+    "id": "165dc594-e36a-488f-a8ba-20fcebacad86",
+    "packageName": "com.microsoft.teams.faqplus.experts",
+    "developer": {
+        "name": "Chen Qiang(River)",
+        "websiteUrl": "https://mdc-web-tomcat17.ubisoft.org/confluence/display/CTUPS/Product+No.001+-+Troubleshooting",
+        "privacyUrl": "https://micorsoft.com",
+        "termsOfUseUrl": "https://micorsoft.com"
+    },
+    "icons": {
+        "color": "color.png",
+        "outline": "outline.png"
+    },
+    "name": {
+        "short": "Dolphin (Experts Team)-Dev",
+        "full": ""
+    },
+    "description": {
+        "short": "A friendly FAQ bot that answers questions and connects you to experts.",
+        "full": "A friendly question and answer bot that answers commonly asked questions. If it can't answer, it will put you in touch with an expert as soon as they are available."
+    },
+    "accentColor": "#64A2CC",
+    "staticTabs": [
+        {
+            "entityId": "help",
+            "name": "Help",
+            "contentUrl": "https://dolphinfaqplus.azurewebsites.net/help?theme={theme}",
+            "scopes": [
+                "personal"
+            ]
+        }
+    ],
+    "bots": [
+        {
+            "botId": "eda1200f-ef7c-4439-a002-9aa40035dc28",
+            "scopes": [
+                "personal",
+                "team"
+            ],
+            "commandLists": [
+                {
+                    "scopes": [
+                        "personal"
+                    ],
+                    "commands": [
+                        {
+                            "title": "Take a tour",
+                            "description": "Tour of key features"
+                        },
+                        {
+                            "title": "Ask an expert",
+                            "description": "Connect with an expert"
+                        },
+                        {
+                            "title": "Share feedback",
+                            "description": "Send feedback"
+                        },
+                        {
+                            "title": "Select a subject",
+                            "description": "Choose a subject about your question"
+                        }
+                    ]
+                }
+            ],
+            "supportsFiles": false,
+            "isNotificationOnly": false
+        }
+    ],
+    "composeExtensions": [
+        {
+            "botId": "eda1200f-ef7c-4439-a002-9aa40035dc28",
+            "canUpdateConfiguration": false,
+            "commands": [
+                {
+                    "id": "recents",
+                    "type": "query",
+                    "title": "Recent",
+                    "description": "Search recent requests",
+                    "initialRun": true,
+                    "fetchTask": false,
+                    "context": [
+                        "compose"
+                    ],
+                    "parameters": [
+                        {
+                            "name": "searchText",
+                            "title": "Search",
+                            "description": "Search tickets",
+                            "inputType": "text"
+                        }
+                    ]
+                },
+                {
+                    "id": "openrequests",
+                    "type": "query",
+                    "title": "Unassigned",
+                    "description": "Search unassigned requests not yet assigned to an expert",
+                    "initialRun": true,
+                    "fetchTask": false,
+                    "context": [
+                        "compose"
+                    ],
+                    "parameters": [
+                        {
+                            "name": "searchText",
+                            "title": "Search",
+                            "description": "Search tickets",
+                            "inputType": "text"
+                        }
+                    ]
+                },
+                {
+                    "id": "assignedrequests",
+                    "type": "query",
+                    "title": "Assigned",
+                    "description": "Search requests assigned to an expert",
+                    "initialRun": true,
+                    "fetchTask": false,
+                    "context": [
+                        "compose"
+                    ],
+                    "parameters": [
+                        {
+                            "name": "searchText",
+                            "title": "Search",
+                            "description": "Search tickets",
+                            "inputType": "text"
+                        }
+                    ]
+                },
+                {
+                    "id": "kbquestions",
+                    "type": "query",
+                    "title": "Knowledge base",
+                    "description": "Search recent requests",
+                    "initialRun": true,
+                    "fetchTask": false,
+                    "context": [
+                        "compose"
+                    ],
+                    "parameters": [
+                        {
+                            "name": "searchText",
+                            "title": "Search",
+                            "description": "Search KB QnA pairs",
+                            "inputType": "text"
+                        }
+                    ]
+                },
+                {
+                    "id": "addquestion",
+                    "type": "action",
+                    "title": "Add new question",
+                    "description": "Add a new qna pair",
+                    "initialRun": true,
+                    "fetchTask": true,
+                    "context": [
+                        "compose",
+                        "message"
+                    ],
+                    "parameters": [
+                        {
+                            "name": "param",
+                            "title": "param",
+                            "description": ""
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "permissions": [
+        "identity",
+        "messageTeamMembers"
+    ],
+    "validDomains": [
+        "dolphinfaqplus.azurewebsites.net"
+    ]
+}

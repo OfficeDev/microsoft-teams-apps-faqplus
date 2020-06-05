@@ -1,0 +1,85 @@
+{
+    "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.6/MicrosoftTeams.schema.json",
+    "manifestVersion": "1.6",
+    "version": "1.0.1",
+    "showLoadingIndicator": false,
+    "id": "8b7a7472-7d12-4a61-b311-235e3a056804",
+    "packageName": "com.ubisoft.teams.dolphin",
+    "developer": {
+        "name": "Chen Qiang(River)",
+        "websiteUrl": "https://mdc-web-tomcat17.ubisoft.org/confluence/display/CTUPS/Product+No.001+-+Troubleshooting",
+        "privacyUrl": "https://micorsoft.com",
+        "termsOfUseUrl": "https://micorsoft.com"
+    },
+    "icons": {
+        "color": "color.png",
+        "outline": "outline.png"
+    },
+    "name": {
+        "short": "Dolphin-Dev",
+        "full": " New Dolphin for Teams"
+    },
+    "description": {
+        "short": "A friendly FAQ bot that answers questions and connects you to experts.",
+        "full": "A friendly question and answer bot that answers commonly asked questions. If it can't answer, it will put you in touch with an expert as soon as they are available."
+    },
+    "accentColor": "#64A2CC",
+    "staticTabs": [
+        {
+            "entityId": "help",
+            "name": "Help",
+            "contentUrl": "https://dev-dolphin.azurewebsites.net/help?theme={theme}",
+            "scopes": [
+                "personal"
+            ]
+        }
+    ],
+    "bots": [
+        {
+            "botId": "eda1200f-ef7c-4439-a002-9aa40035dc28",
+            "scopes": [
+                "personal",
+                "team"
+            ],
+            "commandLists": [
+                {
+                    "scopes": [
+                        "personal"
+                    ],
+                    "commands": [
+                        {
+                            "title": "Take a tour111",
+                            "description": "Tour of key features"
+                        },
+                        {
+                            "title": "Ask an expert222",
+                            "description": "Connect with an expert"
+                        },
+                        {
+                            "title": "Share feedback333",
+                            "description": "Send feedback"
+                        },
+                        {
+                            "title": "Select a subject444",
+                            "description": "Choose a subject about your question"
+                        },
+                        {
+                            "title": "test555",
+                            "description": "test"
+                        }
+                    ]
+                }
+            ],
+            "supportsFiles": false,
+            "isNotificationOnly": false
+        }
+    ],
+    "permissions": [
+        "identity",
+        "messageTeamMembers"
+    ],
+    "validDomains": [
+        "dev-dolphin.azurewebsites.net",
+        "dolphinfaqplus.azurewebsites.net"
+    ]
+}
