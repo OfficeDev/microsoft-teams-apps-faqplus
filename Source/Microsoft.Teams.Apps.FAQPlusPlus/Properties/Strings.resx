@@ -228,7 +228,7 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <comment>Text on change status button.</comment>
   </data>
   <data name="ResponseHeaderText" xml:space="preserve">
-    <value>Here is what I found:</value>
+    <value>Here is what I found {0}:</value>
     <comment>Response header-letting the user know that a response is generated to their request from QnA Maker.</comment>
   </data>
   <data name="ClosedFactTitle" xml:space="preserve">
