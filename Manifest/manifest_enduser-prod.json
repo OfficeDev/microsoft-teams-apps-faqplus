@@ -3,7 +3,7 @@
     "manifestVersion": "1.6",
     "version": "1.0.0",
     "showLoadingIndicator": false,
-    "id": "8b7a7472-7d12-4a61-b311-235e3a056804",
+    "id": "a959c78e-0b47-4dd9-bc62-0e39111a436d",
     "packageName": "com.ubisoft.teams.dolphin",
     "developer": {
         "name": "Chen Qiang(River)",
@@ -16,7 +16,7 @@
         "outline": "outline.png"
     },
     "name": {
-        "short": "Dolphin",
+        "short": "Dolphin-Prod",
         "full": " New Dolphin for Teams"
     },
     "description": {
@@ -28,7 +28,7 @@
         {
             "entityId": "help",
             "name": "Help",
-            "contentUrl": "https://dolphinfaqplus.azurewebsites.net/help?theme={theme}",
+            "contentUrl": "https://prod-dolphin.azurewebsites.net/help?theme={theme}",
             "scopes": [
                 "personal"
             ]
@@ -36,7 +36,7 @@
     ],
     "bots": [
         {
-            "botId": "eda1200f-ef7c-4439-a002-9aa40035dc28",
+            "botId": "533900b8-5087-4702-8960-b0e96b40e03b",
             "scopes": [
                 "personal",
                 "team"
@@ -58,6 +58,10 @@
                         {
                             "title": "Share feedback",
                             "description": "Send feedback"
+                        },
+                        {
+                            "title": "Select a subject",
+                            "description": "Choose a subject about your question"
                         }
                     ]
                 }
@@ -71,6 +75,7 @@
         "messageTeamMembers"
     ],
     "validDomains": [
+        "prod-dolphin.azurewebsites.net",
         "dolphinfaqplus.azurewebsites.net"
     ]
 }
