@@ -91,7 +91,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     {
                         Type = "Image",
 
-                        Url = new Uri(appBaseUri + "/content/Subject_V4.png"),
+                        Url = new Uri(appBaseUri + "/content/Project_V1.png"),
                         Size = AdaptiveImageSize.Stretch,
                     },
                 },
