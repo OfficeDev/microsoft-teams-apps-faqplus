@@ -35,6 +35,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Dialogs
         /// Initializes a new instance of the <see cref="QnAMakerMultiturnDialog"/> class.
         /// </summary>
         /// <param name="qSP">Instantce of IQnaServiceProvider</param>
+        /// <param name="conversationState"> conversation state</param>
         public QnAMakerMultiturnDialog(IQnaServiceProvider qSP, ConversationState conversationState)
             : base(nameof(QnAMakerMultiturnDialog))
         {
@@ -198,7 +199,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Dialogs
                     }
                     else
                     {
-                        await stepContext.Context.SendActivityAsync(MessageFactory.Attachment(ResponseCard.GetCard(answerData.Questions.FirstOrDefault(), answerData.Answer, reply))).ConfigureAwait(false);
+                        var conversationStateAccessors = this.conversationState.CreateProperty<ConversationInfo>(nameof(ConversationInfo));
+                        var conInfo = await conversationStateAccessors.GetAsync(stepContext.Context, () => new ConversationInfo(), cancellationToken);
+
+                        await stepContext.Context.SendActivityAsync(MessageFactory.Attachment(ResponseCard.GetCard(answerData.Questions.FirstOrDefault(), answerData.Answer, reply, conInfo.SubjectSelected))).ConfigureAwait(false);
                     }
                 }
             }

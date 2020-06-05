@@ -5,6 +5,7 @@
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
 {
     using System.Collections.Generic;
+    using System.Globalization;
     using AdaptiveCards;
     using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker.Models;
     using Microsoft.Bot.Schema;
@@ -24,8 +25,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <param name="question">Knowledgebase question, from QnA Maker service.</param>
         /// <param name="answer">Knowledgebase answer, from QnA Maker service.</param>
         /// <param name="userQuestion">Actual question asked by the user to the bot.</param>
+        /// <param name="subject">Subject selected</param>
         /// <returns>Response card.</returns>
-        public static Attachment GetCard(string question, string answer, string userQuestion)
+        public static Attachment GetCard(string question, string answer, string userQuestion, string subject)
         {
             AdaptiveCard responseCard = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
             {
@@ -34,7 +36,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     new AdaptiveTextBlock
                     {
                         Weight = AdaptiveTextWeight.Bolder,
-                        Text = Strings.ResponseHeaderText,
+                        Text = string.IsNullOrEmpty(subject) ? Strings.ResponseHeaderText : string.Format(CultureInfo.InvariantCulture, Strings.ResponseHeaderText, "from " + subject),
                         Wrap = true,
                     },
                     new AdaptiveTextBlock

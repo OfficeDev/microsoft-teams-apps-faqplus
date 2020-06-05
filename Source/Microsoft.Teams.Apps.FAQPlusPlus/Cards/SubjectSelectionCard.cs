@@ -34,22 +34,21 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 {
                     if (subject == currentSubject)
                     {
-                        projectActions.Add(
-                       new AdaptiveSubmitAction
-                       {
-                           Title = subject,
-                           Data = new SubjectSelectionCardPayload
-                           {
-                               MsTeams = new CardAction
-                               {
-                                   Type = ActionTypes.MessageBack,
-                                   DisplayText = subject,
-                                   Text = subject,
-                                   Image = appBaseUri + "/content/Star.png",
-                               },
-                               Subject = subject.Trim(),
-                           },
-                       });
+                        AdaptiveSubmitAction action = new AdaptiveSubmitAction();
+                        action.Title = subject;
+                        action.Data = new SubjectSelectionCardPayload
+                        {
+                            MsTeams = new CardAction
+                            {
+                                Type = ActionTypes.MessageBack,
+                                DisplayText = subject,
+                                Text = subject,
+                                Image = appBaseUri + "/content/Star.png",
+                            },
+                            Subject = subject.Trim(),
+                        };
+                        action.AdditionalProperties.Add("iconUrl", appBaseUri + "/content/Star.png");
+                        projectActions.Add(action);
                     }
                     else
                     {
@@ -106,22 +105,21 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 {
                     if (subject == currentSubject)
                     {
-                        otherActions.Add(
-                        new AdaptiveSubmitAction
+                        AdaptiveSubmitAction action = new AdaptiveSubmitAction();
+                        action.Title = subject;
+                        action.Data = new SubjectSelectionCardPayload
                         {
-                            Title = subject,
-                            Data = new SubjectSelectionCardPayload
+                            MsTeams = new CardAction
                             {
-                                MsTeams = new CardAction
-                                {
-                                    Type = ActionTypes.MessageBack,
-                                    DisplayText = subject,
-                                    Text = subject,
-                                    Image = appBaseUri + "/content/Star.png",
-                                },
-                                Subject = subject.Trim(),
+                                Type = ActionTypes.MessageBack,
+                                DisplayText = subject,
+                                Text = subject,
+                                Image = appBaseUri + "/content/Star.png",
                             },
-                        });
+                            Subject = subject.Trim(),
+                        };
+                        action.AdditionalProperties.Add("iconUrl", appBaseUri + "/content/Star.png");
+                        otherActions.Add(action);
                     }
                     else
                     {
@@ -171,7 +169,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 Content = otherCard,
             });
             return attachments;
-
         }
     }
 }
