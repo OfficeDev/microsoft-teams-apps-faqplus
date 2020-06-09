@@ -795,17 +795,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     }
 
                     // Subject selection
-                    SubjectSelectionCardPayload subjectPlayload = JsonConvert.DeserializeObject<SubjectSelectionCardPayload>(message.Value.ToString());
-                    if (subjectPlayload != null && subjectPlayload.Subject != null)
-                    {
-                        this.logger.LogInformation($"User select subject{subjectPlayload.Subject}");
-                        conInfo = await this.GetConversationInfoAsync(turnContext, cancellationToken);
-                        conInfo.SubjectSelected = subjectPlayload.Subject;
-                        await this.conversationState.SaveChangesAsync(turnContext, false, cancellationToken);
+                    //SubjectSelectionCardPayload subjectPlayload = JsonConvert.DeserializeObject<SubjectSelectionCardPayload>(message.Value.ToString());
+                    //if (subjectPlayload != null && subjectPlayload.Subject != null)
+                    //{
+                    //    this.logger.LogInformation($"User select subject{subjectPlayload.Subject}");
+                    //    conInfo = await this.GetConversationInfoAsync(turnContext, cancellationToken);
+                    //    conInfo.SubjectSelected = subjectPlayload.Subject;
+                    //    await this.conversationState.SaveChangesAsync(turnContext, false, cancellationToken);
 
-                        await turnContext.SendActivityAsync(string.Format(CultureInfo.InvariantCulture, Strings.SubjectSelectionMessageBack, subjectPlayload.Subject)).ConfigureAwait(false);
-                        return;
-                    }
+                    //    await turnContext.SendActivityAsync(string.Format(CultureInfo.InvariantCulture, Strings.SubjectSelectionMessageBack, subjectPlayload.Subject)).ConfigureAwait(false);
+                    //    return;
+                    //}
                 }
 
                 this.logger.LogInformation("Card submit in 1:1 chat");
@@ -848,22 +848,22 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     conInfo = await this.GetConversationInfoAsync(turnContext, cancellationToken);
 
                     // If no subject selected, prompt for subject
-                    if (conInfo.SubjectSelected == null)
-                    {
-                        this.logger.LogInformation("Prompt user for subject");
-                        subject = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.Subjects).ConfigureAwait(false);
-                        if (Validators.IsValidJSON(subject))
-                        {
-                            Subject sub = JsonConvert.DeserializeObject<Subject>(subject);
-                            conInfo = await this.GetConversationInfoAsync(turnContext, cancellationToken);
-                            await turnContext.SendActivityAsync(MessageFactory.Carousel(SubjectSelectionCard.GetCards(sub, conInfo.SubjectSelected, this.appBaseUri))).ConfigureAwait(false);
-                        }
-                    }
-                    else
-                    {
-                        this.logger.LogInformation("Sending input to QnAMaker");
-                        await this.GetQuestionAnswerReplyAsync(turnContext, text, cancellationToken).ConfigureAwait(false);
-                    }
+                    //if (conInfo.SubjectSelected == null)
+                    //{
+                    //    this.logger.LogInformation("Prompt user for subject");
+                    //    subject = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.Subjects).ConfigureAwait(false);
+                    //    if (Validators.IsValidJSON(subject))
+                    //    {
+                    //        Subject sub = JsonConvert.DeserializeObject<Subject>(subject);
+                    //        conInfo = await this.GetConversationInfoAsync(turnContext, cancellationToken);
+                    //        await turnContext.SendActivityAsync(MessageFactory.Carousel(SubjectSelectionCard.GetCards(sub, conInfo.SubjectSelected, this.appBaseUri))).ConfigureAwait(false);
+                    //    }
+                    //}
+                    //else
+                    //{
+                    this.logger.LogInformation("Sending input to QnAMaker");
+                    await this.GetQuestionAnswerReplyAsync(turnContext, text, cancellationToken).ConfigureAwait(false);
+                    //}
 
                     break;
             }

@@ -73,14 +73,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Dialogs
         private async Task<DialogTurnResult> CallGenerateAnswerAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
 
-            var conversationStateAccessors = this.conversationState.CreateProperty<ConversationInfo>(nameof(ConversationInfo));
-            var conInfo = await conversationStateAccessors.GetAsync(stepContext.Context, () => new ConversationInfo(), cancellationToken);
+            //var conversationStateAccessors = this.conversationState.CreateProperty<ConversationInfo>(nameof(ConversationInfo));
+            //var conInfo = await conversationStateAccessors.GetAsync(stepContext.Context, () => new ConversationInfo(), cancellationToken);
 
-            List<MetadataDTO> metadata = new List<MetadataDTO>();
-            if (conInfo != null)
-            {
-                metadata.Add(new MetadataDTO("project", conInfo.SubjectSelected));
-            }
+            List<MetadataDTO> metadata = new List<MetadataDTO>();   
+            //if (conInfo != null)
+            //{
+            //    metadata.Add(new MetadataDTO("project", conInfo.SubjectSelected));
+            //}
 
             stepContext.Values[CurrentQuery] = stepContext.Context.Activity.Text;
 
@@ -100,12 +100,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Dialogs
 
             // Calling QnAMaker to get response.
             var response = await this.qnaServiceProvider.GenerateAnswerAsync(question: stepContext.Context.Activity.Text, isTestKnowledgeBase: false, qnaId, context, metadata).ConfigureAwait(false);
-            if (response.Answers.First().Id == -1)
-            {
-                List<MetadataDTO> metadataChitCat = new List<MetadataDTO>();
-                metadataChitCat.Add(new MetadataDTO("editorial", "chitchat"));
-                response = await this.qnaServiceProvider.GenerateAnswerAsync(question: stepContext.Context.Activity.Text, isTestKnowledgeBase: false, qnaId, context, metadataChitCat).ConfigureAwait(false);
-            }
+            //if (response.Answers.First().Id == -1)
+            //{
+            //    List<MetadataDTO> metadataChitCat = new List<MetadataDTO>();
+            //    metadataChitCat.Add(new MetadataDTO("editorial", "chitchat"));
+            //    response = await this.qnaServiceProvider.GenerateAnswerAsync(question: stepContext.Context.Activity.Text, isTestKnowledgeBase: false, qnaId, context, metadataChitCat).ConfigureAwait(false);
+            //}
 
             // Resetting previous query.
             dialogOptions[PreviousQnAId] = -1;

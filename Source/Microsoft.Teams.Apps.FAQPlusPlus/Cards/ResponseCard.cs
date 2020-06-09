@@ -36,7 +36,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     new AdaptiveTextBlock
                     {
                         Weight = AdaptiveTextWeight.Bolder,
-                        Text = string.IsNullOrEmpty(subject) ? Strings.ResponseHeaderText : string.Format(CultureInfo.InvariantCulture, Strings.ResponseHeaderText, "from " + subject),
+                        Text = string.Format(CultureInfo.InvariantCulture, Strings.ResponseHeaderText, string.IsNullOrEmpty(subject) ? string.Empty : "from " + subject),
                         Wrap = true,
                     },
                     new AdaptiveTextBlock
