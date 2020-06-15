@@ -25,18 +25,20 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <summary>
         /// This method will construct the card for share feedback, when invoked from the bot menu.
         /// </summary>
+        /// <param name="appBaseUri">The base URI where the app is hosted.</param>
         /// <returns>Ask an expert card.</returns>
-        public static Attachment GetCard()
+        public static Attachment GetCard(string appBaseUri)
         {
-            return GetCard(new ShareFeedbackCardPayload(), showValidationErrors: false);
+            return GetCard(new ShareFeedbackCardPayload(), showValidationErrors: false, appBaseUri);
         }
 
         /// <summary>
         /// This method will construct the card for share feedback, when invoked from the response card.
         /// </summary>
         /// <param name="payload">Payload from the response card.</param>
+        /// <param name="appBaseUri">The base URI where the app is hosted.</param>
         /// <returns>Ask an expert card.</returns>
-        public static Attachment GetCard(ResponseCardPayload payload)
+        public static Attachment GetCard(ResponseCardPayload payload, string appBaseUri)
         {
             var cardPayload = new ShareFeedbackCardPayload
             {
@@ -45,15 +47,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 KnowledgeBaseAnswer = payload?.KnowledgeBaseAnswer,
             };
 
-            return GetCard(cardPayload, showValidationErrors: false);
+            return GetCard(cardPayload, showValidationErrors: false, appBaseUri);
         }
 
         /// <summary>
         /// This method will construct the card for share feedback, when invoked from the feedback card submit.
         /// </summary>
         /// <param name="payload">Payload from the response card.</param>
+        /// <param name="appBaseUri">The base URI where the app is hosted.</param>
         /// <returns>Ask an expert card.</returns>
-        public static Attachment GetCard(ShareFeedbackCardPayload payload)
+        public static Attachment GetCard(ShareFeedbackCardPayload payload, string appBaseUri)
         {
             if (payload == null)
             {
@@ -61,7 +64,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             }
             else
             {
-                return GetCard(payload, showValidationErrors: true);
+                return GetCard(payload, showValidationErrors: true, appBaseUri);
             }
         }
 
@@ -70,8 +73,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// </summary>
         /// <param name="data">Data from the share feedback card.</param>
         /// <param name="showValidationErrors">Flag to determine rating value.</param>
+        /// <param name="appBaseUri">The base URI where the app is hosted.</param>
         /// <returns>Share feedback card.</returns>
-        private static Attachment GetCard(ShareFeedbackCardPayload data, bool showValidationErrors)
+        private static Attachment GetCard(ShareFeedbackCardPayload data, bool showValidationErrors, string appBaseUri)
         {
             AdaptiveCard shareFeedbackCard = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
             {
@@ -84,94 +88,138 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         Size = AdaptiveTextSize.Large,
                         Wrap = true,
                     },
-                    new AdaptiveColumnSet
-                    {
-                        Columns = new List<AdaptiveColumn>
-                        {
-                            new AdaptiveColumn
-                            {
-                                Width = AdaptiveColumnWidth.Auto,
-                                Items = new List<AdaptiveElement>
-                                {
-                                    new AdaptiveTextBlock
-                                    {
-                                        Text = Strings.FeedbackRatingRequired,
-                                        Wrap = true,
-                                    },
-                                },
-                            },
-                            new AdaptiveColumn
-                            {
-                                Items = new List<AdaptiveElement>
-                                {
-                                    new AdaptiveTextBlock
-                                    {
-                                        Text = (showValidationErrors && !Enum.TryParse(data.Rating, out FeedbackRating rating)) ? Strings.RatingMandatoryText : string.Empty,
-                                        Color = AdaptiveTextColor.Attention,
-                                        HorizontalAlignment = AdaptiveHorizontalAlignment.Right,
-                                        Wrap = true,
-                                    },
-                                },
-                            },
-                        },
-                    },
-                    new AdaptiveChoiceSetInput
-                    {
-                        Id = nameof(ShareFeedbackCardPayload.Rating),
-                        IsMultiSelect = false,
-                        Style = AdaptiveChoiceInputStyle.Compact,
-                        Choices = new List<AdaptiveChoice>
-                        {
-                            new AdaptiveChoice
-                            {
-                                Title = Strings.HelpfulRatingText,
-                                Value = nameof(FeedbackRating.Helpful),
-                            },
-                            new AdaptiveChoice
-                            {
-                                Title = Strings.NeedsImprovementRatingText,
-                                Value = nameof(FeedbackRating.NeedsImprovement),
-                            },
-                            new AdaptiveChoice
-                            {
-                                Title = Strings.NotHelpfulRatingText,
-                                Value = nameof(FeedbackRating.NotHelpful),
-                            },
-                        },
-                    },
-                    new AdaptiveTextBlock
-                    {
-                        Text = Strings.DescriptionText,
-                        Wrap = true,
-                    },
-                    new AdaptiveTextInput
-                    {
-                        Spacing = AdaptiveSpacing.Small,
-                        Id = nameof(ShareFeedbackCardPayload.Description),
-                        Placeholder = Strings.FeedbackDescriptionPlaceholderText,
-                        IsMultiline = true,
-                        Value = data.Description,
-                    },
                 },
                 Actions = new List<AdaptiveAction>
                 {
-                    new AdaptiveSubmitAction
+                    new AdaptiveShowCardAction
                     {
-                        Title = Strings.ShareFeedbackButtonText,
-                        Data = new ShareFeedbackCardPayload
+                        Title = " ",
+                        Card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
                         {
-                            MsTeams = new CardAction
+                           Body = new List<AdaptiveElement>
                             {
-                                Type = ActionTypes.MessageBack,
-                                DisplayText = Strings.ShareFeedbackDisplayText,
-                                Text = ShareFeedbackSubmitText,
+                                new AdaptiveTextBlock
+                                {
+                                    Text = Strings.DescriptionText,
+                                    Wrap = true,
+                                },
+                                new AdaptiveTextInput
+                                {
+                                    Spacing = AdaptiveSpacing.Small,
+                                    Id = nameof(ShareFeedbackCardPayload.Description),
+                                    Placeholder = Strings.FeedbackDescriptionPlaceholderText,
+                                    IsMultiline = true,
+                                },
                             },
-                            UserQuestion = data.UserQuestion,
-                            KnowledgeBaseAnswer = data.KnowledgeBaseAnswer,
+                           Actions = new List<AdaptiveAction>
+                           {
+                                new AdaptiveSubmitAction
+                                {
+                                    Title = Strings.ShareFeedbackButtonText,
+                                    Data = new ShareFeedbackCardPayload
+                                    {
+                                        MsTeams = new CardAction
+                                        {
+                                            Type = ActionTypes.MessageBack,
+                                            DisplayText = Strings.ShareFeedbackDisplayText,
+                                            Text = ShareFeedbackSubmitText,
+                                        },
+                                        UserQuestion = data.UserQuestion,
+                                        KnowledgeBaseAnswer = data.KnowledgeBaseAnswer,
+                                        Rating = nameof(FeedbackRating.Helpful),
+                                    },
+                                },
+                           },
+                        },
+                    },
+                    new AdaptiveShowCardAction
+                    {
+                        Title = " ",
+                        Card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
+                        {
+                           Body = new List<AdaptiveElement>
+                           {
+                               new AdaptiveTextBlock
+                               {
+                                   Text = Strings.DescriptionText,
+                                   Wrap = true,
+                               },
+                               new AdaptiveTextInput
+                               {
+                                   Spacing = AdaptiveSpacing.Small,
+                                   Id = nameof(ShareFeedbackCardPayload.Description),
+                                   Placeholder = Strings.FeedbackDescriptionPlaceholderText,
+                                   IsMultiline = true,
+                               },
+                           },
+                           Actions = new List<AdaptiveAction>
+                           {
+                               new AdaptiveSubmitAction
+                               {
+                                   Title = Strings.ShareFeedbackButtonText,
+                                   Data = new ShareFeedbackCardPayload
+                                   {
+                                       MsTeams = new CardAction
+                                       {
+                                           Type = ActionTypes.MessageBack,
+                                           DisplayText = Strings.ShareFeedbackDisplayText,
+                                           Text = ShareFeedbackSubmitText,
+                                       },
+                                       UserQuestion = data.UserQuestion,
+                                       KnowledgeBaseAnswer = data.KnowledgeBaseAnswer,
+                                       Rating = nameof(FeedbackRating.NeedsImprovement),
+                                   },
+                               },
+                           },
+                        },
+                    },
+                    new AdaptiveShowCardAction
+                    {
+                        Title = " ",
+                        Card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
+                        {
+                           Body = new List<AdaptiveElement>
+                           {
+                               new AdaptiveTextBlock
+                               {
+                                   Text = Strings.DescriptionText,
+                                   Wrap = true,
+                               },
+                               new AdaptiveTextInput
+                               {
+                                   Spacing = AdaptiveSpacing.Small,
+                                   Id = nameof(ShareFeedbackCardPayload.Description),
+                                   Placeholder = Strings.FeedbackDescriptionPlaceholderText,
+                                   IsMultiline = true,
+                               },
+                           },
+                           Actions = new List<AdaptiveAction>
+                            {
+                                new AdaptiveSubmitAction
+                                {
+                                    Title = Strings.ShareFeedbackButtonText,
+                                    Data = new ShareFeedbackCardPayload
+                                    {
+                                        MsTeams = new CardAction
+                                        {
+                                            Type = ActionTypes.MessageBack,
+                                            DisplayText = Strings.ShareFeedbackDisplayText,
+                                            Text = ShareFeedbackSubmitText,
+                                        },
+                                        UserQuestion = data.UserQuestion,
+                                        KnowledgeBaseAnswer = data.KnowledgeBaseAnswer,
+                                        Rating = nameof(FeedbackRating.NotHelpful),
+                                    },
+                                },
+                            },
                         },
                     },
                 },
             };
+
+            shareFeedbackCard.Actions[0].AdditionalProperties.Add("iconUrl", appBaseUri + "/content/face_smile.png");
+            shareFeedbackCard.Actions[1].AdditionalProperties.Add("iconUrl", appBaseUri + "/content/face_straigh.png");
+            shareFeedbackCard.Actions[2].AdditionalProperties.Add("iconUrl", appBaseUri + "/content/face_sad.png");
 
             return new Attachment
             {

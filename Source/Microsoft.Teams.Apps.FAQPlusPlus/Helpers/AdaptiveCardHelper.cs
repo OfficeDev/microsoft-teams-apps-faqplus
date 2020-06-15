@@ -59,13 +59,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Helpers
         /// Helps to get the expert submit card.
         /// </summary>
         /// <param name="message">A message in a conversation.</param>
-        /// <param name="subjectSelected"> subject selected by user</param>
+        /// <param name="subject"> subject of current question</param>
+        /// <param name="appBaseUri">The base URI where the app is hosted.</param>
         /// <param name="turnContext">Context object containing information cached for a single turn of conversation with a user.</param>
         /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
         /// <returns>A task that represents the work queued to execute.</returns>
         public static async Task<Attachment> ShareFeedbackSubmitText(
             IMessageActivity message,
-            string subjectSelected,
+            string subject,
+            string appBaseUri,
             ITurnContext<IMessageActivity> turnContext,
             CancellationToken cancellationToken)
         {
@@ -78,14 +80,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Helpers
                 {
                     Id = turnContext.Activity.ReplyToId,
                     Conversation = turnContext.Activity.Conversation,
-                    Attachments = new List<Attachment> { ShareFeedbackCard.GetCard(shareFeedbackSubmitTextPayload) },
+                    Attachments = new List<Attachment> { ShareFeedbackCard.GetCard(shareFeedbackSubmitTextPayload, appBaseUri) },
                 };
                 await turnContext.UpdateActivityAsync(updateCardActivity, cancellationToken).ConfigureAwait(false);
                 return null;
             }
 
             var teamsUserDetails = await GetUserDetailsInPersonalChatAsync(turnContext, cancellationToken).ConfigureAwait(false);
-            return SmeFeedbackCard.GetCard(shareFeedbackSubmitTextPayload, subjectSelected, teamsUserDetails);
+            return SmeFeedbackCard.GetCard(shareFeedbackSubmitTextPayload, subject, teamsUserDetails);
         }
 
         /// <summary>

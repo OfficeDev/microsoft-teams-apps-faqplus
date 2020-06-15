@@ -824,7 +824,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
                 case Constants.ShareFeedback:
                     this.logger.LogInformation("Sending user feedback card");
-                    await turnContext.SendActivityAsync(MessageFactory.Attachment(ShareFeedbackCard.GetCard())).ConfigureAwait(false);
+                    await turnContext.SendActivityAsync(MessageFactory.Attachment(ShareFeedbackCard.GetCard(this.appBaseUri))).ConfigureAwait(false);
                     break;
 
                 case Constants.TakeATour:
@@ -832,17 +832,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     var userTourCards = TourCarousel.GetUserTourCards(this.appBaseUri);
                     await turnContext.SendActivityAsync(MessageFactory.Carousel(userTourCards)).ConfigureAwait(false);
                     break;
-                case Constants.SelectASubject:
-                    this.logger.LogInformation("Sending subject selection card");
-                    string subject = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.Subjects).ConfigureAwait(false);
-                    if (Validators.IsValidJSON(subject))
-                    {
-                        Subject sub = JsonConvert.DeserializeObject<Subject>(subject);
-                        conInfo = await this.GetConversationInfoAsync(turnContext, cancellationToken);
-                        await turnContext.SendActivityAsync(MessageFactory.Carousel(SubjectSelectionCard.GetCards(sub, conInfo.SubjectSelected, this.appBaseUri))).ConfigureAwait(false);
-                    }
+                //case Constants.SelectASubject:
+                //    this.logger.LogInformation("Sending subject selection card");
+                //    string subject = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.Subjects).ConfigureAwait(false);
+                //    if (Validators.IsValidJSON(subject))
+                //    {
+                //        Subject sub = JsonConvert.DeserializeObject<Subject>(subject);
+                //        conInfo = await this.GetConversationInfoAsync(turnContext, cancellationToken);
+                //        await turnContext.SendActivityAsync(MessageFactory.Carousel(SubjectSelectionCard.GetCards(sub, conInfo.SubjectSelected, this.appBaseUri))).ConfigureAwait(false);
+                //    }
 
-                    break;
+                //    break;
 
                 default:
                     conInfo = await this.GetConversationInfoAsync(turnContext, cancellationToken);
@@ -861,8 +861,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     //}
                     //else
                     //{
-                        this.logger.LogInformation("Sending input to QnAMaker");
-                        await this.GetQuestionAnswerReplyAsync(turnContext, text, cancellationToken).ConfigureAwait(false);
+                    this.logger.LogInformation("Sending input to QnAMaker");
+                    await this.GetQuestionAnswerReplyAsync(turnContext, text, cancellationToken).ConfigureAwait(false);
                     //}
 
                     break;
@@ -975,7 +975,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 case Constants.ShareFeedback:
                     this.logger.LogInformation("Sending user share feedback card (from answer)");
                     var shareFeedbackPayload = ((JObject)message.Value).ToObject<ResponseCardPayload>();
-                    await turnContext.SendActivityAsync(MessageFactory.Attachment(ShareFeedbackCard.GetCard(shareFeedbackPayload))).ConfigureAwait(false);
+                    await turnContext.SendActivityAsync(MessageFactory.Attachment(ShareFeedbackCard.GetCard(shareFeedbackPayload, this.appBaseUri))).ConfigureAwait(false);
                     break;
 
                 case AskAnExpertCard.AskAnExpertSubmitText:
@@ -988,13 +988,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                         smeTeamCard = new SmeTicketCard(newTicket).ToAttachment(message?.LocalTimestamp);
                         userCard = new UserNotificationCard(newTicket).ToAttachment(Strings.NotificationCardContent, message?.LocalTimestamp);
                     }
-
                     break;
 
                 case ShareFeedbackCard.ShareFeedbackSubmitText:
                     this.logger.LogInformation("Received app feedback");
                     conInfo = await this.GetConversationInfoAsync(turnContext, cancellationToken);
-                    smeTeamCard = await AdaptiveCardHelper.ShareFeedbackSubmitText(message, conInfo.SubjectSelected, turnContext, cancellationToken).ConfigureAwait(false);
+                    smeTeamCard = await AdaptiveCardHelper.ShareFeedbackSubmitText(message, conInfo.SubjectSelected, this.appBaseUri, turnContext, cancellationToken).ConfigureAwait(false);
                     if (smeTeamCard != null)
                     {
                         await turnContext.SendActivityAsync(MessageFactory.Text(Strings.ThankYouTextContent)).ConfigureAwait(false);
@@ -1527,6 +1526,4 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             return conInfo;
         }
     }
-
-
 }

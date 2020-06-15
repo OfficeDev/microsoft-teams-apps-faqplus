@@ -173,8 +173,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Dialogs
         {
             var queryResult = stepContext.Result as QnASearchResultList;
             string reply = stepContext.Context.Activity.Text;
-
-
             var dialogOptions = GetDialogOptionsValue(stepContext);
             var previousQnAId = Convert.ToInt32(dialogOptions[PreviousQnAId]);
             if (previousQnAId > 0)
@@ -206,10 +204,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Dialogs
                     }
                     else
                     {
-                        var conversationStateAccessors = this.conversationState.CreateProperty<ConversationInfo>(nameof(ConversationInfo));
-                        var conInfo = await conversationStateAccessors.GetAsync(stepContext.Context, () => new ConversationInfo(), cancellationToken);
-
-                        await stepContext.Context.SendActivityAsync(MessageFactory.Attachment(ResponseCard.GetCard(answerData.Questions.FirstOrDefault(), answerData.Answer, reply, conInfo.SubjectSelected, this.appBaseUri), this.appBaseUri)).ConfigureAwait(false);
+                        await stepContext.Context.SendActivityAsync(MessageFactory.Attachment(ResponseCard.GetCard(answerData.Questions.FirstOrDefault(), answerData.Answer, reply))).ConfigureAwait(false);
                     }
                 }
             }

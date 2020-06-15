@@ -25,9 +25,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <param name="question">Knowledgebase question, from QnA Maker service.</param>
         /// <param name="answer">Knowledgebase answer, from QnA Maker service.</param>
         /// <param name="userQuestion">Actual question asked by the user to the bot.</param>
-        /// <param name="subject">Subject selected</param>
         /// <returns>Response card.</returns>
-        public static Attachment GetCard(string question, string answer, string userQuestion, string subject, string appurl)
+        public static Attachment GetCard(string question, string answer, string userQuestion)
         {
             AdaptiveCard responseCard = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
             {
@@ -36,7 +35,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     new AdaptiveTextBlock
                     {
                         Weight = AdaptiveTextWeight.Bolder,
-                        Text = string.IsNullOrEmpty(subject) ? Strings.ResponseHeaderText : string.Format(CultureInfo.InvariantCulture, Strings.ResponseHeaderText, "from " + subject),
+                        Text =  Strings.ResponseHeaderText,
                         Wrap = true,
                     },
                     new AdaptiveTextBlock
@@ -97,7 +96,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <returns>Response card.</returns>
         public static List<Attachment> GetMultiturnCard(string question, string answer, IList<PromptDTO> promts)
         {
-
             double cardNum = System.Math.Ceiling((double)promts.Count / 6);
 
             var attachments = new List<Attachment>();
