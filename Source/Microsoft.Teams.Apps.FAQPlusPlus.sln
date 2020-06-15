@@ -1,15 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29306.81
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.1082
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Teams.Apps.FAQPlusPlus.Configuration", "Microsoft.Teams.Apps.FAQPlusPlus.Configuration\Microsoft.Teams.Apps.FAQPlusPlus.Configuration.csproj", "{FB347EC9-3571-43D2-9D54-3C14EA9E47BF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Teams.Apps.FAQPlusPlus", "Microsoft.Teams.Apps.FAQPlusPlus\Microsoft.Teams.Apps.FAQPlusPlus.csproj", "{055149A6-01FF-4C2A-8CD5-DD0061A28CD8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Teams.Apps.FAQPlusPlus.Common", "Microsoft.Teams.Apps.FAQPlusPlus.Common\Microsoft.Teams.Apps.FAQPlusPlus.Common.csproj", "{868E7490-FD9A-44A6-8BC0-939C130BBC5B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Teams.Apps.FAQPlusPlus.Common", "Microsoft.Teams.Apps.FAQPlusPlus.Common\Microsoft.Teams.Apps.FAQPlusPlus.Common.csproj", "{868E7490-FD9A-44A6-8BC0-939C130BBC5B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction", "Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction\Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.csproj", "{E678D0B0-C907-4A11-8AD9-94BD8C63F002}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction", "Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction\Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.csproj", "{E678D0B0-C907-4A11-8AD9-94BD8C63F002}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

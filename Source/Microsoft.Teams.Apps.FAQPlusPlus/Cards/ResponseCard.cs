@@ -27,7 +27,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <param name="userQuestion">Actual question asked by the user to the bot.</param>
         /// <param name="subject">Subject selected</param>
         /// <returns>Response card.</returns>
-        public static Attachment GetCard(string question, string answer, string userQuestion, string subject)
+        public static Attachment GetCard(string question, string answer, string userQuestion, string subject, string appurl)
         {
             AdaptiveCard responseCard = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
             {
@@ -95,48 +95,65 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <param name="answer">Knowledgebase answer, from QnA Maker service.</param>
         /// <param name="promts">multiturn prompts</param>
         /// <returns>Response card.</returns>
-        public static Attachment GetMultiturnCard(string question, string answer, IList<PromptDTO> promts)
+        public static List<Attachment> GetMultiturnCard(string question, string answer, IList<PromptDTO> promts)
         {
-            List<AdaptiveAction> actions = new List<AdaptiveAction>();
 
-            foreach (PromptDTO prompt in promts)
+            double cardNum = System.Math.Ceiling((double)promts.Count / 6);
+
+            var attachments = new List<Attachment>();
+
+            for (int cardIndex = 0; cardIndex < cardNum; cardIndex++)
             {
-                actions.Add(new AdaptiveSubmitAction
+                List<AdaptiveAction> actions = new List<AdaptiveAction>();
+                for (int index = 0 + (cardIndex * 6); index < (cardIndex + 1) * 6 && index < promts.Count; index++)
                 {
-                    Title = prompt.DisplayText,
-                    Data = new ResponseCardPayload
+                    actions.Add(new AdaptiveSubmitAction
                     {
-                        MsTeams = new CardAction
+                        Title = promts[index].DisplayText,
+                        Data = new ResponseCardPayload
                         {
-                            Type = ActionTypes.MessageBack,
-                            DisplayText = prompt.DisplayText,
-                            Text = prompt.DisplayText,
+                            MsTeams = new CardAction
+                            {
+                                Type = ActionTypes.MessageBack.ToString(),
+                                Text = promts[index].DisplayText,
+                                Value = new ResponseCardPayload
+                                {
+                                    MsTeams = new CardAction
+                                    {
+                                        Type = ActionTypes.MessageBack,
+                                        DisplayText = promts[index].DisplayText,
+                                        Text = promts[index].DisplayText,
+                                    },
+                                    UserQuestion = question,
+                                    KnowledgeBaseAnswer = answer,
+                                    IsMultiturn = true,
+                                },
+                            },
                         },
-                        UserQuestion = question,
-                        KnowledgeBaseAnswer = answer,
-                        IsMultiturn = true,
+                    });
+                }
+
+                AdaptiveCard responseCard = new AdaptiveCard
+                {
+                    Body = new List<AdaptiveElement>
+                    {
+                        new AdaptiveTextBlock
+                        {
+                            Text = cardIndex == 0 ? answer : null,
+                            Wrap = true,
+                        },
                     },
+                    Actions = actions,
+                };
+
+                attachments.Add(new Attachment
+                {
+                    ContentType = AdaptiveCard.ContentType,
+                    Content = responseCard,
                 });
             }
 
-            AdaptiveCard responseCard = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
-            {
-                Body = new List<AdaptiveElement>
-                {
-                    new AdaptiveTextBlock
-                    {
-                        Text = answer,
-                        Wrap = true,
-                    },
-                },
-                Actions = actions,
-            };
-
-            return new Attachment
-            {
-                ContentType = AdaptiveCard.ContentType,
-                Content = responseCard,
-            };
+            return attachments;
         }
     }
 }

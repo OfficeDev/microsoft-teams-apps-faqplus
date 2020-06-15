@@ -11,8 +11,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Dialogs
     using Microsoft.Bot.Builder.AI.QnA;
     using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Schema;
+    using Microsoft.Extensions.Options;
     using Microsoft.Teams.Apps.FAQPlusPlus.Cards;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models.Configuration;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers;
     using Microsoft.Teams.Apps.FAQPlusPlus.Helpers;
     using Newtonsoft.Json;
@@ -27,16 +29,18 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Dialogs
         private const string QnAContextData = "qnaContextData";
         private const string QnAPromptsData = "qnaPromptsData";
         private const string PreviousQnAId = "prevQnAId";
+        private readonly string appBaseUri;
 
         private readonly IQnaServiceProvider qnaServiceProvider;
         private readonly BotState conversationState;
+
 
         /// <summary>
         /// Initializes a new instance of the <see cref="QnAMakerMultiturnDialog"/> class.
         /// </summary>
         /// <param name="qSP">Instantce of IQnaServiceProvider</param>
         /// <param name="conversationState"> conversation state</param>
-        public QnAMakerMultiturnDialog(IQnaServiceProvider qSP, ConversationState conversationState)
+        public QnAMakerMultiturnDialog(IQnaServiceProvider qSP, ConversationState conversationState, IOptionsMonitor<BotSettings> optionsAccessor)
             : base(nameof(QnAMakerMultiturnDialog))
         {
             this.AddDialog(new WaterfallDialog(QnAMakerDialogName)
@@ -45,6 +49,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Dialogs
                 .AddStep(this.DisplayQnAResult));
             this.qnaServiceProvider = qSP;
             this.conversationState = conversationState;
+            this.appBaseUri = optionsAccessor.CurrentValue.AppBaseUri;
         }
 
         /// <summary>
@@ -73,14 +78,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Dialogs
         private async Task<DialogTurnResult> CallGenerateAnswerAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
 
-            var conversationStateAccessors = this.conversationState.CreateProperty<ConversationInfo>(nameof(ConversationInfo));
-            var conInfo = await conversationStateAccessors.GetAsync(stepContext.Context, () => new ConversationInfo(), cancellationToken);
+            //var conversationStateAccessors = this.conversationState.CreateProperty<ConversationInfo>(nameof(ConversationInfo));
+            //var conInfo = await conversationStateAccessors.GetAsync(stepContext.Context, () => new ConversationInfo(), cancellationToken);
 
             List<MetadataDTO> metadata = new List<MetadataDTO>();
-            if (conInfo != null)
-            {
-                metadata.Add(new MetadataDTO("project", conInfo.SubjectSelected));
-            }
+            //if (conInfo != null)
+            //{
+            //    metadata.Add(new MetadataDTO("project", conInfo.SubjectSelected));
+            //}
 
             stepContext.Values[CurrentQuery] = stepContext.Context.Activity.Text;
 
@@ -100,12 +105,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Dialogs
 
             // Calling QnAMaker to get response.
             var response = await this.qnaServiceProvider.GenerateAnswerAsync(question: stepContext.Context.Activity.Text, isTestKnowledgeBase: false, qnaId, context, metadata).ConfigureAwait(false);
-            if (response.Answers.First().Id == -1)
-            {
-                List<MetadataDTO> metadataChitCat = new List<MetadataDTO>();
-                metadataChitCat.Add(new MetadataDTO("editorial", "chitchat"));
-                response = await this.qnaServiceProvider.GenerateAnswerAsync(question: stepContext.Context.Activity.Text, isTestKnowledgeBase: false, qnaId, context, metadataChitCat).ConfigureAwait(false);
-            }
+            //if (response.Answers.First().Id == -1)
+            //{
+            //    List<MetadataDTO> metadataChitCat = new List<MetadataDTO>();
+            //    metadataChitCat.Add(new MetadataDTO("editorial", "chitchat"));
+            //    response = await this.qnaServiceProvider.GenerateAnswerAsync(question: stepContext.Context.Activity.Text, isTestKnowledgeBase: false, qnaId, context, metadataChitCat).ConfigureAwait(false);
+            //}
 
             // Resetting previous query.
             dialogOptions[PreviousQnAId] = -1;
@@ -147,7 +152,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Dialogs
                     stepContext.ActiveDialog.State["options"] = dialogOptions;
 
                     // Get multi-turn prompts card activity.
-                    await stepContext.Context.SendActivityAsync(MessageFactory.Attachment(ResponseCard.GetMultiturnCard(answer.Questions.First(), answer.Answer, answer.Context.Prompts))).ConfigureAwait(false);
+                    var reply = MessageFactory.Attachment(ResponseCard.GetMultiturnCard(answer.Questions.First(), answer.Answer, answer.Context.Prompts));
+                    reply.AttachmentLayout = AttachmentLayoutTypes.List;
+                    await stepContext.Context.SendActivityAsync(reply);
 
                     return new DialogTurnResult(DialogTurnStatus.Waiting);
                 }
@@ -202,7 +209,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Dialogs
                         var conversationStateAccessors = this.conversationState.CreateProperty<ConversationInfo>(nameof(ConversationInfo));
                         var conInfo = await conversationStateAccessors.GetAsync(stepContext.Context, () => new ConversationInfo(), cancellationToken);
 
-                        await stepContext.Context.SendActivityAsync(MessageFactory.Attachment(ResponseCard.GetCard(answerData.Questions.FirstOrDefault(), answerData.Answer, reply, conInfo.SubjectSelected))).ConfigureAwait(false);
+                        await stepContext.Context.SendActivityAsync(MessageFactory.Attachment(ResponseCard.GetCard(answerData.Questions.FirstOrDefault(), answerData.Answer, reply, conInfo.SubjectSelected, this.appBaseUri), this.appBaseUri)).ConfigureAwait(false);
                     }
                 }
             }
