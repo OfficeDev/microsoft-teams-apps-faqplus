@@ -112,21 +112,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         {
                             MsTeams = new CardAction
                             {
-                                Type = ActionTypes.MessageBack.ToString(),
+                                Type = ActionTypes.MessageBack,
+                                DisplayText = promts[index].DisplayText,
                                 Text = promts[index].DisplayText,
-                                Value = new ResponseCardPayload
-                                {
-                                    MsTeams = new CardAction
-                                    {
-                                        Type = ActionTypes.MessageBack,
-                                        DisplayText = promts[index].DisplayText,
-                                        Text = promts[index].DisplayText,
-                                    },
-                                    UserQuestion = question,
-                                    KnowledgeBaseAnswer = answer,
-                                    IsMultiturn = true,
-                                },
                             },
+                            UserQuestion = question,
+                            KnowledgeBaseAnswer = answer,
+                            IsMultiturn = true,
                         },
                     });
                 }
