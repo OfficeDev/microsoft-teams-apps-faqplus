@@ -23,6 +23,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         public string KnowledgeBaseAnswer { get; set; }
 
         /// <summary>
+        /// Gets or sets the value of projectMetadata.
+        /// </summary>
+        [JsonProperty("Project")]
+        public string Project { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether is multiturn QnA Pari.
         /// </summary>
         [JsonProperty("IsMultiturn")]

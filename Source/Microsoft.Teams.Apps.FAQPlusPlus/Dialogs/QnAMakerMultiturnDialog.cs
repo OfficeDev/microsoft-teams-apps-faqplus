@@ -204,13 +204,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Dialogs
                     }
                     else
                     {
-                        await stepContext.Context.SendActivityAsync(MessageFactory.Attachment(ResponseCard.GetCard(answerData.Questions.FirstOrDefault(), answerData.Answer, reply))).ConfigureAwait(false);
+                        string project = (from r in answerData.Metadata where r.Name.Equals("project") select r).FirstOrDefault()?.Value;
+                        await stepContext.Context.SendActivityAsync(MessageFactory.Attachment(ResponseCard.GetCard(answerData.Questions.FirstOrDefault(), answerData.Answer, reply, project, this.appBaseUri))).ConfigureAwait(false);
                     }
                 }
             }
             else
             {
-                await stepContext.Context.SendActivityAsync(MessageFactory.Attachment(UnrecognizedInputCard.GetCard(reply))).ConfigureAwait(false);
+                await stepContext.Context.SendActivityAsync(MessageFactory.Attachment(UnrecognizedInputCard.GetCard(reply, this.appBaseUri))).ConfigureAwait(false);
             }
 
             return await stepContext.EndDialogAsync().ConfigureAwait(false);

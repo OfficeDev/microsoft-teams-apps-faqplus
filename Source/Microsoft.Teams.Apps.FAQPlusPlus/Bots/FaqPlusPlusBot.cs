@@ -981,13 +981,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 case AskAnExpertCard.AskAnExpertSubmitText:
                     this.logger.LogInformation("Received question for expert");
                     newTicket = await AdaptiveCardHelper.AskAnExpertSubmitText(message, turnContext, cancellationToken, this.ticketsProvider).ConfigureAwait(false);
-                    conInfo = await this.GetConversationInfoAsync(turnContext, cancellationToken);
-                    newTicket.Subject = conInfo.SubjectSelected;
                     if (newTicket != null)
                     {
                         smeTeamCard = new SmeTicketCard(newTicket).ToAttachment(message?.LocalTimestamp);
                         userCard = new UserNotificationCard(newTicket).ToAttachment(Strings.NotificationCardContent, message?.LocalTimestamp);
                     }
+
                     break;
 
                 case ShareFeedbackCard.ShareFeedbackSubmitText:
@@ -1503,7 +1502,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     if (!hasPublished)
                     {
                         this.logger.LogError(ex, "Error while fetching the qna pair: knowledge base may be empty or it has not published yet.");
-                        await turnContext.SendActivityAsync(MessageFactory.Attachment(UnrecognizedInputCard.GetCard(text))).ConfigureAwait(false);
+                        await turnContext.SendActivityAsync(MessageFactory.Attachment(UnrecognizedInputCard.GetCard(text, this.appBaseUri))).ConfigureAwait(false);
                         return;
                     }
                 }

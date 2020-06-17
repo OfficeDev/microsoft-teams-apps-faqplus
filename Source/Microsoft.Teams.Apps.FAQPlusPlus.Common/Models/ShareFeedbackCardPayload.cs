@@ -27,6 +27,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         public string UserQuestion { get; set; }
 
         /// <summary>
+        /// Gets or sets the value of projectMetadata.
+        /// </summary>
+        public string Project { get; set; }
+
+        /// <summary>
         /// Gets or sets the answer for the expert- Answer sent to the SME team along with feedback
         /// provided by the user on response given by bot calling QnA Maker service.
         /// </summary>

@@ -45,6 +45,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 Description = payload.UserQuestion,     // Pre-populate the description with the user's question
                 UserQuestion = payload.UserQuestion,
                 KnowledgeBaseAnswer = payload?.KnowledgeBaseAnswer,
+                Project = payload.Project,
             };
 
             return GetCard(cardPayload, showValidationErrors: false, appBaseUri);
@@ -127,6 +128,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                         UserQuestion = data.UserQuestion,
                                         KnowledgeBaseAnswer = data.KnowledgeBaseAnswer,
                                         Rating = nameof(FeedbackRating.Helpful),
+                                        Project = data.Project,
                                     },
                                 },
                            },
@@ -168,6 +170,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                        UserQuestion = data.UserQuestion,
                                        KnowledgeBaseAnswer = data.KnowledgeBaseAnswer,
                                        Rating = nameof(FeedbackRating.NeedsImprovement),
+                                       Project = data.Project,
                                    },
                                },
                            },
@@ -209,6 +212,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                         UserQuestion = data.UserQuestion,
                                         KnowledgeBaseAnswer = data.KnowledgeBaseAnswer,
                                         Rating = nameof(FeedbackRating.NotHelpful),
+                                        Project = data.Project,
                                     },
                                 },
                             },

@@ -21,7 +21,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// </summary>
         /// <param name="userQuestion">Actual question asked by the user to the bot.</param>
         /// <returns>UnrecognizedInput Card.</returns>
-        public static Attachment GetCard(string userQuestion)
+        public static Attachment GetCard(string userQuestion, string appBaseUri)
         {
             AdaptiveCard unrecognizedInputCard = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
             {
@@ -51,6 +51,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     },
                 },
             };
+            unrecognizedInputCard.Actions[0].AdditionalProperties.Add("iconUrl", appBaseUri + "/content/expert.png");
 
             return new Attachment
             {

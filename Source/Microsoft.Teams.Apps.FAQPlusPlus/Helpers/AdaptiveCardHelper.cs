@@ -119,6 +119,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Helpers
                 LastModifiedByObjectId = message.From.AadObjectId,
                 UserQuestion = data.UserQuestion,
                 KnowledgeBaseAnswer = data.KnowledgeBaseAnswer,
+                Subject = data.Project,
             };
 
             await ticketsProvider.UpsertTicketAsync(ticketEntity).ConfigureAwait(false);

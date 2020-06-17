@@ -25,8 +25,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <param name="question">Knowledgebase question, from QnA Maker service.</param>
         /// <param name="answer">Knowledgebase answer, from QnA Maker service.</param>
         /// <param name="userQuestion">Actual question asked by the user to the bot.</param>
+        /// <param name="project"> the value of project metadata </param>
+        /// <param name="appBaseUri">The base URI where the app is hosted.</param>
         /// <returns>Response card.</returns>
-        public static Attachment GetCard(string question, string answer, string userQuestion)
+        public static Attachment GetCard(string question, string answer, string userQuestion, string project, string appBaseUri)
         {
             AdaptiveCard responseCard = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
             {
@@ -35,7 +37,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     new AdaptiveTextBlock
                     {
                         Weight = AdaptiveTextWeight.Bolder,
-                        Text =  Strings.ResponseHeaderText,
+                        Text = Strings.ResponseHeaderText,
                         Wrap = true,
                     },
                     new AdaptiveTextBlock
@@ -59,6 +61,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                             },
                             UserQuestion = userQuestion,
                             KnowledgeBaseAnswer = answer,
+                            Project = project,
                         },
                     },
                     new AdaptiveSubmitAction
@@ -74,10 +77,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                             },
                             UserQuestion = userQuestion,
                             KnowledgeBaseAnswer = answer,
+                            Project = project,
                         },
                     },
                 },
             };
+            responseCard.Actions[0].AdditionalProperties.Add("iconUrl", appBaseUri + "/content/expert.png");
+            responseCard.Actions[1].AdditionalProperties.Add("iconUrl", appBaseUri + "/content/feedback.png");
 
             return new Attachment
             {
@@ -85,7 +91,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 Content = responseCard,
             };
         }
-
 
         /// <summary>
         /// Construct the response card - when user asks a question to QnA Maker through bot.
