@@ -42,7 +42,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         {
             var cardPayload = new ShareFeedbackCardPayload
             {
-                Description = payload.UserQuestion,     // Pre-populate the description with the user's question
+                DescriptionHelpful = payload.UserQuestion,             // Pre-populate the description with the user's question
+                DescriptionNeedsImprovement = payload.UserQuestion,    // Pre-populate the description with the user's question
+                DescriptionNotHelpful = payload.UserQuestion,          // Pre-populate the description with the user's question
                 UserQuestion = payload.UserQuestion,
                 KnowledgeBaseAnswer = payload?.KnowledgeBaseAnswer,
                 Project = payload.Project,
@@ -107,7 +109,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                 new AdaptiveTextInput
                                 {
                                     Spacing = AdaptiveSpacing.Small,
-                                    Id = nameof(ShareFeedbackCardPayload.Description),
+                                    Id = nameof(ShareFeedbackCardPayload.DescriptionHelpful),
                                     Placeholder = Strings.FeedbackDescriptionPlaceholderText,
                                     IsMultiline = true,
                                 },
@@ -149,7 +151,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                new AdaptiveTextInput
                                {
                                    Spacing = AdaptiveSpacing.Small,
-                                   Id = nameof(ShareFeedbackCardPayload.Description),
+                                   Id = nameof(ShareFeedbackCardPayload.DescriptionNeedsImprovement),
                                    Placeholder = Strings.FeedbackDescriptionPlaceholderText,
                                    IsMultiline = true,
                                },
@@ -191,7 +193,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                new AdaptiveTextInput
                                {
                                    Spacing = AdaptiveSpacing.Small,
-                                   Id = nameof(ShareFeedbackCardPayload.Description),
+                                   Id = nameof(ShareFeedbackCardPayload.DescriptionNotHelpful),
                                    Placeholder = Strings.FeedbackDescriptionPlaceholderText,
                                    IsMultiline = true,
                                },

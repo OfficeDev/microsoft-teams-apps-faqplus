@@ -132,6 +132,20 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Helpers
             TeamsChannelAccount member,
             IFeedbackProvider feedbackProvider)
         {
+            string description = null;
+            if (data.Rating == nameof(FeedbackRating.Helpful))
+            {
+                description = data.DescriptionHelpful;
+            }
+            else if (data.Rating == nameof(FeedbackRating.NeedsImprovement))
+            {
+                description = data.DescriptionNeedsImprovement;
+            }
+            else if (data.Rating == nameof(FeedbackRating.NotHelpful))
+            {
+                description = data.DescriptionNotHelpful;
+            }
+
             FeedbackEntity feedbackEntity = new FeedbackEntity
             {
                 FeedbackId = Guid.NewGuid().ToString(),
@@ -139,7 +153,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Helpers
                 UserName = member.Name,
                 UserGivenName = member.GivenName,
                 Rating = data.Rating,
-                Description = data.Description,
+                Description = description,
                 UserQuestion = data.UserQuestion,
                 KnowledgeBaseAnswer = data.KnowledgeBaseAnswer,
                 Subject = data.Project,
