@@ -97,6 +97,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
             services.AddHttpClient();
             services.AddSingleton<ICredentialProvider, ConfigurationCredentialProvider>();
             services.AddSingleton<ITicketsProvider>(new TicketsProvider(this.Configuration["StorageConnectionString"]));
+            services.AddSingleton<IFeedbackProvider>(new FeedbackProvider(this.Configuration["StorageConnectionString"]));
+            services.AddSingleton<IConversationProvider>(new ConversationProvider(this.Configuration["StorageConnectionString"]));
+            services.AddSingleton<IUserActionProvider>(new UserActionProvider(this.Configuration["StorageConnectionString"]));
             services.AddSingleton<IBotFrameworkHttpAdapter, BotFrameworkHttpAdapter>();
             services.AddSingleton(new MicrosoftAppCredentials(this.Configuration["MicrosoftAppId"], this.Configuration["MicrosoftAppPassword"]));
 

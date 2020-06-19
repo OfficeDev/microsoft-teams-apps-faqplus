@@ -351,7 +351,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         Strings.UpdateHistoryHeadersText,
                         editedBy,
                         actionPerformed == Strings.EntryCreatedByText ? AddAction : EditAction,
-                        DateTime.UtcNow.ToString(Rfc3339DateTimeFormat, CultureInfo.InvariantCulture));
+                        DateTime.UtcNow.AddHours(8).ToString(Rfc3339DateTimeFormat, CultureInfo.InvariantCulture));
                 }
                 else
                 {
@@ -361,7 +361,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         qnaPairEntity.UpdateHistoryData,
                         editedBy,
                         actionPerformed == Strings.EntryCreatedByText ? AddAction : EditAction,
-                        DateTime.UtcNow.ToString(Rfc3339DateTimeFormat, CultureInfo.InvariantCulture));
+                        DateTime.UtcNow.AddHours(8).ToString(Rfc3339DateTimeFormat, CultureInfo.InvariantCulture));
                 }
 
                 card.Body.Add(container);
@@ -675,8 +675,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             }
 
             string actionData = string.IsNullOrEmpty(oldActions)
-                ? string.Format("{0}${1}|{2}|{3}", Strings.UpdateHistoryHeadersText, deletedBy, DeleteAction, DateTime.UtcNow.ToString(Rfc3339DateTimeFormat, CultureInfo.InvariantCulture))
-                : string.Format("{0}${1}|{2}|{3}", oldActions, deletedBy, DeleteAction, DateTime.UtcNow.ToString(Rfc3339DateTimeFormat, CultureInfo.InvariantCulture));
+                ? string.Format("{0}${1}|{2}|{3}", Strings.UpdateHistoryHeadersText, deletedBy, DeleteAction, DateTime.UtcNow.AddHours(8).ToString(Rfc3339DateTimeFormat, CultureInfo.InvariantCulture))
+                : string.Format("{0}${1}|{2}|{3}", oldActions, deletedBy, DeleteAction, DateTime.UtcNow.AddHours(8).ToString(Rfc3339DateTimeFormat, CultureInfo.InvariantCulture));
 
             card.Actions.Add(
               new AdaptiveShowCardAction()
@@ -858,7 +858,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                             Strings.UpdateHistoryHeadersText,
                             editedBy,
                             actionPerformed == Strings.EntryCreatedByText ? AddAction : EditAction,
-                            DateTime.UtcNow.ToString(Rfc3339DateTimeFormat, CultureInfo.InvariantCulture));
+                            DateTime.UtcNow.AddHours(8).ToString(Rfc3339DateTimeFormat, CultureInfo.InvariantCulture));
                     }
                     else
                     {
@@ -868,7 +868,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                             qnaPairEntity.UpdateHistoryData,
                             editedBy,
                             actionPerformed == Strings.EntryCreatedByText ? AddAction : EditAction,
-                            DateTime.UtcNow.ToString(Rfc3339DateTimeFormat, CultureInfo.InvariantCulture));
+                            DateTime.UtcNow.AddHours(8).ToString(Rfc3339DateTimeFormat, CultureInfo.InvariantCulture));
                     }
 
                     card.Actions.Add(

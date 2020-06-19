@@ -90,7 +90,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
                             Answer = combinedDescription?.Trim(),
                             Metadata = new List<MetadataDTO>()
                             {
-                                new MetadataDTO() { Name = Constants.MetadataCreatedAt, Value = DateTime.UtcNow.Ticks.ToString(CultureInfo.InvariantCulture) },
+                                new MetadataDTO() { Name = Constants.MetadataCreatedAt, Value = DateTime.UtcNow.AddHours(8).Ticks.ToString(CultureInfo.InvariantCulture) },
                                 new MetadataDTO() { Name = Constants.MetadataCreatedBy, Value = createdBy },
                                 new MetadataDTO() { Name = Constants.MetadataConversationId, Value = HttpUtility.UrlEncode(conversationId) },
                                 new MetadataDTO() { Name = Constants.MetadataActivityReferenceId, Value = activityReferenceId },
@@ -145,7 +145,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
                             {
                                 Add = new List<MetadataDTO>()
                                 {
-                                    new MetadataDTO() { Name = Constants.MetadataUpdatedAt, Value = DateTime.UtcNow.Ticks.ToString(CultureInfo.InvariantCulture) },
+                                    new MetadataDTO() { Name = Constants.MetadataUpdatedAt, Value = DateTime.UtcNow.AddHours(8).Ticks.ToString(CultureInfo.InvariantCulture) },
                                     new MetadataDTO() { Name = Constants.MetadataUpdatedBy, Value = updatedBy },
                                 },
                             },

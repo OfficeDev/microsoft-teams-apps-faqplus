@@ -91,6 +91,21 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common
         public const string TicketTableName = "Tickets";
 
         /// <summary>
+        /// Table name where feedback from bot will be saved.
+        /// </summary>
+        public const string FeedbackTableName = "Feedback";
+
+        /// <summary>
+        /// Table name where user action will be saved.
+        /// </summary>
+        public const string UserActionTableName = "UserAction";
+
+        /// <summary>
+        /// Table name where QnA conversation with bot will be saved.
+        /// </summary>
+        public const string ConversationTableName = "QnAConversation";
+
+        /// <summary>
         /// Name of column value to map with knowledgebase id in table storage.
         /// </summary>
         public const string KnowledgeBaseEntityId = "KnowledgeBaseId";

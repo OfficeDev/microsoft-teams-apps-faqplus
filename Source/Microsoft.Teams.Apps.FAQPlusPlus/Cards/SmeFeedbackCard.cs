@@ -25,10 +25,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// feedback details given by the user.
         /// </summary>
         /// <param name="data">User activity payload.</param>
-        /// <param name="subjectSelected">Subject user selected</param>
-        /// <param name="userDetails">User details.</param>
         /// <returns>Sme facing feedback notification card.</returns>
-        public static Attachment GetCard(ShareFeedbackCardPayload data, string subjectSelected, TeamsChannelAccount userDetails)
+        public static Attachment GetCard(FeedbackEntity data)
         {
             // Constructing adaptive card that is sent to SME team.
             AdaptiveCard smeFeedbackCard = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
@@ -43,7 +41,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                    },
                    new AdaptiveTextBlock()
                    {
-                       Text = string.Format(CultureInfo.InvariantCulture, Strings.FeedbackAlertText, userDetails?.Name),
+                       Text = string.Format(CultureInfo.InvariantCulture, Strings.FeedbackAlertText, data.UserName),
                        Wrap = true,
                    },
                    new AdaptiveTextBlock()
@@ -63,15 +61,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                {
                    new AdaptiveOpenUrlAction
                    {
-                       Title = string.Format(CultureInfo.InvariantCulture, Strings.ChatTextButton, userDetails?.GivenName),
-                       UrlString = $"https://teams.microsoft.com/l/chat/0/0?users={Uri.EscapeDataString(userDetails.UserPrincipalName)}",
+                       Title = string.Format(CultureInfo.InvariantCulture, Strings.ChatTextButton, data.UserGivenName),
+                       UrlString = $"https://teams.microsoft.com/l/chat/0/0?users={Uri.EscapeDataString(data.UserPrincipalName)}",
                    },
                },
             };
 
 
             // Description fact is available in the card only when user enters description text.
-            if (!string.IsNullOrWhiteSpace(subjectSelected))
+            if (!string.IsNullOrWhiteSpace(data.Subject))
             {
                 smeFeedbackCard.Body.Insert(2, new AdaptiveTextBlock()
                 {
@@ -82,7 +80,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
 
                 smeFeedbackCard.Body.Insert(3, new AdaptiveTextBlock()
                 {
-                    Text = subjectSelected,
+                    Text = data.Subject,
                     Spacing = AdaptiveSpacing.None,
                     Wrap = true,
                 });

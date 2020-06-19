@@ -59,17 +59,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Helpers
         /// Helps to get the expert submit card.
         /// </summary>
         /// <param name="message">A message in a conversation.</param>
-        /// <param name="subject"> subject of current question</param>
         /// <param name="appBaseUri">The base URI where the app is hosted.</param>
         /// <param name="turnContext">Context object containing information cached for a single turn of conversation with a user.</param>
         /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+        /// <param name="feedbackProvider">Feedback Provider</param>
         /// <returns>A task that represents the work queued to execute.</returns>
-        public static async Task<Attachment> ShareFeedbackSubmitText(
+        public static async Task<FeedbackEntity> ShareFeedbackSubmitText(
             IMessageActivity message,
-            string subject,
             string appBaseUri,
             ITurnContext<IMessageActivity> turnContext,
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken,
+            IFeedbackProvider feedbackProvider)
         {
             var shareFeedbackSubmitTextPayload = ((JObject)message.Value).ToObject<ShareFeedbackCardPayload>();
 
@@ -87,7 +87,53 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Helpers
             }
 
             var teamsUserDetails = await GetUserDetailsInPersonalChatAsync(turnContext, cancellationToken).ConfigureAwait(false);
-            return SmeFeedbackCard.GetCard(shareFeedbackSubmitTextPayload, subject, teamsUserDetails);
+            return await CreateFeedbackAsync(message, shareFeedbackSubmitTextPayload, teamsUserDetails, feedbackProvider).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Get the account details of the user in a 1:1 chat with the bot.
+        /// </summary>
+        /// <param name="turnContext">Context object containing information cached for a single turn of conversation with a user.</param>
+        /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+        /// <returns>A task that represents the work queued to execute.</returns>
+        public static async Task<TeamsChannelAccount> GetUserDetailsInPersonalChatAsync(
+          ITurnContext<IMessageActivity> turnContext,
+          CancellationToken cancellationToken)
+        {
+            var members = await ((BotFrameworkAdapter)turnContext.Adapter).GetConversationMembersAsync(turnContext, cancellationToken).ConfigureAwait(false);
+            return JsonConvert.DeserializeObject<TeamsChannelAccount>(JsonConvert.SerializeObject(members[0]));
+        }
+
+        /// <summary>
+        /// Create a new Feedback entity from the input.
+        /// </summary>
+        /// <param name="message">A message in a conversation.</param>
+        /// <param name="data">Represents the submit data associated with the Share feedback card.</param>
+        /// <param name="member">Teams channel account detailing user Azure Active Directory details.</param>
+        /// <param name="feedbackProvider">Tickets Provider.</param>
+        /// <returns>TicketEntity object.</returns>
+        private static async Task<FeedbackEntity> CreateFeedbackAsync(
+            IMessageActivity message,
+            ShareFeedbackCardPayload data,
+            TeamsChannelAccount member,
+            IFeedbackProvider feedbackProvider)
+        {
+            FeedbackEntity feedbackEntity = new FeedbackEntity
+            {
+                FeedbackId = Guid.NewGuid().ToString(),
+                UserPrincipalName = member.UserPrincipalName,
+                UserName = member.Name,
+                UserGivenName = member.GivenName,
+                Rating = data.Rating,
+                Description = data.Description,
+                UserQuestion = data.UserQuestion,
+                KnowledgeBaseAnswer = data.KnowledgeBaseAnswer,
+                Subject = data.Project,
+            };
+
+            await feedbackProvider.UpsertFeecbackAsync(feedbackEntity).ConfigureAwait(false);
+
+            return feedbackEntity;
         }
 
         /// <summary>
@@ -108,7 +154,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Helpers
             {
                 TicketId = Guid.NewGuid().ToString(),
                 Status = (int)TicketState.Open,
-                DateCreated = DateTime.UtcNow,
+                DateCreated = DateTime.UtcNow.AddHours(8),
                 Title = data.Title,
                 Description = data.Description,
                 RequesterName = member.Name,
@@ -125,20 +171,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Helpers
             await ticketsProvider.UpsertTicketAsync(ticketEntity).ConfigureAwait(false);
 
             return ticketEntity;
-        }
-
-        /// <summary>
-        /// Get the account details of the user in a 1:1 chat with the bot.
-        /// </summary>
-        /// <param name="turnContext">Context object containing information cached for a single turn of conversation with a user.</param>
-        /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
-        /// <returns>A task that represents the work queued to execute.</returns>
-        private static async Task<TeamsChannelAccount> GetUserDetailsInPersonalChatAsync(
-          ITurnContext<IMessageActivity> turnContext,
-          CancellationToken cancellationToken)
-        {
-            var members = await ((BotFrameworkAdapter)turnContext.Adapter).GetConversationMembersAsync(turnContext, cancellationToken).ConfigureAwait(false);
-            return JsonConvert.DeserializeObject<TeamsChannelAccount>(JsonConvert.SerializeObject(members[0]));
         }
     }
 }

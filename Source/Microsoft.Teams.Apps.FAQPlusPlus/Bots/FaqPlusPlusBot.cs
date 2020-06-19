@@ -83,6 +83,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         private readonly IConfigurationDataProvider configurationProvider;
         private readonly MicrosoftAppCredentials microsoftAppCredentials;
         private readonly ITicketsProvider ticketsProvider;
+        private readonly IFeedbackProvider feedbackProvider;
+        private readonly IUserActionProvider userActionProvider;
         private readonly IActivityStorageProvider activityStorageProvider;
         private readonly ISearchService searchService;
         private readonly string appId;
@@ -103,6 +105,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <param name="configurationProvider">Configuration Provider.</param>
         /// <param name="microsoftAppCredentials">Microsoft app credentials to use.</param>
         /// <param name="ticketsProvider">Tickets Provider.</param>
+        /// <param name="feedbackProvider">Feedback Provider</param>
+        /// <param name="userActionProvider">UserAction Provider</param>
         /// <param name="activityStorageProvider">Activity storage provider.</param>
         /// <param name="qnaServiceProvider">Question and answer maker service provider.</param>
         /// <param name="searchService">SearchService dependency injection.</param>
@@ -118,6 +122,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             Common.Providers.IConfigurationDataProvider configurationProvider,
             MicrosoftAppCredentials microsoftAppCredentials,
             ITicketsProvider ticketsProvider,
+            IFeedbackProvider feedbackProvider,
+            IUserActionProvider userActionProvider,
             IQnaServiceProvider qnaServiceProvider,
             IActivityStorageProvider activityStorageProvider,
             ISearchService searchService,
@@ -133,6 +139,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             this.configurationProvider = configurationProvider;
             this.microsoftAppCredentials = microsoftAppCredentials;
             this.ticketsProvider = ticketsProvider;
+            this.feedbackProvider = feedbackProvider;
+            this.userActionProvider = userActionProvider;
             this.options = optionsAccessor.CurrentValue;
             this.qnaServiceProvider = qnaServiceProvider;
             this.activityStorageProvider = activityStorageProvider;
@@ -780,7 +788,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             ITurnContext<IMessageActivity> turnContext,
             CancellationToken cancellationToken)
         {
-            ConversationInfo conInfo = null;
             if (!string.IsNullOrEmpty(message.ReplyToId) && (message.Value != null) && ((JObject)message.Value).HasValues)
             {
                 if (Validators.IsValidJSON(message.Value.ToString()))
@@ -813,6 +820,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 return;
             }
 
+            UserActionEntity userAction = await this.GeneratePersonalActionEntityAsync(turnContext, cancellationToken);
+
             string text = message.Text?.ToLower()?.Trim() ?? string.Empty;
 
             switch (text)
@@ -820,17 +829,20 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 case Constants.AskAnExpert:
                     this.logger.LogInformation("Sending user ask an expert card");
                     await turnContext.SendActivityAsync(MessageFactory.Attachment(AskAnExpertCard.GetCard())).ConfigureAwait(false);
+                    userAction.Action = nameof(UserActionType.AskExpertReq);
                     break;
 
                 case Constants.ShareFeedback:
                     this.logger.LogInformation("Sending user feedback card");
                     await turnContext.SendActivityAsync(MessageFactory.Attachment(ShareFeedbackCard.GetCard(this.appBaseUri))).ConfigureAwait(false);
+                    userAction.Action = nameof(UserActionType.ShareFeedbackReq);
                     break;
 
                 case Constants.TakeATour:
                     this.logger.LogInformation("Sending user tour card");
                     var userTourCards = TourCarousel.GetUserTourCards(this.appBaseUri);
                     await turnContext.SendActivityAsync(MessageFactory.Carousel(userTourCards)).ConfigureAwait(false);
+                    userAction.Action = nameof(UserActionType.TakeATour);
                     break;
                 //case Constants.SelectASubject:
                 //    this.logger.LogInformation("Sending subject selection card");
@@ -845,7 +857,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 //    break;
 
                 default:
-                    conInfo = await this.GetConversationInfoAsync(turnContext, cancellationToken);
+                    //conInfo = await this.GetConversationInfoAsync(turnContext, cancellationToken);
 
                     // If no subject selected, prompt for subject
                     //if (conInfo.SubjectSelected == null)
@@ -866,6 +878,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     //}
 
                     break;
+            }
+
+            if (userAction.Action != nameof(UserActionType.NotDefined))
+            {
+                await this.userActionProvider.UpsertUserActionAsync(userAction).ConfigureAwait(false);
             }
         }
 
@@ -962,7 +979,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             Attachment smeTeamCard = null;      // Notification to SME team
             Attachment userCard = null;         // Acknowledgement to the user
             TicketEntity newTicket = null;      // New ticket
-            ConversationInfo conInfo;
+            FeedbackEntity newFeedback = null;      // New Feedback
+
+            UserActionEntity userAction = await this.GeneratePersonalActionEntityAsync(turnContext, cancellationToken);
 
             switch (message?.Text)
             {
@@ -970,12 +989,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     this.logger.LogInformation("Sending user ask an expert card (from answer)");
                     var askAnExpertPayload = ((JObject)message.Value).ToObject<ResponseCardPayload>();
                     await turnContext.SendActivityAsync(MessageFactory.Attachment(AskAnExpertCard.GetCard(askAnExpertPayload))).ConfigureAwait(false);
+                    userAction.Action = nameof(UserActionType.AskExpertReq);
                     break;
 
                 case Constants.ShareFeedback:
                     this.logger.LogInformation("Sending user share feedback card (from answer)");
                     var shareFeedbackPayload = ((JObject)message.Value).ToObject<ResponseCardPayload>();
                     await turnContext.SendActivityAsync(MessageFactory.Attachment(ShareFeedbackCard.GetCard(shareFeedbackPayload, this.appBaseUri))).ConfigureAwait(false);
+                    userAction.Action = nameof(UserActionType.ShareFeedbackReq);
                     break;
 
                 case AskAnExpertCard.AskAnExpertSubmitText:
@@ -987,17 +1008,19 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                         userCard = new UserNotificationCard(newTicket).ToAttachment(Strings.NotificationCardContent, message?.LocalTimestamp);
                     }
 
+                    userAction.Action = nameof(UserActionType.AskExpert);
                     break;
 
                 case ShareFeedbackCard.ShareFeedbackSubmitText:
                     this.logger.LogInformation("Received app feedback");
-                    conInfo = await this.GetConversationInfoAsync(turnContext, cancellationToken);
-                    smeTeamCard = await AdaptiveCardHelper.ShareFeedbackSubmitText(message, conInfo.SubjectSelected, this.appBaseUri, turnContext, cancellationToken).ConfigureAwait(false);
-                    if (smeTeamCard != null)
+                    newFeedback = await AdaptiveCardHelper.ShareFeedbackSubmitText(message, this.appBaseUri, turnContext, cancellationToken, this.feedbackProvider).ConfigureAwait(false);
+                    if (newFeedback != null)
                     {
+                        smeTeamCard = SmeFeedbackCard.GetCard(newFeedback);
                         await turnContext.SendActivityAsync(MessageFactory.Text(Strings.ThankYouTextContent)).ConfigureAwait(false);
                     }
 
+                    userAction.Action = nameof(UserActionType.ShareFeedback);
                     break;
 
                 default:
@@ -1026,6 +1049,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             {
                 await turnContext.SendActivityAsync(MessageFactory.Attachment(userCard), cancellationToken).ConfigureAwait(false);
             }
+
+            // Save user action
+            if (userAction.Action != nameof(UserActionType.NotDefined))
+            {
+                await this.userActionProvider.UpsertUserActionAsync(userAction).ConfigureAwait(false);
+            }
         }
 
         /// <summary>
@@ -1053,6 +1082,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 return;
             }
 
+            UserActionEntity userAction = this.GenerateChannelAction();
+            userAction.Remark += $"from {ticket.Status}";
+
             // Update the ticket based on the payload.
             switch (payload.Action)
             {
@@ -1062,25 +1094,33 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     ticket.AssignedToName = null;
                     ticket.AssignedToObjectId = null;
                     ticket.DateClosed = null;
+                    userAction.Action = nameof(UserActionType.ChangeStatus);
+                    userAction.Remark += $" to {ticket.Status}";
                     break;
 
                 case ChangeTicketStatusPayload.CloseAction:
                     ticket.Status = (int)TicketState.Closed;
-                    ticket.DateClosed = DateTime.UtcNow;
+                    ticket.DateClosed = DateTime.UtcNow.AddHours(8);
+                    userAction.Action = nameof(UserActionType.ChangeStatus);
+                    userAction.Remark += $" to {ticket.Status}";
                     break;
 
                 case ChangeTicketStatusPayload.AssignToSelfAction:
                     ticket.Status = (int)TicketState.Open;
-                    ticket.DateAssigned = DateTime.UtcNow;
+                    ticket.DateAssigned = DateTime.UtcNow.AddHours(8);
                     ticket.AssignedToName = message.From.Name;
                     ticket.AssignedToObjectId = message.From.AadObjectId;
                     ticket.DateClosed = null;
+                    userAction.Action = nameof(UserActionType.ChangeStatus);
+                    userAction.Remark += $" to {ticket.Status}";
                     break;
 
                 default:
                     this.logger.LogInformation($"Unknown status command {payload.Action}", SeverityLevel.Warning);
                     return;
             }
+
+            userAction.UserName += message.From.Name;
 
             ticket.LastModifiedByName = message.From.Name;
             ticket.LastModifiedByObjectId = message.From.AadObjectId;
@@ -1135,6 +1175,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 userNotification.Conversation = new ConversationAccount { Id = ticket.RequesterConversationId };
                 var userResponse = await turnContext.Adapter.SendActivitiesAsync(turnContext, new Activity[] { (Activity)userNotification }, cancellationToken).ConfigureAwait(false);
                 this.logger.LogInformation($"User notified of update to ticket {ticket.TicketId}, activityId = {userResponse.FirstOrDefault()?.Id}");
+            }
+
+            // record user action
+            if (userAction.Action != nameof(UserActionType.NotDefined))
+            {
+                await this.userActionProvider.UpsertUserActionAsync(userAction).ConfigureAwait(false);
             }
         }
 
@@ -1513,16 +1559,28 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         }
 
         /// <summary>
-        /// Get current conversation info
+        /// Get new personl user action entity 
         /// </summary>
-        /// <returns>conversation info</returns>
-        private async Task<ConversationInfo> GetConversationInfoAsync(
-            ITurnContext turnContext,
-            CancellationToken cancellationToken)
+        /// <param name="turnContext">Context object containing information cached for a single turn of conversation with a user.</param>
+        /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+        /// <returns>user action entity</returns>
+        private async Task<UserActionEntity> GeneratePersonalActionEntityAsync(ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
         {
-            var conversationStateAccessors = this.conversationState.CreateProperty<ConversationInfo>(nameof(ConversationInfo));
-            var conInfo = await conversationStateAccessors.GetAsync(turnContext, () => new ConversationInfo(), cancellationToken);
-            return conInfo;
+            UserActionEntity userAction = new UserActionEntity();
+            var userDetails = await AdaptiveCardHelper.GetUserDetailsInPersonalChatAsync(turnContext, cancellationToken).ConfigureAwait(false);
+            userAction.UserPrincipalName = userDetails.UserPrincipalName;
+            userAction.UserName = userDetails.Name;
+            userAction.UserActionId = Guid.NewGuid().ToString();
+            userAction.Action = nameof(UserActionType.NotDefined);
+            return userAction;
+        }
+
+        private UserActionEntity GenerateChannelAction()
+        {
+            UserActionEntity userAction = new UserActionEntity();
+            userAction.UserActionId = Guid.NewGuid().ToString();
+            userAction.Action = nameof(UserActionType.NotDefined);
+            return userAction;
         }
     }
 }

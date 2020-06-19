@@ -33,14 +33,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Dialogs
 
         private readonly IQnaServiceProvider qnaServiceProvider;
         private readonly BotState conversationState;
-
+        private readonly IConversationProvider conversationProvider;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="QnAMakerMultiturnDialog"/> class.
         /// </summary>
         /// <param name="qSP">Instantce of IQnaServiceProvider</param>
         /// <param name="conversationState"> conversation state</param>
-        public QnAMakerMultiturnDialog(IQnaServiceProvider qSP, ConversationState conversationState, IOptionsMonitor<BotSettings> optionsAccessor)
+        /// <param name="optionsAccessor">A set of key/value application configuration properties for FaqPlusPlus bot.</param>
+        /// <param name="conversationProvider">QnA conversation provider</param>
+        public QnAMakerMultiturnDialog(IQnaServiceProvider qSP, ConversationState conversationState, IOptionsMonitor<BotSettings> optionsAccessor, IConversationProvider conversationProvider)
             : base(nameof(QnAMakerMultiturnDialog))
         {
             this.AddDialog(new WaterfallDialog(QnAMakerDialogName)
@@ -50,6 +52,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Dialogs
             this.qnaServiceProvider = qSP;
             this.conversationState = conversationState;
             this.appBaseUri = optionsAccessor.CurrentValue.AppBaseUri;
+            this.conversationProvider = conversationProvider;
         }
 
         /// <summary>
@@ -77,10 +80,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Dialogs
         /// <returns>4</returns>
         private async Task<DialogTurnResult> CallGenerateAnswerAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
-
-            //var conversationStateAccessors = this.conversationState.CreateProperty<ConversationInfo>(nameof(ConversationInfo));
-            //var conInfo = await conversationStateAccessors.GetAsync(stepContext.Context, () => new ConversationInfo(), cancellationToken);
-
             List<MetadataDTO> metadata = new List<MetadataDTO>();
             //if (conInfo != null)
             //{
@@ -101,6 +100,19 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Dialogs
                 {
                     qnaId = currentQnAID;
                 }
+            }
+
+            // A new question & answer flow
+            ConversationEntity conInfo = await this.GetConversationInfoAsync(stepContext.Context, cancellationToken);
+            if (qnaId == 0)
+            {
+                conInfo.Question = stepContext.Context.Activity.Text;
+                conInfo.Turns = null;
+                conInfo.FinalAnswer = null;
+            }
+            else
+            {
+                conInfo.Turns += stepContext.Context.Activity.Text + ";";
             }
 
             // Calling QnAMaker to get response.
@@ -180,6 +192,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Dialogs
                 return await stepContext.ReplaceDialogAsync(QnAMakerDialogName, dialogOptions, cancellationToken).ConfigureAwait(false);
             }
 
+            ConversationEntity conInfo = await this.GetConversationInfoAsync(stepContext.Context, cancellationToken);
             if (queryResult.Answers.First().Id != -1)
             {
                 var answerData = queryResult.Answers.First();
@@ -205,16 +218,35 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Dialogs
                     else
                     {
                         string project = (from r in answerData.Metadata where r.Name.Equals("project") select r).FirstOrDefault()?.Value;
+                        conInfo.Project = project;
                         await stepContext.Context.SendActivityAsync(MessageFactory.Attachment(ResponseCard.GetCard(answerData.Questions.FirstOrDefault(), answerData.Answer, reply, project, this.appBaseUri))).ConfigureAwait(false);
                     }
                 }
+
+                conInfo.FinalAnswer = answerData.Answer;
             }
             else
             {
                 await stepContext.Context.SendActivityAsync(MessageFactory.Attachment(UnrecognizedInputCard.GetCard(reply, this.appBaseUri))).ConfigureAwait(false);
+                conInfo.FinalAnswer = null;
             }
 
+            conInfo.ConversationId = Guid.NewGuid().ToString();
+            await this.conversationProvider.UpsertConversationAsync(conInfo).ConfigureAwait(false);
             return await stepContext.EndDialogAsync().ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Get current conversation info
+        /// </summary>
+        /// <returns>conversation info</returns>
+        private async Task<ConversationEntity> GetConversationInfoAsync(
+            ITurnContext turnContext,
+            CancellationToken cancellationToken)
+        {
+            var conversationStateAccessors = this.conversationState.CreateProperty<ConversationEntity>(nameof(ConversationEntity));
+            var conInfo = await conversationStateAccessors.GetAsync(turnContext, () => new ConversationEntity(), cancellationToken);
+            return conInfo;
         }
     }
 }
