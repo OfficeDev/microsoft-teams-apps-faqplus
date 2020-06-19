@@ -57,7 +57,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                     new AdaptiveImage
                                     {
                                         Style = AdaptiveImageStyle.Default,
-                                        Size = AdaptiveImageSize.Large,
+                                        Size = AdaptiveImageSize.Medium,
                                         Url = new Uri(appBaseUri + "/content/ticket_channel.png"),
                                     },
                                 },
