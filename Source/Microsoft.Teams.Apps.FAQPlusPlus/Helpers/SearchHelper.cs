@@ -51,6 +51,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Helpers
         /// <param name="searchService">Search service.</param>
         /// <param name="knowledgeBaseSearchService">Knowledgebase search service.</param>
         /// <param name="activityStorageProvider">Activity storage provider.</param>
+        /// <param name="appBaseUri">The base URI where the app is hosted.</param>
         /// <returns><see cref="Task"/> Returns MessagingExtensionResult which will be used for providing the card.</returns>
         public static async Task<MessagingExtensionResult> GetSearchResultAsync(
             string query,
@@ -60,7 +61,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Helpers
             DateTimeOffset? localTimestamp,
             ISearchService searchService,
             IKnowledgeBaseSearchService knowledgeBaseSearchService,
-            IActivityStorageProvider activityStorageProvider)
+            IActivityStorageProvider activityStorageProvider,
+            string appBaseUri)
         {
             MessagingExtensionResult composeExtensionResult = new MessagingExtensionResult
             {
@@ -76,17 +78,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Helpers
             {
                 case RecentCommandId:
                     searchServiceResults = await searchService.SearchTicketsAsync(TicketSearchScope.RecentTickets, query, count, skip).ConfigureAwait(false);
-                    composeExtensionResult = GetMessagingExtensionResult(commandId, localTimestamp, searchServiceResults);
+                    composeExtensionResult = GetMessagingExtensionResult(commandId, localTimestamp, searchServiceResults, appBaseUri);
                     break;
 
                 case OpenCommandId:
                     searchServiceResults = await searchService.SearchTicketsAsync(TicketSearchScope.OpenTickets, query, count, skip).ConfigureAwait(false);
-                    composeExtensionResult = GetMessagingExtensionResult(commandId, localTimestamp, searchServiceResults);
+                    composeExtensionResult = GetMessagingExtensionResult(commandId, localTimestamp, searchServiceResults, appBaseUri);
                     break;
 
                 case AssignedCommandId:
                     searchServiceResults = await searchService.SearchTicketsAsync(TicketSearchScope.AssignedTickets, query, count, skip).ConfigureAwait(false);
-                    composeExtensionResult = GetMessagingExtensionResult(commandId, localTimestamp, searchServiceResults);
+                    composeExtensionResult = GetMessagingExtensionResult(commandId, localTimestamp, searchServiceResults, appBaseUri);
                     break;
 
                 case KnowledgebaseQuestionCommandId:
@@ -110,11 +112,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Helpers
         /// <param name="commandId">Command id to determine which tab in message extension has been invoked.</param>
         /// <param name="localTimestamp">Local timestamp of the user activity.</param>
         /// <param name="searchServiceResults">List of tickets from Azure search service.</param>
+        /// <param name="appBaseUri">The base URI where the app is hosted.</param>
         /// <returns><see cref="Task"/> Returns MessagingExtensionResult which will be shown in messaging extension tab.</returns>
         public static MessagingExtensionResult GetMessagingExtensionResult(
             string commandId,
             DateTimeOffset? localTimestamp,
-            IList<TicketEntity> searchServiceResults)
+            IList<TicketEntity> searchServiceResults,
+            string appBaseUri)
         {
             MessagingExtensionResult composeExtensionResult = new MessagingExtensionResult
             {
@@ -132,7 +136,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Helpers
                 };
 
                 var selectedTicketAdaptiveCard = new MessagingExtensionTicketsCard(ticket);
-                composeExtensionResult.Attachments.Add(selectedTicketAdaptiveCard.ToAttachment(localTimestamp).ToMessagingExtensionAttachment(previewCard.ToAttachment()));
+                composeExtensionResult.Attachments.Add(selectedTicketAdaptiveCard.ToAttachment(localTimestamp, appBaseUri).ToMessagingExtensionAttachment(previewCard.ToAttachment()));
             }
 
             return composeExtensionResult;

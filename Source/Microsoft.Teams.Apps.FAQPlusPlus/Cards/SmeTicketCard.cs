@@ -38,24 +38,52 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// Returns an attachment based on the state and information of the ticket.
         /// </summary>
         /// <param name="localTimestamp">Local timestamp of the user activity.</param>
+        /// <param name="appBaseUri">The base URI where the app is hosted.</param>
         /// <returns>Returns the attachment that will be sent in a message.</returns>
-        public Attachment ToAttachment(DateTimeOffset? localTimestamp)
+        public Attachment ToAttachment(DateTimeOffset? localTimestamp, string appBaseUri)
         {
             var card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
             {
                 Body = new List<AdaptiveElement>
                 {
-                    new AdaptiveTextBlock
+                    new AdaptiveColumnSet
                     {
-                        Text = this.Ticket.Title,
-                        Size = AdaptiveTextSize.Large,
-                        Weight = AdaptiveTextWeight.Bolder,
-                        Wrap = true,
-                    },
-                    new AdaptiveTextBlock
-                    {
-                        Text = string.Format(CultureInfo.InvariantCulture, Strings.QuestionForExpertSubHeaderText, this.Ticket.RequesterName),
-                        Wrap = true,
+                        Columns = new List<AdaptiveColumn>
+                        {
+                            new AdaptiveColumn
+                            {
+                                Items = new List<AdaptiveElement>
+                                {
+                                    new AdaptiveImage
+                                    {
+                                        Style = AdaptiveImageStyle.Default,
+                                        Size = AdaptiveImageSize.Large,
+                                        Url = new Uri(appBaseUri + "/content/ticket_channel.png"),
+                                    },
+                                },
+                                Width = "auto",
+                            },
+                            new AdaptiveColumn
+                            {
+                                Items = new List<AdaptiveElement>
+                                {
+                                    new AdaptiveTextBlock()
+                                    {
+                                        Text = this.Ticket.Title,
+                                        Weight = AdaptiveTextWeight.Bolder,
+                                        Wrap = true,
+                                    },
+                                    new AdaptiveTextBlock()
+                                    {
+                                        Text = string.Format(CultureInfo.InvariantCulture, Strings.QuestionForExpertSubHeaderText, this.Ticket.RequesterName),
+                                        Spacing = AdaptiveSpacing.None,
+                                        IsSubtle = true,
+                                        Wrap = true,
+                                    },
+                                },
+                                Width = "stretch",
+                            },
+                        },
                     },
                     new AdaptiveFactSet
                     {

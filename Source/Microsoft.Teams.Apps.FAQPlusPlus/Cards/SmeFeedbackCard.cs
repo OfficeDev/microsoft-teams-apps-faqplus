@@ -25,24 +25,53 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// feedback details given by the user.
         /// </summary>
         /// <param name="data">User activity payload.</param>
+        /// <param name="appBaseUri">The base URI where the app is hosted.</param>
         /// <returns>Sme facing feedback notification card.</returns>
-        public static Attachment GetCard(FeedbackEntity data)
+        public static Attachment GetCard(FeedbackEntity data, string appBaseUri)
         {
             // Constructing adaptive card that is sent to SME team.
             AdaptiveCard smeFeedbackCard = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
             {
                 Body = new List<AdaptiveElement>
                {
-                   new AdaptiveTextBlock()
+                   new AdaptiveColumnSet
                    {
-                       Text = Strings.SMEFeedbackHeaderText,
-                       Weight = AdaptiveTextWeight.Bolder,
-                       Size = AdaptiveTextSize.Medium,
-                   },
-                   new AdaptiveTextBlock()
-                   {
-                       Text = string.Format(CultureInfo.InvariantCulture, Strings.FeedbackAlertText, data.UserName),
-                       Wrap = true,
+                       Columns = new List<AdaptiveColumn>
+                       {
+                           new AdaptiveColumn
+                           {
+                               Items = new List<AdaptiveElement>
+                               {
+                                   new AdaptiveImage
+                                   {
+                                       Style = AdaptiveImageStyle.Default,
+                                       Size = AdaptiveImageSize.Large,
+                                       Url = new Uri(appBaseUri + "/content/feedback_channel.png"),
+                                   },
+                               },
+                               Width = "auto",
+                           },
+                           new AdaptiveColumn
+                           {
+                               Items = new List<AdaptiveElement>
+                               {
+                                   new AdaptiveTextBlock()
+                                   {
+                                       Text = Strings.SMEFeedbackHeaderText,
+                                       Weight = AdaptiveTextWeight.Bolder,
+                                       Wrap = true,
+                                   },
+                                   new AdaptiveTextBlock()
+                                   {
+                                       Text = string.Format(CultureInfo.InvariantCulture, Strings.FeedbackAlertText, data.UserName),
+                                       Spacing = AdaptiveSpacing.None,
+                                       IsSubtle = true,
+                                       Wrap = true,
+                                   },
+                               },
+                               Width = "stretch",
+                           },
+                       },
                    },
                    new AdaptiveTextBlock()
                    {
@@ -58,15 +87,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                    },
                },
                 Actions = new List<AdaptiveAction>
-               {
-                   new AdaptiveOpenUrlAction
-                   {
-                       Title = string.Format(CultureInfo.InvariantCulture, Strings.ChatTextButton, data.UserGivenName),
-                       UrlString = $"https://teams.microsoft.com/l/chat/0/0?users={Uri.EscapeDataString(data.UserPrincipalName)}",
-                   },
-               },
+                {
+                    new AdaptiveOpenUrlAction
+                    {
+                        Title = string.Format(CultureInfo.InvariantCulture, Strings.ChatTextButton, data.UserGivenName),
+                        UrlString = $"https://teams.microsoft.com/l/chat/0/0?users={Uri.EscapeDataString(data.UserPrincipalName)}",
+                    },
+                },
             };
-
 
             // Description fact is available in the card only when user enters description text.
             if (!string.IsNullOrWhiteSpace(data.Subject))

@@ -421,7 +421,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
                     return new MessagingExtensionResponse
                     {
-                        ComposeExtension = await SearchHelper.GetSearchResultAsync(searchQuery, messageExtensionQuery.CommandId, messageExtensionQuery.QueryOptions.Count, messageExtensionQuery.QueryOptions.Skip, turnContextActivity.LocalTimestamp, this.searchService, this.knowledgeBaseSearchService, this.activityStorageProvider).ConfigureAwait(false),
+                        ComposeExtension = await SearchHelper.GetSearchResultAsync(searchQuery, messageExtensionQuery.CommandId, messageExtensionQuery.QueryOptions.Count, messageExtensionQuery.QueryOptions.Skip, turnContextActivity.LocalTimestamp, this.searchService, this.knowledgeBaseSearchService, this.activityStorageProvider, this.appBaseUri).ConfigureAwait(false),
                     };
                 }
 
@@ -962,7 +962,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     newTicket = await AdaptiveCardHelper.AskAnExpertSubmitText(message, turnContext, cancellationToken, this.ticketsProvider).ConfigureAwait(false);
                     if (newTicket != null)
                     {
-                        smeTeamCard = new SmeTicketCard(newTicket).ToAttachment(message?.LocalTimestamp);
+                        smeTeamCard = new SmeTicketCard(newTicket).ToAttachment(message?.LocalTimestamp, this.appBaseUri);
                         userCard = new UserNotificationCard(newTicket).ToAttachment(Strings.NotificationCardContent, message?.LocalTimestamp);
                     }
 
@@ -974,7 +974,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     newFeedback = await AdaptiveCardHelper.ShareFeedbackSubmitText(message, this.appBaseUri, turnContext, cancellationToken, this.feedbackProvider).ConfigureAwait(false);
                     if (newFeedback != null)
                     {
-                        smeTeamCard = SmeFeedbackCard.GetCard(newFeedback);
+                        smeTeamCard = SmeFeedbackCard.GetCard(newFeedback, this.appBaseUri);
                         await turnContext.SendActivityAsync(MessageFactory.Text(Strings.ThankYouTextContent)).ConfigureAwait(false);
                     }
 
@@ -1100,7 +1100,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             {
                 Id = ticket.SmeCardActivityId,
                 Conversation = new ConversationAccount { Id = ticket.SmeThreadConversationId },
-                Attachments = new List<Attachment> { new SmeTicketCard(ticket).ToAttachment(message.LocalTimestamp) },
+                Attachments = new List<Attachment> { new SmeTicketCard(ticket).ToAttachment(message.LocalTimestamp, this.appBaseUri) },
             };
             var updateResponse = await turnContext.UpdateActivityAsync(updateCardActivity, cancellationToken).ConfigureAwait(false);
             this.logger.LogInformation($"Card for ticket {ticket.TicketId} updated to status ({ticket.Status}, {ticket.AssignedToObjectId}), activityId = {updateResponse.Id}");
