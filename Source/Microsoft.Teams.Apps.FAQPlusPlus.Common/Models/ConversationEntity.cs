@@ -15,6 +15,16 @@
         public string ConversationId { get; set; }
 
         /// <summary>
+        /// Gets or sets user email.
+        /// </summary>
+        public string UserPrincipalName { get; set; }
+
+        /// <summary>
+        /// Gets or sets user name.
+        /// </summary>
+        public string UserName { get; set; }
+
+        /// <summary>
         ///  Gets or sets project metadata related to this QnA pari.
         /// </summary>
         public string Project { get; set; }

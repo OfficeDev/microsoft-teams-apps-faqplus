@@ -800,19 +800,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                         await this.GetQuestionAnswerReplyAsync(turnContext, message?.Text, cancellationToken).ConfigureAwait(false);
                         return;
                     }
-
-                    // Subject selection
-                    //SubjectSelectionCardPayload subjectPlayload = JsonConvert.DeserializeObject<SubjectSelectionCardPayload>(message.Value.ToString());
-                    //if (subjectPlayload != null && subjectPlayload.Subject != null)
-                    //{
-                    //    this.logger.LogInformation($"User select subject{subjectPlayload.Subject}");
-                    //    conInfo = await this.GetConversationInfoAsync(turnContext, cancellationToken);
-                    //    conInfo.SubjectSelected = subjectPlayload.Subject;
-                    //    await this.conversationState.SaveChangesAsync(turnContext, false, cancellationToken);
-
-                    //    await turnContext.SendActivityAsync(string.Format(CultureInfo.InvariantCulture, Strings.SubjectSelectionMessageBack, subjectPlayload.Subject)).ConfigureAwait(false);
-                    //    return;
-                    //}
                 }
 
                 this.logger.LogInformation("Card submit in 1:1 chat");
@@ -844,38 +831,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     await turnContext.SendActivityAsync(MessageFactory.Carousel(userTourCards)).ConfigureAwait(false);
                     userAction.Action = nameof(UserActionType.TakeATour);
                     break;
-                //case Constants.SelectASubject:
-                //    this.logger.LogInformation("Sending subject selection card");
-                //    string subject = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.Subjects).ConfigureAwait(false);
-                //    if (Validators.IsValidJSON(subject))
-                //    {
-                //        Subject sub = JsonConvert.DeserializeObject<Subject>(subject);
-                //        conInfo = await this.GetConversationInfoAsync(turnContext, cancellationToken);
-                //        await turnContext.SendActivityAsync(MessageFactory.Carousel(SubjectSelectionCard.GetCards(sub, conInfo.SubjectSelected, this.appBaseUri))).ConfigureAwait(false);
-                //    }
-
-                //    break;
-
                 default:
-                    //conInfo = await this.GetConversationInfoAsync(turnContext, cancellationToken);
-
-                    // If no subject selected, prompt for subject
-                    //if (conInfo.SubjectSelected == null)
-                    //{
-                    //    this.logger.LogInformation("Prompt user for subject");
-                    //    subject = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.Subjects).ConfigureAwait(false);
-                    //    if (Validators.IsValidJSON(subject))
-                    //    {
-                    //        Subject sub = JsonConvert.DeserializeObject<Subject>(subject);
-                    //        conInfo = await this.GetConversationInfoAsync(turnContext, cancellationToken);
-                    //        await turnContext.SendActivityAsync(MessageFactory.Carousel(SubjectSelectionCard.GetCards(sub, conInfo.SubjectSelected, this.appBaseUri))).ConfigureAwait(false);
-                    //    }
-                    //}
-                    //else
-                    //{
                     this.logger.LogInformation("Sending input to QnAMaker");
                     await this.GetQuestionAnswerReplyAsync(turnContext, text, cancellationToken).ConfigureAwait(false);
-                    //}
 
                     break;
             }
@@ -1082,8 +1040,18 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 return;
             }
 
+            string currentStats;
+            if (ticket.Status == 0)
+            {
+                currentStats = ticket.IsAssigned() ? "Assigned" : "Open";
+            }
+            else
+            {
+                currentStats = "Closed";
+            }
+
             UserActionEntity userAction = this.GenerateChannelAction();
-            userAction.Remark += $"from {ticket.Status}";
+            userAction.Remark += $"from {currentStats}";
 
             // Update the ticket based on the payload.
             switch (payload.Action)
@@ -1095,14 +1063,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     ticket.AssignedToObjectId = null;
                     ticket.DateClosed = null;
                     userAction.Action = nameof(UserActionType.ChangeStatus);
-                    userAction.Remark += $" to {ticket.Status}";
+                    userAction.Remark += $" to Open";
                     break;
 
                 case ChangeTicketStatusPayload.CloseAction:
                     ticket.Status = (int)TicketState.Closed;
                     ticket.DateClosed = DateTime.UtcNow.AddHours(8);
                     userAction.Action = nameof(UserActionType.ChangeStatus);
-                    userAction.Remark += $" to {ticket.Status}";
+                    userAction.Remark += $" to Closed";
                     break;
 
                 case ChangeTicketStatusPayload.AssignToSelfAction:
@@ -1112,7 +1080,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     ticket.AssignedToObjectId = message.From.AadObjectId;
                     ticket.DateClosed = null;
                     userAction.Action = nameof(UserActionType.ChangeStatus);
-                    userAction.Remark += $" to {ticket.Status}";
+                    userAction.Remark += $" to Assigned";
                     break;
 
                 default:

@@ -105,6 +105,20 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Helpers
         }
 
         /// <summary>
+        /// Get the account details of the user in a 1:1 chat with the bot.
+        /// </summary>
+        /// <param name="turnContext">Context object containing information cached for a single turn of conversation with a user.</param>
+        /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+        /// <returns>A task that represents the work queued to execute.</returns>
+        public static async Task<TeamsChannelAccount> GetUserDetailsInPersonalChatAsync(
+          ITurnContext turnContext,
+          CancellationToken cancellationToken)
+        {
+            var members = await ((BotFrameworkAdapter)turnContext.Adapter).GetConversationMembersAsync(turnContext, cancellationToken).ConfigureAwait(false);
+            return JsonConvert.DeserializeObject<TeamsChannelAccount>(JsonConvert.SerializeObject(members[0]));
+        }
+
+        /// <summary>
         /// Create a new Feedback entity from the input.
         /// </summary>
         /// <param name="message">A message in a conversation.</param>

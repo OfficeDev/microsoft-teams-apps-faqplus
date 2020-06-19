@@ -81,10 +81,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Dialogs
         private async Task<DialogTurnResult> CallGenerateAnswerAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             List<MetadataDTO> metadata = new List<MetadataDTO>();
-            //if (conInfo != null)
-            //{
-            //    metadata.Add(new MetadataDTO("project", conInfo.SubjectSelected));
-            //}
 
             stepContext.Values[CurrentQuery] = stepContext.Context.Activity.Text;
 
@@ -109,6 +105,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Dialogs
                 conInfo.Question = stepContext.Context.Activity.Text;
                 conInfo.Turns = null;
                 conInfo.FinalAnswer = null;
+                var userDetails = await AdaptiveCardHelper.GetUserDetailsInPersonalChatAsync(stepContext.Context, cancellationToken).ConfigureAwait(false);
+                conInfo.UserPrincipalName = userDetails.UserPrincipalName;
+                conInfo.UserName = userDetails.Name;
             }
             else
             {
@@ -117,12 +116,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Dialogs
 
             // Calling QnAMaker to get response.
             var response = await this.qnaServiceProvider.GenerateAnswerAsync(question: stepContext.Context.Activity.Text, isTestKnowledgeBase: false, qnaId, context, metadata).ConfigureAwait(false);
-            //if (response.Answers.First().Id == -1)
-            //{
-            //    List<MetadataDTO> metadataChitCat = new List<MetadataDTO>();
-            //    metadataChitCat.Add(new MetadataDTO("editorial", "chitchat"));
-            //    response = await this.qnaServiceProvider.GenerateAnswerAsync(question: stepContext.Context.Activity.Text, isTestKnowledgeBase: false, qnaId, context, metadataChitCat).ConfigureAwait(false);
-            //}
 
             // Resetting previous query.
             dialogOptions[PreviousQnAId] = -1;
