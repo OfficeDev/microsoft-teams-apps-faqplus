@@ -75,7 +75,7 @@ We recommend that you copy these values into a text file, using an application l
 * Azure Search
 
 5. Enter a "Base Resource Name", which the template uses to generate names for the other resources.
-* The app service names `[Base Resource Name]`, `[Base Resource Name]-config`, and `[Base Resource Name]-qnamaker` must be available. For example, if you select `contosofaqplus` as the base name, the names `contosofaqplus`, `contosofaqplus-config`, and `contosofaqplus-qnamaker` must be available (not taken); otherwise, the deployment will fail with a Conflict error.
+* The app service names `[Base Resource Name]`, and `[Base Resource Name]-qnamaker` must be available. For example, if you select `contosofaqplus` as the base name, the names `contosofaqplus`, and `contosofaqplus-qnamaker` must be available (not taken); otherwise, the deployment will fail with a Conflict error.
 * Remember the base resource name that you selected. We will need it later.
 
 6. Fill in the various IDs in the template:
@@ -105,21 +105,26 @@ Make sure that the values are copied as-is, with no extra spaces. The template c
 12. Once the deployment has finished, you would be directed to a page that has the following fields:
 * botId - This is the Microsoft Application ID for the FAQ Plus [Version 2] bot.
 * appDomain - This is the base domain for the FAQ Plus [Version 2] Bot.
-* configurationAppUrl - This is the URL for the configuration web application.
 
 # Step 3: Set up authentication for the configuration app
 
-1. Note the location of the configuration app that you deployed, which is `https://[BaseResourceName]-config.azurewebsites.net`. For example, if you chose "contosofaqplus" as the base name, the configuration app will be at `https://contosofaqplus-config.azurewebsites.net`
+1. Note the location of the configuration app that you deployed, which is `https://[BaseResourceName].azurewebsites.net`. For example, if you chose "contosofaqplus" as the base name, the configuration app will be at `https://contosofaqplus.azurewebsites.net`
 
 2. Go back to the "App Registrations" page [here](https://portal.azure.com/#blade/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/RegisteredAppsPreview).
 
 3. Click on the configuration app in the application list. Under "Manage", click on "Authentication" to bring up authentication settings.
 
-4. Add a new entry to "Redirect URLs":
+4. Add new entries to "Redirect URLs":
 * **Type**: Web
-* **Redirect URL**: Location (URL) of your configuration app. This is the URL from Step 3.1.
+* **Redirect URLs**: If your configuration app's URL is https://contosofaqplus.azurewebsites.net, then add the following three entries as the Redirect URLs:
 
-5. Under "Implicit grant", check "ID tokens".
+	- https://contosofaqplus.azurewebsites.net
+	- https://contosofaqplus.azurewebsites.net/signin 
+	- https://contosofaqplus.azurewebsites.net/configuration
+
+Note: Please refer to Step 3.1 for more details about the URL. 
+
+5. Under "Implicit grant", check "Access tokens" and "ID tokens".
 
 6. Click "Save" to commit your changes.
 
@@ -137,6 +142,10 @@ Use the following values when connecting to the QnA service:
 
 ![Screenshot of settings](https://docs.microsoft.com/en-us/azure/cognitive-services/qnamaker/media/qnamaker-tutorial-create-publish-query-in-portal/create-kb-step-2.png)
 
+## Multi-Turn Enablement
+With the new updates to the FAQ Plus [Version 2] app template, the knowledge base can now support multi-turn conversations. To understand the basics of multi-turn conversations, navigate to the [QnA Maker documentation](https://docs.microsoft.com/en-us/azure/cognitive-services/QnAMaker/how-to/multiturn-conversation#what-is-a-multi-turn-conversation) to understand about multi-turn conversations. To enable multi-turn on the newly created knowledge base, go to this [link](https://docs.microsoft.com/en-us/azure/cognitive-services/QnAMaker/how-to/multiturn-conversation#create-a-multi-turn-conversation-from-a-documents-structure) to enable multi-turn extraction on the knowledge base. 
+
+* Note: For best practices with regards to formatting and document structure, please follow these [guidelines](https://docs.microsoft.com/en-us/azure/cognitive-services/QnAMaker/how-to/multiturn-conversation#building-your-own-multi-turn-document).
 
 After [publishing the knowledge base](https://docs.microsoft.com/en-us/azure/cognitive-services/qnamaker/tutorials/create-publish-query-in-portal#publish-to-get-knowledge-base-endpoints), note the knowledge base ID (see screenshot).
 
@@ -146,7 +155,7 @@ Remember the knowledge base ID: we will need it in the next step.
 
 # Step 5: Finish configuring the FAQ Plus [Version 2] app
 
-1. Go to the configuration app, which is at `https://[BaseResourceName]-config.azurewebsites.net`. For example, if you chose “contosofaqplus” as the base name, the configuration app will be at `https://contosofaqplus-config.azurewebsites.net`.
+1. Go to the configuration app, which is at `https://[BaseResourceName].azurewebsites.net/configuration`. For example, if you chose “contosofaqplus” as the base name, the configuration app will be at `https://contosofaqplus.azurewebsites.net/configuration`.
 
 2. You will be prompted to login with your credentials. Make sure that you log in with an account that is in the list of users allowed to access the configuration app.
 

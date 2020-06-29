@@ -22,6 +22,9 @@ KnowledgeBaseId | This is the knowledge base Id for which the bot can return ans
 MSTeamId | The team Id which the bot can be able to post messages whenever the end-user asks for an expert's assistance with a query.
 StaticTabText | The static tab text, would be the standard text that is displayed in the help tab which will be installed along with the bot in a personal scope. The static tab text will be configured by the configurator application, and is publically accessible with no authentication.
 WelcomeMessage | The welcome message is a configurable text that the bot would send to the end-user the very first time that end-user installs the bot in a personal scope.
+LastModifiedByUPN | The user principal name (UPN) of the Admin who modified the setting.
+LastModifiedByObjectId | The Azure Active Directory Object Id of the Admin who modified the setting.
+LastModifiedOn | The date/time on which the Admin modified the setting.
 
 ## TicketInfo Table
 
@@ -46,6 +49,7 @@ The **TicketInfo** table stores data about tickets (or requests) that are posted
 |DateClosed|The date when a ticket is updated to the closed status.
 |LastModifiedByName|The name of the expert who recently updated the ticket.
 |LastModifiedByObjectId|The AAD Object ID of the expert who recently updated the ticket.
+|LastModifiedOn|The date/time on which the expert has updated the ticket.
 |UserQuestion|The original question that has been asked by the end-user.
 |KbEntryAnswer|The answer that is stored in the knowledge base.
 
