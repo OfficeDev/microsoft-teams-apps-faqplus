@@ -5,17 +5,17 @@
   "id": "165dc594-e36a-488f-a8ba-20fcebacad86",
   "packageName": "com.microsoft.teams.faqplus.experts",
   "developer": {
-    "name": "<<companyName>>",
-    "websiteUrl": "<<websiteUrl>>",
-    "privacyUrl": "<<privacyUrl>>",
-    "termsOfUseUrl": "<<termsOfUseUrl>>"
+    "name": "Stuart McCarthy",
+    "websiteUrl": "http://www.microsoft.com",
+    "privacyUrl": "http://www.microsoft.com",
+    "termsOfUseUrl": "http://www.microsoft.com"
   },
   "icons": {
     "color": "color.png",
     "outline": "outline.png"
   },
   "name": {
-    "short": "FAQ Plus [V2] (Experts Team)"
+    "short": "PublicEngagementBot"
   },
   "description": {
     "short": "A friendly FAQ bot that answers questions and connects you to experts.",
@@ -24,7 +24,7 @@
   "accentColor": "#64A2CC",
   "bots": [
     {
-      "botId": "<<botId>>",
+      "botId": "b72c0d92-92ad-4a9e-bcde-9ebfbd5850e9",
       "scopes": [
         "personal",
         "team"
@@ -58,7 +58,7 @@
     {
       "entityId": "help",
       "name": "Help",
-      "contentUrl": "https://<<appDomain>>/help?theme={theme}",
+      "contentUrl": "https://smccar-PublicEngagementBot2.azurewebsites.net/help?theme={theme}",
       "scopes": [
         "personal"
       ]
@@ -66,7 +66,7 @@
   ],
   "composeExtensions": [
     {
-      "botId": "<<botId>>",
+      "botId": "b72c0d92-92ad-4a9e-bcde-9ebfbd5850e9",
       "canUpdateConfiguration": false,
       "commands": [
         {
@@ -164,6 +164,6 @@
     "messageTeamMembers"
   ],
   "validDomains": [
-    "<<appDomain>>"
+    "smccar-PublicEngagementBot2.azurewebsites.net"
   ]
 }

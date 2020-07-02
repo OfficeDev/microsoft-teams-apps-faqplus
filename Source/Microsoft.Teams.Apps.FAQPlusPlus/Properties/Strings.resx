@@ -384,7 +384,7 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <comment>Title fact is used to show the title entered by the user for his inquiry.</comment>
   </data>
   <data name="TitleRequiredText" xml:space="preserve">
-    <value>Title (Required)</value>
+    <value>Name and Contact Details (required)</value>
     <comment>Title(Required): label of the title text box.</comment>
   </data>
   <data name="NotHelpfulRatingText" xml:space="preserve">
