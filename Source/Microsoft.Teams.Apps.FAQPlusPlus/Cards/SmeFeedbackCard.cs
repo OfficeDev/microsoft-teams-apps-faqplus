@@ -99,14 +99,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             // Description fact is available in the card only when user enters description text.
             if (!string.IsNullOrWhiteSpace(data.Subject))
             {
-                smeFeedbackCard.Body.Insert(2, new AdaptiveTextBlock()
+                smeFeedbackCard.Body.Insert(3, new AdaptiveTextBlock()
                 {
                     Text = Strings.SubjectFact,
                     Weight = AdaptiveTextWeight.Bolder,
                     Wrap = true,
                 });
 
-                smeFeedbackCard.Body.Insert(3, new AdaptiveTextBlock()
+                smeFeedbackCard.Body.Insert(4, new AdaptiveTextBlock()
                 {
                     Text = data.Subject,
                     Spacing = AdaptiveSpacing.None,
