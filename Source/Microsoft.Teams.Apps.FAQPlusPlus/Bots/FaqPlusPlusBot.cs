@@ -831,6 +831,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     await turnContext.SendActivityAsync(MessageFactory.Carousel(userTourCards)).ConfigureAwait(false);
                     userAction.Action = nameof(UserActionType.TakeATour);
                     break;
+                case "":
+                    await turnContext.SendActivityAsync("\U0001F600").ConfigureAwait(false);
+                    break;
                 default:
                     this.logger.LogInformation("Sending input to QnAMaker");
                     await this.GetQuestionAnswerReplyAsync(turnContext, text, cancellationToken).ConfigureAwait(false);
