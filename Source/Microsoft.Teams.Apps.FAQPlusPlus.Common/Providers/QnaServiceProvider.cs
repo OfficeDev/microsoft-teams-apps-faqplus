@@ -186,14 +186,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         /// <returns>QnaSearchResult result as response.</returns>
         public async Task<QnASearchResultList> GenerateAnswerAsync(string question, bool isTestKnowledgeBase)
         {
-            var knowledgeBaseId = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.KnowledgeBaseId).ConfigureAwait(false);
-
-            QnASearchResultList qnaSearchResult = await this.qnaMakerRuntimeClient.Runtime.GenerateAnswerAsync(knowledgeBaseId, new QueryDTO()
+            var knowledgeBaseId = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.KnowledgeBaseId).ConfigureAwait(false);           
+            var scoreThreathold = float.Parse(this.options.ScoreThreshold, CultureInfo.InvariantCulture);
+            var dto = new QueryDTO()
             {
                 IsTest = isTestKnowledgeBase,
                 Question = question?.Trim(),
-                ScoreThreshold = Convert.ToDouble(this.options.ScoreThreshold),
-            }).ConfigureAwait(false);
+                ScoreThreshold = scoreThreathold,
+            };
+            QnASearchResultList qnaSearchResult = await this.qnaMakerRuntimeClient.Runtime.GenerateAnswerAsync(knowledgeBaseId, dto).ConfigureAwait(false);
 
             return qnaSearchResult;
         }
