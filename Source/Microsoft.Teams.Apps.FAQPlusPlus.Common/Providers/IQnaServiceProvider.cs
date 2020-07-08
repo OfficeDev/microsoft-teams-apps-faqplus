@@ -44,8 +44,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         /// </summary>
         /// <param name="question">Question text.</param>
         /// <param name="isTestKnowledgeBase">Prod or test.</param>
+        /// <param name="payload">The response card payload that contains the previous question when a follow up is queried.</param>
         /// <returns>QnaSearchResult object as response.</returns>
-        Task<QnASearchResultList> GenerateAnswerAsync(string question, bool isTestKnowledgeBase);
+        Task<QnASearchResultList> GenerateAnswerAsync(string question, bool isTestKnowledgeBase, ResponseCardPayload payload = null);
 
         /// <summary>
         /// This method is used to update Qna pair in Kb.

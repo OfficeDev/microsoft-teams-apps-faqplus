@@ -138,7 +138,7 @@
     <comment>Explains what bot does and possible questions.</comment>
   </data>
   <data name="FunctionCardText2" xml:space="preserve">
-    <value>You can ask me a question by typing it in the chat box below  I'll try my best to answer it...</value>
+    <value>You can simply ask me a question and I will try my best to answer. If there are additional follow-ups, I will bring those as well...</value>
     <comment>Suggests the user to ask question.</comment>
   </data>
   <data name="ShareFeedbackButtonText" xml:space="preserve">
@@ -170,7 +170,7 @@
     <comment>Ability to chat directly with end user from SME channel.</comment>
   </data>
   <data name="NotificationCardContent" xml:space="preserve">
-    <value>I've shared your question with the related experts. They'll respond to you directly with a chat message.</value>
+    <value>I've shared your question with the team. An expert will reach out to you soon in separate chat.</value>
     <comment>Confirmation message to the user upon asking question to the expert.</comment>
   </data>
   <data name="TeamChatHeaderText" xml:space="preserve">
@@ -220,7 +220,7 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <comment>Text says that user is asking a question to the expert, {0} placeholder holds the name of the person.</comment>
   </data>
   <data name="TeamCustomMessage" xml:space="preserve">
-    <value>Hello, I don't support bot commands in the Team. Here is a quick tour of how I can help.</value>
+    <value>I'm unable to respond to commands in channels. Take a quick tour to learn what I can do.</value>
     <comment>When SME team member asks bot a questions- a message appears saying that team member is supposed to install the bot in personal scope.</comment>
   </data>
   <data name="ChangeStatusButtonText" xml:space="preserve">
@@ -228,7 +228,7 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <comment>Text on change status button.</comment>
   </data>
   <data name="ResponseHeaderText" xml:space="preserve">
-    <value>Here is what I found:</value>
+    <value>Here's what I found:</value>
     <comment>Response header-letting the user know that a response is generated to their request from QnA Maker.</comment>
   </data>
   <data name="ClosedFactTitle" xml:space="preserve">
@@ -240,7 +240,7 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <comment>Created: one of the available fact set in notification cards- created is the title for created date value.</comment>
   </data>
   <data name="ShowCardTitleText" xml:space="preserve">
-    <value>Enter short title here (50 characters max)</value>
+    <value>Type a short title (50 characters max)</value>
     <comment>Label text where users enters title for his question or feedback. </comment>
   </data>
   <data name="MandatoryTitleFieldText" xml:space="preserve">
@@ -248,7 +248,7 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <comment>Text that suggest users to fill mandatory fields.</comment>
   </data>
   <data name="ResultsFeedbackText" xml:space="preserve">
-    <value>Results feedback</value>
+    <value>Feedback</value>
     <comment>This text is used as title for results feedback card.</comment>
   </data>
   <data name="FeedbackAlertText" xml:space="preserve">
@@ -348,7 +348,7 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <comment>This value represents the SME Ticket in the Unassigned status</comment>
   </data>
   <data name="AskAnExpertSubheaderText" xml:space="preserve">
-    <value>The expert will respond to you directly with a chat message.</value>
+    <value>One of our experts will reach out to you soon.</value>
     <comment>Ask en expert card subtitle text:lets the user know that SME team member can directly chat with the requester.</comment>
   </data>
   <data name="DescriptionFact" xml:space="preserve">
@@ -356,7 +356,7 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <comment>Available factset in user notification and SME facing cards.</comment>
   </data>
   <data name="FeedbackRatingRequired" xml:space="preserve">
-    <value>Feedback (Required)</value>
+    <value>Was this answer helpful? (Required)</value>
     <comment>Feedback(Required): label for the feedback rating dropdown.</comment>
   </data>
   <data name="HelpfulRatingText" xml:space="preserve">
@@ -588,5 +588,17 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
   <data name="UpdateHistoryDateHeaderText" xml:space="preserve">
     <value>Date</value>
     <comment>Date header text in update history adaptive card text.</comment>
+  </data>
+  <data name="SelectActionItemDisplayTextFormatting" xml:space="preserve">
+    <value>**{0}**</value>
+    <comment>The formatting of the select action item display text, with {0} being the placeholder for the DisplayText from the Follow Up prompt.</comment>
+  </data>
+  <data name="AppFeedbackDescriptionPlaceholderText" xml:space="preserve">
+    <value>Type your feedback (500 characters max)</value>
+    <comment>Placeholder for app feedback description</comment>
+  </data>
+  <data name="ShareAppFeedbackRating" xml:space="preserve">
+    <value>How helpful is this app? (Required)</value>
+    <comment>Feedback for App</comment>
   </data>
 </root>

@@ -79,6 +79,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Type your feedback (500 characters max).
+        /// </summary>
+        public static string AppFeedbackDescriptionPlaceholderText {
+            get {
+                return ResourceManager.GetString("AppFeedbackDescriptionPlaceholderText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ask an expert.
         /// </summary>
         public static string AskAnExpertButtonText {
@@ -106,7 +115,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The expert will respond to you directly with a chat message..
+        ///   Looks up a localized string similar to One of our experts will reach out to you soon..
         /// </summary>
         public static string AskAnExpertSubheaderText {
             get {
@@ -412,7 +421,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Feedback (Required).
+        ///   Looks up a localized string similar to Was this answer helpful? (Required).
         /// </summary>
         public static string FeedbackRatingRequired {
             get {
@@ -439,7 +448,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You can ask me a question by typing it in the chat box below  I&apos;ll try my best to answer it....
+        ///   Looks up a localized string similar to You can simply ask me a question and I will try my best to answer. If there are additional follow-ups, I will bring those as well....
         /// </summary>
         public static string FunctionCardText2 {
             get {
@@ -583,7 +592,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to I&apos;ve shared your question with the related experts. They&apos;ll respond to you directly with a chat message..
+        ///   Looks up a localized string similar to I&apos;ve shared your question with the team. An expert will reach out to you soon in separate chat..
         /// </summary>
         public static string NotificationCardContent {
             get {
@@ -736,7 +745,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Here is what I found:.
+        ///   Looks up a localized string similar to Here&apos;s what I found:.
         /// </summary>
         public static string ResponseHeaderText {
             get {
@@ -745,7 +754,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Results feedback.
+        ///   Looks up a localized string similar to Feedback.
         /// </summary>
         public static string ResultsFeedbackText {
             get {
@@ -759,6 +768,24 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         public static string SaveButtonText {
             get {
                 return ResourceManager.GetString("SaveButtonText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to **{0}**.
+        /// </summary>
+        public static string SelectActionItemDisplayTextFormatting {
+            get {
+                return ResourceManager.GetString("SelectActionItemDisplayTextFormatting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to How helpful is this app? (Required).
+        /// </summary>
+        public static string ShareAppFeedbackRating {
+            get {
+                return ResourceManager.GetString("ShareAppFeedbackRating", resourceCulture);
             }
         }
         
@@ -790,7 +817,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enter short title here (50 characters max).
+        ///   Looks up a localized string similar to Type a short title (50 characters max).
         /// </summary>
         public static string ShowCardTitleText {
             get {
@@ -943,7 +970,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Hello, I don&apos;t support bot commands in the Team. Here is a quick tour of how I can help..
+        ///   Looks up a localized string similar to I&apos;m unable to respond to commands in channels. Take a quick tour to learn what I can do..
         /// </summary>
         public static string TeamCustomMessage {
             get {
