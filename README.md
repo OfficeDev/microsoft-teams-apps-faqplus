@@ -12,6 +12,10 @@ urlFragment: microsoft-teams-apps-faqplusv2
 | [Documentation](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Home) | [Deployment guide](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Deployment-Guide) | [Architecture](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Solution-Overview) |
 | ---- | ---- | ---- |
 
+| Branch | Description |
+| ---- | ---- |
+| v2.0 | Capability to enable add/edit QnA pairs from expert team |
+
 Chatbots are an easy way to provide answers to frequently asked questions by users. However, most chatbots fail to engage with users in a meaningful way because there is no human in the loop when the chatbot fails.  
 
 FAQ Plus bot is a friendly Q&A bot that brings a human in the loop when it is unable to help. One can ask the bot a question and the bot responds with an answer if it's in the knowledge base. If not, the bot allows the user to submit a query which then gets posted in a pre-configured team of experts who are help to provide support by acting upon the notifications from within their Team itself. 
