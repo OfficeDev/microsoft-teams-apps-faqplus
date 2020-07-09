@@ -106,7 +106,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The expert will respond to you directly with a chat message..
+        ///   Looks up a localized string similar to If you think the solution couldn&apos;t resolve your problem now. PS team will receive these info and contact you soon..
         /// </summary>
         public static string AskAnExpertSubheaderText {
             get {
@@ -304,7 +304,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enter information (500 characters max).
+        ///   Looks up a localized string similar to Open to hear any of your feedback here (500 characters max).
         /// </summary>
         public static string DescriptionPlaceholderText {
             get {
@@ -313,7 +313,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Description.
+        ///   Looks up a localized string similar to Description (Optional).
         /// </summary>
         public static string DescriptionText {
             get {
@@ -421,7 +421,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Tell my team of experts how I&apos;m doing so they can help me improve..
+        ///   Looks up a localized string similar to Don&apos;t hesitate to post your feedback for any aspect, maybe your feedback will be applied in next update.
         /// </summary>
         public static string FeedbackText1 {
             get {
@@ -628,7 +628,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Question asked:.
+        ///   Looks up a localized string similar to Question:.
         /// </summary>
         public static string QuestionAskedFactTitle {
             get {
@@ -736,6 +736,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to If this doesn&apos;t help you, you can:.
+        /// </summary>
+        public static string ResponseFooterText {
+            get {
+                return ResourceManager.GetString("ResponseFooterText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Here is what I found:.
         /// </summary>
         public static string ResponseHeaderText {
@@ -745,7 +754,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Results feedback.
+        ///   Looks up a localized string similar to Feedback for this answer.
         /// </summary>
         public static string ResultsFeedbackText {
             get {
@@ -781,7 +790,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Share app feedback.
+        ///   Looks up a localized string similar to Feedback for this app.
         /// </summary>
         public static string ShareFeedbackTitleText {
             get {
@@ -790,7 +799,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enter short title here (50 characters max).
+        ///   Looks up a localized string similar to Brief title for this issue (50 characters max).
         /// </summary>
         public static string ShowCardTitleText {
             get {
@@ -880,7 +889,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Subject:.
+        ///   Looks up a localized string similar to Category:.
         /// </summary>
         public static string SubjectFact {
             get {
@@ -889,7 +898,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Hi, I am your lovely Dolphin, I&apos;m glad to help..
+        ///   Looks up a localized string similar to Hi, I&apos;m your lovely Dolphin ❤ Anything I can help you?.
         /// </summary>
         public static string SubjectSelectionGreetingText {
             get {
@@ -898,7 +907,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to In order to narrow down your question, please select a subject:.
+        ///   Looks up a localized string similar to Please select the category before you post your question:.
         /// </summary>
         public static string SubjectSelectionHeaderText {
             get {

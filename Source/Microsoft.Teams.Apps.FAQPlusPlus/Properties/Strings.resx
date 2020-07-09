@@ -130,7 +130,7 @@
     <comment>Helps the user in understanding there is an expert team to connect to.</comment>
   </data>
   <data name="FeedbackText1" xml:space="preserve">
-    <value>Tell my team of experts how I'm doing so they can help me improve.</value>
+    <value>Don't hesitate to post your feedback for any aspect, maybe your feedback will be applied in next update</value>
     <comment>Text suggests that user is invited to share his feedback on his experience using bot.</comment>
   </data>
   <data name="FunctionCardText1" xml:space="preserve">
@@ -146,7 +146,7 @@
     <comment>Button text for share feedback show card in QnA response card.</comment>
   </data>
   <data name="DescriptionText" xml:space="preserve">
-    <value>Description</value>
+    <value>Description (Optional)</value>
     <comment>Label text for description.</comment>
   </data>
   <data name="FeedbackDescriptionPlaceholderText" xml:space="preserve">
@@ -212,7 +212,7 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <comment>Message when user asks random question to the bot.</comment>
   </data>
   <data name="QuestionAskedFactTitle" xml:space="preserve">
-    <value>Question asked:</value>
+    <value>Question:</value>
     <comment>The fact set title for the question asked in the SME Ticket card.</comment>
   </data>
   <data name="QuestionForExpertSubHeaderText" xml:space="preserve">
@@ -240,7 +240,7 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <comment>Created: one of the available fact set in notification cards- created is the title for created date value.</comment>
   </data>
   <data name="ShowCardTitleText" xml:space="preserve">
-    <value>Enter short title here (50 characters max)</value>
+    <value>Brief title for this issue (50 characters max)</value>
     <comment>Label text where users enters title for his question or feedback. </comment>
   </data>
   <data name="MandatoryTitleFieldText" xml:space="preserve">
@@ -248,7 +248,7 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <comment>Text that suggest users to fill mandatory fields.</comment>
   </data>
   <data name="ResultsFeedbackText" xml:space="preserve">
-    <value>Results feedback</value>
+    <value>Feedback for this answer</value>
     <comment>This text is used as title for results feedback card.</comment>
   </data>
   <data name="FeedbackAlertText" xml:space="preserve">
@@ -256,7 +256,7 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <comment>Text in the SME feedback card, The placeholder {0} represents the name of the person sharing the feedback. The placeholder {1} represents the feedback type.</comment>
   </data>
   <data name="ShareFeedbackTitleText" xml:space="preserve">
-    <value>Share app feedback</value>
+    <value>Feedback for this app</value>
     <comment>Title text of share feedback user carousel card.</comment>
   </data>
   <data name="AskAnExpertDisplayText" xml:space="preserve">
@@ -348,7 +348,7 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <comment>This value represents the SME Ticket in the Unassigned status</comment>
   </data>
   <data name="AskAnExpertSubheaderText" xml:space="preserve">
-    <value>The expert will respond to you directly with a chat message.</value>
+    <value>If you think the solution couldn't resolve your problem now. PS team will receive these info and contact you soon.</value>
     <comment>Ask en expert card subtitle text:lets the user know that SME team member can directly chat with the requester.</comment>
   </data>
   <data name="DescriptionFact" xml:space="preserve">
@@ -488,7 +488,7 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <comment>Show message on adaptive card, after adding the QnA pair.</comment>
   </data>
   <data name="DescriptionPlaceholderText" xml:space="preserve">
-    <value>Enter information (500 characters max)</value>
+    <value>Open to hear any of your feedback here (500 characters max)</value>
     <comment>Placeholder text for description text box.</comment>
   </data>
   <data name="ImageUrlPlaceholderText" xml:space="preserve">
@@ -590,11 +590,11 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <comment>Date header text in update history adaptive card text.</comment>
   </data>
   <data name="SubjectSelectionHeaderText" xml:space="preserve">
-    <value>In order to narrow down your question, please select a subject:</value>
+    <value>Please select the category before you post your question:</value>
     <comment>SubjectSelection header-letting the user know that they need to select a subject.</comment>
   </data>
   <data name="SubjectSelectionGreetingText" xml:space="preserve">
-    <value>Hi, I am your lovely Dolphin, I'm glad to help.</value>
+    <value>Hi, I'm your lovely Dolphin ❤ Anything I can help you?</value>
     <comment>SubjectSelection greeting message show before the header</comment>
   </data>
   <data name="SubjectSelectionMessageBack" xml:space="preserve">
@@ -602,7 +602,11 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <comment>The message send back to user afte they select an subject</comment>
   </data>
   <data name="SubjectFact" xml:space="preserve">
-    <value>Subject:</value>
+    <value>Category:</value>
     <comment>Available factset in user notification and SME facing cards.</comment>
+  </data>
+  <data name="ResponseFooterText" xml:space="preserve">
+    <value>If this doesn't help you, you can:</value>
+    <comment>Response footer-letting the user know that a what they can do if answer doesn't help.</comment>
   </data>
 </root>
