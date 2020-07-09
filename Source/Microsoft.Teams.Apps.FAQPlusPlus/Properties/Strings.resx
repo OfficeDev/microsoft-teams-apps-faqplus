@@ -606,7 +606,7 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <comment>Available factset in user notification and SME facing cards.</comment>
   </data>
   <data name="ResponseFooterText" xml:space="preserve">
-    <value>If this doesn't help you, you can:</value>
+    <value>If this doesn't help, you can:</value>
     <comment>Response footer-letting the user know that a what they can do if answer doesn't help.</comment>
   </data>
 </root>

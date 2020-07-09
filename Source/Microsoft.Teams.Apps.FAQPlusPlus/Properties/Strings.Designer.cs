@@ -736,7 +736,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to If this doesn&apos;t help you, you can:.
+        ///   Looks up a localized string similar to If this doesn&apos;t help, you can:.
         /// </summary>
         public static string ResponseFooterText {
             get {
