@@ -205,9 +205,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             {
                 Id = id,
                 Questions = new List<string>()
-                    {
-                        userQuestion,
-                    },
+                {
+                    userQuestion,
+                },
                 Answer = answer,
             });
 
