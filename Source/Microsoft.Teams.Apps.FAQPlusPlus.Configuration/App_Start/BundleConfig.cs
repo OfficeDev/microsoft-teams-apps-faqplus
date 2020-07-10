@@ -12,9 +12,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration
     public static class BundleConfig
     {
         /// <summary>
-        /// Register the bundles
+        /// Register the bundles.
         /// </summary>
-        /// <param name="bundles">Collection of bundles</param>
+        /// <param name="bundles">Collection of bundles.</param>
         public static void RegisterBundles(BundleCollection bundles)
         {
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(

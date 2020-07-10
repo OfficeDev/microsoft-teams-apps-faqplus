@@ -199,37 +199,19 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <returns>A list of previous questions.</returns>
         private static List<QnADTO> BuildListOfPreviousQuestions(int id, string userQuestion, string answer, ResponseCardPayload payload)
         {
-            if (payload.PreviousQuestions?.Count > 0)
+            var previousQuestions = payload.PreviousQuestions ?? new List<QnADTO>();
+
+            previousQuestions.Add(new QnADTO
             {
-                payload.PreviousQuestions.Add(new QnADTO
-                {
-                    Id = id,
-                    Questions = new List<string>()
+                Id = id,
+                Questions = new List<string>()
                     {
                         userQuestion,
                     },
-                    Answer = answer,
-                });
+                Answer = answer,
+            });
 
-                return payload.PreviousQuestions;
-            }
-            else
-            {
-                List<QnADTO> previousQuestions = new List<QnADTO>
-                {
-                    new QnADTO
-                    {
-                        Id = id,
-                        Questions = new List<string>()
-                    {
-                        userQuestion,
-                    },
-                        Answer = answer,
-                    },
-                };
-
-                return previousQuestions;
-            }
+            return previousQuestions;
         }
     }
 }

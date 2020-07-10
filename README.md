@@ -29,7 +29,7 @@ FAQ Plus bot is a friendly Q&A bot that brings a human in the loop when it is un
 ![FAQ Plus in action (experts view)](https://github.com/OfficeDev/microsoft-teams-faqplusplus-app/wiki/images/FAQPlusExperts.gif)
 
 
-**FAQ Plus [Version 2] (To_Do_Link) provides new features to experts team such as:**
+**FAQ Plus (To_Do_Link) provides new features to experts team such as:**
 * Adding/editing/deleting/previewing QnA
 * Viewing update history of QnA
 * View all the existing QnA
@@ -72,7 +72,7 @@ This is how the card will look like when the bot responds with the answer to the
 
 ## Legal Notices
 
-Please read the license terms applicable to this template [here](https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgithub.com%2FOfficeDev%2Fmicrosoft-teams-company-communicator-app%2Fblob%2Fmaster%2FLICENSE&data=04%7C01%7CNidhi.Shandilya%40microsoft.com%7C263aa462997e45b8e20108d7479b86be%7C72f988bf86f141af91ab2d7cd011db47%7C1%7C0%7C637056605626329514%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C-1&sdata=o6iWeK9uPnMs9vWhK29bXG6FSitjy8S64aXiM%2B5%2FdtE%3D&reserved=0). In addition to these terms, you agree to the following:
+Please read the license terms applicable to this template [here](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/blob/master/LICENSE). In addition to these terms, you agree to the following:
 
 - You are responsible for complying with all applicable privacy and security regulations, as well as all internal privacy and security policies of your company. You must also include your own privacy statement and terms of use for your app if you choose to deploy or share it broadly.
 - This template includes functionality to provide all with required information, and it is your responsibility to ensure the data is presented accurately.
@@ -83,7 +83,7 @@ Please read the license terms applicable to this template [here](https://nam06.s
 
 Begin with the [Solution overview](/wiki/Solution-overview) to read about what the app does and how it works.
 
-When you're ready to try out FAQ Plus [Version 2], or to use it in your own organization, follow the steps in the [Deployment guide](/wiki/DeployementGuide).
+When you're ready to try out FAQ Plus, or to use it in your own organization, follow the steps in the [Deployment guide](/wiki/DeployementGuide).
 
 ## Feedback
 

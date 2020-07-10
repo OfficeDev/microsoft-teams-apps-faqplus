@@ -8,14 +8,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration
     using System.Web.Routing;
 
     /// <summary>
-    /// Router Config
+    /// Router Config.
     /// </summary>
     public static class RouteConfig
     {
         /// <summary>
-        /// Register Routes
+        /// Register Routes.
         /// </summary>
-        /// <param name="routes">Routes collection</param>
+        /// <param name="routes">Routes collection.</param>
         public static void RegisterRoutes(RouteCollection routes)
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");

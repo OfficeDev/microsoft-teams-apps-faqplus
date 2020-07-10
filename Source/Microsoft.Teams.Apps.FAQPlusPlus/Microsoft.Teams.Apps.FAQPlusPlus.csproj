@@ -28,7 +28,6 @@
 
   <ItemGroup>
     <AdditionalFiles Include="..\stylecop.json" />
-    <Compile Include="..\GlobalSuppressions.cs" />
   </ItemGroup>
 
   <ItemGroup>

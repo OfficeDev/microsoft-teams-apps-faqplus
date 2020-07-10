@@ -183,9 +183,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         /// </summary>
         /// <param name="question">Question text.</param>
         /// <param name="isTestKnowledgeBase">Prod or test.</param>
-        /// <param name="payload">The response card payload which contains the previous question when querying follow up prompts.</param>
+        /// <param name="isPrompt">Is the question from a follow up prompt.</param>
+        /// <param name="previousQnAId">Id of previous question.</param>
+        /// <param name="previousUserQuery">Previous question information.</param>
         /// <returns>QnaSearchResultList result as response.</returns>
-        public async Task<QnASearchResultList> GenerateAnswerAsync(string question, bool isTestKnowledgeBase, ResponseCardPayload payload = null)
+        public async Task<QnASearchResultList> GenerateAnswerAsync(string question, bool isTestKnowledgeBase, bool isPrompt = false, string previousQnAId = null, string previousUserQuery = null)
         {
             var knowledgeBaseId = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.KnowledgeBaseId).ConfigureAwait(false);
 
@@ -196,12 +198,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
                 ScoreThreshold = Convert.ToDouble(this.options.ScoreThreshold),
             };
 
-            if (payload != null && payload.IsPrompt)
+            if (isPrompt && previousQnAId != null && previousUserQuery != null)
             {
                 queryDTO.Context = new QueryDTOContext
                 {
-                    PreviousQnaId = payload.PreviousQuestions.FirstOrDefault().Id.ToString(),
-                    PreviousUserQuery = payload.PreviousQuestions.FirstOrDefault().Questions.FirstOrDefault(),
+                    PreviousQnaId = previousQnAId,
+                    PreviousUserQuery = previousUserQuery,
                 };
             }
 
