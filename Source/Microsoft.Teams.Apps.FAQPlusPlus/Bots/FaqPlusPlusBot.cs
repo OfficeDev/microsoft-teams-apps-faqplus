@@ -158,7 +158,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             {
                 if (turnContext != null & !this.IsActivityFromExpectedTenant(turnContext))
                 {
-                    this.logger.LogInformation($"Unexpected tenant id {turnContext?.Activity.Conversation.TenantId}", SeverityLevel.Warning);
+                    this.logger.LogWarning($"Unexpected tenant id {turnContext?.Activity.Conversation.TenantId}");
                     return Task.CompletedTask;
                 }
 
@@ -215,7 +215,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                         break;
 
                     default:
-                        this.logger.LogInformation($"Received unexpected conversationType {message.Conversation.ConversationType}", SeverityLevel.Warning);
+                        this.logger.LogWarning($"Received unexpected conversationType {message.Conversation.ConversationType}");
                         break;
                 }
             }
@@ -934,7 +934,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     }
                     else
                     {
-                        this.logger.LogInformation($"Unexpected text in submit payload: {message.Text}", SeverityLevel.Warning);
+                        this.logger.LogWarning($"Unexpected text in submit payload: {message.Text}");
                     }
 
                     break;
@@ -1013,7 +1013,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     break;
 
                 default:
-                    this.logger.LogInformation($"Unknown status command {payload.Action}", SeverityLevel.Warning);
+                    this.logger.LogWarning($"Unknown status command {payload.Action}");
                     return;
             }
 
@@ -1432,7 +1432,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     payload = ((JObject)message.Value).ToObject<ResponseCardPayload>();
                 }
 
-                queryResult = await this.qnaServiceProvider.GenerateAnswerAsync(question: text, isTestKnowledgeBase: false, payload).ConfigureAwait(false);
+                queryResult = await this.qnaServiceProvider.GenerateAnswerAsync(question: text, isTestKnowledgeBase: false, payload.IsPrompt, payload.PreviousQuestions?.First().Id.ToString(), payload.PreviousQuestions?.First().Questions.First()).ConfigureAwait(false);
 
                 if (queryResult.Answers.First().Id != -1)
                 {

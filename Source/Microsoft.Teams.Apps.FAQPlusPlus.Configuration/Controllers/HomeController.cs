@@ -14,7 +14,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers;
 
     /// <summary>
-    /// Home Controller
+    /// Home Controller.
     /// </summary>
     [Authorize]
     public class HomeController : Controller
@@ -97,7 +97,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         /// Save or update knowledgeBaseId in table storage which is received from View.
         /// </summary>
         /// <param name="knowledgeBaseId">knowledgeBaseId is the unique string to identify knowledgebase.</param>
-        /// <returns>View</returns>
+        /// <returns>View.</returns>
         [HttpGet]
         public async Task<ActionResult> UpsertKnowledgeBaseIdAsync(string knowledgeBaseId)
         {

@@ -170,7 +170,7 @@
     <comment>Ability to chat directly with end user from SME channel.</comment>
   </data>
   <data name="NotificationCardContent" xml:space="preserve">
-    <value>I've shared your question with the team. An expert will reach out to you soon in separate chat.</value>
+    <value>I've shared your question with the team. An expert will reach out to you soon in a separate chat.</value>
     <comment>Confirmation message to the user upon asking question to the expert.</comment>
   </data>
   <data name="TeamChatHeaderText" xml:space="preserve">

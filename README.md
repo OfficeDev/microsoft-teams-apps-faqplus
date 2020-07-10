@@ -70,7 +70,7 @@ This is how the card will look like when the bot responds with the answer to the
 
 ![End-user_Rich_Card](/Wiki/Images/End-user_Rich_Card.png)
 
-## Legal Notices
+## Legal Notice
 
 Please read the license terms applicable to this template [here](https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgithub.com%2FOfficeDev%2Fmicrosoft-teams-company-communicator-app%2Fblob%2Fmaster%2FLICENSE&data=04%7C01%7CNidhi.Shandilya%40microsoft.com%7C263aa462997e45b8e20108d7479b86be%7C72f988bf86f141af91ab2d7cd011db47%7C1%7C0%7C637056605626329514%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C-1&sdata=o6iWeK9uPnMs9vWhK29bXG6FSitjy8S64aXiM%2B5%2FdtE%3D&reserved=0). In addition to these terms, you agree to the following:
 

@@ -592,7 +592,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to I&apos;ve shared your question with the team. An expert will reach out to you soon in separate chat..
+        ///   Looks up a localized string similar to I&apos;ve shared your question with the team. An expert will reach out to you soon in a separate chat..
         /// </summary>
         public static string NotificationCardContent {
             get {

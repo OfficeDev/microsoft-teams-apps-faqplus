@@ -13,14 +13,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers;
 
     /// <summary>
-    /// Autofac configuration
+    /// Autofac configuration.
     /// </summary>
     public static class AutofacConfig
     {
         /// <summary>
-        /// Register Autofac dependencies
+        /// Register Autofac dependencies.
         /// </summary>
-        /// <returns>Autofac container</returns>
+        /// <returns>Autofac container.</returns>
         public static IContainer RegisterDependencies()
         {
             var builder = new ContainerBuilder();

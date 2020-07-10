@@ -10,14 +10,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration
     using global::Owin;
 
     /// <summary>
-    /// Startup
+    /// Startup.
     /// </summary>
     public partial class Startup
     {
         /// <summary>
-        /// Configuration
+        /// Configuration.
         /// </summary>
-        /// <param name="app">IAppBuilder app</param>
+        /// <param name="app">IAppBuilder app.</param>
         public void Configuration(IAppBuilder app)
         {
             AreaRegistration.RegisterAllAreas();
