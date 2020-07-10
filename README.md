@@ -29,7 +29,7 @@ FAQ Plus bot is a friendly Q&A bot that brings a human in the loop when it is un
 ![FAQ Plus in action (experts view)](https://github.com/OfficeDev/microsoft-teams-faqplusplus-app/wiki/images/FAQPlusExperts.gif)
 
 
-**FAQ Plus (To_Do_Link) provides new features to experts team such as:**
+**FAQ Plus provides new features to experts team such as:**
 * Adding/editing/deleting/previewing QnA
 * Viewing update history of QnA
 * View all the existing QnA
