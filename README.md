@@ -38,37 +38,37 @@ FAQ Plus bot is a friendly Q&A bot that brings a human in the loop when it is un
 
 Experts team invoking the task module to add QnA pair:
 
-![Invoking_taskmodule1](/Wiki/Images/Invoking_taskmodule1.png)
+![Invoking_taskmodule1](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/Invoking_taskmodule1.png)
 
 Experts team configuring the bot to respond with a hero card as an answer to a question:
 
-![Invoking_taskmodule2](/Wiki/Images/Invoking_taskmodule2.png)
+![Invoking_taskmodule2](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/Invoking_taskmodule2.png)
 
-![Add question screen 1](/Wiki/Images/add-question-richcard1.png)
+![Add question screen 1](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/add-question-richcard1.png)
 
 Experts team previewing the QnA pair before saving:
    
-![Preview_Rich_card](/Wiki/Images/Preview_Rich_card.png)
+![Preview_Rich_card](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/Preview_Rich_card.png)
 
 Experts team updating the QnA pair:
 
-![Updating_Question-ui1](/Wiki/Images/Updating_Question-ui1.png)
+![Updating_Question-ui1](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/Updating_Question-ui1.png)
 
-![Updating_Question-ui2](/Wiki/Images/Updating_Question-ui2.png)
+![Updating_Question-ui2](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/Updating_Question-ui2.png)
 
-![Updating_Question-ui4](/Wiki/Images/Updating_Question-ui4.png)
+![Updating_Question-ui4](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/Updating_Question-ui4.png)
 
 Some of the fields are markdown supported and are indicated with "(Markdown supported)" beside the field label:
    
-![Adding_Markdown-Support-1](/Wiki/Images/Adding_Markdown-Support1.png)
+![Adding_Markdown-Support-1](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/Adding_Markdown-Support1.png)
    
 This is how the card will look like when the bot responds with the answer to the Experts team:
 
-![Adding_Markdown-Support-3](/Wiki/Images/Adding_Markdown-Support3.png)
+![Adding_Markdown-Support-3](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/Adding_Markdown-Support3.png)
 
 This is how the card will look like when the bot responds with the answer to the End-user:
 
-![End-user_Rich_Card](/Wiki/Images/End-user_Rich_Card.png)
+![End-user_Rich_Card](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/End-user_Rich_Card.png)
 
 ## Legal Notice
 

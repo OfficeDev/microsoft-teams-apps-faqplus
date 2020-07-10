@@ -23,7 +23,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         public string KnowledgeBaseAnswer { get; set; }
 
         /// <summary>
-        /// Gets or sets Previous Questions.
+        /// Gets or sets list of previous questions when a follow up prompt is selected.
         /// </summary>
         public List<QnADTO> PreviousQuestions { get; set; }
 
