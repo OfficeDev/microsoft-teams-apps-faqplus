@@ -183,11 +183,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         /// </summary>
         /// <param name="question">Question text.</param>
         /// <param name="isTestKnowledgeBase">Prod or test.</param>
-        /// <param name="isPrompt">Is the question from a follow up prompt.</param>
         /// <param name="previousQnAId">Id of previous question.</param>
         /// <param name="previousUserQuery">Previous question information.</param>
         /// <returns>QnaSearchResultList result as response.</returns>
-        public async Task<QnASearchResultList> GenerateAnswerAsync(string question, bool isTestKnowledgeBase, bool isPrompt = false, string previousQnAId = null, string previousUserQuery = null)
+        public async Task<QnASearchResultList> GenerateAnswerAsync(string question, bool isTestKnowledgeBase, string previousQnAId = null, string previousUserQuery = null)
         {
             var knowledgeBaseId = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.KnowledgeBaseId).ConfigureAwait(false);
 
@@ -198,7 +197,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
                 ScoreThreshold = Convert.ToDouble(this.options.ScoreThreshold),
             };
 
-            if (isPrompt && previousQnAId != null && previousUserQuery != null)
+            if (previousQnAId != null && previousUserQuery != null)
             {
                 queryDTO.Context = new QueryDTOContext
                 {

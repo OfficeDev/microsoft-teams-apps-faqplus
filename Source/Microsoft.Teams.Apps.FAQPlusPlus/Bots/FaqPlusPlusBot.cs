@@ -1427,12 +1427,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
                 ResponseCardPayload payload = new ResponseCardPayload();
 
-                if (!string.IsNullOrEmpty(message.ReplyToId) && (message.Value != null) && ((JObject)message.Value).HasValues)
+                if (!string.IsNullOrEmpty(message.ReplyToId) && (message.Value != null))
                 {
                     payload = ((JObject)message.Value).ToObject<ResponseCardPayload>();
                 }
 
-                queryResult = await this.qnaServiceProvider.GenerateAnswerAsync(question: text, isTestKnowledgeBase: false, payload.IsPrompt, payload.PreviousQuestions?.First().Id.ToString(), payload.PreviousQuestions?.First().Questions.First()).ConfigureAwait(false);
+                queryResult = await this.qnaServiceProvider.GenerateAnswerAsync(question: text, isTestKnowledgeBase: false, payload.PreviousQuestions?.First().Id.ToString(), payload.PreviousQuestions?.First().Questions.First()).ConfigureAwait(false);
 
                 if (queryResult.Answers.First().Id != -1)
                 {

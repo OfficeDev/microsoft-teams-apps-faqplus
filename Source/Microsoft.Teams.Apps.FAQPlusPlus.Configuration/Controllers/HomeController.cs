@@ -251,7 +251,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
                 var knowledgebaseDetail = await this.qnaMakerClient.Knowledgebase.GetDetailsAsync(knowledgeBaseId).ConfigureAwait(false);
                 return knowledgebaseDetail.Id == knowledgeBaseId;
             }
+#pragma warning disable CA1031 // Do not catch general exception types
             catch
+#pragma warning restore CA1031 // Do not catch general exception types
             {
                 return false;
             }
@@ -269,7 +271,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
                 await this.configurationPovider.UpsertEntityAsync(endpointKeys.PrimaryEndpointKey, ConfigurationEntityTypes.QnAMakerEndpointKey).ConfigureAwait(false);
                 return true;
             }
+#pragma warning disable CA1031 // Do not catch general exception types
             catch
+#pragma warning restore CA1031 // Do not catch general exception types
             {
                 return false;
             }

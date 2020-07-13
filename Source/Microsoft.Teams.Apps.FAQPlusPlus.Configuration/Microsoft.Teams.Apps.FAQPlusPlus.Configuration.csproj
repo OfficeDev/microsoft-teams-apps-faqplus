@@ -260,9 +260,6 @@
     <AdditionalFiles Include="..\stylecop.json" />
   </ItemGroup>
   <ItemGroup>
-    <!--<Compile Include="..\GlobalSuppressions.cs">
-      <Link>Properties\GlobalSuppressions.cs</Link>
-    </Compile>-->
     <Compile Include="App_Start\AutofacConfig.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
@@ -274,7 +271,6 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Models\KnowledgeBaseViewModel.cs" />
     <Compile Include="Models\HelpTabViewModel.cs" />
     <Compile Include="Models\TeamViewModel.cs" />
