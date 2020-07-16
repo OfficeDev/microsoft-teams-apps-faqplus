@@ -1,10 +1,10 @@
-# FAQ Plus [Version 2]
+# FAQ Plus
 
 Chatbots are an easy way to provide answers to frequently asked questions by end-users. However, most chatbots fail to engage with end-users in meaningful way because there is no human in the loop when the chatbot fails. 
 
 FAQ Plus bot is a friendly Q&A bot that brings a human in the loop when it is unable to help. One can ask the bot a question and the bot responds with an answer if it is contained in the knowledge base. If not, the bot allows the end-user to submit a query which then gets posted in a pre-configured team of experts to provide support by acting upon the notifications from within their team itself.
 
-**Applicable scenarios:** FAQ Plus [Version 2] works really well for light weight QnA and help desk scenarios. It also works well to provide quick support when launching new projects/initiatives in the organization.
+**Applicable scenarios:** FAQ Plus works really well for light weight QnA and help desk scenarios. It also works well to provide quick support when launching new projects/initiatives in the organization.
 
 **Earlier release of FAQ Plus has following features:**
 

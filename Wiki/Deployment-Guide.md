@@ -12,7 +12,7 @@ To begin, you will need:
 	* QnAMaker cognitive service
 	* Application Insights  
 * A team in Microsoft Teams with your group of experts. (You can add and remove team members later!)
-* A copy of the FAQ Plus [Version 2] app GitHub repo (https://github.com/OfficeDev/microsoft-teams-faqplusplusversiontwo-app)
+* A copy of the FAQ Plus app GitHub repo (https://github.com/OfficeDev/microsoft-teams-faqplusplusversiontwo-app)
 * A reasonable set of Question and Answer pairs to set up the knowledge base for the bot.
 
  
@@ -103,8 +103,8 @@ Make sure that the values are copied as-is, with no extra spaces. The template c
 11. Wait for the deployment to finish. You can check the progress of the deployment from the "Notifications" pane of the Azure Portal. It can take more than 10 minutes for the deployment to finish.
 
 12. Once the deployment has finished, you would be directed to a page that has the following fields:
-* botId - This is the Microsoft Application ID for the FAQ Plus [Version 2] bot.
-* appDomain - This is the base domain for the FAQ Plus [Version 2] Bot.
+* botId - This is the Microsoft Application ID for the FAQ Plus bot.
+* appDomain - This is the base domain for the FAQ Plus Bot.
 
 # Step 3: Set up authentication for the configuration app
 
@@ -143,7 +143,7 @@ Use the following values when connecting to the QnA service:
 ![Screenshot of settings](https://docs.microsoft.com/en-us/azure/cognitive-services/qnamaker/media/qnamaker-tutorial-create-publish-query-in-portal/create-kb-step-2.png)
 
 ## Multi-Turn Enablement
-With the new updates to the FAQ Plus [Version 2] app template, the knowledge base can now support multi-turn conversations. To understand the basics of multi-turn conversations, navigate to the [QnA Maker documentation](https://docs.microsoft.com/en-us/azure/cognitive-services/QnAMaker/how-to/multiturn-conversation#what-is-a-multi-turn-conversation) to understand about multi-turn conversations. To enable multi-turn on the newly created knowledge base, go to this [link](https://docs.microsoft.com/en-us/azure/cognitive-services/QnAMaker/how-to/multiturn-conversation#create-a-multi-turn-conversation-from-a-documents-structure) to enable multi-turn extraction on the knowledge base. 
+With the new updates to the FAQ Plus app template, the knowledge base can now support multi-turn conversations. To understand the basics of multi-turn conversations, navigate to the [QnA Maker documentation](https://docs.microsoft.com/en-us/azure/cognitive-services/QnAMaker/how-to/multiturn-conversation#what-is-a-multi-turn-conversation) to understand about multi-turn conversations. To enable multi-turn on the newly created knowledge base, go to this [link](https://docs.microsoft.com/en-us/azure/cognitive-services/QnAMaker/how-to/multiturn-conversation#create-a-multi-turn-conversation-from-a-documents-structure) to enable multi-turn extraction on the knowledge base. 
 
 * Note: For best practices with regards to formatting and document structure, please follow these [guidelines](https://docs.microsoft.com/en-us/azure/cognitive-services/QnAMaker/how-to/multiturn-conversation#building-your-own-multi-turn-document).
 
@@ -153,7 +153,7 @@ After [publishing the knowledge base](https://docs.microsoft.com/en-us/azure/cog
 
 Remember the knowledge base ID: we will need it in the next step.
 
-# Step 5: Finish configuring the FAQ Plus [Version 2] app
+# Step 5: Finish configuring the FAQ Plus app
 
 1. Go to the configuration app, which is at `https://[BaseResourceName].azurewebsites.net/configuration`. For example, if you chose “contosofaqplus” as the base name, the configuration app will be at `https://contosofaqplus.azurewebsites.net/configuration`.
 
@@ -204,14 +204,14 @@ Create two Teams app packages: one for end-users to install personally, and one 
 5. Save and Rename `manifest_enduser.json` file to a file named `manifest.json`.
 
 6. Create a ZIP package with the `manifest.json`,`color.png`, and `outline.png`. The two image files are the icons for your app in Teams.
-* Name this package `faqplusv2-enduser.zip`, so you know that this is the app for end-users.
+* Name this package `faqplus-enduser.zip`, so you know that this is the app for end-users.
 * Make sure that the 3 files are the _top level_ of the ZIP package, with no nested folders.
 
 ![image10](/Wiki/Images/file-explorer.png)
 
 7. Delete the `manifest.json` file.
 
-Repeat the steps above but with the file `Manifest\manifest_sme.json`. Name the resulting package `faqplusv2-experts.zip`, so you know that this is the app for experts.
+Repeat the steps above but with the file `Manifest\manifest_sme.json`. Name the resulting package `faqplus-experts.zip`, so you know that this is the app for experts.
 
 # Step 7: Run the apps in Microsoft Teams
 

@@ -9,7 +9,7 @@ For ex: IT aka Contoso IT Support.
 
 **Code Changes:**
 
-- Change the text references in the associated resource(Strings.resx) file from FAQ Plus [Version 2] to the domain on which it should cater to.
+- Change the text references in the associated resource(Strings.resx) file from FAQ Plus to the domain on which it should cater to.
 
 - Update the app name, description, tab name and other details in the associated manifest JSON files for end-user and experts team respectively.
 

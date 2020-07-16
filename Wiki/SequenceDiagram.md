@@ -1,4 +1,4 @@
-# Data flow diagram to detail out the data flow between various services in  FAQ Plus [Version 2] bot
+# Data flow diagram to detail out the data flow between various services in  FAQ Plus bot
 
 ## Add question using compose action
 
