@@ -6,7 +6,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Models
     using System.ComponentModel.DataAnnotations;
 
     /// <summary>
-    /// KnowledgeBase View Model
+    /// KnowledgeBase View Model.
     /// </summary>
     public class KnowledgeBaseViewModel
     {
