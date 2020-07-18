@@ -41,42 +41,7 @@ FAQ Plus bot is a friendly Q&A bot that brings a human in the loop when it is un
 
 ![Invoking_taskmodule1](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/Invoking_taskmodule1.png)
 
-
-*	Expert configuring the bot to respond with a hero card as an answer to a question:
-
-![Invoking_taskmodule2](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/Invoking_taskmodule2.png)
-
-![Add question screen 1](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/add-question-richcard1.png)
-
-
-*	Expert previewing the QnA pair before saving:
-   
-![Preview_Rich_card](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/Preview_Rich_card.png)
-
-
-*	Expert updating the QnA pair:
-
-![Updating_Question-ui1](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/Updating_Question-ui1.png)
-
-![Updating_Question-ui2](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/Updating_Question-ui2.png)
-
-![Updating_Question-ui4](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/Updating_Question-ui4.png)
-
-
-*	Some of the fields are markdown supported and are indicated with "(Markdown supported)" beside the field label:
-   
-![Adding_Markdown-Support-1](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/Adding_Markdown-Support1.png)
-   
-
-*	This is how the card will look like when the bot responds with the answer to the Experts team:
-
-![Adding_Markdown-Support-3](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/Adding_Markdown-Support3.png)
-
-
-*	This is how the card will look like when the bot responds with the answer to the End-user:
-
-![End-user_Rich_Card](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/End-user_Rich_Card.png)
-
+More screenshots and tips on how to use the app are in the [Wiki](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Home) of this repository.
 
 ## Legal Notice
 
