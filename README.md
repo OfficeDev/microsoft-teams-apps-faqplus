@@ -9,7 +9,7 @@ urlFragment: microsoft-teams-apps-faqplus
 ---
 #  FAQ Plus App Template
 
-| [Documentation](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Home) | [Deployment guide](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Deployment-Guide) | [Architecture](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Solution-Overview) |
+| [Documentation](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Home) | [Deployment guide](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Deployment-Guide) | [Architecture](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Solution-Overview) |
 | ---- | ---- | ---- |
 
 Chatbots on Microsoft Teams are an easy way to provide answers to frequently asked questions by users. However, most chatbots fail to engage with users in a meaningful way because there is no human in the loop when the chatbot fails to answer a question well. 
@@ -39,13 +39,13 @@ FAQ Plus bot is a friendly Q&A bot that brings a human in the loop when it is un
 
 *	Expert invoking the task module to add QnA pair:
 
-![Invoking_taskmodule1](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/Invoking_taskmodule1.png)
+![Invoking_taskmodule1](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/Invoking_taskmodule1.png)
 
-More screenshots and tips on how to use the app are in the [Wiki](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Home) of this repository.
+More screenshots and tips on how to use the app are in the [Wiki](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Home) of this repository.
 
 ## Legal Notice
 
-Please read the license terms applicable to this template [here](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/blob/master/LICENSE). In addition to these terms, you agree to the following:
+Please read the license terms applicable to this template [here](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/blob/master/LICENSE). In addition to these terms, you agree to the following:
 
 - You are responsible for complying with all applicable privacy and security regulations, as well as all internal privacy and security policies of your company. You must also include your own privacy statement and terms of use for your app if you choose to deploy or share it broadly.
 - This template includes functionality to provide all with required information, and it is your responsibility to ensure the data is presented accurately.
