@@ -1,4 +1,4 @@
-# Prerequisites
+## Prerequisites
 
 To begin, you will need: 
 
@@ -16,7 +16,7 @@ To begin, you will need:
 * A reasonable set of Question and Answer pairs to set up the knowledge base for the bot.
 
  
-# Step 1: Register Azure AD applications
+## Step 1: Register Azure AD applications
 
 Register two Azure AD applications in your tenant's directory: one for the bot, and another for the configuration app.
 
@@ -27,17 +27,17 @@ Register two Azure AD applications in your tenant's directory: one for the bot, 
 	2. **Supported account types**: Select "Accounts in any organizational directory"
 	3. Leave the "Redirect URL" field blank.
 
-![Azure AD app registration page](/Wiki/Images/multitenant_app_creation.png)
+[[/Images/multitenant_app_creation.png | Azure registration page]]
 
 3. Click on the "Register" button.
 
 4. When the app is registered, you'll be taken to the app's "Overview" page. Copy the **Application (client) ID**; we will need it later. Verify that the "Supported account types" is set to **Multiple organizations**.
 
-![Azure AD app overview page](/Wiki/Images/multitenant_app_overview.png)
+[[/Images/multitenant_app_overview.png| Azure Overview page]]
 
 5. On the side rail in the Manage section, navigate to the "Certificates & secrets" section. In the Client secrets section, click on "+ New client secret". Add a description for the secret and select an expiry time. Click "Add".
 
-![Azure AD app overview page](/Wiki/Images/multitenant_app_secret.png)
+[[/Images/multitenant_app_secret.png | Azure AD overview page]]
 
 6. Once the client secret is created, copy its **Value**; we will need it later.
 
@@ -55,9 +55,9 @@ At this point you have 4 unique values:
 
 We recommend that you copy these values into a text file, using an application like Notepad. We will need these values later.
 
-![image2](/Wiki/Images/azure-config-app-step3.png)
+[[/Images/azure-config-app-step3.png| Configuration step 3]]
 
-# Step 2: Deploy to your Azure subscription
+## Step 2: Deploy to your Azure subscription
 
 1. Click on the "Deploy to Azure" button below.
 
@@ -106,7 +106,7 @@ Make sure that the values are copied as-is, with no extra spaces. The template c
 * botId - This is the Microsoft Application ID for the FAQ Plus bot.
 * appDomain - This is the base domain for the FAQ Plus Bot.
 
-# Step 3: Set up authentication for the configuration app
+## Step 3: Set up authentication for the configuration app
 
 1. Note the location of the configuration app that you deployed, which is `https://[BaseResourceName].azurewebsites.net`. For example, if you chose "contosofaqplus" as the base name, the configuration app will be at `https://contosofaqplus.azurewebsites.net`
 
@@ -128,7 +128,7 @@ Note: Please refer to Step 3.1 for more details about the URL.
 
 6. Click "Save" to commit your changes.
 
-# Step 4: Create the QnA Maker knowledge base
+## Step 4: Create the QnA Maker knowledge base
 
 Create a knowledge base, following the instructions in the [QnA Maker documentation](https://docs.microsoft.com/en-us/azure/cognitive-services/qnamaker/tutorials/create-publish-query-in-portal#create-a-knowledge-base).
 
@@ -140,38 +140,38 @@ Use the following values when connecting to the QnA service:
 * **Azure subscription name**: The Azure subscription to which the ARM template was deployed.
 * **Azure QnA service**: The QnA service created during the deployment. This is the same as the "Base resource name"; for example, if you chose "contosofaqplus" as the base name, the QnA Maker service will be named `contosofaqplus`.
 
-![Screenshot of settings](https://docs.microsoft.com/en-us/azure/cognitive-services/qnamaker/media/qnamaker-tutorial-create-publish-query-in-portal/create-kb-step-2.png)
+[[https://docs.microsoft.com/en-us/azure/cognitive-services/qnamaker/media/qnamaker-tutorial-create-publish-query-in-portal/create-kb-step-2.png| Settings page]]
 
-## Multi-Turn Enablement
+### Multi-Turn Enablement
 With the new updates to the FAQ Plus app template, the knowledge base can now support multi-turn conversations. To understand the basics of multi-turn conversations, navigate to the [QnA Maker documentation](https://docs.microsoft.com/en-us/azure/cognitive-services/QnAMaker/how-to/multiturn-conversation#what-is-a-multi-turn-conversation) to understand about multi-turn conversations. To enable multi-turn on the newly created knowledge base, go to this [link](https://docs.microsoft.com/en-us/azure/cognitive-services/QnAMaker/how-to/multiturn-conversation#create-a-multi-turn-conversation-from-a-documents-structure) to enable multi-turn extraction on the knowledge base. 
 
 * Note: For best practices with regards to formatting and document structure, please follow these [guidelines](https://docs.microsoft.com/en-us/azure/cognitive-services/QnAMaker/how-to/multiturn-conversation#building-your-own-multi-turn-document).
 
 After [publishing the knowledge base](https://docs.microsoft.com/en-us/azure/cognitive-services/qnamaker/tutorials/create-publish-query-in-portal#publish-to-get-knowledge-base-endpoints), note the knowledge base ID (see screenshot).
 
-![Screenshot of the publishing page](/Wiki/Images/kb_publishing.png)
+[[/Images/kb_publishing.png | Publish KB]]
 
 Remember the knowledge base ID: we will need it in the next step.
 
-# Step 5: Finish configuring the FAQ Plus app
+## Step 5: Finish configuring the FAQ Plus app
 
 1. Go to the configuration app, which is at `https://[BaseResourceName].azurewebsites.net/configuration`. For example, if you chose “contosofaqplus” as the base name, the configuration app will be at `https://contosofaqplus.azurewebsites.net/configuration`.
 
 2. You will be prompted to login with your credentials. Make sure that you log in with an account that is in the list of users allowed to access the configuration app.
 
-![image4](/Wiki/Images/config-web-app-login.png)
+[[/Images/config-web-app-login.png| Config web app page]]
 
 3. Get the link to the team with your experts from the Teams client. To do so, open Microsoft Teams, and navigate to the team. Click on the "..." next to the team name, then select "Get link to team".
 
-![image5](/Wiki/Images/get-link-to-Team.png)
+[[/Images/get-link-to-Team.png | Get link to Team]]
 
 Cick on "Copy" to copy the link to the clipboard.
 
-![image6](/Wiki/Images/link-to-team.png)
+[[/Images/link-to-team.png | Link to team]]
 
 4. Paste the copied link into the "Team Id" field, then press "OK".
 
-![image7](/Wiki/Images/fill-in-team-link.png)
+[[/Images/fill-in-team-link.png | Add team link form]]
 
 5. Enter the QnA Maker knowledge base ID into the "Knowledge base ID" field, then press "OK".
 
@@ -181,7 +181,7 @@ Cick on "Copy" to copy the link to the clipboard.
 
 Remember to click on "OK" after changing a setting. To edit the setting later, click on "Edit" to make the text box editable.
 
-# Step 6: Create the Teams app packages
+## Step 6: Create the Teams app packages
 
 Create two Teams app packages: one for end-users to install personally, and one to be installed to the experts team.
 
@@ -207,13 +207,13 @@ Create two Teams app packages: one for end-users to install personally, and one 
 * Name this package `faqplus-enduser.zip`, so you know that this is the app for end-users.
 * Make sure that the 3 files are the _top level_ of the ZIP package, with no nested folders.
 
-![image10](/Wiki/Images/file-explorer.png)
+[[/Images/file-explorer.png| File explorer]]
 
 7. Delete the `manifest.json` file.
 
 Repeat the steps above but with the file `Manifest\manifest_sme.json`. Name the resulting package `faqplus-experts.zip`, so you know that this is the app for experts.
 
-# Step 7: Run the apps in Microsoft Teams
+## Step 7: Run the apps in Microsoft Teams
 
 1. If your tenant has sideloading apps enabled, you can install your app by following the instructions [here](https://docs.microsoft.com/en-us/microsoftteams/platform/concepts/apps/apps-upload#load-your-package-into-teams)
 
@@ -227,4 +227,4 @@ Repeat the steps above but with the file `Manifest\manifest_sme.json`. Name the 
 
 # Troubleshooting
 
-Please see our [Troubleshooting](/wiki/Troubleshooting.md) page.
+Please see our [Troubleshooting](Troubleshooting) page.

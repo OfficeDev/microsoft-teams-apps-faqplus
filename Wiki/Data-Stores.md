@@ -11,8 +11,8 @@ The app uses the following data stores:
 
  All these resources are created in your Azure subscription. None are hosted directly by Microsoft.
 
-# Storage account
- ## ConfigurationInfo Table
+## Storage account
+ ### ConfigurationInfo Table
  
 The **ConfigurationInfo** table stores data about the necessary configurations that are required for the bot. Each row in the table has the following columns:
 
@@ -26,7 +26,7 @@ LastModifiedByUPN | The user principal name (UPN) of the Admin who modified the 
 LastModifiedByObjectId | The Azure Active Directory Object Id of the Admin who modified the setting.
 LastModifiedOn | The date/time on which the Admin modified the setting.
 
-## TicketInfo Table
+### TicketInfo Table
 
 The **TicketInfo** table stores data about tickets (or requests) that are posted to the expert team by the bot on behalf of end-user. Each row in the table has the following columns:
   
@@ -53,7 +53,7 @@ The **TicketInfo** table stores data about tickets (or requests) that are posted
 |UserQuestion|The original question that has been asked by the end-user.
 |KbEntryAnswer|The answer that is stored in the knowledge base.
 
-## ActivityEntity Table 
+### ActivityEntity Table 
 
 The **ActivityEntity** table is used to maintain card state which is further used to refresh cards when edited or deleted. Each row in the table has the following columns:
 
@@ -62,7 +62,7 @@ The **ActivityEntity** table is used to maintain card state which is further use
 TimeStamp | The date and time when the card gets posted.
 ActivityID | The ID of the card that gets posted in the channel when the question is added for the first time.
 
-## Blob Storage
+### Blob Storage
 
 The **Blob Storage** stores knowledge base with QnA and metadata in JSON format.
 The same JSON is used by messaging extension search results for knowledge base tab.

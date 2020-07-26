@@ -1,59 +1,71 @@
-# FAQ Plus
+## FAQ Plus
 
-Chatbots are an easy way to provide answers to frequently asked questions by end-users. However, most chatbots fail to engage with end-users in meaningful way because there is no human in the loop when the chatbot fails. 
+Chatbots on Microsoft Teams are an easy way to provide answers to frequently asked questions by users. However, most chatbots fail to engage with users in a meaningful way because there is no human in the loop when the chatbot fails to answer a question well. 
 
-FAQ Plus bot is a friendly Q&A bot that brings a human in the loop when it is unable to help. One can ask the bot a question and the bot responds with an answer if it is contained in the knowledge base. If not, the bot allows the end-user to submit a query which then gets posted in a pre-configured team of experts to provide support by acting upon the notifications from within their team itself.
+FAQ Plus bot is a friendly Q&A bot that brings a human in the loop when it is unable to help. A user can ask the bot a question and the bot responds with an answer if it's in the knowledge base. If not, the bot offers  the user an option to "Ask an expert", which posts the question to a pre-configured team of experts to provide support. An expert can assign the question to themself, chat with the user to gain more context and add the question to the knowledge base from using a messaging extention so that the next user to ask that same question will get an answer from the chatbot!
 
-**Applicable scenarios:** FAQ Plus works really well for light weight QnA and help desk scenarios. It also works well to provide quick support when launching new projects/initiatives in the organization.
+**The July 2020 (version 3) release of FAQ Plus includes a multi-turn feature to the end user experience. With the multi-turn feature, users will be presented with follow-up options along with an answer to their question. This enables the FAQ Plus bot to answer the user's question with more relevance. Multi-turn follow-up options are programmed directly into the QnA Maker when the tenant admin uploads the Q&A pairs into the knowledge base.**
 
-**Earlier release of FAQ Plus has following features:**
+**FAQ Plus provides features to the expert team such as:**
+* Adding/editing/deleting/previewing QnA
+* Viewing update history of QnA
+* View all the existing QnA
+* View the original version of the edited QnA
+* View details of manually added QnA
 
-*	An Enduser interacting with FAQ Plus:
+**Here are some screenshots showing FAQ Plus in action:**
+
+*	A user interacting with FAQ Plus through chat:
 
 ![FAQ Plus in action (user view)](https://github.com/OfficeDev/microsoft-teams-faqplusplus-app/wiki/images/FAQPlusEndUser.gif)
 
-*	Experts team using FAQ Plus:
+
+*	Expert using FAQ Plus:
 
 ![FAQ Plus in action (experts view)](https://github.com/OfficeDev/microsoft-teams-faqplusplus-app/wiki/images/FAQPlusExperts.gif)
 
 
+*	Expert invoking the task module to add QnA pair:
 
-**Following are the features provided to the experts team as part of FAQ Plus [Version 2]:**
+![Invoking_taskmodule1](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/Invoking_taskmodule1.png)
 
-*	Experts team invoking the task module to add QnA pair:
 
-![Invoking_taskmodule1](/Wiki/Images/Invoking_taskmodule1.png)
+*	Expert configuring the bot to respond with a hero card as an answer to a question:
 
-*	Experts team configuring the bot to respond with a hero card as an answer to a question:
+![Invoking_taskmodule2](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/Invoking_taskmodule2.png)
 
-![Invoking_taskmodule2](/Wiki/Images/Invoking_taskmodule2.png)
+![Add question screen 1](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/add-question-richcard1.png)
 
-![Add question screen 1](/Wiki/Images/add-question-richcard1.png)
 
-*	Experts team previewing the QnA pair before saving:
+*	Expert previewing the QnA pair before saving:
    
-![Preview_Rich_card](/Wiki/Images/Preview_Rich_card.png)
+![Preview_Rich_card](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/Preview_Rich_card.png)
 
-*	Experts team updating the QnA pair:
 
-![Updating_Question-ui1](/Wiki/Images/Updating_Question-ui1.png)
+*	Expert updating the QnA pair:
 
-![Updating_Question-ui2](/Wiki/Images/Updating_Question-ui2.png)
+![Updating_Question-ui1](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/Updating_Question-ui1.png)
 
-![Updating_Question-ui4](/Wiki/Images/Updating_Question-ui4.png)
+![Updating_Question-ui2](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/Updating_Question-ui2.png)
 
-*	Some of the fields are markdown supported and are indicated with "(Markdown supported)" beside the field label.
+![Updating_Question-ui4](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/Updating_Question-ui4.png)
+
+
+*	Some of the fields are markdown supported and are indicated with "(Markdown supported)" beside the field label:
    
-![Adding_Markdown-Support-1](/Wiki/Images/Adding_Markdown-Support1.png)
+![Adding_Markdown-Support-1](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/Adding_Markdown-Support1.png)
    
+
 *	This is how the card will look like when the bot responds with the answer to the Experts team:
 
-![Adding_Markdown-Support-3](/Wiki/Images/Adding_Markdown-Support3.png)
+![Adding_Markdown-Support-3](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/Adding_Markdown-Support3.png)
+
 
 *	This is how the card will look like when the bot responds with the answer to the End-user:
 
-![End-user_Rich_Card](/Wiki/Images/End-user_Rich_Card.png)
+![End-user_Rich_Card](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/End-user_Rich_Card.png)
 
+Please refer the following documentation links for further details related to the app:
 
 - [Solution overview](Solution-Overview)
 	- [Data stores](Data-Stores)
