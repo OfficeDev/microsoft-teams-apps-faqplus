@@ -12,7 +12,7 @@ To begin, you will need:
 	* QnAMaker cognitive service
 	* Application Insights  
 * A team in Microsoft Teams with your group of experts. (You can add and remove team members later!)
-* A copy of the FAQ Plus app GitHub repo (https://github.com/OfficeDev/microsoft-teams-faqplusplusversiontwo-app)
+* A copy of the FAQ Plus app GitHub repo (https://github.com/OfficeDev/microsoft-teams-faqplusplus-app)
 * A reasonable set of Question and Answer pairs to set up the knowledge base for the bot.
 
  
@@ -61,7 +61,7 @@ We recommend that you copy these values into a text file, using an application l
 
 1. Click on the "Deploy to Azure" button below.
 
-[![Deploy to Azure](https://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FOfficeDev%2Fmicrosoft-teams-faqplusplus-app%2Fmaster%2FDeployment%2Fazuredeploy.json)
+[![Deploy to Azure](https://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FOfficeDev%2Fmicrosoft-teams-apps-faqplus%2Fmaster%2FDeployment%2Fazuredeploy.json)
 
 2. When prompted, log in to your Azure subscription.
 
@@ -108,7 +108,7 @@ Make sure that the values are copied as-is, with no extra spaces. The template c
 
 ## Step 3: Set up authentication for the configuration app
 
-1. Note the location of the configuration app that you deployed, which is `https://[BaseResourceName].azurewebsites.net`. For example, if you chose "contosofaqplus" as the base name, the configuration app will be at `https://contosofaqplus.azurewebsites.net`
+1. Note the location of the configuration app that you deployed, which is `https://[BaseResourceName]-config.azurewebsites.net`. For example, if you choose "contosofaqplus" as the base name, the configuration app will be at `https://contosofaqplus-config.azurewebsites.net`
 
 2. Go back to the "App Registrations" page [here](https://portal.azure.com/#blade/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/RegisteredAppsPreview).
 
@@ -116,11 +116,9 @@ Make sure that the values are copied as-is, with no extra spaces. The template c
 
 4. Add new entries to "Redirect URLs":
 * **Type**: Web
-* **Redirect URLs**: If your configuration app's URL is https://contosofaqplus.azurewebsites.net, then add the following three entries as the Redirect URLs:
+* **Redirect URLs**: If your configuration app's URL is https://contosofaqplus-config.azurewebsites.net, then add the following entry as the Redirect URL:
 
-	- https://contosofaqplus.azurewebsites.net
-	- https://contosofaqplus.azurewebsites.net/signin 
-	- https://contosofaqplus.azurewebsites.net/configuration
+	- https://contosofaqplus-config.azurewebsites.net
 
 Note: Please refer to Step 3.1 for more details about the URL. 
 
@@ -155,7 +153,7 @@ Remember the knowledge base ID: we will need it in the next step.
 
 ## Step 5: Finish configuring the FAQ Plus app
 
-1. Go to the configuration app, which is at `https://[BaseResourceName].azurewebsites.net/configuration`. For example, if you chose “contosofaqplus” as the base name, the configuration app will be at `https://contosofaqplus.azurewebsites.net/configuration`.
+1. Go to the configuration app, which is at `https://[BaseResourceName]-config.azurewebsites.net/`. For example, if you chose “contosofaqplus” as the base name, the configuration app will be at `https://contosofaqplus-config.azurewebsites.net/`.
 
 2. You will be prompted to login with your credentials. Make sure that you log in with an account that is in the list of users allowed to access the configuration app.
 

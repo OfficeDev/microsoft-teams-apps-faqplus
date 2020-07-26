@@ -69,4 +69,4 @@ If  no QnA pairs exist in knowledge base then add new ones either directly from 
 
 **Didn't find your problem here?**
 
-Please, report the issue [here](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/issues/new)
+Please, report the issue [here](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/issues/new)

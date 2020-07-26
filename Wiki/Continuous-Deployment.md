@@ -10,7 +10,7 @@ Please follow below steps to deploy latest changes to the app service:
 
     [[https://github.com/OfficeDev/microsoft-teams-apps-bookaroom/wiki/Images/Azure-appservice-menu.png|Azure app service menu blade]]
 
-1. Search and select the app service name (search for the `base resource name`) which is created during first deployment. For e.g. `constoso-faqplusv2`.azurewebsites.net
+1. Search and select the app service name (search for the `base resource name`) which is created during first deployment. For e.g. `constoso-faqplus`.azurewebsites.net
 
 1. Select Deployment Center under menu blade
 
@@ -30,7 +30,7 @@ Please follow below steps to deploy latest changes to the app service:
 
 1. Search Function App in Azure portal search box and select.
 
-1. Filter the app name which is created during first deployment. For e.g. `constoso-faqplusv2`-function.azurewebsites.net
+1. Filter the app name which is created during first deployment. For e.g. `constoso-faqplus`-function.azurewebsites.net
     [[https://github.com/OfficeDev/microsoft-teams-apps-bookaroom/wiki/Images/Azure-function-menu.png|Azure Function App Overview menu]]
 
 1. Under Overview section, select `Deployment options configured with ExternalGit`

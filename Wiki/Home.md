@@ -17,53 +17,55 @@ FAQ Plus bot is a friendly Q&A bot that brings a human in the loop when it is un
 
 *	A user interacting with FAQ Plus through chat:
 
-![FAQ Plus in action (user view)](https://github.com/OfficeDev/microsoft-teams-faqplusplus-app/wiki/images/FAQPlusEndUser.gif)
+![FAQ Plus in action (user view1)](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/UserInteraction1.png)
+
+![FAQ Plus in action (user view2)](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/UserInteraction2.png)
+
+![FAQ Plus in action (user view3)](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/UserInteraction3.png)
 
 
 *	Expert using FAQ Plus:
 
-![FAQ Plus in action (experts view)](https://github.com/OfficeDev/microsoft-teams-faqplusplus-app/wiki/images/FAQPlusExperts.gif)
+![FAQ Plus in action (experts view1)](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/ExpertInteraction1.png)
 
+![FAQ Plus in action (experts view2)](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/ExpertInteraction2.png)
 
 *	Expert invoking the task module to add QnA pair:
 
-![Invoking_taskmodule1](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/Invoking_taskmodule1.png)
+![Invoking_taskmodule1](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/Invoking_taskmodule1.png)
 
 
 *	Expert configuring the bot to respond with a hero card as an answer to a question:
 
-![Invoking_taskmodule2](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/Invoking_taskmodule2.png)
-
-![Add question screen 1](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/add-question-richcard1.png)
-
+![Add question screen 1](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/add-question-richcard1.png)
 
 *	Expert previewing the QnA pair before saving:
    
-![Preview_Rich_card](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/Preview_Rich_card.png)
+![Preview_Rich_card](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/Preview_Rich_card.png)
 
 
 *	Expert updating the QnA pair:
 
-![Updating_Question-ui1](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/Updating_Question-ui1.png)
+![Updating_Question-ui1](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/Updating_Question-ui1.png)
 
-![Updating_Question-ui2](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/Updating_Question-ui2.png)
+![Updating_Question-ui2](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/Updating_Question-ui2.png)
 
-![Updating_Question-ui4](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/Updating_Question-ui4.png)
+![Updating_Question-ui4](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/Updating_Question-ui4.png)
 
 
 *	Some of the fields are markdown supported and are indicated with "(Markdown supported)" beside the field label:
    
-![Adding_Markdown-Support-1](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/Adding_Markdown-Support1.png)
+![Adding_Markdown-Support-1](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/Adding_Markdown-Support1.png)
    
 
 *	This is how the card will look like when the bot responds with the answer to the Experts team:
 
-![Adding_Markdown-Support-3](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/Adding_Markdown-Support3.png)
+![Adding_Markdown-Support-3](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/Adding_Markdown-Support3.png)
 
 
 *	This is how the card will look like when the bot responds with the answer to the End-user:
 
-![End-user_Rich_Card](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2/wiki/Images/End-user_Rich_Card.png)
+![End-user_Rich_Card](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/End-user_Rich_Card.png)
 
 Please refer the following documentation links for further details related to the app:
 
