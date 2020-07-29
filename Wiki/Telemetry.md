@@ -1,3 +1,5 @@
+# Telemetry
+
 The FAQ Plus app logs telemetry to [Azure Application Insights](https://azure.microsoft.com/en-us/services/monitor/). You can go to the respective Application Insights blade of the Azure App Services to view basic telemetry about your services, such as requests, failures, and dependency errors, custom events, traces etc.
 
 The FAQ Plus app integrates with Application Insights to gather bot activity analytics, as described [here](https://blog.botframework.com/2019/03/21/bot-analytics-behind-the-scenes/).
@@ -16,7 +18,7 @@ The FAQ Plus app logs following events:
 - Context of how it was invoked: `ConversationType`
 
 `Logging`:
-- Application uses application insights trace logging to track application execution logs. The logs in here can be helpful to determine user actions. Following are the common application insight queries that would be of interest -  
+- Application uses application insights trace logging to track application execution logs. The logs in here can be helpful to determine user actions. Following are the common application insight queries that would be of interest.
 
 *Application Insights queries:*
 
@@ -27,9 +29,7 @@ traces
 | where message contains "Bot added to 1:1 chat"
 | where timestamp >= ago(30d) 
 | summarize count() by message
-
 ```
-
 - Number of times bot is added to team successfully in last 30 days
 
 ```
@@ -38,7 +38,6 @@ traces
 | where timestamp >= ago(30d) 
 | summarize count() by message 
 ```
-
 - Number of times users sends feedback card in last 30 days
 
 ```
@@ -46,9 +45,7 @@ traces
 | where message contains "Sending user feedback card" 
 | where timestamp >= ago(30d) 
 | summarize count() by message  
-
 ```
-
 - Number of times users sends ask an expert card in last 30 days
 
 ```
@@ -56,32 +53,32 @@ traces
 | where message contains "Sending user ask an expert card"
 | where timestamp >= ago(30d) 
 | summarize count() by message  
-
 ```
-
 - Number of times Bot sends tour card in last 30 days
+
 ```
 traces
 | where message contains "Sending team tour card"
 | where timestamp >= ago(30d)
-
 ```
-
 - Number of times bot posts question to expert team in last 30 days
+
 ```
 traces
 | where message contains "Received question for expert"
 | where timestamp >= ago(30d)
-
 ```
-
 - Number of times the user submitted the feedback in last 30 days
+
 ```
 traces
 | where message contains "Received app feedback"
 | where timestamp >= ago(30d)
-
 ```
+For e.g.: trace showing the total number of times feedback card is sent.
+
+![trace_example](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/trace_example.png)
+
 The **Configurator** app with Application Insights to gather event activity analytics, as described [here]((https://docs.microsoft.com/en-us/azure/azure-monitor/app/app-insights-overview)).
 
 The Configurator App logs following events:

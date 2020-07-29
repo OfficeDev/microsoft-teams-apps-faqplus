@@ -1,4 +1,4 @@
-[[/Images/architecture_overview.png|architecture-overview]]
+![architecture-overview](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/architecture_overview.png)
 
 The **FAQ Plus** application has the following main components:
 
@@ -7,18 +7,18 @@ The **FAQ Plus** application has the following main components:
 * **FAQ Plus Bot**: The bot serves both end-users and experts team
 	* The knowledge base (KB) in QnA Maker is presented to end-user in a 1:1 conversational bot interface. Through the bot, end-user can ask the question to bot, escalate to a designated experts team, send feedback about the app, or give feedback on specific answers.
 	* The experts team receives notifications from the bot when end-users ask questions to expert or create feedback items. The bot tracks questions in a simple "ticketing system", with a basic life cycle of Unassigned -> Assigned to expert -> Closed. The bot notifies both the end-user and the experts team as the request changes states.
-	* Experts in team can add new QnA pair to the knowledge base.
-	* Application provides messaging extension that expert team members to search for tickets and QnA pairs from knowledge base. 
+	* Using the bot, members of the experts team can add QnA to the existing knowledge base.
+	* The same bot also implements a messaging extension that lets members of the expert team search for tickets or questions in the knowledge base.
 
 * **Blob Storage** : The knowledge base with QnA and associated metadata is stored in blob storage by Azure function. The same is shown by messaging extension for respective section and search categories using Azure search service.
 
-* **Azure Function**: Changes in QnA Maker are published every fifteen minutes to knowledge base by time triggered azure function. 
+* **Azure Function**: QnA changes in QnA Maker are published every fifteen minutes to knowledge base by time triggered Azure functions.
   
-* **Configuration Application**: An Azure App Service lets app admins configure the application to provide team and knowledge base details. These values are necessary to map the expert team and the associated knowledge base. Currently app supports only one knowledge base per tenant(deployment). 
+* **Configuration Application**: An Azure App Service lets app admins configure the application to provide team and knowledge base details. These values are necessary to map the expert team and the associated knowledge base. Currently app supports only one knowledge base per tenant(deployment).
 
 ## QnA Maker
 
-FAQ Plus v2 uses QnA Maker to respond to user questions; in fact, you can have a blank knowledge base to start using FAQ Plus. The precision and recall of the bot responses to end-user questions are directly tied to the quality of the knowledge base, so it's important to follow QnA Maker's recommended [best practices](https://docs.microsoft.com/en-us/azure/cognitive-services/qnamaker/concepts/best-practices). Please keep in mind that a good knowledge base requires curation and feedback: see [Development lifecycle of a knowledge base](https://docs.microsoft.com/en-us/azure/cognitive-services/qnamaker/concepts/development-lifecycle-knowledge-base).
+FAQ Plus uses QnA Maker to respond to user questions; in fact, you can have a blank knowledge base to start using FAQ Plus. The precision and recall of the bot responses to end-user questions are directly tied to the quality of the knowledge base, so it's important to follow QnA Maker's recommended [best practices](https://docs.microsoft.com/en-us/azure/cognitive-services/qnamaker/concepts/best-practices). Please keep in mind that a good knowledge base requires curation and feedback: see [Development lifecycle of a knowledge base](https://docs.microsoft.com/en-us/azure/cognitive-services/qnamaker/concepts/development-lifecycle-knowledge-base).
 
 For more details about QnA Maker, please refer to the [QnAMaker documentation](https://docs.microsoft.com/en-us/azure/cognitive-services/qnamaker/overview/overview).
 
