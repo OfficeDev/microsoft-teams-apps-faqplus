@@ -520,7 +520,7 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <comment>Error message to show if redirection url is not valid while adding or editing the QnA pair.</comment>
   </data>
   <data name="DescriptionLabelText" xml:space="preserve">
-    <value>*Description (Markdown supported)</value>
+    <value>*Descripción (Markdown soportado)</value>
     <comment>Label text for description text box.</comment>
   </data>
   <data name="QuestionLabelText" xml:space="preserve">
