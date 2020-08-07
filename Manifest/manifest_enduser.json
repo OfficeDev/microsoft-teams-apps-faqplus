@@ -36,16 +36,16 @@
           ],
           "commands": [
             {
-              "title": "Take a tour",
-              "description": "Tour of key features"
+              "title": "Ir a MiCatalogo",
+              "description": "Ir a la pagina de MiCatalogo de la Mesa de Servicios."
             },
             {
-              "title": "Ask an expert",
-              "description": "Connect with an expert"
+              "title": "Preguntarle a un Asesor de TI",
+              "description": "Realizar una pregunta a la Mesa de Servicios de TI."
             },
             {
-              "title": "Share feedback",
-              "description": "Send feedback"
+              "title": "Compartir Comentarios",
+              "description": "Compartir Comentarios."
             }
           ]
         }

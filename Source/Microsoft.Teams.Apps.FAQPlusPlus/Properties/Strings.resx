@@ -122,7 +122,7 @@
     <comment>Ask an expert placeholder text.</comment>
   </data>
   <data name="AskAnExpertTitleText" xml:space="preserve">
-    <value>Ask an expert</value>
+    <value>Preguntale a un Experto</value>
     <comment>Title of the ask an expert card.</comment>
   </data>
   <data name="AskAnExpertText2" xml:space="preserve">
@@ -134,7 +134,7 @@
     <comment>Text suggests that user is invited to share his feedback on his experience using bot.</comment>
   </data>
   <data name="FunctionCardText1" xml:space="preserve">
-    <value>Ask a question</value>
+    <value>Hacer una pregunta</value>
     <comment>Explains what bot does and possible questions.</comment>
   </data>
   <data name="FunctionCardText2" xml:space="preserve">
@@ -146,7 +146,7 @@
     <comment>Button text for share feedback show card in QnA response card.</comment>
   </data>
   <data name="DescriptionText" xml:space="preserve">
-    <value>Description</value>
+    <value>Descripcion</value>
     <comment>Label text for description.</comment>
   </data>
   <data name="FeedbackDescriptionPlaceholderText" xml:space="preserve">
@@ -154,7 +154,7 @@
     <comment>Placeholder label where the user enters feedback in the text box.</comment>
   </data>
   <data name="StatusFactTitle" xml:space="preserve">
-    <value>Status: </value>
+    <value>Estado: </value>
     <comment>Status one of the available fact set in notification cards.</comment>
   </data>
   <data name="AskAnExpertButtonText" xml:space="preserve">
@@ -232,11 +232,11 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <comment>Response header-letting the user know that a response is generated to their request from QnA Maker.</comment>
   </data>
   <data name="ClosedFactTitle" xml:space="preserve">
-    <value>Closed: </value>
+    <value>Cerrado: </value>
     <comment>Closed fact title is one of the available fact set.</comment>
   </data>
   <data name="DateCreatedDisplayFactTitle" xml:space="preserve">
-    <value>Created: </value>
+    <value>Creado: </value>
     <comment>Created: one of the available fact set in notification cards- created is the title for created date value.</comment>
   </data>
   <data name="ShowCardTitleText" xml:space="preserve">
@@ -292,7 +292,7 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <comment>Notification text sent to the user who opened a ticket, when the ticket is reopened.</comment>
   </data>
   <data name="GoToOriginalThreadButtonText" xml:space="preserve">
-    <value>Go to original thread</value>
+    <value>Ir al hilo original</value>
     <comment>Go to original thread button available on messaging extension card.</comment>
   </data>
   <data name="NonSMEErrorText" xml:space="preserve">
@@ -300,11 +300,11 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <comment>Error message when a user of non-SME team tries to access messaging extension application</comment>
   </data>
   <data name="AssignedUserNotificationStatus" xml:space="preserve">
-    <value>Assigned</value>
+    <value>Assignado</value>
     <comment>The status value for the user notification when a ticket is assigned to an expert</comment>
   </data>
   <data name="ClosedUserNotificationStatus" xml:space="preserve">
-    <value>Closed</value>
+    <value>Cerrado</value>
     <comment>The status value for the user notification when a ticket is closed by an expert.</comment>
   </data>
   <data name="UnassignedUserNotificationStatus" xml:space="preserve">
@@ -316,7 +316,7 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <comment>The {0} is the placeholder for the title that the user had provided when asking an expert.</comment>
   </data>
   <data name="AssignToMeActionChoiceTitle" xml:space="preserve">
-    <value>Assign to me</value>
+    <value>Assign a mi</value>
     <comment>The dropdown choice for "Assign to me" for the SME ticket status is being updated</comment>
   </data>
   <data name="CloseActionChoiceTitle" xml:space="preserve">
@@ -412,7 +412,7 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <comment>Delete confirmation message.</comment>
   </data>
   <data name="DeleteButtonText" xml:space="preserve">
-    <value>Delete</value>
+    <value>Eliminar</value>
     <comment>Delete button text.</comment>
   </data>
   <data name="LastEditedText" xml:space="preserve">
@@ -428,7 +428,7 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <comment>Label text for question on the card.</comment>
   </data>
   <data name="EditButtonText" xml:space="preserve">
-    <value>Edit</value>
+    <value>Editar</value>
     <comment>Edit button text.</comment>
   </data>
   <data name="WaitMessageAnswer" xml:space="preserve">
@@ -440,7 +440,7 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <comment>Yes button text on delete QnA pair confirmation card.</comment>
   </data>
   <data name="DeletedQnaPair" xml:space="preserve">
-    <value>Deleted by {0}</value>
+    <value>Eliminado por {0}</value>
     <comment>Text shown on the card when a QnA pair is deleted.</comment>
   </data>
   <data name="UpdateHistoryButtonText" xml:space="preserve">
@@ -468,7 +468,7 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <comment>Error message to show if question is already existing in the knowledgebase while adding or editing the QnA pair.</comment>
   </data>
   <data name="OpenArticle" xml:space="preserve">
-    <value>Open article</value>
+    <value>Abrir Articulo</value>
     <comment>Open article button text, which will show on adaptiver rich card if redirection url field is filled while adding/editing the QnA pair.</comment>
   </data>
   <data name="BackButtonCommandText" xml:space="preserve">
@@ -484,7 +484,7 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <comment>Error message to show if image url text box is empty while adding or editing the QnA pair.</comment>
   </data>
   <data name="EntryCreatedByText" xml:space="preserve">
-    <value>Created by</value>
+    <value>Creado por</value>
     <comment>Show message on adaptive card, after adding the QnA pair.</comment>
   </data>
   <data name="DescriptionPlaceholderText" xml:space="preserve">
@@ -552,7 +552,7 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <comment>Error message to show if title text box is empty while adding or editing the QnA pair.</comment>
   </data>
   <data name="GoToThread" xml:space="preserve">
-    <value>View details</value>
+    <value>Ver detalles</value>
     <comment>Button title for the card created through Messaging Extension</comment>
   </data>
   <data name="PreviewButtonText" xml:space="preserve">
@@ -576,7 +576,7 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <comment>Error message to show if description text box is empty while adding or editing the QnA pair.</comment>
   </data>
   <data name="OptionalFieldDisplayText" xml:space="preserve">
-    <value>Optional Fields</value>
+    <value>Campos opcionales</value>
   </data>
   <data name="SuggestedText" xml:space="preserve">
     <value>The optional fields below can be used to add additional details to the answer.</value>
