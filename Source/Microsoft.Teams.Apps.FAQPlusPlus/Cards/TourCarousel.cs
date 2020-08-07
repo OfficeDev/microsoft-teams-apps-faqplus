@@ -24,6 +24,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 GetCard(Strings.TeamNotificationHeaderText, Strings.TeamNotificationContent, appBaseUri + "/content/Notifications.png"),
                 GetCard(Strings.TeamChatHeaderText, Strings.TeamChatContent, appBaseUri + "/content/Enduserchat.png"),
                 GetCard(Strings.TeamTicketSystemHeaderText, Strings.TeamTicketSystemContent, appBaseUri + "/content/Ticketsystem.png"),
+                GetCard(Strings.TeamTicketSystemHeaderText, Strings.TeamTicketSystemContent, appBaseUri + "https://www.epm.com.co/site/portals/0/images/icono-ema.png"),
             };
         }
 
