@@ -122,7 +122,7 @@
     <comment>Ask an expert placeholder text.</comment>
   </data>
   <data name="AskAnExpertTitleText" xml:space="preserve">
-    <value>Ask an expert</value>
+    <value>Preguntar Experto</value>
     <comment>Title of the ask an expert card.</comment>
   </data>
   <data name="AskAnExpertText2" xml:space="preserve">
@@ -146,7 +146,7 @@
     <comment>Button text for share feedback show card in QnA response card.</comment>
   </data>
   <data name="DescriptionText" xml:space="preserve">
-    <value>Description</value>
+    <value>Descripcion</value>
     <comment>Label text for description.</comment>
   </data>
   <data name="FeedbackDescriptionPlaceholderText" xml:space="preserve">
@@ -154,11 +154,11 @@
     <comment>Placeholder label where the user enters feedback in the text box.</comment>
   </data>
   <data name="StatusFactTitle" xml:space="preserve">
-    <value>Status: </value>
+    <value>Estado: </value>
     <comment>Status one of the available fact set in notification cards.</comment>
   </data>
   <data name="AskAnExpertButtonText" xml:space="preserve">
-    <value>Ask an expert</value>
+    <value>Preguntar a Experto</value>
     <comment>Action button which invokes ask an expert show card.</comment>
   </data>
   <data name="ThankYouTextContent" xml:space="preserve">
@@ -228,7 +228,7 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <comment>Text on change status button.</comment>
   </data>
   <data name="ResponseHeaderText" xml:space="preserve">
-    <value>Here's what I found:</value>
+    <value>Esto es lo que encontre:</value>
     <comment>Response header-letting the user know that a response is generated to their request from QnA Maker.</comment>
   </data>
   <data name="ClosedFactTitle" xml:space="preserve">
