@@ -352,7 +352,7 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <comment>Ask en expert card subtitle text:lets the user know that SME team member can directly chat with the requester.</comment>
   </data>
   <data name="DescriptionFact" xml:space="preserve">
-    <value>Description:</value>
+    <value>Descripcion:</value>
     <comment>Available factset in user notification and SME facing cards.</comment>
   </data>
   <data name="FeedbackRatingRequired" xml:space="preserve">
@@ -376,7 +376,7 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <comment>Rating is mandatory , a warning message to the user when rating is not submitted in share feedback activity.</comment>
   </data>
   <data name="TakeATourButtonText" xml:space="preserve">
-    <value>Take a tour</value>
+    <value>Tomar un tour</value>
     <comment>Take a tour button available for the users on welcome card, through which user can take a tour on bot functionalities in personal scope. </comment>
   </data>
   <data name="TitleFact" xml:space="preserve">
@@ -392,7 +392,7 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <comment>Unhelpful: available feedback rating scale.</comment>
   </data>
   <data name="ViewArticleButtonText" xml:space="preserve">
-    <value>View article</value>
+    <value>Ver articulo</value>
     <comment>The necessary string for the view article button</comment>
   </data>
   <data name="SMEFeedbackHeaderText" xml:space="preserve">
