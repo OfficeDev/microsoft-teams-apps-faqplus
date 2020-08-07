@@ -39,6 +39,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 GetCard(Strings.FunctionCardText1, Strings.FunctionCardText2, appBaseUri + "/content/Askaquestion.png"),
                 GetCard(Strings.AskAnExpertTitleText, Strings.AskAnExpertText2, appBaseUri + "/content/Expertinquiry.png"),
                 GetCard(Strings.ShareFeedbackTitleText, Strings.FeedbackText1, appBaseUri + "/content/Sharefeedback.png"),
+                GetCard(Strings.ShareFeedbackTitleText, Strings.FeedbackText1, appBaseUri + "https://www.epm.com.co/site/portals/0/images/icono-ema.png"),
             };
         }
 
