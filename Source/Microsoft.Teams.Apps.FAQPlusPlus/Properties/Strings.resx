@@ -122,7 +122,7 @@
     <comment>Ask an expert placeholder text.</comment>
   </data>
   <data name="AskAnExpertTitleText" xml:space="preserve">
-    <value>Ask an expert</value>
+    <value>Preguntar a Expero</value>
     <comment>Title of the ask an expert card.</comment>
   </data>
   <data name="AskAnExpertText2" xml:space="preserve">
@@ -134,7 +134,7 @@
     <comment>Text suggests that user is invited to share his feedback on his experience using bot.</comment>
   </data>
   <data name="FunctionCardText1" xml:space="preserve">
-    <value>Ask a question</value>
+    <value>Hacer una pregunta</value>
     <comment>Explains what bot does and possible questions.</comment>
   </data>
   <data name="FunctionCardText2" xml:space="preserve">
@@ -142,11 +142,11 @@
     <comment>Suggests the user to ask question.</comment>
   </data>
   <data name="ShareFeedbackButtonText" xml:space="preserve">
-    <value>Share feedback</value>
+    <value>Compartir comentarios</value>
     <comment>Button text for share feedback show card in QnA response card.</comment>
   </data>
   <data name="DescriptionText" xml:space="preserve">
-    <value>Description</value>
+    <value>Descripcion</value>
     <comment>Label text for description.</comment>
   </data>
   <data name="FeedbackDescriptionPlaceholderText" xml:space="preserve">
@@ -154,11 +154,11 @@
     <comment>Placeholder label where the user enters feedback in the text box.</comment>
   </data>
   <data name="StatusFactTitle" xml:space="preserve">
-    <value>Status: </value>
+    <value>Estado: </value>
     <comment>Status one of the available fact set in notification cards.</comment>
   </data>
   <data name="AskAnExpertButtonText" xml:space="preserve">
-    <value>Ask an expert</value>
+    <value>Preguntar a Experto</value>
     <comment>Action button which invokes ask an expert show card.</comment>
   </data>
   <data name="ThankYouTextContent" xml:space="preserve">
@@ -174,19 +174,19 @@
     <comment>Confirmation message to the user upon asking question to the expert.</comment>
   </data>
   <data name="TeamChatHeaderText" xml:space="preserve">
-    <value>Initiate chat with end users</value>
+    <value>Iniciar chat con usuarios finales</value>
     <comment>Team carousel chat card header-title of the chat card.</comment>
   </data>
   <data name="TeamChatContent" xml:space="preserve">
-    <value>Click chat with user button to initiate a direct chat.</value>
+    <value>Haga clic en el botón de chat con el usuario para iniciar un chat directo.</value>
     <comment>Team carousel chat card content- SME team members can chat directly with the end users.</comment>
   </data>
   <data name="TeamNotificationHeaderText" xml:space="preserve">
-    <value>Receive notifications from end users</value>
+    <value>Recibir notificaciones de usuarios finales.</value>
     <comment>Team carousel function card content- title of the chat card.</comment>
   </data>
   <data name="TeamNotificationContent" xml:space="preserve">
-    <value>You can see what users need help with.</value>
+    <value>Puedes ver con qué necesitan ayuda las usuarios.</value>
     <comment>Team carousel function card content- team can take the question from the end users through bot.</comment>
   </data>
   <data name="TeamTicketSystemHeaderText" xml:space="preserve">
