@@ -115,7 +115,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ...If my answer isn&apos;t satisfactory... I&apos;ll connect you to an expert..
+        ///   Looks up a localized string similar to If my answer wasn&apos;t satisfactory, I&apos;ll get you in touch with an expert on the subject..
         /// </summary>
         public static string AskAnExpertText2 {
             get {
@@ -196,7 +196,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Close.
+        ///   Looks up a localized string similar to Resolved.
         /// </summary>
         public static string CloseActionChoiceTitle {
             get {
@@ -205,7 +205,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Closed: .
+        ///   Looks up a localized string similar to Resolved: .
         /// </summary>
         public static string ClosedFactTitle {
             get {
@@ -214,7 +214,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This request has been closed. Ask an expert again if you still need more assistance..
+        ///   Looks up a localized string similar to This request has been resolved. Ask an expert again if you still need more assistance..
         /// </summary>
         public static string ClosedTicketUserNotification {
             get {
@@ -223,7 +223,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Closed.
+        ///   Looks up a localized string similar to Resolved.
         /// </summary>
         public static string ClosedUserNotificationStatus {
             get {
@@ -232,7 +232,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to I didn&apos;t find a matching answer for this question. Do you want me to ask an expert?.
+        ///   Looks up a localized string similar to I didn&apos;t find a relevant answer for your question. Would you like me to ask an expert?.
         /// </summary>
         public static string CustomMessage {
             get {
@@ -385,7 +385,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Something went wrong. Please try again later..
+        ///   Looks up a localized string similar to An error has occurred. Please try again later..
         /// </summary>
         public static string ErrorMessage {
             get {
@@ -421,7 +421,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Don&apos;t hesitate to post your feedback for any aspect, maybe your feedback will be applied in next update.
+        ///   Looks up a localized string similar to Let me team of experts know how I&apos;m doing so they can make me even better!.
         /// </summary>
         public static string FeedbackText1 {
             get {
@@ -439,7 +439,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You can ask me a question by typing it in the chat box below  I&apos;ll try my best to answer it....
+        ///   Looks up a localized string similar to You can ask me a question by typing it in the chat box below and I&apos;ll do my best to answer your question.
         /// </summary>
         public static string FunctionCardText2 {
             get {
@@ -565,7 +565,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The messaging extension can only be invoked from the channel in which the  app is installed.
+        ///   Looks up a localized string similar to The messaging extension can only be run from the channel that the app is installed..
         /// </summary>
         public static string NonSMEErrorText {
             get {
@@ -583,7 +583,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to I&apos;ve shared your question with the related experts. They&apos;ll respond to you directly with a chat message..
+        ///   Looks up a localized string similar to Thank you for your question! We&apos;ve dispatched your message directly to an expert, who will respond to you directly..
         /// </summary>
         public static string NotificationCardContent {
             get {
@@ -754,7 +754,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Feedback for this answer.
+        ///   Looks up a localized string similar to Feedback for the answer of &quot;{}&quot;.
         /// </summary>
         public static string ResultsFeedbackText {
             get {
@@ -970,7 +970,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Click chat with user button to initiate a direct chat..
+        ///   Looks up a localized string similar to Click on the &quot;Chat With User&quot; button to message them directly..
         /// </summary>
         public static string TeamChatContent {
             get {
@@ -988,7 +988,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Hello, I don&apos;t support bot commands in the Team. Here is a quick tour of how I can help..
+        ///   Looks up a localized string similar to Sorry, but I don&apos;t support bot commands on Teams. Here&apos;s a quick tour of how I can help you..
         /// </summary>
         public static string TeamCustomMessage {
             get {

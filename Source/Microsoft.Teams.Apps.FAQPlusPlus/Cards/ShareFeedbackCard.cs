@@ -6,6 +6,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using AdaptiveCards;
     using Microsoft.Bot.Schema;
     using Microsoft.Bot.Streaming.Payloads;
@@ -87,7 +88,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     new AdaptiveTextBlock
                     {
                         Weight = AdaptiveTextWeight.Bolder,
-                        Text = !string.IsNullOrWhiteSpace(data.UserQuestion) ? Strings.ResultsFeedbackText : Strings.ShareFeedbackTitleText,
+                        Text = !string.IsNullOrWhiteSpace(data.UserQuestion) ? string.Format(CultureInfo.InvariantCulture, Strings.ResultsFeedbackText, data.UserQuestion) : Strings.ShareFeedbackTitleText,
                         Size = AdaptiveTextSize.Large,
                         Wrap = true,
                     },
