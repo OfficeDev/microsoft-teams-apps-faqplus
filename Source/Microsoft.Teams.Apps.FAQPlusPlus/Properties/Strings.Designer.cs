@@ -754,7 +754,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Feedback for the answer of &quot;{}&quot;.
+        ///   Looks up a localized string similar to Feedback for the answer of  &quot;{0}&quot;.
         /// </summary>
         public static string ResultsFeedbackText {
             get {

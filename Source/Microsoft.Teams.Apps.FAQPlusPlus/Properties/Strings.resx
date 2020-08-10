@@ -248,7 +248,7 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <comment>Text that suggest users to fill mandatory fields.</comment>
   </data>
   <data name="ResultsFeedbackText" xml:space="preserve">
-    <value>Feedback for the answer of "{}"</value>
+    <value>Feedback for the answer of  "{0}"</value>
     <comment>This text is used as title for results feedback card.</comment>
   </data>
   <data name="FeedbackAlertText" xml:space="preserve">
