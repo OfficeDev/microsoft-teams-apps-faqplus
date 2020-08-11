@@ -586,7 +586,7 @@ Soy su amigo Q&amp;A bot que te ayuda a brindar apoyo a las personas que interac
     <comment>Question answer pair added manually in QnA Maker</comment>
   </data>
   <data name="UpdateHistoryDateHeaderText" xml:space="preserve">
-    <value>Fecha</value>
+    <value>Fecha:</value>
     <comment>Date header text in update history adaptive card text.</comment>
   </data>
 </root>
