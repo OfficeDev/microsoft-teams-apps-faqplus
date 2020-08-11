@@ -122,7 +122,7 @@
     <comment>Ask an expert placeholder text.</comment>
   </data>
   <data name="AskAnExpertTitleText" xml:space="preserve">
-    <value>Preguntar a Expero</value>
+    <value>Preguntar a Experto</value>
     <comment>Title of the ask an expert card.</comment>
   </data>
   <data name="AskAnExpertText2" xml:space="preserve">
@@ -146,7 +146,7 @@
     <comment>Button text for share feedback show card in QnA response card.</comment>
   </data>
   <data name="DescriptionText" xml:space="preserve">
-    <value>Descripcion</value>
+    <value>Descripción</value>
     <comment>Label text for description.</comment>
   </data>
   <data name="FeedbackDescriptionPlaceholderText" xml:space="preserve">
