@@ -36,16 +36,16 @@
           ],
           "commands": [
             {
-              "title": "Take a tour",
-              "description": "Tour of key features"
+              "title": "Tour por Teams",
+              "description": "Recorrido por las características de Teams"
             },
             {
-              "title": "Ask an expert",
-              "description": "Connect with an expert"
+              "title": "Preguntale a un Experto",
+              "description": "Conectar con un experto"
             },
             {
-              "title": "Share feedback",
-              "description": "Send feedback"
+              "title": "Comparte tus comentarios",
+              "description": "Enviar comentarios"
             }
           ]
         }
