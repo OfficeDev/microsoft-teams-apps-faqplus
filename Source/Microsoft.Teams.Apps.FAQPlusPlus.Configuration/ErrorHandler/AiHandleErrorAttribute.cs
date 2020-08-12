@@ -4,7 +4,7 @@
 
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.ErrorHandler{    using System;    using System.Web.Mvc;    using Microsoft.ApplicationInsights;
     /// <summary>
-    /// Report unhandled errors to Application Insights
+    /// Report unhandled errors to Application Insights.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = true, AllowMultiple = true)]    public class AiHandleErrorAttribute : HandleErrorAttribute    {
         /// <summary>

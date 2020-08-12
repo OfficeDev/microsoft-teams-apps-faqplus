@@ -12,7 +12,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration
     public static class FilterConfig
     {
         /// <summary>
-        /// Register Global Filters
+        /// Register Global Filters.
         /// </summary>
         /// <param name="filters">Collection of global filters.</param>
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)

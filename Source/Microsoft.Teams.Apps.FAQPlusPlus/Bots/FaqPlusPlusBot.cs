@@ -158,7 +158,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             {
                 if (turnContext != null & !this.IsActivityFromExpectedTenant(turnContext))
                 {
-                    this.logger.LogInformation($"Unexpected tenant id {turnContext?.Activity.Conversation.TenantId}", SeverityLevel.Warning);
+                    this.logger.LogWarning($"Unexpected tenant id {turnContext?.Activity.Conversation.TenantId}");
                     return Task.CompletedTask;
                 }
 
@@ -215,7 +215,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                         break;
 
                     default:
-                        this.logger.LogInformation($"Received unexpected conversationType {message.Conversation.ConversationType}", SeverityLevel.Warning);
+                        this.logger.LogWarning($"Received unexpected conversationType {message.Conversation.ConversationType}");
                         break;
                 }
             }
@@ -790,7 +790,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
                 default:
                     this.logger.LogInformation("Sending input to QnAMaker");
-                    await this.GetQuestionAnswerReplyAsync(turnContext, text).ConfigureAwait(false);
+                    await this.GetQuestionAnswerReplyAsync(turnContext, message).ConfigureAwait(false);
                     break;
             }
         }
@@ -925,7 +925,18 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     break;
 
                 default:
-                    this.logger.LogInformation($"Unexpected text in submit payload: {message.Text}", SeverityLevel.Warning);
+                    var payload = ((JObject)message.Value).ToObject<ResponseCardPayload>();
+
+                    if (payload.IsPrompt)
+                    {
+                        this.logger.LogInformation("Sending input to QnAMaker for prompt");
+                        await this.GetQuestionAnswerReplyAsync(turnContext, message).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        this.logger.LogWarning($"Unexpected text in submit payload: {message.Text}");
+                    }
+
                     break;
             }
 
@@ -1002,7 +1013,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     break;
 
                 default:
-                    this.logger.LogInformation($"Unknown status command {payload.Action}", SeverityLevel.Warning);
+                    this.logger.LogWarning($"Unknown status command {payload.Action}");
                     return;
             }
 
@@ -1402,15 +1413,26 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// Get the reply to a question asked by end user.
         /// </summary>
         /// <param name="turnContext">Context object containing information cached for a single turn of conversation with a user.</param>
-        /// <param name="text">Text message.</param>
+        /// <param name="message">Text message.</param>
         /// <returns>A task that represents the work queued to execute.</returns>
         private async Task GetQuestionAnswerReplyAsync(
             ITurnContext<IMessageActivity> turnContext,
-            string text)
+            IMessageActivity message)
         {
+            string text = message.Text?.ToLower()?.Trim() ?? string.Empty;
+
             try
             {
-                var queryResult = await this.qnaServiceProvider.GenerateAnswerAsync(question: text, isTestKnowledgeBase: false).ConfigureAwait(false);
+                var queryResult = new QnASearchResultList();
+
+                ResponseCardPayload payload = new ResponseCardPayload();
+
+                if (!string.IsNullOrEmpty(message.ReplyToId) && (message.Value != null))
+                {
+                    payload = ((JObject)message.Value).ToObject<ResponseCardPayload>();
+                }
+
+                queryResult = await this.qnaServiceProvider.GenerateAnswerAsync(question: text, isTestKnowledgeBase: false, payload.PreviousQuestions?.First().Id.ToString(), payload.PreviousQuestions?.First().Questions.First()).ConfigureAwait(false);
 
                 if (queryResult.Answers.First().Id != -1)
                 {
@@ -1428,7 +1450,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     }
                     else
                     {
-                        await turnContext.SendActivityAsync(MessageFactory.Attachment(ResponseCard.GetCard(answerData.Questions.FirstOrDefault(), answerData.Answer, text))).ConfigureAwait(false);
+                        await turnContext.SendActivityAsync(MessageFactory.Attachment(ResponseCard.GetCard(answerData, text, this.appBaseUri, payload))).ConfigureAwait(false);
                     }
                 }
                 else

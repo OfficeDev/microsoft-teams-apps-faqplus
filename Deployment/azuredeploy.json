@@ -42,7 +42,7 @@
     "appDisplayName": {
       "type": "string",
       "minLength": 1,
-      "defaultValue": "FAQ Plus V2",
+      "defaultValue": "FAQ Plus",
       "metadata": {
         "description": "The app (and bot) display name."
       }
@@ -58,7 +58,7 @@
     "appIconUrl": {
       "type": "string",
       "minLength": 1,
-      "defaultValue": "https://raw.githubusercontent.com/OfficeDev/microsoft-teams-apps-faqplusv2/master/Manifest/color.png",
+      "defaultValue": "https://raw.githubusercontent.com/OfficeDev/microsoft-teams-apps-faqplus/master/Manifest/color.png",
       "metadata": {
         "description": "The link to the icon for the app. It must resolve to a PNG file."
       }
@@ -132,7 +132,7 @@
       "metadata": {
         "description": "The URL to the GitHub repository to deploy."
       },
-      "defaultValue": "https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2.git"
+      "defaultValue": "https://github.com/OfficeDev/microsoft-teams-apps-faqplus.git"
     },
     "gitBranch": {
       "type": "string",

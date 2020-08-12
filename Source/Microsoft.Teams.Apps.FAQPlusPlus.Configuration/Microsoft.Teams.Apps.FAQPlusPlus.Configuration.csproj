@@ -260,9 +260,6 @@
     <AdditionalFiles Include="..\stylecop.json" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\GlobalSuppressions.cs">
-      <Link>Properties\GlobalSuppressions.cs</Link>
-    </Compile>
     <Compile Include="App_Start\AutofacConfig.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
@@ -291,7 +288,6 @@
     <Content Include="Content\spinner.css" />
     <Content Include="Global.asax" />
     <Content Include="libman.json" />
-    <Content Include="lib\bootstrap\dist\fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -323,10 +319,6 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Connected Services\Application Insights\ConnectedService.json" />
-    <Content Include="lib\bootstrap\dist\fonts\glyphicons-halflings-regular.eot" />
-    <Content Include="lib\bootstrap\dist\fonts\glyphicons-halflings-regular.ttf" />
-    <Content Include="lib\bootstrap\dist\fonts\glyphicons-halflings-regular.woff" />
-    <Content Include="lib\bootstrap\dist\fonts\glyphicons-halflings-regular.woff2" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>

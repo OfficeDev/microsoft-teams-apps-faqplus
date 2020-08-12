@@ -593,4 +593,16 @@ Soy su amigo Q&amp;A bot que te ayuda a brindar apoyo a las personas que interac
     <value>Fecha:</value>
     <comment>Date header text in update history adaptive card text.</comment>
   </data>
+  <data name="SelectActionItemDisplayTextFormatting" xml:space="preserve">
+    <value>**{0}**</value>
+    <comment>The formatting of the select action item display text, with {0} being the placeholder for the DisplayText from the Follow Up prompt.</comment>
+  </data>
+  <data name="AppFeedbackDescriptionPlaceholderText" xml:space="preserve">
+    <value>Type your feedback (500 characters max)</value>
+    <comment>Placeholder for app feedback description</comment>
+  </data>
+  <data name="ShareAppFeedbackRating" xml:space="preserve">
+    <value>How helpful is this app? (Required)</value>
+    <comment>Feedback for App</comment>
+  </data>																								  
 </root>
