@@ -1,4 +1,4 @@
-## Prerequisites
+# Prerequisites
 
 To begin, you will need: 
 
@@ -15,8 +15,7 @@ To begin, you will need:
 * A copy of the FAQ Plus app GitHub repo (https://github.com/OfficeDev/microsoft-teams-apps-faqplus)
 * A reasonable set of Question and Answer pairs to set up the knowledge base for the bot.
 
- 
-## Step 1: Register Azure AD applications
+# Step 1: Register Azure AD applications
 
 Register two Azure AD applications in your tenant's directory: one for the bot, and another for the configuration app.
 
@@ -33,7 +32,7 @@ Register two Azure AD applications in your tenant's directory: one for the bot, 
 
 4. When the app is registered, you'll be taken to the app's "Overview" page. Copy the **Application (client) ID** and **Directory (tenant) ID**; we will need it later. Verify that the "Supported account types" is set to **Multiple organizations**.
 
-[[/Images/multitenant_app_overview.png|Azure overview page]]
+![Azure overview page](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/multitenant_app_overview.png)
 
 5. On the side rail in the Manage section, navigate to the "Certificates & secrets" section. In the Client secrets section, click on "+ New client secret". Add a description for the secret and select an expiry time. Click "Add".
 
@@ -57,7 +56,7 @@ We recommend that you copy these values into a text file, using an application l
 
 ![Configuration step 3](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/azure-config-app-step3.png)
 
-## Step 2: Deploy to your Azure subscription
+# Step 2: Deploy to your Azure subscription
 
 1. Click on the "Deploy to Azure" button below.
 
@@ -69,10 +68,14 @@ We recommend that you copy these values into a text file, using an application l
 
 4. Select a subscription and resource group.
 * We recommend creating a new resource group.
-* The resource group location MUST be in a datacenter that supports: Application Insights; Azure Search; and QnA Maker. For an up-to-date list, click [here](https://azure.microsoft.com/en-us/global-infrastructure/services/?products=logic-apps,cognitive-services,search,monitor), and select a region where the following services are available:
-* Application Insights
-* QnA Maker
-* Azure Search
+* The resource group location MUST be in a datacenter that supports:
+	* Application Insights
+	* Azure Search
+	* QnA Maker.
+* For an up-to-date list, click [here](https://azure.microsoft.com/en-us/global-infrastructure/services/?products=logic-apps,cognitive-services,search,monitor), and select a region where the following services are available:
+	* Application Insights
+	* QnA Maker
+	* Azure Search
 
 5. Enter a "Base Resource Name", which the template uses to generate names for the other resources.
 * The app service names `[Base Resource Name]`, `[Base Resource Name]-config`, and `[Base Resource Name]-qnamaker` must be available. For example, if you select `contosofaqplus` as the base name, the names `contosofaqplus`, `contosofaqplus-config`, and `contosofaqplus-qnamaker` must be available (not taken); otherwise, the deployment will fail with a Conflict error.
@@ -107,7 +110,7 @@ Make sure that the values are copied as-is, with no extra spaces. The template c
 * appDomain - This is the base domain for the FAQ Plus Bot.
 * configurationAppUrl - This is the URL for the configuration web application.
 
-## Step 3: Set up authentication for the configuration app
+# Step 3: Set up authentication for the configuration app
 
 1. Note the location of the configuration app that you deployed, which is `https://[BaseResourceName]-config.azurewebsites.net`. For example, if you chose "contosofaqplus" as the base name, the configuration app will be at `https://contosofaqplus-config.azurewebsites.net`
 
@@ -115,22 +118,28 @@ Make sure that the values are copied as-is, with no extra spaces. The template c
 
 3. Click on the configuration app in the application list. Under "Manage", click on "Authentication" to bring up authentication settings.
 
-4. Add new entries to "Redirect URLs":
-	a. **Type**: Web
-	b. **Redirect URLs**: If your configuration app's URL is https://contosofaqplus-config.azurewebsites.net, then add the following three entries as the Redirect URLs:
+4. Click on Add a platform, select Web.
+![Adding Redirect URI1](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/authenticationimage1.png)
+
+5. Add new entry to "Redirect URIs":
+	If your configuration app's URL is https://contosofaqplus-config.azurewebsites.net, then add the following entry as the Redirect URIs:
 	- https://contosofaqplus-config.azurewebsites.net
-	- https://contosofaqplus-config.azurewebsites.net/signin
-	- https://contosofaqplus-config.azurewebsites.net/configuration
 
 	Note: Please refer to Step 3.1 for more details about the URL. 
 
-5. Under "Implicit grant", check "ID tokens". The reason to check "ID tokens" is because you are using only the accounts on your current Azure tenant and using that to authenticate yourself in the configuration app.
+6. Under "Implicit grant", check "ID tokens" and "Access tokens". The reason to check "ID tokens" is because you are using only the accounts on your current Azure tenant and using that to authenticate yourself in the configuration app. Click configure.
+![Adding Redirect URI2](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/authenticationimage2.png)
 
-6. Click "Save" to commit your changes.
+7. Add new entries to "Redirect URIs":
+	- https://contosofaqplus-config.azurewebsites.net/signin
+	- https://contosofaqplus-config.azurewebsites.net/configuration
+![Adding Redirect URI3](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/authenticationimage3.png)
 
-## Step 4: Create the QnA Maker knowledge base
+8. Click "Save" to commit your changes.
 
-Create a knowledge base, following the instructions in the [QnA Maker documentation](https://docs.microsoft.com/en-us/azure/cognitive-services/qnamaker/tutorials/create-publish-query-in-portal#create-a-knowledge-base).
+# Step 4: Create the QnA Maker knowledge base
+
+Create a knowledge base on the [QnA Maker portal](https://www.qnamaker.ai/Create), following the instructions in the QnA Maker documentation [QnA Maker documentation](https://docs.microsoft.com/en-us/azure/cognitive-services/qnamaker/tutorials/create-publish-query-in-portal#create-a-knowledge-base).
 
 Skip the step, "Create a QnA service in Microsoft Azure", because the ARM template that you deployed in Step 2 "Deploy to your Azure subscription" already created the QnA service. Proceed directly to the next step, "Connect your QnA service to your KB".
 
@@ -142,7 +151,7 @@ Use the following values when connecting to the QnA service:
 
 ![Screenshot of settings](https://docs.microsoft.com/en-us/azure/cognitive-services/qnamaker/media/qnamaker-tutorial-create-publish-query-in-portal/create-kb-step-2.png)
 
-### Multi-Turn Enablement
+## Multi-Turn Enablement
 With the new updates to the FAQ Plus app template, the knowledge base can now support multi-turn conversations. To understand the basics of multi-turn conversations, navigate to the [QnA Maker documentation](https://docs.microsoft.com/en-us/azure/cognitive-services/QnAMaker/how-to/multiturn-conversation#what-is-a-multi-turn-conversation) to understand about multi-turn conversations. To enable multi-turn on the newly created knowledge base, go to this [link](https://docs.microsoft.com/en-us/azure/cognitive-services/QnAMaker/how-to/multiturn-conversation#create-a-multi-turn-conversation-from-a-documents-structure) to enable multi-turn extraction. 
 
 * Note: For best practices with regards to formatting and document structure, please follow the guidelines [here](https://docs.microsoft.com/en-us/azure/cognitive-services/QnAMaker/how-to/multiturn-conversation#building-your-own-multi-turn-document).
@@ -153,7 +162,7 @@ After [publishing the knowledge base](https://docs.microsoft.com/en-us/azure/cog
 
 Remember the knowledge base ID: we will need it in the next step.
 
-## Step 5: Finish configuring the FAQ Plus app
+# Step 5: Finish configuring the FAQ Plus app
 
 1. Go to the configuration app, which is at `https://[BaseResourceName]-config.azurewebsites.net`. For example, if you chose “contosofaqplus” as the base name, the configuration app will be at `https://contosofaqplus-config.azurewebsites.net`.
 
@@ -181,7 +190,7 @@ Cick on "Copy" to copy the link to the clipboard.
 
 Remember to click on "OK" after changing a setting. To edit the setting later, click on "Edit" to make the text box editable.
 
-## Step 6: Create the Teams app packages
+# Step 6: Create the Teams app packages
 
 Create two Teams app packages: one for end-users to install personally, and one to be installed to the experts team.
 
@@ -197,23 +206,22 @@ Create two Teams app packages: one for end-users to install personally, and one 
 
 * `developer.termsOfUseUrl`
 
-3. Change the `<<botId>>` placeholder to your Azure AD application's ID from above. This is the same GUID that you entered in the template under "Bot Client ID".
+3. Replace all the occurrences of `<<botId>>` placeholder to your Azure AD application's ID from above. This is the same GUID that you entered in the template under "Bot Client ID".
 
-4. In the "validDomains" section, replace the `<<appDomain>>` with your Bot App Service's domain. This will be `[BaseResourceName].azurewebsites.net`. For example if you chose "contosofaqplus" as the base name, change the placeholder to `contosofaqplus.azurewebsites.net`.
+4. In the "validDomains" section, replace all the occurences of `<<appDomain>>` with your Bot App Service's domain. This will be `[BaseResourceName].azurewebsites.net`. For example if you chose "contosofaqplus" as the base name, change the placeholder to `contosofaqplus.azurewebsites.net`.
 
 5. Save and Rename `manifest_enduser.json` file to a file named `manifest.json`.
 
 6. Create a ZIP package with the `manifest.json`,`color.png`, and `outline.png`. The two image files are the icons for your app in Teams.
 * Name this package `faqplus-enduser.zip`, so you know that this is the app for end-users.
 * Make sure that the 3 files are the _top level_ of the ZIP package, with no nested folders.
-
 ![File explorer](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/file-explorer.png)
 
 7. Delete the `manifest.json` file.
 
-Repeat the steps above but with the file `Manifest\manifest_sme.json`. Name the resulting package `faqplus-experts.zip`, so you know that this is the app for experts.
+Repeat the steps above but with the file `Manifest\manifest_sme.json`.  Name the resulting package `faqplus-experts.zip`, so you know that this is the app for experts.
 
-## Step 7: Run the apps in Microsoft Teams
+# Step 7: Run the apps in Microsoft Teams
 
 1. If your tenant has sideloading apps enabled, you can install your app by following the instructions [here](https://docs.microsoft.com/en-us/microsoftteams/platform/concepts/apps/apps-upload#load-your-package-into-teams)
 
@@ -227,4 +235,4 @@ Repeat the steps above but with the file `Manifest\manifest_sme.json`. Name the 
 
 ## Troubleshooting
 
-Please see our [Troubleshooting](/wiki/Troubleshooting.md) page.
+Please see our [Troubleshooting](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Troubleshooting) page.
