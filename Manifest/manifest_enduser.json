@@ -43,6 +43,10 @@
               "title": "Preguntale a un Experto",
               "description": "Conectar con un experto"
             },
+			{
+              "title": "Ir a MiCatalogo",
+              "description": "Acceder a la web de MiCatalogo"
+            },			
             {
               "title": "Comparte tus comentarios",
               "description": "Enviar comentarios"
