@@ -133,7 +133,7 @@
     <value>Dígale a mi equipo de expertos cómo lo estoy haciendo para que puedan ayudarme a mejorar.</value>
     <comment>Text suggests that user is invited to share his feedback on his experience using bot.</comment>
   </data>
-    <data name="FeedbackText2" xml:space="preserve">
+    <data name="FeedbackText3" xml:space="preserve">
     <value>Puedes aprender mas en el portal de O365 de EPM.</value>
     <comment>Mesnaje opcional del carrusel</comment>
   </data>
