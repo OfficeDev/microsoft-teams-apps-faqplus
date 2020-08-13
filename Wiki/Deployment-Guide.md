@@ -221,9 +221,20 @@ Create two Teams app packages: one for end-users to install personally, and one 
 * Make sure that the 3 files are the _top level_ of the ZIP package, with no nested folders.
 ![File Explorer](/Wiki/Images/file-explorer.png)
 
-7. Delete the `manifest.json` file.
+7. Rename the `manifest.json` file to `manifest_enduser.json` for reusing the file.
 
-Repeat the steps above but with the file `Manifest\manifest_sme.json`.  Name the resulting package `faqplus-experts.zip`, so you know that this is the app for experts.
+8.  Open the `Manifest\manifest_sme.json` file in a text editor.
+
+9. Repeat the steps from 2 to 4 to replace the all the placeholders in the file.
+
+10. Save and Rename `manifest_sme.json` file to a file named `manifest.json`.
+
+11. Create a ZIP package with the `manifest.json`,`color.png`, and `outline.png`. The two image files are the icons for your app in Teams.
+* Name this package `faqplus-experts.zip`, so you know that this is the app for end-users.
+* Make sure that the 3 files are the _top level_ of the ZIP package, with no nested folders.
+![File Explorer](/Wiki/Images/file-explorer.png)
+
+12. Rename the `manifest.json` file to `manifest_sme.json` for reusing the file.
 
 ## Step 7: Run the apps in Microsoft Teams
 
