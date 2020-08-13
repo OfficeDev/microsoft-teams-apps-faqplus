@@ -71,7 +71,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             // If there follow up prompts, then the follow up prompts will render accordingly.
             if (response?.Context.Prompts.Count > 0)
             {
-                List<QnADTO> previousQuestions = BuildListOfPreviousQuestions((int)response.Id, userQuestion, answer, payload);
+                List<QnADTO> previousQuestions = BuildListOfPreviousQuestions((int)response.Id, answer, payload);
 
                 foreach (var item in response.Context.Prompts)
                 {
