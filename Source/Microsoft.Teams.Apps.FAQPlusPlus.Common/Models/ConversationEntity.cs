@@ -44,5 +44,9 @@
         /// </summary>
         public string FinalAnswer { get; set; }
 
+        /// <summary>
+        ///  Gets or sets the temp answer for multi-turn.
+        /// </summary>
+        public string TempAnswer { get; set; }
     }
 }

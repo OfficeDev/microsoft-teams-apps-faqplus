@@ -161,6 +161,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Dialogs
                     reply.AttachmentLayout = AttachmentLayoutTypes.List;
                     await stepContext.Context.SendActivityAsync(reply);
 
+                    // Save conversation data
+                    ConversationEntity conInfo = await this.GetConversationInfoAsync(stepContext.Context, cancellationToken);
+                    conInfo.TempAnswer += "<Start>" + answer.Answer + "<End>";
+                    conInfo.ConversationId = Guid.NewGuid().ToString();
+                    await this.conversationProvider.UpsertConversationAsync(conInfo).ConfigureAwait(false);
+
                     return new DialogTurnResult(DialogTurnStatus.Waiting);
                 }
             }
@@ -180,6 +186,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Dialogs
             string reply = stepContext.Context.Activity.Text;
             var dialogOptions = GetDialogOptionsValue(stepContext);
             var previousQnAId = Convert.ToInt32(dialogOptions[PreviousQnAId]);
+
             if (previousQnAId > 0)
             {
                 return await stepContext.ReplaceDialogAsync(QnAMakerDialogName, dialogOptions, cancellationToken).ConfigureAwait(false);
@@ -224,7 +231,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Dialogs
                 conInfo.FinalAnswer = null;
             }
 
-            conInfo.ConversationId = Guid.NewGuid().ToString();
             await this.conversationProvider.UpsertConversationAsync(conInfo).ConfigureAwait(false);
             return await stepContext.EndDialogAsync().ConfigureAwait(false);
         }
