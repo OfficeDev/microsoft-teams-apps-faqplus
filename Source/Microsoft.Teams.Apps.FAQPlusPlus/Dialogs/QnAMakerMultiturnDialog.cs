@@ -105,9 +105,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Dialogs
                 conInfo.Question = stepContext.Context.Activity.Text;
                 conInfo.Turns = null;
                 conInfo.FinalAnswer = null;
+                conInfo.TempAnswer = null;
                 var userDetails = await AdaptiveCardHelper.GetUserDetailsInPersonalChatAsync(stepContext.Context, cancellationToken).ConfigureAwait(false);
                 conInfo.UserPrincipalName = userDetails.UserPrincipalName;
                 conInfo.UserName = userDetails.Name;
+                conInfo.ConversationId = Guid.NewGuid().ToString();
             }
             else
             {
@@ -163,8 +165,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Dialogs
 
                     // Save conversation data
                     ConversationEntity conInfo = await this.GetConversationInfoAsync(stepContext.Context, cancellationToken);
-                    conInfo.TempAnswer += "<Start>" + answer.Answer + "<End>";
-                    conInfo.ConversationId = Guid.NewGuid().ToString();
+                    conInfo.TempAnswer += string.Format("{0}{1}{2}", "<Start>", answer.Answer, "<End>");
                     await this.conversationProvider.UpsertConversationAsync(conInfo).ConfigureAwait(false);
 
                     return new DialogTurnResult(DialogTurnStatus.Waiting);
