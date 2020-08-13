@@ -23,7 +23,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             {
                 GetCard(Strings.TeamNotificationHeaderText, Strings.TeamNotificationContent, appBaseUri + "/content/Notifications.png"),
                 GetCard(Strings.TeamChatHeaderText, Strings.TeamChatContent, appBaseUri + "/content/Enduserchat.png"),
-                GetCard(Strings.TeamTicketSystemHeaderText, Strings.TeamTicketSystemContent, appBaseUri + "/content/icono-ema.png"),
+                GetCard(Strings.TeamTicketSystemHeaderText, Strings.TeamTicketSystemContent, appBaseUri + "/content/Sharefeedback.png"),
             };
         }
 
@@ -38,6 +38,19 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             {
                 GetCard(Strings.FunctionCardText1, Strings.FunctionCardText2, appBaseUri + "/content/Askaquestion.png"),
                 GetCard(Strings.AskAnExpertTitleText, Strings.AskAnExpertText2, appBaseUri + "/content/Expertinquiry.png"),
+                GetCard(Strings.ShareFeedbackTitleText, Strings.FeedbackText1, appBaseUri + "/content/Sharefeedback.png"),
+             };
+        }
+
+        /// <summary>
+        /// Create the set of cards that comprise the feedback team tour carousel.
+        /// </summary>
+        /// <param name="appBaseUri">The base URI where the app is hosted.</param>
+        /// <returns>The cards that comprise the feedback team tour.</returns>
+        public static IEnumerable<Attachment> GetFeedbackTeamTourCards(string appBaseUri)
+        {
+            return new List<Attachment>()
+            {
                 GetCard(Strings.ShareFeedbackTitleText, Strings.FeedbackText1, appBaseUri + "/content/icono-ema.png"),
             };
         }
