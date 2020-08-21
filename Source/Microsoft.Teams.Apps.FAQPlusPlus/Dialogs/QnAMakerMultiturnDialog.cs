@@ -110,6 +110,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Dialogs
                 conInfo.UserPrincipalName = userDetails.UserPrincipalName;
                 conInfo.UserName = userDetails.Name;
                 conInfo.ConversationId = Guid.NewGuid().ToString();
+                context = null;
             }
             else
             {
