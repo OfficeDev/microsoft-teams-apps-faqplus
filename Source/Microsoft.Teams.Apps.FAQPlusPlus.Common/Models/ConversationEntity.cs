@@ -48,5 +48,10 @@
         ///  Gets or sets the temp answer for multi-turn.
         /// </summary>
         public string TempAnswer { get; set; }
+
+        /// <summary>
+        ///  Gets or sets the score of final answer.
+        /// </summary>
+        public string Score { get; set; }
     }
 }

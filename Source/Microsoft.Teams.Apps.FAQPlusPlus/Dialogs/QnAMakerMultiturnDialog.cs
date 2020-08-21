@@ -110,6 +110,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Dialogs
                 conInfo.UserPrincipalName = userDetails.UserPrincipalName;
                 conInfo.UserName = userDetails.Name;
                 conInfo.ConversationId = Guid.NewGuid().ToString();
+                conInfo.Score = null;
                 context = null;
             }
             else
@@ -166,7 +167,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Dialogs
 
                     // Save conversation data
                     ConversationEntity conInfo = await this.GetConversationInfoAsync(stepContext.Context, cancellationToken);
-                    conInfo.TempAnswer += string.Format("{0}{1}{2}", "<Start>", answer.Answer, "<End>");
+                    conInfo.TempAnswer += string.Format("<Start:{0}>{1}<End>", answer.Score, answer.Answer);
                     await this.conversationProvider.UpsertConversationAsync(conInfo).ConfigureAwait(false);
 
                     return new DialogTurnResult(DialogTurnStatus.Waiting);
@@ -226,6 +227,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Dialogs
                 }
 
                 conInfo.FinalAnswer = answerData.Answer;
+                conInfo.Score = answerData.Score.ToString();
             }
             else
             {
