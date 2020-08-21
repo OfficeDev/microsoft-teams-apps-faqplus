@@ -9,7 +9,7 @@ For ex: IT aka Contoso IT Support.
 
 **Code Changes:**
 
-- Change the text references in the associated resource(Strings.resx) file from FAQ Plus [Version 2] to the domain on which it should cater to.
+- Change the text references in the associated resource(Strings.resx) file from FAQ Plus to the domain on which it should cater to.
 
 - Update the app name, description, tab name and other details in the associated manifest JSON files for end-user and experts team respectively.
 
@@ -26,11 +26,11 @@ Configure the bot to use an existing knowledge base with QnA pairs instead of a 
 
 1) Change the **Knowledge base ID** field value in the configurator app and your bot will start pointing to knowledge base with QnA pairs associated with updated knowledge base ID.
 
-   ![image4](/Wiki/Images/config-web-app-login.png)
+   ![image4](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/config-web-app-login.png)
 
 2) Navigate to [Azure portal](https://portal.azure.com/) and go to configuration section of your bot app service, update the appsettings values for QnAMakerHostUrl, QnAMakerApiEndpointKey & QnAMakerApiEndpointUrl of your existing knowledge base.
 
-![Configuration_app-settings](/Wiki/Images/Configuration_app-settings.png)
+![Configuration_app-settings](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/Configuration_app-settings.png)
 
 ## Scenario 3:
 

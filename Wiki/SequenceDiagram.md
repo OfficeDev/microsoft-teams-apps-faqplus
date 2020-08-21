@@ -1,4 +1,4 @@
-# Data flow diagram to detail out the data flow between various services in  FAQ Plus [Version 2] bot
+# Data flow diagram to detail out the data flow between various services in  FAQ Plus bot
 
 ## Add question using compose action
 
@@ -8,7 +8,7 @@
 
 - With knowledge base Id, question is added in QnAMaker and corresponding result is shown in card.
 
-![dfd_add_ question](/Wiki/Images/Dfd_AddQuestion.png)
+![dfd_add_ question](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/Dfd_AddQuestion.png)
 
 ## Update/Delete question
 
@@ -18,7 +18,7 @@
 
 - With knowledge base Id, question is updated/deleted in QnAMaker and corresponding result is shown in card.
 
-![dfd_update_delete](/Wiki/Images/Dfd_UpdateDelete.png)
+![dfd_update_delete](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/Dfd_UpdateDelete.png)
   
 ## Azure function for publishing knowledge base
 
@@ -26,4 +26,4 @@
 
 - It publishes knowledge base only if modification is done from last publish time.
 
-![dfd_Publish knowledge base](/Wiki/Images/Dfd_Publish.png)
+![dfd_Publish knowledge base](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/Dfd_Publish.png)

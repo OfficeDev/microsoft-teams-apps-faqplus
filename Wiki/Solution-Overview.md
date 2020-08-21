@@ -1,8 +1,8 @@
-![architecture-overview](/Wiki/Images/architecture_overview.png)
+![architecture-overview](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/architecture_overview.png)
 
 The **FAQ Plus** application has the following main components:
 
-* **QnAMaker**: Resources that comprise the QnAMaker service, which implements the "FAQ" part of the application. The installer creates a [knowledge base](https://docs.microsoft.com/en-us/azure/cognitive-services/qnamaker/concepts/knowledge-base) using the [tools](https://docs.microsoft.com/en-us/azure/cognitive-services/qnamaker/concepts/development-lifecycle-knowledge-base) provided by QnAMaker.
+* **QnA Maker**: Resources that comprise the QnAMaker service, which implements the "FAQ" part of the application. The installer creates a [knowledge base](https://docs.microsoft.com/en-us/azure/cognitive-services/qnamaker/concepts/knowledge-base) using the [tools](https://docs.microsoft.com/en-us/azure/cognitive-services/qnamaker/concepts/development-lifecycle-knowledge-base) provided by QnAMaker.
 
 * **FAQ Plus Bot**: The bot serves both end-users and experts team
 	* The knowledge base (KB) in QnA Maker is presented to end-user in a 1:1 conversational bot interface. Through the bot, end-user can ask the question to bot, escalate to a designated experts team, send feedback about the app, or give feedback on specific answers.
@@ -12,15 +12,15 @@ The **FAQ Plus** application has the following main components:
 
 * **Blob Storage** : The knowledge base with QnA and associated metadata is stored in blob storage by Azure function. The same is shown by messaging extension for respective section and search categories using Azure search service.
 
-* **Azure Function**: QnA changes in QnAMaker are published every fifteen minutes to knowledge base by time triggered azure functions.
+* **Azure Function**: QnA changes in QnA Maker are published every fifteen minutes to knowledge base by time triggered Azure functions.
   
-* **Configuration Application**: An Azure App Service lets app admins configure the app.
+* **Configuration Application**: An Azure App Service lets app admins configure the application to provide team and knowledge base details. These values are necessary to map the expert team and the associated knowledge base. Currently app supports only one knowledge base per tenant(deployment).
 
-## QnAMaker
+## QnA Maker
 
-FAQ Plus uses QnAMaker to respond to user questions; in fact, you can have a blank knowledge base to start using FAQ Plus. The precision and recall of the bot responses to end-user questions are directly tied to the quality of the knowledge base, so it's important to follow QnAMaker's recommended [best practices](https://docs.microsoft.com/en-us/azure/cognitive-services/qnamaker/concepts/best-practices). Please keep in mind that a good knowledge base requires curation and feedback: see [Development lifecycle of a knowledge base](https://docs.microsoft.com/en-us/azure/cognitive-services/qnamaker/concepts/development-lifecycle-knowledge-base).
+FAQ Plus uses QnA Maker to respond to user questions; in fact, you can have a blank knowledge base to start using FAQ Plus. The precision and recall of the bot responses to end-user questions are directly tied to the quality of the knowledge base, so it's important to follow QnA Maker's recommended [best practices](https://docs.microsoft.com/en-us/azure/cognitive-services/qnamaker/concepts/best-practices). Please keep in mind that a good knowledge base requires curation and feedback: see [Development lifecycle of a knowledge base](https://docs.microsoft.com/en-us/azure/cognitive-services/qnamaker/concepts/development-lifecycle-knowledge-base).
 
- For more details about QnAMaker, please refer to the [QnAMaker documentation](https://docs.microsoft.com/en-us/azure/cognitive-services/qnamaker/overview/overview).
+For more details about QnA Maker, please refer to the [QnAMaker documentation](https://docs.microsoft.com/en-us/azure/cognitive-services/qnamaker/overview/overview).
 
 ## Bot and Messaging Extension
 

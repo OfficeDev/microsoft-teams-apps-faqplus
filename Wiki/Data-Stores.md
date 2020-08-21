@@ -11,8 +11,8 @@ The app uses the following data stores:
 
  All these resources are created in your Azure subscription. None are hosted directly by Microsoft.
 
-# Storage account
- ## ConfigurationInfo Table
+## Storage account
+ ### ConfigurationInfo Table
  
 The **ConfigurationInfo** table stores data about the necessary configurations that are required for the bot. Each row in the table has the following columns:
 
@@ -22,8 +22,11 @@ KnowledgeBaseId | This is the knowledge base Id for which the bot can return ans
 MSTeamId | The team Id which the bot can be able to post messages whenever the end-user asks for an expert's assistance with a query.
 StaticTabText | The static tab text, would be the standard text that is displayed in the help tab which will be installed along with the bot in a personal scope. The static tab text will be configured by the configurator application, and is publically accessible with no authentication.
 WelcomeMessage | The welcome message is a configurable text that the bot would send to the end-user the very first time that end-user installs the bot in a personal scope.
+LastModifiedByUPN | The user principal name (UPN) of the Admin who modified the setting.
+LastModifiedByObjectId | The Azure Active Directory Object Id of the Admin who modified the setting.
+LastModifiedOn | The date/time on which the Admin modified the setting.
 
-## TicketInfo Table
+### TicketInfo Table
 
 The **TicketInfo** table stores data about tickets (or requests) that are posted to the expert team by the bot on behalf of end-user. Each row in the table has the following columns:
   
@@ -46,10 +49,11 @@ The **TicketInfo** table stores data about tickets (or requests) that are posted
 |DateClosed|The date when a ticket is updated to the closed status.
 |LastModifiedByName|The name of the expert who recently updated the ticket.
 |LastModifiedByObjectId|The AAD Object ID of the expert who recently updated the ticket.
+|LastModifiedOn|The date/time on which the expert has updated the ticket.
 |UserQuestion|The original question that has been asked by the end-user.
 |KbEntryAnswer|The answer that is stored in the knowledge base.
 
-## ActivityEntity Table 
+### ActivityEntity Table 
 
 The **ActivityEntity** table is used to maintain card state which is further used to refresh cards when edited or deleted. Each row in the table has the following columns:
 
@@ -58,7 +62,7 @@ The **ActivityEntity** table is used to maintain card state which is further use
 TimeStamp | The date and time when the card gets posted.
 ActivityID | The ID of the card that gets posted in the channel when the question is added for the first time.
 
-## Blob Storage
+### Blob Storage
 
 The **Blob Storage** stores knowledge base with QnA and metadata in JSON format.
 The same JSON is used by messaging extension search results for knowledge base tab.

@@ -17,65 +17,67 @@ The FAQ Plus app logs following events:
 - Basic user info: `UserAadObjectId`
 - Context of how it was invoked: `ConversationType`
 
-`customEvents`:
-- CRUD operations logging.
+`Logging`:
+- Application uses application insights trace logging to track application execution logs. The logs in here can be helpful to determine user actions. Following are the common application insight queries that would be of interest.
 
 *Application Insights queries:*
 
-- This query gives total number of times Bot is added to 1:1 chat.
+- Get list of traces messages and count when bot is added to 1:1 chat in last 30 days
 
 ```
 traces
 | where message contains "Bot added to 1:1 chat"
+| where timestamp >= ago(30d) 
+| summarize count() by message
 ```
-
-- This query gives total number of times Bot is successfully added to team.
+- Number of times bot is added to team successfully in last 30 days
 
 ```
 traces
 | where message contains "Bot added to team"
+| where timestamp >= ago(30d) 
+| summarize count() by message 
 ```
-
-- This query gives total number of times  user sends feedback card.
+- Number of times users sends feedback card in last 30 days
 
 ```
 traces
 | where message contains "Sending user feedback card" 
+| where timestamp >= ago(30d) 
+| summarize count() by message  
 ```
-
-- This query gives total number of times Bot sends ask an expert card.
+- Number of times users sends ask an expert card in last 30 days
 
 ```
 traces
 | where message contains "Sending user ask an expert card"
+| where timestamp >= ago(30d) 
+| summarize count() by message  
 ```
+- Number of times Bot sends tour card in last 30 days
 
-- This query gives total number of times  card is submitted in channel.
-```
-traces
-| where message contains "Card submit in channel"
-```
-
-- This query gives total number of times Bot sends tour card.
 ```
 traces
 | where message contains "Sending team tour card"
+| where timestamp >= ago(30d)
 ```
+- Number of times bot posts question to expert team in last 30 days
 
-- This query gives total number of times expert receives question.
 ```
 traces
 | where message contains "Received question for expert"
+| where timestamp >= ago(30d)
 ```
+- Number of times the user submitted the feedback in last 30 days
 
-- This query gives total number of times the app feedback is received.
 ```
 traces
 | where message contains "Received app feedback"
+| where timestamp >= ago(30d)
 ```
 For e.g.: trace showing the total number of times feedback card is sent.
 
-![trace_example](/Wiki/Images/trace_example.png)
+![trace_example](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/trace_example.png)
 
 The **Configurator** app with Application Insights to gather event activity analytics, as described [here]((https://docs.microsoft.com/en-us/azure/azure-monitor/app/app-insights-overview)).
 
@@ -84,10 +86,6 @@ The Configurator App logs following events:
 `Exceptions`:
 
 - Global exceptions logging.
-
-`customEvents`:
-
-- CRUD operations logging.
 
 *Application Insights Log Levels:*
 - **Trace = 0** : Logs that contain the most detailed messages. These messages may contain sensitive application data. These messages are disabled by default and should never be enabled in a production environment.
