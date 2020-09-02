@@ -4,12 +4,13 @@
 
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
 {
+    using System;
     using System.Collections.Generic;
     using System.Globalization;
+    using System.Linq;
     using AdaptiveCards;
     using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker.Models;
     using Microsoft.Bot.Schema;
-    using Microsoft.Teams.Apps.FAQPlusPlus.Bots;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
@@ -20,84 +21,27 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
     public static class ResponseCard
     {
         /// <summary>
-        /// Construct the response card - when user asks a question to QnA Maker through bot.
+        /// Construct the response card - when user asks a question to the QnA Maker through the bot.
         /// </summary>
-        /// <param name="question">Knowledgebase question, from QnA Maker service.</param>
-        /// <param name="answer">Knowledgebase answer, from QnA Maker service.</param>
-        /// <param name="userQuestion">Actual question asked by the user to the bot.</param>
-        /// <param name="project"> the value of project metadata </param>
+        /// <param name="response">The response model.</param>
+        /// <param name="userQuestion">Actual question that the user has asked the bot.</param>
         /// <param name="appBaseUri">The base URI where the app is hosted.</param>
-        /// <returns>Response card.</returns>
-        public static Attachment GetCard(string question, string answer, string userQuestion, string project, string appBaseUri)
+        /// <param name="payload">The response card payload.</param>
+        /// <returns>The response card to append to a message as an attachment.</returns>
+        public static Attachment GetCard(QnASearchResult response, string userQuestion, string appBaseUri, ResponseCardPayload payload)
         {
-            AdaptiveCard responseCard = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
+            List<AdaptiveAction> actions = null;
+            string project = (from r in response.Metadata where r.Name.Equals("project") select r).FirstOrDefault()?.Value;
+            if (response?.Context.Prompts.Count == 0)
             {
-                Body = new List<AdaptiveElement>
-                {
-                    new AdaptiveTextBlock
-                    {
-                        Text = answer,
-                        Wrap = true,
-                    },
-                    new AdaptiveColumnSet
-                    {
-                       Separator = true,
-                       Columns = new List<AdaptiveColumn>
-                       {
-                           new AdaptiveColumn
-                           {
-                               Items = new List<AdaptiveElement>
-                               {
-                                     new AdaptiveTextBlock
-                                    {
-                                        Weight = AdaptiveTextWeight.Lighter,
-                                        Text = Strings.ResponseFooterText,
-                                        Wrap = true,
-                                    },
-                               },
-                           },
-                       },
-                    },
+                actions = BuildListOfActions(userQuestion, response.Answer, project, appBaseUri);
+            }
 
-                },
-                Actions = new List<AdaptiveAction>
-                {
-                    new AdaptiveSubmitAction
-                    {
-                        Title = Strings.AskAnExpertButtonText,
-                        Data = new ResponseCardPayload
-                        {
-                            MsTeams = new CardAction
-                            {
-                                Type = ActionTypes.MessageBack,
-                                DisplayText = Strings.AskAnExpertDisplayText,
-                                Text = Constants.AskAnExpert,
-                            },
-                            UserQuestion = userQuestion,
-                            KnowledgeBaseAnswer = answer,
-                            Project = project,
-                        },
-                    },
-                    new AdaptiveSubmitAction
-                    {
-                        Title = Strings.ShareFeedbackButtonText,
-                        Data = new ResponseCardPayload
-                        {
-                            MsTeams = new CardAction
-                            {
-                                Type = ActionTypes.MessageBack,
-                                DisplayText = Strings.ShareFeedbackDisplayText,
-                                Text = Constants.ShareFeedback,
-                            },
-                            UserQuestion = userQuestion,
-                            KnowledgeBaseAnswer = answer,
-                            Project = project,
-                        },
-                    },
-                },
+            AdaptiveCard responseCard = new AdaptiveCard(new AdaptiveSchemaVersion(1, 2))
+            {
+                Body = BuildResponseCardBody(response, userQuestion, response.Answer, appBaseUri, payload),
+                Actions = actions,
             };
-            responseCard.Actions[0].AdditionalProperties.Add("iconUrl", appBaseUri + "/content/expert.png");
-            responseCard.Actions[1].AdditionalProperties.Add("iconUrl", appBaseUri + "/content/feedback.png");
 
             return new Attachment
             {
@@ -107,62 +51,176 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         }
 
         /// <summary>
-        /// Construct the response card - when user asks a question to QnA Maker through bot.
+        /// This method builds the body of the response card, and helps to render the follow up prompts if the response contains any.
         /// </summary>
-        /// <param name="question">Knowledgebase question, from QnA Maker service.</param>
-        /// <param name="answer">Knowledgebase answer, from QnA Maker service.</param>
-        /// <param name="promts">multiturn prompts</param>
-        /// <returns>Response card.</returns>
-        public static List<Attachment> GetMultiturnCard(string question, string answer, IList<PromptDTO> promts)
+        /// <param name="response">The QnA response model.</param>
+        /// <param name="userQuestion">The user question - the actual question asked to the bot.</param>
+        /// <param name="answer">The answer string.</param>
+        /// <param name="appBaseUri">The base URI where the app is hosted.</param>
+        /// <param name="payload">The response card payload.</param>
+        /// <returns>A list of adaptive elements which makes up the body of the adaptive card.</returns>
+        private static List<AdaptiveElement> BuildResponseCardBody(QnASearchResult response, string userQuestion, string answer, string appBaseUri, ResponseCardPayload payload)
         {
-            double cardNum = System.Math.Ceiling((double)promts.Count / 6);
-
-            var attachments = new List<Attachment>();
-
-            for (int cardIndex = 0; cardIndex < cardNum; cardIndex++)
+            var cardBodyToConstruct = new List<AdaptiveElement>()
             {
-                List<AdaptiveAction> actions = new List<AdaptiveAction>();
-                for (int index = 0 + (cardIndex * 6); index < (cardIndex + 1) * 6 && index < promts.Count; index++)
+                new AdaptiveTextBlock
                 {
-                    actions.Add(new AdaptiveSubmitAction
+                    Text = answer,
+                    Wrap = true,
+                    Spacing = AdaptiveSpacing.Medium,
+                },
+            };
+
+            // If there follow up prompts, then the follow up prompts will render accordingly.
+            if (response?.Context.Prompts.Count > 0)
+            {
+                List<QnADTO> previousQuestions = BuildListOfPreviousQuestions((int)response.Id, userQuestion, answer, payload);
+
+                foreach (var item in response.Context.Prompts)
+                {
+                    var container = new AdaptiveContainer
                     {
-                        Title = promts[index].DisplayText,
-                        Data = new ResponseCardPayload
+                        Items = new List<AdaptiveElement>()
                         {
-                            MsTeams = new CardAction
+                            new AdaptiveColumnSet
                             {
-                                Type = ActionTypes.MessageBack,
-                                DisplayText = promts[index].DisplayText,
-                                Text = promts[index].DisplayText,
+                                Columns = new List<AdaptiveColumn>()
+                                {
+                                    // This column will be for the icon.
+                                    new AdaptiveColumn
+                                    {
+                                        Width = AdaptiveColumnWidth.Auto,
+                                        VerticalContentAlignment = AdaptiveVerticalContentAlignment.Center,
+                                        Items = new List<AdaptiveElement>()
+                                        {
+                                            new AdaptiveImage
+                                            {
+                                                Url = new Uri(appBaseUri + "/content/Followupicon.png"),
+                                                Size = AdaptiveImageSize.Stretch,
+                                                Style = AdaptiveImageStyle.Default,
+                                            },
+                                        },
+                                        Spacing = AdaptiveSpacing.Small,
+                                    },
+                                    new AdaptiveColumn
+                                    {
+                                        Width = AdaptiveColumnWidth.Auto,
+                                        VerticalContentAlignment = AdaptiveVerticalContentAlignment.Center,
+                                        Items = new List<AdaptiveElement>()
+                                        {
+                                            new AdaptiveTextBlock
+                                            {
+                                                Wrap = true,
+                                                Text = string.Format(Strings.SelectActionItemDisplayTextFormatting, item.DisplayText),
+                                            },
+                                        },
+                                        Spacing = AdaptiveSpacing.Small,
+                                    },
+                                },
                             },
-                            UserQuestion = question,
-                            KnowledgeBaseAnswer = answer,
-                            IsMultiturn = true,
                         },
-                    });
-                }
-
-                AdaptiveCard responseCard = new AdaptiveCard
-                {
-                    Body = new List<AdaptiveElement>
-                    {
-                        new AdaptiveTextBlock
+                        SelectAction = new AdaptiveSubmitAction
                         {
-                            Text = cardIndex == 0 ? answer : null,
-                            Wrap = true,
+                            Title = item.DisplayText,
+                            Data = new ResponseCardPayload
+                            {
+                                MsTeams = new CardAction
+                                {
+                                    Type = ActionTypes.MessageBack,
+                                    DisplayText = item.DisplayText,
+                                    Text = item.DisplayText,
+                                },
+                                PreviousQuestions = previousQuestions,
+                                IsPrompt = true,
+                            },
                         },
-                    },
-                    Actions = actions,
-                };
+                        Separator = true,
+                    };
 
-                attachments.Add(new Attachment
-                {
-                    ContentType = AdaptiveCard.ContentType,
-                    Content = responseCard,
-                });
+                    cardBodyToConstruct.Add(container);
+                }
             }
 
-            return attachments;
+            return cardBodyToConstruct;
+        }
+
+        /// <summary>
+        /// This method will build the necessary list of actions.
+        /// </summary>
+        /// <param name="userQuestion">The user question - the actual question asked to the bot.</param>
+        /// <param name="answer">The answer string.</param>
+        /// <param name="project"> the value of project metadata </param>
+        /// <param name="appBaseUri">The base URI where the app is hosted.</param>
+        /// <returns>A list of adaptive actions.</returns>
+        private static List<AdaptiveAction> BuildListOfActions(string userQuestion, string answer, string project, string appBaseUri)
+        {
+            List<AdaptiveAction> actionsList = new List<AdaptiveAction>
+            {
+                // Adds the "Ask an expert" button.
+                new AdaptiveSubmitAction
+                {
+                    Title = Strings.AskAnExpertButtonText,
+                    Data = new ResponseCardPayload
+                    {
+                        MsTeams = new CardAction
+                        {
+                            Type = ActionTypes.MessageBack,
+                            DisplayText = Strings.AskAnExpertDisplayText,
+                            Text = Constants.AskAnExpert,
+                        },
+                        UserQuestion = userQuestion,
+                        KnowledgeBaseAnswer = answer,
+                        Project = project,
+                    },
+                    IconUrl = appBaseUri + "/content/expert.png",
+                },
+
+                // Adds the "Share feedback" button.
+                new AdaptiveSubmitAction
+                {
+                    Title = Strings.ShareFeedbackButtonText,
+                    Data = new ResponseCardPayload
+                    {
+                        MsTeams = new CardAction
+                        {
+                            Type = ActionTypes.MessageBack,
+                            DisplayText = Strings.ShareFeedbackDisplayText,
+                            Text = Constants.ShareFeedback,
+                        },
+                        UserQuestion = userQuestion,
+                        KnowledgeBaseAnswer = answer,
+                        Project = project,
+                    },
+                    IconUrl = appBaseUri + "/content/feedback.png",
+                },
+            };
+
+            return actionsList;
+        }
+
+        /// <summary>
+        /// This method will build the list of previous questions.
+        /// </summary>
+        /// <param name="id">The QnA Id of the previous question.</param>
+        /// <param name="userQuestion">The question that was asked by the user originally.</param>
+        /// <param name="answer">The knowledge base answer.</param>
+        /// <param name="payload">The response card payload.</param>
+        /// <returns>A list of previous questions.</returns>
+        private static List<QnADTO> BuildListOfPreviousQuestions(int id, string userQuestion, string answer, ResponseCardPayload payload)
+        {
+            var previousQuestions = payload.PreviousQuestions ?? new List<QnADTO>();
+
+            previousQuestions.Add(new QnADTO
+            {
+                Id = id,
+                Questions = new List<string>()
+                {
+                    userQuestion,
+                },
+                Answer = answer,
+            });
+
+            return previousQuestions;
         }
     }
 }

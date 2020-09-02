@@ -34,7 +34,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// Short date and time format to support adaptive card text feature.
         /// </summary>
         /// <remarks>
-        /// refer adaptive card text feature https://docs.microsoft.com/en-us/adaptive-cards/authoring-cards/text-features#datetime-formatting-and-localization
+        /// refer adaptive card text feature https://docs.microsoft.com/en-us/adaptive-cards/authoring-cards/text-features#datetime-formatting-and-localization.
         /// </remarks>
         private const string AdaptiveCardShortDateTimeFormat = "{{{{DATE({0}, SHORT)}}}} {{{{TIME({1})}}}}";
 
@@ -42,7 +42,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// Date time format to support adaptive card text feature.
         /// </summary>
         /// <remarks>
-        /// refer adaptive card text feature https://docs.microsoft.com/en-us/adaptive-cards/authoring-cards/text-features#datetime-formatting-and-localization
+        /// refer adaptive card text feature https://docs.microsoft.com/en-us/adaptive-cards/authoring-cards/text-features#datetime-formatting-and-localization.
         /// </remarks>
         private const string Rfc3339DateTimeFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'";
 
@@ -1233,7 +1233,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// Get the latest 10 update history records.
         /// </summary>
         /// <param name="actionsPerformed">action record details in following Name|Action|Date$ format.</param>
-        /// <returns>action record string with latest 10 entries</returns>
+        /// <returns>action record string with latest 10 entries.</returns>
         /// <remarks>method skips the header.</remarks>
         private static string GetLast10HistoryRecord(string actionsPerformed)
         {

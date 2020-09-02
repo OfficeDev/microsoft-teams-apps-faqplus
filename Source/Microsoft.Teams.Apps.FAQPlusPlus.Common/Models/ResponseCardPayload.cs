@@ -1,9 +1,12 @@
 ﻿// <copyright file="ResponseCardPayload.cs" company="Microsoft">
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
+
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
 {
     using Newtonsoft.Json;
+    using System.Collections.Generic;
+    using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker.Models;
 
     /// <summary>
     /// Represents the payload of a response card.
@@ -29,9 +32,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         public string Project { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether is multiturn QnA Pari.
+        /// Gets or sets list of previous questions when a follow up prompt is selected.
         /// </summary>
-        [JsonProperty("IsMultiturn")]
-        public bool IsMultiturn { get; set; } = false;
+        public List<QnADTO> PreviousQuestions { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether question is from prompt.
+        /// </summary>
+        public bool IsPrompt { get; set; }
     }
 }

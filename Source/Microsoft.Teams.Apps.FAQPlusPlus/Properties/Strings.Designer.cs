@@ -19,7 +19,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Strings {
@@ -75,6 +75,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         public static string AnswerTitle {
             get {
                 return ResourceManager.GetString("AnswerTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Type your feedback (500 characters max).
+        /// </summary>
+        public static string AppFeedbackDescriptionPlaceholderText {
+            get {
+                return ResourceManager.GetString("AppFeedbackDescriptionPlaceholderText", resourceCulture);
             }
         }
         
@@ -412,7 +421,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Feedback (Required).
+        ///   Looks up a localized string similar to Was this answer helpful? (Required).
         /// </summary>
         public static string FeedbackRatingRequired {
             get {
@@ -439,7 +448,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You can ask me a question by typing it in the chat box below and I&apos;ll do my best to answer your question.
+        ///   Looks up a localized string similar to You can simply ask me a question and I will try my best to answer. If there are additional follow-ups, I will bring those as well....
         /// </summary>
         public static string FunctionCardText2 {
             get {
@@ -768,6 +777,24 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         public static string SaveButtonText {
             get {
                 return ResourceManager.GetString("SaveButtonText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to **{0}**.
+        /// </summary>
+        public static string SelectActionItemDisplayTextFormatting {
+            get {
+                return ResourceManager.GetString("SelectActionItemDisplayTextFormatting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to How helpful is this app? (Required).
+        /// </summary>
+        public static string ShareAppFeedbackRating {
+            get {
+                return ResourceManager.GetString("ShareAppFeedbackRating", resourceCulture);
             }
         }
         

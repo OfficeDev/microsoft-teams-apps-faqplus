@@ -16,7 +16,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
     using Newtonsoft.Json.Linq;
 
     /// <summary>
-    /// Home Controller
+    /// Home Controller.
     /// </summary>
     [Authorize]
     public class HomeController : Controller
@@ -99,7 +99,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         /// Save or update knowledgeBaseId in table storage which is received from View.
         /// </summary>
         /// <param name="knowledgeBaseId">knowledgeBaseId is the unique string to identify knowledgebase.</param>
-        /// <returns>View</returns>
+        /// <returns>View.</returns>
         [HttpGet]
         public async Task<ActionResult> UpsertKnowledgeBaseIdAsync(string knowledgeBaseId)
         {
@@ -297,7 +297,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
                 var knowledgebaseDetail = await this.qnaMakerClient.Knowledgebase.GetDetailsAsync(knowledgeBaseId).ConfigureAwait(false);
                 return knowledgebaseDetail.Id == knowledgeBaseId;
             }
+#pragma warning disable CA1031 // Do not catch general exception types
             catch
+#pragma warning restore CA1031 // Do not catch general exception types
             {
                 return false;
             }
@@ -315,7 +317,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
                 await this.configurationPovider.UpsertEntityAsync(endpointKeys.PrimaryEndpointKey, ConfigurationEntityTypes.QnAMakerEndpointKey).ConfigureAwait(false);
                 return true;
             }
+#pragma warning disable CA1031 // Do not catch general exception types
             catch
+#pragma warning restore CA1031 // Do not catch general exception types
             {
                 return false;
             }

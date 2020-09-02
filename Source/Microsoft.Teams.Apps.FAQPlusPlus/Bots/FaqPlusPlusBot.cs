@@ -9,12 +9,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
     using System.Globalization;
     using System.Linq;
     using System.Net;
+    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.ApplicationInsights.DataContracts;
     using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker.Models;
     using Microsoft.Bot.Builder;
-    using Microsoft.Bot.Builder.Dialogs;
     using Microsoft.Bot.Builder.Teams;
     using Microsoft.Bot.Connector.Authentication;
     using Microsoft.Bot.Schema;
@@ -36,9 +36,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
     /// <summary>
     /// Class that handles the teams activity of Faq Plus bot and messaging extension.
     /// </summary>
-    /// <typeparam name="T">dialog</typeparam>
-    public class FaqPlusPlusBot<T> : TeamsActivityHandler
-        where T : Dialog
+    public class FaqPlusPlusBot : TeamsActivityHandler
     {
         /// <summary>
         ///  Default access cache expiry in days to check if user using the app is a valid SME or not.
@@ -85,6 +83,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         private readonly ITicketsProvider ticketsProvider;
         private readonly IFeedbackProvider feedbackProvider;
         private readonly IUserActionProvider userActionProvider;
+        private readonly IConversationProvider conversationProvider;
         private readonly IActivityStorageProvider activityStorageProvider;
         private readonly ISearchService searchService;
         private readonly string appId;
@@ -93,20 +92,20 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         private readonly int accessCacheExpiryInDays;
         private readonly string appBaseUri;
         private readonly IKnowledgeBaseSearchService knowledgeBaseSearchService;
-        private readonly ILogger<FaqPlusPlusBot<T>> logger;
+        private readonly ILogger<FaqPlusPlusBot> logger;
         private readonly IQnaServiceProvider qnaServiceProvider;
-        private readonly Dialog dialog;
         private readonly BotState conversationState;
         private readonly BotState userState;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FaqPlusPlusBot{T}"/> class.
+        /// Initializes a new instance of the <see cref="FaqPlusPlusBot"/> class.
         /// </summary>
         /// <param name="configurationProvider">Configuration Provider.</param>
         /// <param name="microsoftAppCredentials">Microsoft app credentials to use.</param>
         /// <param name="ticketsProvider">Tickets Provider.</param>
-        /// <param name="feedbackProvider">Feedback Provider</param>
-        /// <param name="userActionProvider">UserAction Provider</param>
+        /// <param name="feedbackProvider">Feedback Provider.</param>
+        /// <param name="userActionProvider">UserAction Provider.</param>
+        /// <param name="conversationProvider">Conversation storage provider.</param>
         /// <param name="activityStorageProvider">Activity storage provider.</param>
         /// <param name="qnaServiceProvider">Question and answer maker service provider.</param>
         /// <param name="searchService">SearchService dependency injection.</param>
@@ -117,13 +116,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <param name="logger">Instance to send logs to the Application Insights service.</param>
         /// <param name="conversationState">conversation sate cache</param>
         /// <param name="userState">user state cache</param>
-        /// <param name="dialog">Instance to handle multiturn conversation</param>
         public FaqPlusPlusBot(
             Common.Providers.IConfigurationDataProvider configurationProvider,
             MicrosoftAppCredentials microsoftAppCredentials,
             ITicketsProvider ticketsProvider,
             IFeedbackProvider feedbackProvider,
             IUserActionProvider userActionProvider,
+            IConversationProvider conversationProvider,
             IQnaServiceProvider qnaServiceProvider,
             IActivityStorageProvider activityStorageProvider,
             ISearchService searchService,
@@ -131,16 +130,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             IMemoryCache memoryCache,
             IKnowledgeBaseSearchService knowledgeBaseSearchService,
             IOptionsMonitor<BotSettings> optionsAccessor,
-            ILogger<FaqPlusPlusBot<T>> logger,
+            ILogger<FaqPlusPlusBot> logger,
             ConversationState conversationState,
-            UserState userState,
-            T dialog)
+            UserState userState)
         {
             this.configurationProvider = configurationProvider;
             this.microsoftAppCredentials = microsoftAppCredentials;
             this.ticketsProvider = ticketsProvider;
             this.feedbackProvider = feedbackProvider;
             this.userActionProvider = userActionProvider;
+            this.conversationProvider = conversationProvider;
             this.options = optionsAccessor.CurrentValue;
             this.qnaServiceProvider = qnaServiceProvider;
             this.activityStorageProvider = activityStorageProvider;
@@ -159,7 +158,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
             this.appBaseUri = this.options.AppBaseUri;
             this.knowledgeBaseSearchService = knowledgeBaseSearchService;
-            this.dialog = dialog;
             this.conversationState = conversationState;
             this.userState = userState;
         }
@@ -181,7 +179,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             {
                 if (turnContext != null & !this.IsActivityFromExpectedTenant(turnContext))
                 {
-                    this.logger.LogInformation($"Unexpected tenant id {turnContext?.Activity.Conversation.TenantId}", SeverityLevel.Warning);
+                    this.logger.LogWarning($"Unexpected tenant id {turnContext?.Activity.Conversation.TenantId}");
                     return;
                 }
 
@@ -202,7 +200,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             catch (Exception ex)
             {
                 this.logger.LogError(ex, "Error at OnTurnAsync()");
-                //await base.OnTurnAsync(turnContext, cancellationToken);
             }
         }
 
@@ -242,7 +239,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                         break;
 
                     default:
-                        this.logger.LogInformation($"Received unexpected conversationType {message.Conversation.ConversationType}", SeverityLevel.Warning);
+                        this.logger.LogWarning($"Received unexpected conversationType {message.Conversation.ConversationType}");
                         break;
                 }
             }
@@ -790,18 +787,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         {
             if (!string.IsNullOrEmpty(message.ReplyToId) && (message.Value != null) && ((JObject)message.Value).HasValues)
             {
-                if (Validators.IsValidJSON(message.Value.ToString()))
-                {
-                    // Multi-turn follow up
-                    ResponseCardPayload playload = JsonConvert.DeserializeObject<ResponseCardPayload>(message.Value.ToString());
-                    if (playload != null && playload.IsMultiturn)
-                    {
-                        this.logger.LogInformation("Sending input to QnAMaker");
-                        await this.GetQuestionAnswerReplyAsync(turnContext, message?.Text, cancellationToken).ConfigureAwait(false);
-                        return;
-                    }
-                }
-
                 this.logger.LogInformation("Card submit in 1:1 chat");
                 await this.OnAdaptiveCardSubmitInPersonalChatAsync(message, turnContext, cancellationToken).ConfigureAwait(false);
                 return;
@@ -836,7 +821,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     break;
                 default:
                     this.logger.LogInformation("Sending input to QnAMaker");
-                    await this.GetQuestionAnswerReplyAsync(turnContext, text, cancellationToken).ConfigureAwait(false);
+                    await this.GetQuestionAnswerReplyAsync(turnContext, message, cancellationToken).ConfigureAwait(false);
                     break;
             }
 
@@ -984,7 +969,18 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     break;
 
                 default:
-                    this.logger.LogInformation($"Unexpected text in submit payload: {message.Text}", SeverityLevel.Warning);
+                    var payload = ((JObject)message.Value).ToObject<ResponseCardPayload>();
+
+                    if (payload.IsPrompt)
+                    {
+                        this.logger.LogInformation("Sending input to QnAMaker for prompt");
+                        await this.GetQuestionAnswerReplyAsync(turnContext, message, cancellationToken).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        this.logger.LogWarning($"Unexpected text in submit payload: {message.Text}");
+                    }
+
                     break;
             }
 
@@ -1086,7 +1082,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     break;
 
                 default:
-                    this.logger.LogInformation($"Unknown status command {payload.Action}", SeverityLevel.Warning);
+                    this.logger.LogWarning($"Unknown status command {payload.Action}");
                     return;
             }
 
@@ -1494,17 +1490,78 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// Get the reply to a question asked by end user.
         /// </summary>
         /// <param name="turnContext">Context object containing information cached for a single turn of conversation with a user.</param>
-        /// <param name="text">Text message.</param>
+        /// <param name="message">Text message.</param>
         /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
         /// <returns>A task that represents the work queued to execute.</returns>
         private async Task GetQuestionAnswerReplyAsync(
             ITurnContext<IMessageActivity> turnContext,
-            string text,
+            IMessageActivity message,
             CancellationToken cancellationToken)
         {
+            string text = message.Text?.ToLower()?.Trim() ?? string.Empty;
+            ConversationEntity conInfo = new ConversationEntity();
+            conInfo.ConversationID = Guid.NewGuid().ToString();
+            conInfo.Question = text;
+
             try
             {
-                await this.dialog.RunAsync(turnContext, this.conversationState.CreateProperty<DialogState>(nameof(DialogState)), cancellationToken);
+                var queryResult = new QnASearchResultList();
+
+                ResponseCardPayload payload = new ResponseCardPayload();
+
+                if (!string.IsNullOrEmpty(message.ReplyToId) && (message.Value != null))
+                {
+                    payload = ((JObject)message.Value).ToObject<ResponseCardPayload>();
+                }
+
+                queryResult = await this.qnaServiceProvider.GenerateAnswerAsync(question: text, isTestKnowledgeBase: false, payload.PreviousQuestions?.First().Id.ToString(), payload.PreviousQuestions?.First().Questions.First()).ConfigureAwait(false);
+
+                if (queryResult.Answers.First().Id != -1)
+                {
+                    var answerData = queryResult.Answers.First();
+
+                    conInfo.QnAID = answerData.Id.ToString();
+                    conInfo.Answer = answerData.Answer;
+                    conInfo.Score = answerData.Score.ToString();
+                    conInfo.Project = (from r in answerData.Metadata where r.Name.Equals("project") select r).FirstOrDefault()?.Value;
+                    conInfo.PreviousQnAID = payload.PreviousQuestions?.First().Id.ToString();
+
+                    StringBuilder sb = new StringBuilder();
+                    if (answerData?.Context.Prompts.Count > 0)
+                    {
+                        foreach (var item in answerData.Context.Prompts)
+                        {
+                            sb.Append($"[{item.DisplayText}]");
+                        }
+                    }
+                    conInfo.Prompts = sb.ToString();
+
+                    AnswerModel answerModel = new AnswerModel();
+
+                    if (Validators.IsValidJSON(answerData.Answer))
+                    {
+                        answerModel = JsonConvert.DeserializeObject<AnswerModel>(answerData.Answer);
+                    }
+
+                    if (!string.IsNullOrEmpty(answerModel?.Title) || !string.IsNullOrEmpty(answerModel?.Subtitle) || !string.IsNullOrEmpty(answerModel?.ImageUrl) || !string.IsNullOrEmpty(answerModel?.RedirectionUrl))
+                    {
+                        await turnContext.SendActivityAsync(MessageFactory.Attachment(MessagingExtensionQnaCard.GetEndUserRichCard(text, answerData))).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        await turnContext.SendActivityAsync(MessageFactory.Attachment(ResponseCard.GetCard(answerData, text, this.appBaseUri, payload))).ConfigureAwait(false);
+                    }
+                }
+                else
+                {
+                    await turnContext.SendActivityAsync(MessageFactory.Attachment(UnrecognizedInputCard.GetCard(text, this.appBaseUri))).ConfigureAwait(false);
+                }
+
+                var userDetails = await AdaptiveCardHelper.GetUserDetailsInPersonalChatAsync(turnContext, cancellationToken).ConfigureAwait(false);
+                conInfo.UserName = userDetails.Name;
+                conInfo.UserPrincipalName = userDetails.UserPrincipalName;
+
+                await this.conversationProvider.UpsertConversationAsync(conInfo).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -1529,7 +1586,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         }
 
         /// <summary>
-        /// Get new personl user action entity 
+        /// Get new personl user action entity.
         /// </summary>
         /// <param name="turnContext">Context object containing information cached for a single turn of conversation with a user.</param>
         /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>

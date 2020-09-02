@@ -356,7 +356,7 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <comment>Available factset in user notification and SME facing cards.</comment>
   </data>
   <data name="FeedbackRatingRequired" xml:space="preserve">
-    <value>Feedback (Required)</value>
+    <value>Was this answer helpful? (Required)</value>
     <comment>Feedback(Required): label for the feedback rating dropdown.</comment>
   </data>
   <data name="HelpfulRatingText" xml:space="preserve">
@@ -608,5 +608,17 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
   <data name="ResponseFooterText" xml:space="preserve">
     <value>If this doesn't help, you can:</value>
     <comment>Response footer-letting the user know that a what they can do if answer doesn't help.</comment>
+  </data>
+  <data name="SelectActionItemDisplayTextFormatting" xml:space="preserve">
+    <value>**{0}**</value>
+    <comment>The formatting of the select action item display text, with {0} being the placeholder for the DisplayText from the Follow Up prompt.</comment>
+  </data>
+  <data name="AppFeedbackDescriptionPlaceholderText" xml:space="preserve">
+    <value>Type your feedback (500 characters max)</value>
+    <comment>Placeholder for app feedback description</comment>
+  </data>
+  <data name="ShareAppFeedbackRating" xml:space="preserve">
+    <value>How helpful is this app? (Required)</value>
+    <comment>Feedback for App</comment>
   </data>
 </root>

@@ -183,24 +183,30 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         /// </summary>
         /// <param name="question">Question text.</param>
         /// <param name="isTestKnowledgeBase">Prod or test.</param>
-        /// <param name="qnaID">Id of QnA</param>
-        /// <param name="context">multiturn should have context.</param>
-        /// <param name="metadata"> metadata to narrow the search. </param>
-        /// <returns>QnaSearchResult result as response.</returns>
-        public async Task<QnASearchResultList> GenerateAnswerAsync(string question, bool isTestKnowledgeBase, int? qnaID, QueryDTOContext context = null, List<MetadataDTO> metadata = null)
+        /// <param name="previousQnAId">Id of previous question.</param>
+        /// <param name="previousUserQuery">Previous question information.</param>
+        /// <returns>QnaSearchResultList result as response.</returns>
+        public async Task<QnASearchResultList> GenerateAnswerAsync(string question, bool isTestKnowledgeBase, string previousQnAId = null, string previousUserQuery = null)
         {
             var knowledgeBaseId = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.KnowledgeBaseId).ConfigureAwait(false);
-            QnASearchResultList qnaSearchResult = await this.qnaMakerRuntimeClient.Runtime.GenerateAnswerAsync(knowledgeBaseId, new QueryDTO()
+
+            QueryDTO queryDTO = new QueryDTO()
             {
-                QnaId = qnaID.ToString(),
                 IsTest = isTestKnowledgeBase,
                 Question = question?.Trim(),
                 ScoreThreshold = Convert.ToDouble(this.options.ScoreThreshold),
-                Context = context,
-                StrictFilters = metadata,
-            }).ConfigureAwait(false);
+            };
 
-            return qnaSearchResult;
+            if (previousQnAId != null && previousUserQuery != null)
+            {
+                queryDTO.Context = new QueryDTOContext
+                {
+                    PreviousQnaId = previousQnAId,
+                    PreviousUserQuery = previousUserQuery,
+                };
+            }
+
+            return await this.qnaMakerRuntimeClient.Runtime.GenerateAnswerAsync(knowledgeBaseId, queryDTO).ConfigureAwait(false);
         }
 
         /// <summary>

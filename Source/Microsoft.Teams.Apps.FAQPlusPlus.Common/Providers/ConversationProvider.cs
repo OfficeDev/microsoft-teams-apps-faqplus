@@ -32,8 +32,27 @@
         public Task UpsertConversationAsync(ConversationEntity conversation)
         {
             conversation.PartitionKey = PartitionKey;
-            conversation.RowKey = conversation.ConversationId;
+            conversation.RowKey = conversation.ConversationID;
             return this.StoreOrUpdatConversationEntityAsync(conversation);
+        }
+
+        /// <summary>
+        /// Get already saved entity detail from storage table.
+        /// </summary>
+        /// <param name="conversationID">conversation id received from bot based on which appropriate row data will be fetched.</param>
+        /// <returns><see cref="Task"/> Already saved entity detail.</returns>
+        public async Task<ConversationEntity> GetConversationAsync(string conversationID)
+        {
+            await this.EnsureInitializedAsync().ConfigureAwait(false); // When there is no ticket created by end user and messaging extension is open by SME, table initialization is required before creating search index or datasource or indexer.
+            if (string.IsNullOrEmpty(conversationID))
+            {
+                return null;
+            }
+
+            var searchOperation = TableOperation.Retrieve<ConversationEntity>(PartitionKey, conversationID);
+            var searchResult = await this.conversationCloudTable.ExecuteAsync(searchOperation).ConfigureAwait(false);
+
+            return (ConversationEntity)searchResult.Result;
         }
 
         /// <summary>
