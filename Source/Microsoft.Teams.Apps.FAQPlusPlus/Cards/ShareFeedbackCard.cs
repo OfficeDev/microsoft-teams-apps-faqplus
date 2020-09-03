@@ -95,7 +95,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                 {
                                     new AdaptiveTextBlock
                                     {
-                                        Text = Strings.FeedbackRatingRequired,
+                                        Text = !string.IsNullOrWhiteSpace(data.UserQuestion) ? Strings.FeedbackRatingRequired : Strings.ShareAppFeedbackRating,
                                         Wrap = true,
                                     },
                                 },
@@ -148,7 +148,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     {
                         Spacing = AdaptiveSpacing.Small,
                         Id = nameof(ShareFeedbackCardPayload.Description),
-                        Placeholder = Strings.FeedbackDescriptionPlaceholderText,
+                        Placeholder = !string.IsNullOrWhiteSpace(data.UserQuestion) ? Strings.FeedbackDescriptionPlaceholderText : Strings.AppFeedbackDescriptionPlaceholderText,
                         IsMultiline = true,
                         Value = data.Description,
                     },

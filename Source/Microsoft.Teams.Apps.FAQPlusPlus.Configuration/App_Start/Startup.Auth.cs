@@ -17,7 +17,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration
     using Microsoft.Owin.Security.OpenIdConnect;
 
     /// <summary>
-    /// Startup file
+    /// Startup file.
     /// </summary>
     public partial class Startup
     {

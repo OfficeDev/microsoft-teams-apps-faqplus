@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.PublishFunction">
+            <summary>
+            Azure Function to publish QnA Maker knowledge base.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.PublishFunction.#ctor(Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers.IQnaServiceProvider,Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers.IConfigurationDataProvider,Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers.ISearchServiceDataProvider,Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers.IKnowledgeBaseSearchService)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.PublishFunction"/> class.
+            </summary>
+            <param name="qnaServiceProvider">Qna service provider.</param>
+            <param name="configurationProvider">Configuration service provider.</param>
+            <param name="searchServiceDataProvider">Search service data provider.</param>
+            <param name="knowledgeBaseSearchService">Knowledgebase search service.</param>
+        </member>
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.PublishFunction.Run(Microsoft.Azure.WebJobs.TimerInfo,Microsoft.Extensions.Logging.ILogger)">
+            <summary>
+            Function to get and publish QnA Maker knowledge base.
+            </summary>
+            <param name="myTimer">Duration of publish operations.</param>
+            <param name="log">Log.</param>
+            <returns>A <see cref="T:System.Threading.Tasks.Task"/> representing the result of the asynchronous operation.</returns>
+        </member>
+        <member name="T:Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.Startup">
+            <summary>
+            Azure function Startup Class.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.Startup.Configure(Microsoft.Azure.WebJobs.IWebJobsBuilder)">
+            <summary>
+            Application startup configuration.
+            </summary>
+            <param name="builder">Webjobs builder.</param>
+        </member>
+    </members>
+</doc>

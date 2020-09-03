@@ -260,9 +260,6 @@
     <AdditionalFiles Include="..\stylecop.json" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\GlobalSuppressions.cs">
-      <Link>Properties\GlobalSuppressions.cs</Link>
-    </Compile>
     <Compile Include="App_Start\AutofacConfig.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
