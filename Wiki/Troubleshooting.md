@@ -61,7 +61,7 @@ Redeploy it after fixing the issue/conflict.
 
 This happens when the admin tries to install the app to Microsoft Teams using the zip file.
 
-![Manifest parsing has failed](/Wiki/Images/manifest_parsing_failed.png)
+![Manifest parsing has failed](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/manifest_parsing_failed.png)
 
 #### Fix
 

@@ -26,17 +26,17 @@ Register two Azure AD applications in your tenant's directory: one for the bot, 
 	2. **Supported account types**: Select "Accounts in any organizational directory"
 	3. Leave the "Redirect URL" field blank.
 
-![Azure registration page](/Wiki/Images/multitenant_app_creation.png)
+![Azure registration page](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/multitenant_app_creation.png)
 
 3. Click on the "Register" button.
 
 4. When the app is registered, you'll be taken to the app's "Overview" page. Copy the **Application (client) ID** and **Directory (tenant) ID**; we will need it later. Verify that the "Supported account types" is set to **Multiple organizations**.
 
-![Azure overview page](/Wiki/Images/multitenant_app_overview.png)
+![Azure overview page](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/multitenant_app_overview.png)
 
 5. On the side rail in the Manage section, navigate to the "Certificates & secrets" section. In the Client secrets section, click on "+ New client secret". Add a description of the secret and select an expiry time. Click "Add".
 
-![Azure AD overview page](/Wiki/Images/multitenant_app_secret.png)
+![Azure AD overview page](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/multitenant_app_secret.png)
 
 6. Once the client secret is created, copy its **Value**; we will need it later.
 
@@ -54,7 +54,7 @@ At this point you have 4 unique values:
 
 We recommend that you copy these values into a text file, using an application like Notepad. We will need these values later.
 
-![Configuration step 3](/Wiki/Images/azure-config-app-step3.png)
+![Configuration step 3](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/azure-config-app-step3.png)
 
 ## Step 2: Deploy to your Azure subscription
 
@@ -120,7 +120,7 @@ Make sure that the values are copied as-is, with no extra spaces. The template c
 
 4. Click on Add a platform, select Web.
 
-![Adding Redirect URI1](/Wiki/Images/authenticationimage1.png)
+![Adding Redirect URI1](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/AuthenticationImage1.png)
 
 5. Add new entry to "Redirect URIs":
 	If your configuration app's URL is https://contosofaqplus-config.azurewebsites.net, then add the following entry as the Redirect URIs:
@@ -130,14 +130,14 @@ Make sure that the values are copied as-is, with no extra spaces. The template c
 
 6. Under "Implicit grant", check "ID tokens" and "Access tokens". The reason to check "ID tokens" is because you are using only the accounts on your current Azure tenant and using that to authenticate yourself in the configuration app. Click configure.
 
-![Adding Redirect URI2](/Wiki/Images/authenticationimage2.png)
+![Adding Redirect URI2](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/AuthenticationImage2.png)
 
 7. Add new entries to "Redirect URIs":
 	If your configuration app's URL is https://contosofaqplus-config.azurewebsites.net, then add the following entry as the Redirect URIs:
 	- https://contosofaqplus-config.azurewebsites.net/signin
 	- https://contosofaqplus-config.azurewebsites.net/configuration
 
-![Adding Redirect URI3](/Wiki/Images/authenticationimage3.png)
+![Adding Redirect URI3](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/AuthenticationImage3.png)
 
 8. Click "Save" to commit your changes.
 
@@ -151,7 +151,7 @@ Use the following values when connecting to the QnA service:
 
 * **Microsoft Azure Directory ID**: The tenant associated with the Azure subscription selected in Step 2.1.
 * **Azure subscription name**: The Azure subscription to which the ARM template was deployed.
-* **Azure QnA service**: The QnA service created during the deployment. This is the same as the "Base resource name"; for example, if you chose "contosofaqplus" as the base name, the QnA Maker service will be named `contosofaqplus`.
+* **Azure QnA service**: The QnA service was created during the deployment. This is the same as the "Base resource name"; for example, if you chose "contosofaqplus" as the base name, the QnA Maker service will be named `contosofaqplus`.
 
 ![Screenshot of settings](https://docs.microsoft.com/en-us/azure/cognitive-services/qnamaker/media/qnamaker-tutorial-create-publish-query-in-portal/create-kb-step-2.png)
 
@@ -162,7 +162,7 @@ With the new updates to the FAQ Plus app template, the knowledge base can now su
 
 After [publishing the knowledge base](https://docs.microsoft.com/en-us/azure/cognitive-services/qnamaker/tutorials/create-publish-query-in-portal#publish-to-get-knowledge-base-endpoints), note the knowledge base ID (see screenshot).
 
-![Screenshot of the publishing page](/Wiki/Images/kb_publishing.png)
+![Screenshot of the publishing page](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/kb_publishing.png)
 
 Remember the knowledge base ID: we will need it in the next step.
 
@@ -172,19 +172,19 @@ Remember the knowledge base ID: we will need it in the next step.
 
 2. You will be prompted to log in with your credentials. Make sure that you log in with an account that is in the list of users allowed to access the configuration app.
 
-![Config web app page](/Wiki/Images/config-web-app-login.png)
+![Config web app page](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/config-web-app-login.png)
 
 3. Get the link to the team with your experts from the Teams client. To do so, open Microsoft Teams, and navigate to the team. Click on the "..." next to the team name, then select "Get link to team".
 
-![Get link to Team](/Wiki/Images/get-link-to-Team.png)
+![Get link to Team](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/get-link-to-Team.png)
 
 Click on "Copy" to copy the link to the clipboard.
 
-![Link to team](/Wiki/Images/link-to-team.png)
+![Link to team](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/link-to-team.png)
 
 4. Paste the copied link into the "Team Id" field, then press "OK".
 
-![Add team link form](/Wiki/Images/fill-in-team-link.png)
+![Add team link form](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/fill-in-team-link.png)
 
 5. Enter the QnA Maker knowledge base ID into the "Knowledge base ID" field, then press "OK".
 
@@ -219,20 +219,20 @@ Create two Teams app packages: one for end-users to install personally, and one 
 6. Create a ZIP package with the `manifest.json`,`color.png`, and `outline.png`. The two image files are the icons for your app in Teams.
 * Name this package `faqplus-enduser.zip`, so you know that this is the app for end-users.
 * Make sure that the 3 files are the _top level_ of the ZIP package, with no nested folders.
-![File Explorer](/Wiki/Images/file-explorer.png)
+![File Explorer](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/file-explorer.png)
 
 7. Rename the `manifest.json` file to `manifest_enduser.json` for reusing the file.
 
 8.  Open the `Manifest\manifest_sme.json` file in a text editor.
 
-9. Repeat the steps from 2 to 4 to replace the all the placeholders in the file.
+9. Repeat the steps from 2 to 4 to replace all the placeholders in the file.
 
 10. Save and Rename `manifest_sme.json` file to a file named `manifest.json`.
 
 11. Create a ZIP package with the `manifest.json`,`color.png`, and `outline.png`. The two image files are the icons for your app in Teams.
 * Name this package `faqplus-experts.zip`, so you know that this is the app for end-users.
 * Make sure that the 3 files are the _top level_ of the ZIP package, with no nested folders.
-![File Explorer](/Wiki/Images/file-explorer.png)
+![File Explorer](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/file-explorer.png)
 
 12. Rename the `manifest.json` file to `manifest_sme.json` for reusing the file.
 
@@ -250,4 +250,4 @@ Create two Teams app packages: one for end-users to install personally, and one 
 
 ## Troubleshooting
 
-Please see our [Troubleshooting](/Wiki/Troubleshooting.md) page.
+Please see our [Troubleshooting](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Troubleshooting) page.
