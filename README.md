@@ -45,7 +45,7 @@ More screenshots and tips on how to use the app are in the [Wiki](https://github
 
 ## Legal Notice
 
-Please read the license terms applicable to this template [here](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/blob/master/LICENSE). In addition to these terms, you agree to the following:
+This app template is provided under the [MIT License](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/blob/master/LICENSE) terms.  In addition to these terms, by using this app template you agree to the following:
 
 - You, not Microsoft, will license the use of your app to users or organization. 
 
