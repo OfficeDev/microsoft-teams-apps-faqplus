@@ -19,7 +19,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Strings {
@@ -162,9 +162,18 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Assign to me.
         /// </summary>
-        public static string AssignToMeActionChoiceTitle {
+        public static string AssignToMeActionTitle {
             get {
-                return ResourceManager.GetString("AssignToMeActionChoiceTitle", resourceCulture);
+                return ResourceManager.GetString("AssignToMeActionTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Assign to others.
+        /// </summary>
+        public static string AssignToOthersActionTitle {
+            get {
+                return ResourceManager.GetString("AssignToOthersActionTitle", resourceCulture);
             }
         }
         
@@ -207,9 +216,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Resolved.
         /// </summary>
-        public static string CloseActionChoiceTitle {
+        public static string CloseActionTitle {
             get {
-                return ResourceManager.GetString("CloseActionChoiceTitle", resourceCulture);
+                return ResourceManager.GetString("CloseActionTitle", resourceCulture);
             }
         }
         
@@ -237,6 +246,33 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         public static string ClosedUserNotificationStatus {
             get {
                 return ResourceManager.GetString("ClosedUserNotificationStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}, Comment could not be Empty!.
+        /// </summary>
+        public static string CommentEmptyWarning {
+            get {
+                return ResourceManager.GetString("CommentEmptyWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter your comment here (500 characters max).
+        /// </summary>
+        public static string CommentPlachHonderText {
+            get {
+                return ResourceManager.GetString("CommentPlachHonderText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Comment:.
+        /// </summary>
+        public static string CommentText {
+            get {
+                return ResourceManager.GetString("CommentText", resourceCulture);
             }
         }
         
@@ -403,6 +439,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Expert:.
+        /// </summary>
+        public static string ExpertFact {
+            get {
+                return ResourceManager.GetString("ExpertFact", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to **{0}** has shared the feedback.
         /// </summary>
         public static string FeedbackAlertText {
@@ -448,7 +493,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You can simply ask me a question and I will try my best to answer. If there are additional follow-ups, I will bring those as well....
+        ///   Looks up a localized string similar to You can ask me a question by typing it in the chat box below and I&apos;ll do my best to answer your question.
         /// </summary>
         public static string FunctionCardText2 {
             get {
@@ -601,6 +646,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0},only the owner can change this request! Assigne to yourself first..
+        /// </summary>
+        public static string NotTicketOwnerWarning {
+            get {
+                return ResourceManager.GetString("NotTicketOwnerWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Open article.
         /// </summary>
         public static string OpenArticle {
@@ -615,6 +669,33 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         public static string OptionalFieldDisplayText {
             get {
                 return ResourceManager.GetString("OptionalFieldDisplayText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pending.
+        /// </summary>
+        public static string PendingActionTitle {
+            get {
+                return ResourceManager.GetString("PendingActionTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your request has changed to pending state, experts will investigate and back to you soon..
+        /// </summary>
+        public static string PendingTicketUserNotification {
+            get {
+                return ResourceManager.GetString("PendingTicketUserNotification", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pending.
+        /// </summary>
+        public static string PendingUserNotificationStatus {
+            get {
+                return ResourceManager.GetString("PendingUserNotificationStatus", resourceCulture);
             }
         }
         
@@ -700,6 +781,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Your question has been reassigned to another expert. They&apos;ll respond to you directly with a chat message..
+        /// </summary>
+        public static string ReAssigneTicketUserNotification {
+            get {
+                return ResourceManager.GetString("ReAssigneTicketUserNotification", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Redirection URL.
         /// </summary>
         public static string RedirectionLabelText {
@@ -718,29 +808,38 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reopen.
-        /// </summary>
-        public static string ReopenActionChoiceTitle {
-            get {
-                return ResourceManager.GetString("ReopenActionChoiceTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Reopen and assign to me.
         /// </summary>
-        public static string ReopenAssignToMeActionChoiceTitle {
+        public static string ReopenAssignToMeActionTitle {
             get {
-                return ResourceManager.GetString("ReopenAssignToMeActionChoiceTitle", resourceCulture);
+                return ResourceManager.GetString("ReopenAssignToMeActionTitle", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Your request is open again. An expert will directly send you a chat message..
+        ///   Looks up a localized string similar to Reopen and assign to others.
+        /// </summary>
+        public static string ReopenAssignToOthersActionTitle {
+            get {
+                return ResourceManager.GetString("ReopenAssignToOthersActionTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your request is open again and assigned. An expert will directly send you a chat message..
         /// </summary>
         public static string ReopenedTicketUserNotification {
             get {
                 return ResourceManager.GetString("ReopenedTicketUserNotification", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Resolve.
+        /// </summary>
+        public static string ResolveActionChoiceTitle {
+            get {
+                return ResourceManager.GetString("ResolveActionChoiceTitle", resourceCulture);
             }
         }
         
@@ -835,6 +934,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This request is now assigned. Assigned to {0} by {1}.
+        /// </summary>
+        public static string SMEAssignedByOthersStatus {
+            get {
+                return ResourceManager.GetString("SMEAssignedByOthersStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This request is now assigned. Assigned to {0}..
         /// </summary>
         public static string SMEAssignedStatus {
@@ -871,6 +979,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This request is now pending. Pending by {0}..
+        /// </summary>
+        public static string SMEPendingStatus {
+            get {
+                return ResourceManager.GetString("SMEPendingStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Assigned to {0}.
         /// </summary>
         public static string SMETicketAssignedStatus {
@@ -880,11 +997,20 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Closed.
+        ///   Looks up a localized string similar to Pending by {0}.
         /// </summary>
-        public static string SMETicketClosedStatus {
+        public static string SMETicketPendingStatus {
             get {
-                return ResourceManager.GetString("SMETicketClosedStatus", resourceCulture);
+                return ResourceManager.GetString("SMETicketPendingStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Resolved.
+        /// </summary>
+        public static string SMETicketResolvedStatus {
+            get {
+                return ResourceManager.GetString("SMETicketResolvedStatus", resourceCulture);
             }
         }
         
@@ -912,6 +1038,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         public static string StatusFactTitle {
             get {
                 return ResourceManager.GetString("StatusFactTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string String1 {
+            get {
+                return ResourceManager.GetString("String1", resourceCulture);
             }
         }
         
@@ -1065,6 +1200,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         public static string ThankYouTextContent {
             get {
                 return ResourceManager.GetString("ThankYouTextContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}, the request already assigned to {1} !.
+        /// </summary>
+        public static string TicketAssignedToSameOneWarning {
+            get {
+                return ResourceManager.GetString("TicketAssignedToSameOneWarning", resourceCulture);
             }
         }
         

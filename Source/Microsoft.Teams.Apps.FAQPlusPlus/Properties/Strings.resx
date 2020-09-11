@@ -288,7 +288,7 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <comment>Notification text sent to the user who opened a ticket, when the ticket is closed.</comment>
   </data>
   <data name="ReopenedTicketUserNotification" xml:space="preserve">
-    <value>Your request is open again. An expert will directly send you a chat message.</value>
+    <value>Your request is open again and assigned. An expert will directly send you a chat message.</value>
     <comment>Notification text sent to the user who opened a ticket, when the ticket is reopened.</comment>
   </data>
   <data name="GoToOriginalThreadButtonText" xml:space="preserve">
@@ -315,21 +315,17 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <value>RE: {0}</value>
     <comment>The {0} is the placeholder for the title that the user had provided when asking an expert.</comment>
   </data>
-  <data name="AssignToMeActionChoiceTitle" xml:space="preserve">
+  <data name="AssignToMeActionTitle" xml:space="preserve">
     <value>Assign to me</value>
-    <comment>The dropdown choice for "Assign to me" for the SME ticket status is being updated</comment>
+    <comment>The buttonfor "Assign to me" for the SME ticket status is being updated</comment>
   </data>
-  <data name="CloseActionChoiceTitle" xml:space="preserve">
+  <data name="CloseActionTitle" xml:space="preserve">
     <value>Resolved</value>
     <comment>The dropdown choice for "Resolved" for when the SME ticket status is being updated</comment>
   </data>
-  <data name="ReopenActionChoiceTitle" xml:space="preserve">
-    <value>Reopen</value>
-    <comment>The dropdown choice for "Reopen" for when the SME ticket status is being updated from the closed status.</comment>
-  </data>
-  <data name="ReopenAssignToMeActionChoiceTitle" xml:space="preserve">
+  <data name="ReopenAssignToMeActionTitle" xml:space="preserve">
     <value>Reopen and assign to me</value>
-    <comment>The dropdown choice for "Reopen and assign to me" for when the SME ticket status is being updated from the closed state.</comment>
+    <comment>The choice for "Reopen and assign to me" for when the SME ticket status is being updated from the closed state.</comment>
   </data>
   <data name="UnassignActionChoiceTitle" xml:space="preserve">
     <value>Unassign</value>
@@ -339,9 +335,9 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <value>Assigned to {0}</value>
     <comment>This value represents the SME Ticket in the Assigned status - {0} represents the SME User to whom a ticket has been assigned</comment>
   </data>
-  <data name="SMETicketClosedStatus" xml:space="preserve">
-    <value>Closed</value>
-    <comment>This value represents the SME Ticket in the Closed status</comment>
+  <data name="SMETicketResolvedStatus" xml:space="preserve">
+    <value>Resolved</value>
+    <comment>This value represents the SME Ticket in the Resolved status</comment>
   </data>
   <data name="SMETicketUnassignedStatus" xml:space="preserve">
     <value>Unassigned</value>
@@ -620,5 +616,72 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
   <data name="ShareAppFeedbackRating" xml:space="preserve">
     <value>How helpful is this app? (Required)</value>
     <comment>Feedback for App</comment>
+  </data>
+  <data name="SMETicketPendingStatus" xml:space="preserve">
+    <value>Pending by {0}</value>
+    <comment>This value represents the SME Ticket in the Pending status - {0} represents the  ticket whon is pending on</comment>
+  </data>
+  <data name="AssignToOthersActionTitle" xml:space="preserve">
+    <value>Assign to others</value>
+    <comment>The button for "Assign to others" for the SME ticket status is being updated</comment>
+  </data>
+  <data name="CommentEmptyWarning" xml:space="preserve">
+    <value>{0}, Comment could not be Empty!</value>
+    <comment>Message posted to the thread when the comment is null. {1} = name of SME whom trigger the action.</comment>
+  </data>
+  <data name="CommentPlachHonderText" xml:space="preserve">
+    <value>Enter your comment here (500 characters max)</value>
+    <comment>Placeholder text for comment text box.</comment>
+  </data>
+  <data name="CommentText" xml:space="preserve">
+    <value>Comment:</value>
+    <comment> label of the comment text box.</comment>
+  </data>
+  <data name="ExpertFact" xml:space="preserve">
+    <value>Expert:</value>
+    <comment>Expert: one of the available fact set in notification cards-Expert name</comment>
+  </data>
+  <data name="NotTicketOwnerWarning" xml:space="preserve">
+    <value>{0},only the owner can change this request! Assigne to yourself first.</value>
+    <comment>Message posted to the thread when the try to pending or resolve ticket owned by others. {1} = name of SME whom trigger the action.</comment>
+  </data>
+  <data name="PendingActionTitle" xml:space="preserve">
+    <value>Pending</value>
+    <comment>The buttonfor "pending" for the SME ticket status is being updated</comment>
+  </data>
+  <data name="PendingTicketUserNotification" xml:space="preserve">
+    <value>Your request has changed to pending state, experts will investigate and back to you soon.</value>
+    <comment>Notification text sent to the user when user's ticket has been changed to pending state</comment>
+  </data>
+  <data name="PendingUserNotificationStatus" xml:space="preserve">
+    <value>Pending</value>
+    <comment>The status value for the user notification when a ticket is upending</comment>
+  </data>
+  <data name="ReAssigneTicketUserNotification" xml:space="preserve">
+    <value>Your question has been reassigned to another expert. They'll respond to you directly with a chat message.</value>
+    <comment>Notification text sent to the user who opened a ticket, when the ticket is reassigned to an expert.</comment>
+  </data>
+  <data name="ReopenAssignToOthersActionTitle" xml:space="preserve">
+    <value>Reopen and assign to others</value>
+    <comment>The choice for "Reopen and assign to others" for when the SME ticket status is being updated from the closed state.</comment>
+  </data>
+  <data name="ResolveActionChoiceTitle" xml:space="preserve">
+    <value>Resolve</value>
+    <comment>The buttonfor "Resolve" for the SME ticket status is being updated</comment>
+  </data>
+  <data name="SMEAssignedByOthersStatus" xml:space="preserve">
+    <value>This request is now assigned. Assigned to {0} by {1}</value>
+    <comment>Message posted to the thread when the ticket is assigned by others. {1} = name of SME whom the  ticket is assigned.{1} = name of SME who assigned the request.</comment>
+  </data>
+  <data name="SMEPendingStatus" xml:space="preserve">
+    <value>This request is now pending. Pending by {0}.</value>
+    <comment>Message posted to the thread when the ticket is pending. {0} = name of SME who pending the request.</comment>
+  </data>
+  <data name="String1" xml:space="preserve">
+    <value />
+  </data>
+  <data name="TicketAssignedToSameOneWarning" xml:space="preserve">
+    <value>{0}, the request already assigned to {1} !</value>
+    <comment>Message posted to the thread when try to assign ticket to same one. {1} = name of SME who trigger the action, {1} = name of SME whom the ticket is assigned</comment>
   </data>
 </root>

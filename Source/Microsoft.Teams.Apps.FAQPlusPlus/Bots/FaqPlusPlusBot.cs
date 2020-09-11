@@ -12,6 +12,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
+    using System.Xml;
     using Microsoft.ApplicationInsights.DataContracts;
     using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker.Models;
     using Microsoft.Bot.Builder;
@@ -84,6 +85,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         private readonly IFeedbackProvider feedbackProvider;
         private readonly IUserActionProvider userActionProvider;
         private readonly IConversationProvider conversationProvider;
+        private readonly IExpertProvider expertProvider;
         private readonly IActivityStorageProvider activityStorageProvider;
         private readonly ISearchService searchService;
         private readonly string appId;
@@ -106,6 +108,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <param name="feedbackProvider">Feedback Provider.</param>
         /// <param name="userActionProvider">UserAction Provider.</param>
         /// <param name="conversationProvider">Conversation storage provider.</param>
+        /// <param name="expertProvider">Expert storage provider.</param>
         /// <param name="activityStorageProvider">Activity storage provider.</param>
         /// <param name="qnaServiceProvider">Question and answer maker service provider.</param>
         /// <param name="searchService">SearchService dependency injection.</param>
@@ -123,6 +126,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             IFeedbackProvider feedbackProvider,
             IUserActionProvider userActionProvider,
             IConversationProvider conversationProvider,
+            IExpertProvider expertProvider,
             IQnaServiceProvider qnaServiceProvider,
             IActivityStorageProvider activityStorageProvider,
             ISearchService searchService,
@@ -140,6 +144,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             this.feedbackProvider = feedbackProvider;
             this.userActionProvider = userActionProvider;
             this.conversationProvider = conversationProvider;
+            this.expertProvider = expertProvider;
             this.options = optionsAccessor.CurrentValue;
             this.qnaServiceProvider = qnaServiceProvider;
             this.activityStorageProvider = activityStorageProvider;
@@ -949,7 +954,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     newTicket = await AdaptiveCardHelper.AskAnExpertSubmitText(message, turnContext, cancellationToken, this.ticketsProvider).ConfigureAwait(false);
                     if (newTicket != null)
                     {
-                        smeTeamCard = new SmeTicketCard(newTicket).ToAttachment(message?.LocalTimestamp, this.appBaseUri);
+                        var experts = await this.expertProvider.GetExpertsAsync().ConfigureAwait(false);
+                        smeTeamCard = new SmeTicketCard(newTicket, experts).ToAttachment(message?.LocalTimestamp, this.appBaseUri);
                         userCard = new UserNotificationCard(newTicket).ToAttachment(Strings.NotificationCardContent, message?.LocalTimestamp);
                     }
 
@@ -1038,46 +1044,127 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 return;
             }
 
-            string currentStats;
-            if (ticket.Status == 0)
-            {
-                currentStats = ticket.IsAssigned() ? "Assigned" : "Open";
-            }
-            else
-            {
-                currentStats = "Closed";
-            }
-
             UserActionEntity userAction = this.GenerateChannelAction();
-            userAction.Remark += $"from {currentStats}";
+            userAction.Action = nameof(UserActionType.ChangeStatus);
+            userAction.Remark += $"from {((TicketState)ticket.Status).ToString()}";
+
+            // Illegal operation, post warning to SME team thread and return
+            if (payload.Action == ChangeTicketStatusPayload.PendingAction || payload.Action == ChangeTicketStatusPayload.ResolveAction)
+            {
+                // if not the owner
+                if (ticket.AssignedToName != message.From.Name)
+                {
+                    var mention = await this.MentionSomeoneByName(turnContext, cancellationToken, message.From.Name).ConfigureAwait(false);
+                    if (mention != null)
+                    {
+                        var replyActivity = MessageFactory.Text(string.Format(CultureInfo.InvariantCulture, Strings.NotTicketOwnerWarning, mention.Text));
+                        replyActivity.Entities = new List<Entity> { mention };
+
+                        await turnContext.SendActivityAsync(replyActivity, cancellationToken);
+                        return;
+                    }
+                }
+
+                // if no comment
+                if ((payload.Action == ChangeTicketStatusPayload.PendingAction && payload.PendingComment == string.Empty) || (payload.Action == ChangeTicketStatusPayload.ResolveAction && payload.ResolveComment == string.Empty))
+                {
+                    var mention = await this.MentionSomeoneByName(turnContext, cancellationToken, message.From.Name).ConfigureAwait(false);
+                    if (mention != null)
+                    {
+                        var replyActivity = MessageFactory.Text(string.Format(CultureInfo.InvariantCulture, Strings.CommentEmptyWarning, mention.Text));
+                        replyActivity.Entities = new List<Entity> { mention };
+
+                        await turnContext.SendActivityAsync(replyActivity, cancellationToken);
+                        return;
+                    }
+                }
+            }
 
             // Update the ticket based on the payload.
+            string smeNotification = null;
+            int previousState = ticket.Status;
             switch (payload.Action)
             {
-                case ChangeTicketStatusPayload.ReopenAction:
-                    ticket.Status = (int)TicketState.Open;
-                    ticket.DateAssigned = null;
-                    ticket.AssignedToName = null;
-                    ticket.AssignedToObjectId = null;
-                    ticket.DateClosed = null;
-                    userAction.Action = nameof(UserActionType.ChangeStatus);
-                    userAction.Remark += $" to Open";
+                case ChangeTicketStatusPayload.PendingAction:
+                    ticket.Status = (int)TicketState.Pending;
+                    ticket.PendingComment = payload.PendingComment;
+
+                    userAction.Remark += $" to Pending";
                     break;
 
-                case ChangeTicketStatusPayload.CloseAction:
-                    ticket.Status = (int)TicketState.Closed;
+                case ChangeTicketStatusPayload.ResolveAction:
+                    ticket.Status = (int)TicketState.Resolved;
                     ticket.DateClosed = DateTime.UtcNow.AddHours(8);
-                    userAction.Action = nameof(UserActionType.ChangeStatus);
-                    userAction.Remark += $" to Closed";
+                    ticket.ResolveComment = payload.ResolveComment;
+
+                    userAction.Remark += $" to Resolved";
+                    break;
+
+                case ChangeTicketStatusPayload.AssignToOthersAction:
+                    var info = payload.OtherAssigneeInfo.Split(':');
+                    string assigneeName = null;
+                    string assigneeID = null;
+                    if (info?.Length == 2)
+                    {
+                        assigneeName = info[0];
+                        assigneeID = info?[1];
+                    }
+                    else
+                    {
+                        throw new ArgumentException("assigned infor error");
+                    }
+
+                    // if already assigned
+                    if (ticket.Status == (int)TicketState.Assigned && ticket.AssignedToName == assigneeName)
+                    {
+                        var mention = await this.MentionSomeoneByName(turnContext, cancellationToken, message.From.Name).ConfigureAwait(false);
+                        if (mention != null)
+                        {
+                            var replyActivity = MessageFactory.Text(string.Format(CultureInfo.InvariantCulture, Strings.TicketAssignedToSameOneWarning, mention.Text, ticket.AssignedToName));
+                            replyActivity.Entities = new List<Entity> { mention };
+
+                            await turnContext.SendActivityAsync(replyActivity, cancellationToken);
+                            return;
+                        }
+                    }
+
+                    ticket.Status = (int)TicketState.Assigned;
+                    ticket.DateAssigned = DateTime.UtcNow.AddHours(8);
+
+                    if (info?.Length == 2)
+                    {
+                        ticket.AssignedToName = assigneeName;
+                        ticket.AssignedToObjectId = assigneeID;
+                    }
+
+                    ticket.DateClosed = null;
+
+                    userAction.Remark += $" to Assigned";
                     break;
 
                 case ChangeTicketStatusPayload.AssignToSelfAction:
-                    ticket.Status = (int)TicketState.Open;
+                    // if already assigned 
+                    if (ticket.Status == (int)TicketState.Assigned && ticket.AssignedToName == message.From.Name)
+                    {
+                        var mention = await this.MentionSomeoneByName(turnContext, cancellationToken, message.From.Name).ConfigureAwait(false);
+                        if (mention != null)
+                        {
+                            var replyActivity = MessageFactory.Text(string.Format(CultureInfo.InvariantCulture, Strings.TicketAssignedToSameOneWarning, mention.Text, ticket.AssignedToName));
+                            replyActivity.Entities = new List<Entity> { mention };
+
+                            await turnContext.SendActivityAsync(replyActivity, cancellationToken);
+                            return;
+                        }
+                    }
+
+                    ticket.Status = (int)TicketState.Assigned;
                     ticket.DateAssigned = DateTime.UtcNow.AddHours(8);
                     ticket.AssignedToName = message.From.Name;
                     ticket.AssignedToObjectId = message.From.AadObjectId;
                     ticket.DateClosed = null;
-                    userAction.Action = nameof(UserActionType.ChangeStatus);
+                    ticket.PendingComment = null;
+                    ticket.ResolveComment = null;
+
                     userAction.Remark += $" to Assigned";
                     break;
 
@@ -1094,39 +1181,81 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             this.logger.LogInformation($"Ticket {ticket.TicketId} updated to status ({ticket.Status}, {ticket.AssignedToObjectId}) in store");
 
             // Update the card in the SME team.
+            var experts = await this.expertProvider.GetExpertsAsync().ConfigureAwait(false);
             var updateCardActivity = new Activity(ActivityTypes.Message)
             {
                 Id = ticket.SmeCardActivityId,
                 Conversation = new ConversationAccount { Id = ticket.SmeThreadConversationId },
-                Attachments = new List<Attachment> { new SmeTicketCard(ticket).ToAttachment(message.LocalTimestamp, this.appBaseUri) },
+                Attachments = new List<Attachment> { new SmeTicketCard(ticket, experts).ToAttachment(message.LocalTimestamp, this.appBaseUri) },
             };
             var updateResponse = await turnContext.UpdateActivityAsync(updateCardActivity, cancellationToken).ConfigureAwait(false);
             this.logger.LogInformation($"Card for ticket {ticket.TicketId} updated to status ({ticket.Status}, {ticket.AssignedToObjectId}), activityId = {updateResponse.Id}");
 
             // Post update to user and SME team thread.
-            string smeNotification = null;
             IMessageActivity userNotification = null;
             switch (payload.Action)
             {
-                case ChangeTicketStatusPayload.ReopenAction:
-                    smeNotification = string.Format(CultureInfo.InvariantCulture, Strings.SMEOpenedStatus, message.From.Name);
+                case ChangeTicketStatusPayload.PendingAction:
+                    smeNotification = string.Format(CultureInfo.InvariantCulture, Strings.SMEPendingStatus, message.From.Name);
 
-                    userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket).ToAttachment(Strings.ReopenedTicketUserNotification, message.LocalTimestamp));
-                    userNotification.Summary = Strings.ReopenedTicketUserNotification;
+                    userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket).ToAttachment(Strings.PendingTicketUserNotification, message.LocalTimestamp));
+                    userNotification.Summary = Strings.PendingTicketUserNotification;
                     break;
 
-                case ChangeTicketStatusPayload.CloseAction:
+                case ChangeTicketStatusPayload.ResolveAction:
                     smeNotification = string.Format(CultureInfo.InvariantCulture, Strings.SMEClosedStatus, ticket.LastModifiedByName);
 
-                    userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket).ToAttachment(Strings.ClosedTicketUserNotification, message.LocalTimestamp));
+                    userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket, this.appBaseUri).ToAttachment(Strings.ClosedTicketUserNotification, message.LocalTimestamp));
                     userNotification.Summary = Strings.ClosedTicketUserNotification;
                     break;
 
                 case ChangeTicketStatusPayload.AssignToSelfAction:
                     smeNotification = string.Format(CultureInfo.InvariantCulture, Strings.SMEAssignedStatus, ticket.AssignedToName);
+                    if (previousState == (int)TicketState.Resolved)
+                    {
+                        userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket).ToAttachment(Strings.ReopenedTicketUserNotification, message.LocalTimestamp));
+                        userNotification.Summary = Strings.ReopenedTicketUserNotification;
+                    }
+                    else if (previousState == (int)TicketState.Assigned)
+                    {
+                        userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket).ToAttachment(Strings.ReAssigneTicketUserNotification, message.LocalTimestamp));
+                        userNotification.Summary = Strings.ReAssigneTicketUserNotification;
+                    }
+                    else
+                    {
+                        userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket).ToAttachment(Strings.AssignedTicketUserNotification, message.LocalTimestamp));
+                        userNotification.Summary = Strings.AssignedTicketUserNotification;
+                    }
 
-                    userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket).ToAttachment(Strings.AssignedTicketUserNotification, message.LocalTimestamp));
-                    userNotification.Summary = Strings.AssignedTicketUserNotification;
+                    break;
+                case ChangeTicketStatusPayload.AssignToOthersAction:
+
+                    // @ assignee
+                    var mention = await this.MentionSomeoneByName(turnContext, cancellationToken, ticket.AssignedToName).ConfigureAwait(false);
+                    if (mention != null)
+                    {
+                        var replyActivity = MessageFactory.Text(string.Format(CultureInfo.InvariantCulture, Strings.SMEAssignedByOthersStatus, mention.Text, message.From.Name));
+                        replyActivity.Entities = new List<Entity> { mention };
+
+                        await turnContext.SendActivityAsync(replyActivity, cancellationToken);
+                    }
+
+                    if (previousState == (int)TicketState.Resolved)
+                    {
+                        userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket).ToAttachment(Strings.ReopenedTicketUserNotification, message.LocalTimestamp));
+                        userNotification.Summary = Strings.ReopenedTicketUserNotification;
+                    }
+                    else if (previousState == (int)TicketState.Assigned)
+                    {
+                        userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket).ToAttachment(Strings.ReAssigneTicketUserNotification, message.LocalTimestamp));
+                        userNotification.Summary = Strings.ReAssigneTicketUserNotification;
+                    }
+                    else
+                    {
+                        userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket).ToAttachment(Strings.AssignedTicketUserNotification, message.LocalTimestamp));
+                        userNotification.Summary = Strings.AssignedTicketUserNotification;
+                    }
+
                     break;
             }
 
@@ -1514,7 +1643,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     payload = ((JObject)message.Value).ToObject<ResponseCardPayload>();
                 }
 
-                queryResult = await this.qnaServiceProvider.GenerateAnswerAsync(question: text, isTestKnowledgeBase: false, payload.PreviousQuestions?.First().Id.ToString(), payload.PreviousQuestions?.First().Questions.First()).ConfigureAwait(false);
+                queryResult = await this.qnaServiceProvider.GenerateAnswerAsync(question: text, isTestKnowledgeBase: false, payload.PreviousQuestions?.First().Id.ToString(), payload.PreviousQuestions?.First().Questions.First(), payload.QnAID).ConfigureAwait(false);
 
                 if (queryResult.Answers.First().Id != -1)
                 {
@@ -1534,6 +1663,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                             sb.Append($"[{item.DisplayText}]");
                         }
                     }
+
                     conInfo.Prompts = sb.ToString();
 
                     AnswerModel answerModel = new AnswerModel();
@@ -1549,7 +1679,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     }
                     else
                     {
-                        await turnContext.SendActivityAsync(MessageFactory.Attachment(ResponseCard.GetCard(answerData, text, this.appBaseUri, payload))).ConfigureAwait(false);
+                        bool isChitChat = (from r in answerData.Metadata where r.Value == "chitchat" select r).FirstOrDefault() == null ? false : true;
+                        if (isChitChat)
+                        {
+                            await turnContext.SendActivityAsync(answerData.Answer).ConfigureAwait(false);
+                        }
+                        else
+                        {
+                            await turnContext.SendActivityAsync(MessageFactory.Attachment(ResponseCard.GetCard(answerData, text, this.appBaseUri, payload))).ConfigureAwait(false);
+                        }
                     }
                 }
                 else
@@ -1609,5 +1747,87 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             userAction.Action = nameof(UserActionType.NotDefined);
             return userAction;
         }
+
+        /// <summary>
+        /// Get members information from channel.
+        /// </summary>
+        /// <param name="turnContext">Context object containing information cached for a single turn of conversation with a user.</param>
+        /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+        /// <returns> account list of users.</returns>
+        private async Task<List<TeamsChannelAccount>> GetTeamsChannelMembers(ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
+        {
+            var members = new List<TeamsChannelAccount>();
+            string continuationToken = null;
+
+            do
+            {
+                var currentPage = await TeamsInfo.GetPagedMembersAsync(turnContext, 100, continuationToken, cancellationToken);
+                continuationToken = currentPage.ContinuationToken;
+                members = members.Concat(currentPage.Members).ToList();
+            }
+            while (continuationToken != null);
+            return members;
+        }
+
+        private async Task SaveChannelMembers(ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
+        {
+            var accounts = await this.GetTeamsChannelMembers(turnContext, cancellationToken).ConfigureAwait(false);
+            List<ExpertEntity> experts = new List<ExpertEntity>();
+            foreach (TeamsChannelAccount account in accounts)
+            {
+                experts.Add(new ExpertEntity()
+                {
+                    ID = account.AadObjectId,
+                    Name = account.Name,
+                    GivenName = account.GivenName,
+                    Surname = account.Surname,
+                    Email = account.Email,
+                    UserPrincipalName = account.UserPrincipalName,
+                    TenantId = account.TenantId,
+                    UserRole = account.UserRole,
+                });
+            }
+
+            await this.expertProvider.UpserExpertsAsync(experts);
+        }
+
+
+        private async Task<Mention> MentionSomeoneByName(ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken, string name)
+        {
+            var members = await this.GetTeamsChannelMembers(turnContext, cancellationToken);
+            foreach (TeamsChannelAccount member in members)
+            {
+                if (member.Name.Equals(name))
+                {
+                    var mention = new Mention
+                    {
+                        Mentioned = member,
+                        Text = $"<at>{XmlConvert.EncodeName(member.Name)}</at>",
+                    };
+                    return mention;
+                }
+            }
+
+            return null;
+        }
+        //        @ someone
+        //        var members = await this.GetTeamsChannelMembers(turnContext, cancellationToken);
+        //foreach (TeamsChannelAccount member in members)
+        //        {
+        //            if (member.Name.Equals("Chen Qiang (River)"))
+        //            {
+        //                var mention = new Mention
+        //                {
+        //                    Mentioned = member,
+        //                    Text = $"<at>{XmlConvert.EncodeName("General")}</at>",
+        //                };
+
+        //                var replyActivity = MessageFactory.Text($"Hello {mention.Text}.");
+        //                replyActivity.Entities = new List<Entity> { mention };
+
+        //                await turnContext.SendActivityAsync(replyActivity, cancellationToken);
+        //            }
+        //        }
+
     }
 }

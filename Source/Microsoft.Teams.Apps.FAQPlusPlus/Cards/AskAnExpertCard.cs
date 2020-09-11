@@ -138,7 +138,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 {
                     new AdaptiveSubmitAction
                     {
-                        Title = Strings.AskAnExpertButtonText,
                         Data = new AskAnExpertCardPayload
                         {
                             MsTeams = new CardAction

@@ -12,19 +12,24 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
     public class ChangeTicketStatusPayload
     {
         /// <summary>
-        /// Action that reopens a closed ticket.
+        /// Action that change a ticket to pending.
         /// </summary>
-        public const string ReopenAction = "Reopen";
+        public const string PendingAction = "Pending";
 
         /// <summary>
-        /// Action that closes a ticket.
+        /// Action that resolve a ticket.
         /// </summary>
-        public const string CloseAction = "Close";
+        public const string ResolveAction = "Resolve";
 
         /// <summary>
         /// Action that assigns a ticket to the person that performed the action.
         /// </summary>
         public const string AssignToSelfAction = "AssignToSelf";
+
+        /// <summary>
+        /// Action that assigns a ticket to the other persion in expert channel.
+        /// </summary>
+        public const string AssignToOthersAction = "AssignToOthers";
 
         /// <summary>
         /// Gets or sets the ticket id.
@@ -37,5 +42,23 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         /// </summary>
         [JsonProperty("action")]
         public string Action { get; set; }
+
+        /// <summary>
+        /// Gets or sets the comment for pending.
+        /// </summary>
+        [JsonProperty("pendingComment")]
+        public string PendingComment { get; set; }
+
+        /// <summary>
+        /// Gets or sets the comment for resolve.
+        /// </summary>
+        [JsonProperty("resolveComment")]
+        public string ResolveComment { get; set; }
+
+        /// <summary>
+        /// Gets or sets the info for other assignee name:ID.
+        /// </summary>
+        [JsonProperty("otherAssigneeInfo")]
+        public string OtherAssigneeInfo { get; set; }
     }
 }

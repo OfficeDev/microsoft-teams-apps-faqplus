@@ -181,7 +181,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Helpers
             TicketEntity ticketEntity = new TicketEntity
             {
                 TicketId = Guid.NewGuid().ToString(),
-                Status = (int)TicketState.Open,
+                Status = (int)TicketState.UnAssigned,
                 DateCreated = DateTime.UtcNow.AddHours(8),
                 Title = data.Title,
                 Description = data.Description,

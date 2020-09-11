@@ -19,6 +19,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
     public class SmeTicketCard
     {
         private readonly TicketEntity ticket;
+        private readonly List<ExpertEntity> experts;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SmeTicketCard"/> class.
@@ -27,6 +28,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         public SmeTicketCard(TicketEntity ticket)
         {
             this.ticket = ticket;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SmeTicketCard"/> class.
+        /// </summary>
+        /// <param name="ticket">The ticket model with the latest details.</param>
+        /// <param name="experts">Experts details in expert channel.</param>
+        public SmeTicketCard(TicketEntity ticket, List<ExpertEntity> experts)
+        {
+            this.ticket = ticket;
+            this.experts = experts;
         }
 
         /// <summary>
@@ -90,7 +102,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         Facts = this.BuildFactSet(localTimestamp),
                     },
                 },
-                Actions = this.BuildActions(),
+                Actions = this.BuildActions(appBaseUri),
             };
 
             return new Attachment
@@ -103,30 +115,22 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <summary>
         /// Return the appropriate set of card actions based on the state and information in the ticket.
         /// </summary>
+        /// <param name="appBaseUri">The base URI where the app is hosted.</param>
         /// <returns>Adaptive card actions.</returns>
-        protected virtual List<AdaptiveAction> BuildActions()
+        protected virtual List<AdaptiveAction> BuildActions(string appBaseUri)
         {
             List<AdaptiveAction> actionsList = new List<AdaptiveAction>();
 
-            actionsList.Add(this.CreateChatWithUserAction());
+            actionsList.Add(this.CreateChatWithUserAction(appBaseUri));
 
             actionsList.Add(new AdaptiveShowCardAction
             {
                 Title = Strings.ChangeStatusButtonText,
                 Card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
                 {
-                    Body = new List<AdaptiveElement>
-                    {
-                        this.GetAdaptiveChoiceSetInput(),
-                    },
-                    Actions = new List<AdaptiveAction>
-                    {
-                        new AdaptiveSubmitAction
-                        {
-                            Data = new ChangeTicketStatusPayload { TicketId = this.Ticket.TicketId },
-                        },
-                    },
+                    Actions = this.BuildChangeStatesActions(),
                 },
+                IconUrl = appBaseUri + "/content/change.png",
             });
 
             if (!string.IsNullOrEmpty(this.Ticket.KnowledgeBaseAnswer))
@@ -145,6 +149,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                             },
                         },
                     },
+                    IconUrl = appBaseUri + "/content/article.png",
                 });
             }
 
@@ -154,16 +159,179 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <summary>
         /// Create an adaptive card action that starts a chat with the user.
         /// </summary>
+        /// <param name="appBaseUri">The base URI where the app is hosted.</param>
         /// <returns>Adaptive card action for starting chat with user.</returns>
-        protected AdaptiveAction CreateChatWithUserAction()
+        protected AdaptiveAction CreateChatWithUserAction(string appBaseUri)
         {
             var messageToSend = string.Format(CultureInfo.InvariantCulture, Strings.SMEUserChatMessage, this.Ticket.Title);
             var encodedMessage = Uri.EscapeDataString(messageToSend);
 
             return new AdaptiveOpenUrlAction
             {
+                IconUrl = appBaseUri + "/content/chat.png",
                 Title = string.Format(CultureInfo.InvariantCulture, Strings.ChatTextButton, this.Ticket.RequesterGivenName),
                 Url = new Uri($"https://teams.microsoft.com/l/chat/0/0?users={Uri.EscapeDataString(this.Ticket.RequesterUserPrincipalName)}&message={encodedMessage}"),
+            };
+        }
+
+        /// <summary>
+        /// Create change state actions.
+        /// </summary>
+        /// <returns>action list</returns>
+        private List<AdaptiveAction> BuildChangeStatesActions()
+        {
+            List<AdaptiveAction> actionsList = new List<AdaptiveAction>();
+            if (this.Ticket.Status == (int)TicketState.UnAssigned)
+            {
+                actionsList.Add(this.CreateAssignToMeAction());
+                actionsList.Add(this.CreateAssignToOthersAction());
+            }
+            else if (this.Ticket.Status == (int)TicketState.Assigned)
+            {
+                actionsList.Add(this.CreateResolveAction());
+                actionsList.Add(this.CreatePendingAction());
+                actionsList.Add(this.CreateAssignToMeAction());
+                actionsList.Add(this.CreateAssignToOthersAction());
+            }
+            else if (this.Ticket.Status == (int)TicketState.Pending)
+            {
+                actionsList.Add(this.CreateResolveAction());
+            }
+            else if (this.Ticket.Status == (int)TicketState.Resolved)
+            {
+                actionsList.Add(this.CreateAssignToMeAction());
+                actionsList.Add(this.CreateAssignToOthersAction());
+            }
+
+            return actionsList;
+        }
+
+        /// <summary>
+        /// Create assigne to me action.
+        /// </summary>
+        /// <returns>action.</returns>
+        private AdaptiveAction CreateAssignToMeAction()
+        {
+            return new AdaptiveSubmitAction
+            {
+                Title = this.ticket.Status == (int)TicketState.Resolved ? Strings.ReopenAssignToMeActionTitle : Strings.AssignToMeActionTitle,
+                Data = new ChangeTicketStatusPayload
+                {
+                    Action = ChangeTicketStatusPayload.AssignToSelfAction,
+                    TicketId = this.ticket.TicketId,
+                },
+            };
+        }
+
+        /// <summary>
+        /// Create assigne to others action.
+        /// </summary>
+        /// <returns>action.</returns>
+        private AdaptiveAction CreateAssignToOthersAction()
+        {
+            return new AdaptiveShowCardAction
+            {
+                Title = this.ticket.Status == (int)TicketState.Resolved ? Strings.ReopenAssignToOthersActionTitle : Strings.AssignToOthersActionTitle,
+                Card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
+                {
+                    Body = new List<AdaptiveElement>
+                    {
+                        this.GetAdaptiveChoiceSetInput(),
+                    },
+                    Actions = new List<AdaptiveAction>
+                    {
+                        new AdaptiveSubmitAction
+                        {
+                            Data = new ChangeTicketStatusPayload
+                            {
+                                Action = ChangeTicketStatusPayload.AssignToOthersAction,
+                                TicketId = this.Ticket.TicketId,
+                            },
+                        },
+                    },
+                },
+            };
+        }
+
+        /// <summary>
+        /// Create pending action.
+        /// </summary>
+        /// <returns>action.</returns>
+        private AdaptiveAction CreatePendingAction()
+        {
+            return new AdaptiveShowCardAction
+            {
+                Title = Strings.PendingActionTitle,
+                Card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
+                {
+                    Body = new List<AdaptiveElement>
+                    {
+                         new AdaptiveTextBlock
+                         {
+                             Text = Strings.CommentText,
+                             Wrap = true,
+                         },
+                         new AdaptiveTextInput
+                         {
+                             Spacing = AdaptiveSpacing.Small,
+                             Id = nameof(ChangeTicketStatusPayload.PendingComment),
+                             Placeholder = Strings.CommentPlachHonderText,
+                             IsMultiline = true,
+                         },
+                    },
+                    Actions = new List<AdaptiveAction>
+                    {
+                        new AdaptiveSubmitAction
+                        {
+                            Data = new ChangeTicketStatusPayload
+                            {
+                                TicketId = this.Ticket.TicketId,
+                                Action = ChangeTicketStatusPayload.PendingAction,
+                            },
+                        },
+                    },
+                },
+            };
+        }
+
+        /// <summary>
+        /// Create resolve action.
+        /// </summary>
+        /// <returns>action.</returns>
+        private AdaptiveAction CreateResolveAction()
+        {
+            return new AdaptiveShowCardAction
+            {
+                Title = Strings.ResolveActionChoiceTitle,
+                Card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
+                {
+                    Body = new List<AdaptiveElement>
+                    {
+                         new AdaptiveTextBlock
+                         {
+                             Text = Strings.CommentText,
+                             Wrap = true,
+                         },
+                         new AdaptiveTextInput
+                         {
+                             Spacing = AdaptiveSpacing.Small,
+                             Id = nameof(ChangeTicketStatusPayload.ResolveComment),
+                             Placeholder = Strings.CommentPlachHonderText,
+                             IsMultiline = true,
+                         },
+                    },
+                    Actions = new List<AdaptiveAction>
+                    {
+                        new AdaptiveSubmitAction
+                        {
+                            Data = new ChangeTicketStatusPayload
+                            {
+                                TicketId = this.Ticket.TicketId,
+                                Action = ChangeTicketStatusPayload.ResolveAction,
+                            },
+                        },
+                    },
+                },
             };
         }
 
@@ -209,7 +377,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 Value = CardHelper.GetTicketDisplayStatusForSme(this.Ticket),
             });
 
-            if (this.Ticket.Status == (int)TicketState.Closed)
+            if (this.Ticket.Status == (int)TicketState.Resolved)
             {
                 factList.Add(new AdaptiveFact
                 {
@@ -229,70 +397,83 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         {
             AdaptiveChoiceSetInput choiceSet = new AdaptiveChoiceSetInput
             {
-                Id = nameof(ChangeTicketStatusPayload.Action),
+                Id = nameof(ChangeTicketStatusPayload.OtherAssigneeInfo),
                 IsMultiSelect = false,
                 Style = AdaptiveChoiceInputStyle.Compact,
             };
 
-            if (this.Ticket.Status == (int)TicketState.Open)
+            List<AdaptiveChoice> choices = new List<AdaptiveChoice>();
+            foreach (var expert in this.experts)
             {
-                if (!this.Ticket.IsAssigned())
+                choices.Add(new AdaptiveChoice()
                 {
-                    choiceSet.Value = ChangeTicketStatusPayload.AssignToSelfAction;
-                    choiceSet.Choices = new List<AdaptiveChoice>
-                    {
-                        new AdaptiveChoice
-                        {
-                            Title = Strings.AssignToMeActionChoiceTitle,
-                            Value = ChangeTicketStatusPayload.AssignToSelfAction,
-                        },
-                        new AdaptiveChoice
-                        {
-                            Title = Strings.CloseActionChoiceTitle,
-                            Value = ChangeTicketStatusPayload.CloseAction,
-                        },
-                    };
-                }
-                else
-                {
-                    choiceSet.Value = ChangeTicketStatusPayload.CloseAction;
-                    choiceSet.Choices = new List<AdaptiveChoice>
-                    {
-                        new AdaptiveChoice
-                        {
-                            Title = Strings.UnassignActionChoiceTitle,
-                            Value = ChangeTicketStatusPayload.ReopenAction,
-                        },
-                        new AdaptiveChoice
-                        {
-                            Title = Strings.AssignToMeActionChoiceTitle,
-                            Value = ChangeTicketStatusPayload.AssignToSelfAction,
-                        },
-                        new AdaptiveChoice
-                        {
-                            Title = Strings.CloseActionChoiceTitle,
-                            Value = ChangeTicketStatusPayload.CloseAction,
-                        },
-                    };
-                }
+                    Title = expert.Name,
+                    Value = $"{expert.Name}:{expert.ID}",
+                });
             }
-            else if (this.Ticket.Status == (int)TicketState.Closed)
-            {
-                choiceSet.Value = ChangeTicketStatusPayload.ReopenAction;
-                choiceSet.Choices = new List<AdaptiveChoice>
-                {
-                    new AdaptiveChoice
-                    {
-                        Title = Strings.ReopenActionChoiceTitle,
-                        Value = ChangeTicketStatusPayload.ReopenAction,
-                    },
-                    new AdaptiveChoice
-                    {
-                        Title = Strings.ReopenAssignToMeActionChoiceTitle,
-                        Value = ChangeTicketStatusPayload.AssignToSelfAction,
-                    },
-                };
-            }
+
+            choiceSet.Choices = choices;
+            choiceSet.Value = $"{this.experts[0].Name}:{this.experts[0].ID}";
+
+            //if (this.Ticket.Status == (int)TicketState.UnAssigned)
+            //{
+            //    if (!this.Ticket.IsAssigned())
+            //    {
+            //        choiceSet.Value = ChangeTicketStatusPayload.AssignToSelfAction;
+            //        choiceSet.Choices = new List<AdaptiveChoice>
+            //        {
+            //            new AdaptiveChoice
+            //            {
+            //                Title = Strings.AssignToMeActionChoiceTitle,
+            //                Value = ChangeTicketStatusPayload.AssignToSelfAction,
+            //            },
+            //            new AdaptiveChoice
+            //            {
+            //                Title = Strings.CloseActionChoiceTitle,
+            //                Value = ChangeTicketStatusPayload.ResolveAction,
+            //            },
+            //        };
+            //    }
+            //    else
+            //    {
+            //        choiceSet.Value = ChangeTicketStatusPayload.ResolveAction;
+            //        choiceSet.Choices = new List<AdaptiveChoice>
+            //        {
+            //            //new AdaptiveChoice
+            //            //{
+            //            //    Title = Strings.UnassignActionChoiceTitle,
+            //            //    Value = ChangeTicketStatusPayload.ReopenAction,
+            //            //},
+            //            new AdaptiveChoice
+            //            {
+            //                Title = Strings.AssignToMeActionChoiceTitle,
+            //                Value = ChangeTicketStatusPayload.AssignToSelfAction,
+            //            },
+            //            new AdaptiveChoice
+            //            {
+            //                Title = Strings.CloseActionChoiceTitle,
+            //                Value = ChangeTicketStatusPayload.ResolveAction,
+            //            },
+            //        };
+            //    }
+            //}
+            //else if (this.Ticket.Status == (int)TicketState.Resolved)
+            //{
+            //    //choiceSet.Value = ChangeTicketStatusPayload.ReopenAction;
+            //    choiceSet.Choices = new List<AdaptiveChoice>
+            //    {
+            //        //new AdaptiveChoice
+            //        //{
+            //        //    Title = Strings.ReopenActionChoiceTitle,
+            //        //    Value = ChangeTicketStatusPayload.ReopenAction,
+            //        //},
+            //        new AdaptiveChoice
+            //        {
+            //            Title = Strings.ReopenAssignToMeActionChoiceTitle,
+            //            Value = ChangeTicketStatusPayload.AssignToSelfAction,
+            //        },
+            //    };
+            //}
 
             return choiceSet;
         }

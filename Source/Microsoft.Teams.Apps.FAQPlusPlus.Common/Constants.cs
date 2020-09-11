@@ -91,6 +91,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common
         public const string TicketTableName = "Tickets";
 
         /// <summary>
+        /// Table name where expert detail from expert channel will be saved.
+        /// </summary>
+        public const string ExpertTableName = "Experts";
+
+        /// <summary>
         /// Table name where feedback from bot will be saved.
         /// </summary>
         public const string FeedbackTableName = "Feedback";

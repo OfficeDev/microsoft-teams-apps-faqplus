@@ -11,16 +11,26 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         /// <summary>
         /// Represents an active ticket.
         /// </summary>
-        Open = 0,
+        UnAssigned = 0,
+
+        /// <summary>
+        /// Represents an assigned ticket.
+        /// </summary>
+        Assigned = 1,
+
+        /// <summary>
+        /// Represents a pending ticket.
+        /// </summary>
+        Pending = 2,
 
         /// <summary>
         /// Represents a ticket that requires no further action.
         /// </summary>
-        Closed = 1,
+        Resolved = 3,
 
         /// <summary>
         /// Sentinel value.
         /// </summary>
-        MaxValue = Closed,
+        MaxValue = Resolved,
     }
 }

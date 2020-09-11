@@ -28,11 +28,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// Return the appropriate set of card actions based on the state and information in the ticket.
         /// </summary>
         /// <returns>Adaptive card actions.</returns>
-        protected override List<AdaptiveAction> BuildActions()
+        protected override List<AdaptiveAction> BuildActions(string url)
         {
             List<AdaptiveAction> actions = new List<AdaptiveAction>();
 
-            actions.Add(this.CreateChatWithUserAction());
+            actions.Add(this.CreateChatWithUserAction(url));
 
             if (!string.IsNullOrEmpty(this.Ticket.SmeThreadConversationId))
             {

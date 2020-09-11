@@ -140,6 +140,18 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         public string UserQuestion { get; set; }
 
         /// <summary>
+        /// Gets or sets the comment for pending.
+        /// </summary>
+        [JsonProperty("PendingComment")]
+        public string PendingComment { get; set; }
+
+        /// <summary>
+        /// Gets or sets the comment for resolve.
+        /// </summary>
+        [JsonProperty("ResolveComment")]
+        public string ResolveComment { get; set; }
+
+        /// <summary>
         /// Gets or sets the answer returned to the user from the knowledgebase.
         /// </summary>
         [JsonProperty("KnowledgeBaseAnswer")]
@@ -151,14 +163,5 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         [IsSortable]
         [JsonProperty("Timestamp")]
         public new DateTimeOffset Timestamp => base.Timestamp;
-
-        /// <summary>
-        /// Checks whether a ticket is assigned or not.
-        /// </summary>
-        /// <returns>Boolean value where true represent ticket is assigned while false represent ticket is not assigned.</returns>
-        public bool IsAssigned()
-        {
-            return !string.IsNullOrEmpty(this.AssignedToObjectId) && this.Status == (int)TicketState.Open;
-        }
     }
 }

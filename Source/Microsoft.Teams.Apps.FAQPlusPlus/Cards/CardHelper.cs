@@ -55,11 +55,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <returns>A status string.</returns>
         public static string GetUserTicketDisplayStatus(TicketEntity ticket)
         {
-            if (ticket?.Status == (int)TicketState.Open)
+            if (ticket?.Status == (int)TicketState.UnAssigned)
             {
-                return ticket.IsAssigned() ?
-                    Strings.AssignedUserNotificationStatus :
-                    Strings.UnassignedUserNotificationStatus;
+                return Strings.UnassignedUserNotificationStatus;
+            }
+            else if (ticket?.Status == (int)TicketState.Assigned)
+            {
+                return Strings.AssignedUserNotificationStatus;
+            }
+            else if (ticket?.Status == (int)TicketState.Pending)
+            {
+                return Strings.PendingUserNotificationStatus;
             }
             else
             {
@@ -74,15 +80,22 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <returns>A status string.</returns>
         public static string GetTicketDisplayStatusForSme(TicketEntity ticket)
         {
-            if (ticket?.Status == (int)TicketState.Open)
+            if (ticket?.Status == (int)TicketState.UnAssigned)
             {
-                return ticket.IsAssigned() ?
-                    string.Format(CultureInfo.InvariantCulture, Strings.SMETicketAssignedStatus, ticket?.AssignedToName) :
-                    Strings.SMETicketUnassignedStatus;
+                return Strings.SMETicketUnassignedStatus;
+
+            }
+            else if (ticket?.Status == (int)TicketState.Assigned)
+            {
+                return string.Format(CultureInfo.InvariantCulture, Strings.SMETicketAssignedStatus, ticket?.AssignedToName);
+            }
+            else if (ticket?.Status == (int)TicketState.Pending)
+            {
+                return string.Format(CultureInfo.InvariantCulture, Strings.SMETicketPendingStatus, ticket?.AssignedToName);
             }
             else
             {
-                return Strings.SMETicketClosedStatus;
+                return Strings.SMETicketResolvedStatus;
             }
         }
 

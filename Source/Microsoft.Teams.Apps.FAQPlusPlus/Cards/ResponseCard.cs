@@ -32,6 +32,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         {
             List<AdaptiveAction> actions = null;
             string project = (from r in response.Metadata where r.Name.Equals("project") select r).FirstOrDefault()?.Value;
+
             if (response?.Context.Prompts.Count == 0)
             {
                 actions = BuildListOfActions(userQuestion, response.Answer, project, appBaseUri);
@@ -86,25 +87,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                             {
                                 Columns = new List<AdaptiveColumn>()
                                 {
-                                    // This column will be for the icon.
                                     new AdaptiveColumn
                                     {
-                                        Width = AdaptiveColumnWidth.Auto,
-                                        VerticalContentAlignment = AdaptiveVerticalContentAlignment.Center,
-                                        Items = new List<AdaptiveElement>()
-                                        {
-                                            new AdaptiveImage
-                                            {
-                                                Url = new Uri(appBaseUri + "/content/Followupicon.png"),
-                                                Size = AdaptiveImageSize.Stretch,
-                                                Style = AdaptiveImageStyle.Default,
-                                            },
-                                        },
-                                        Spacing = AdaptiveSpacing.Small,
-                                    },
-                                    new AdaptiveColumn
-                                    {
-                                        Width = AdaptiveColumnWidth.Auto,
+                                        Width = AdaptiveColumnWidth.Stretch,
                                         VerticalContentAlignment = AdaptiveVerticalContentAlignment.Center,
                                         Items = new List<AdaptiveElement>()
                                         {
@@ -112,9 +97,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                             {
                                                 Wrap = true,
                                                 Text = string.Format(Strings.SelectActionItemDisplayTextFormatting, item.DisplayText),
+                                                HorizontalAlignment = AdaptiveHorizontalAlignment.Center,
                                             },
                                         },
-                                        Spacing = AdaptiveSpacing.Small,
+                                        Spacing = AdaptiveSpacing.Padding,
+                                        BackgroundImage = new AdaptiveBackgroundImage
+                                        {
+                                            Url = new Uri(appBaseUri + "/content/Followupicon3.3.png"),
+                                            HorizontalAlignment = AdaptiveHorizontalAlignment.Left,
+                                            VerticalAlignment = AdaptiveVerticalAlignment.Center,
+                                        },
                                     },
                                 },
                             },
@@ -132,6 +124,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                 },
                                 PreviousQuestions = previousQuestions,
                                 IsPrompt = true,
+                                QnAID = item.QnaId.ToString(),
                             },
                         },
                         Separator = true,

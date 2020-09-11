@@ -13,6 +13,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
     /// </summary>
     public class ResponseCardPayload : TeamsAdaptiveSubmitActionData
     {
+
+        /// <summary>
+        /// Gets or sets the QnAID of prompts by the user.
+        /// </summary>
+        [JsonProperty("QnAID")]
+        public string QnAID { get; set; }
+
         /// <summary>
         /// Gets or sets the question that was asked originally asked by the user.
         /// </summary>

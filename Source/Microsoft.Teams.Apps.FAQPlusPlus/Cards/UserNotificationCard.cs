@@ -17,6 +17,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
     public class UserNotificationCard
     {
         private readonly TicketEntity ticket;
+        private string appBaseUri;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UserNotificationCard"/> class.
@@ -25,6 +26,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         public UserNotificationCard(TicketEntity ticket)
         {
             this.ticket = ticket;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UserNotificationCard"/> class.
+        /// </summary>
+        /// <param name="appBaseUri">The base URI where the app is hosted.</param>
+        /// <param name="ticket">The ticket to create a card from.</param>
+        public UserNotificationCard(TicketEntity ticket, string appBaseUri)
+        {
+            this.ticket = ticket;
+            this.appBaseUri = appBaseUri;
         }
 
         /// <summary>
@@ -49,7 +61,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                       Facts = this.BuildFactSet(this.ticket, activityLocalTimestamp),
                     },
                 },
-                Actions = BuildActions(this.ticket),
+                Actions = BuildActions(this.ticket, this.appBaseUri),
             };
 
             return new Attachment
@@ -63,10 +75,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// Having the necessary adaptive actions built.
         /// </summary>
         /// <param name="ticket">The current ticket information.</param>
+        /// <param name="appBaseUri">The base URI where the app is hosted.</param>
         /// <returns>A list of adaptive card actions.</returns>
-        private static List<AdaptiveAction> BuildActions(TicketEntity ticket)
+        private static List<AdaptiveAction> BuildActions(TicketEntity ticket, string appBaseUri)
         {
-            if (ticket.Status == (int)TicketState.Closed)
+            if (ticket.Status == (int)TicketState.Resolved)
             {
                 return new List<AdaptiveAction>
                 {
@@ -82,6 +95,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                 Text = Strings.AskAnExpertDisplayText,
                             },
                         },
+                        IconUrl = appBaseUri + "/content/expert.png",
                     },
                 };
             }
@@ -103,6 +117,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 Title = Strings.StatusFactTitle,
                 Value = CardHelper.GetUserTicketDisplayStatus(this.ticket),
             });
+
+            if (ticket.Status != (int)TicketState.UnAssigned)
+            {
+                factList.Add(new AdaptiveFact
+                {
+                    Title = Strings.ExpertFact,
+                    Value = ticket.AssignedToName,
+                });
+            }
 
             if (!string.IsNullOrEmpty(ticket.Subject))
             {
@@ -133,14 +156,30 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 Title = Strings.DateCreatedDisplayFactTitle,
                 Value = CardHelper.GetFormattedDateInUserTimeZone(this.ticket.DateCreated, activityLocalTimestamp),
             });
+            if (ticket.Status == (int)TicketState.Pending && this.ticket.PendingComment != null)
+            {
+                factList.Add(new AdaptiveFact
+                {
+                    Title = Strings.CommentText,
+                    Value = CardHelper.TruncateStringIfLonger(this.ticket.PendingComment, CardHelper.DescriptionMaxDisplayLength),
+                });
+            }
 
-            if (ticket.Status == (int)TicketState.Closed)
+            if (ticket.Status == (int)TicketState.Resolved)
             {
                 factList.Add(new AdaptiveFact
                 {
                     Title = Strings.ClosedFactTitle,
                     Value = CardHelper.GetFormattedDateInUserTimeZone(this.ticket.DateClosed.Value, activityLocalTimestamp),
                 });
+                if (this.ticket.ResolveComment != null)
+                {
+                    factList.Add(new AdaptiveFact
+                    {
+                        Title = Strings.CommentText,
+                        Value = CardHelper.TruncateStringIfLonger(this.ticket.ResolveComment, CardHelper.DescriptionMaxDisplayLength),
+                    });
+                }
             }
 
             return factList;

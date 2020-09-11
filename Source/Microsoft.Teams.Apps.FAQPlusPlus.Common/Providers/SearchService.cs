@@ -89,12 +89,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
                     break;
 
                 case TicketSearchScope.OpenTickets:
-                    searchParameters.Filter = "Status eq " + (int)TicketState.Open + " and AssignedToName eq null";
+                    searchParameters.Filter = "Status eq " + (int)TicketState.UnAssigned + " and AssignedToName eq null";
                     searchParameters.OrderBy = new[] { "Timestamp desc" };
                     break;
 
                 case TicketSearchScope.AssignedTickets:
-                    searchParameters.Filter = "Status eq " + (int)TicketState.Open + " and AssignedToName ne null";
+                    searchParameters.Filter = "Status eq " + (int)TicketState.UnAssigned + " and AssignedToName ne null";
                     searchParameters.OrderBy = new[] { "Timestamp desc" };
                     break;
             }

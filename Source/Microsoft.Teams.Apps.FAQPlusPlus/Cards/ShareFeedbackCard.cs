@@ -119,7 +119,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                            {
                                 new AdaptiveSubmitAction
                                 {
-                                    Title = Strings.ShareFeedbackButtonText,
                                     Data = new ShareFeedbackCardPayload
                                     {
                                         MsTeams = new CardAction
@@ -161,7 +160,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                            {
                                new AdaptiveSubmitAction
                                {
-                                   Title = Strings.ShareFeedbackButtonText,
                                    Data = new ShareFeedbackCardPayload
                                    {
                                        MsTeams = new CardAction
@@ -203,7 +201,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                             {
                                 new AdaptiveSubmitAction
                                 {
-                                    Title = Strings.ShareFeedbackButtonText,
                                     Data = new ShareFeedbackCardPayload
                                     {
                                         MsTeams = new CardAction

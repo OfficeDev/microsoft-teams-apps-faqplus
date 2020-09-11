@@ -185,20 +185,24 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         /// <param name="isTestKnowledgeBase">Prod or test.</param>
         /// <param name="previousQnAId">Id of previous question.</param>
         /// <param name="previousUserQuery">Previous question information.</param>
+        /// <param name="QnAID">Prompts should carry its QnAID</param>
         /// <returns>QnaSearchResultList result as response.</returns>
-        public async Task<QnASearchResultList> GenerateAnswerAsync(string question, bool isTestKnowledgeBase, string previousQnAId = null, string previousUserQuery = null)
+        public async Task<QnASearchResultList> GenerateAnswerAsync(string question, bool isTestKnowledgeBase, string previousQnAId = null, string previousUserQuery = null, string QnAID = null)
         {
             var knowledgeBaseId = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.KnowledgeBaseId).ConfigureAwait(false);
 
             QueryDTO queryDTO = new QueryDTO()
             {
+                QnaId = QnAID,
                 IsTest = isTestKnowledgeBase,
                 Question = question?.Trim(),
                 ScoreThreshold = Convert.ToDouble(this.options.ScoreThreshold),
+                RankerType = "QuestionOnly",
             };
 
             if (previousQnAId != null && previousUserQuery != null)
             {
+                queryDTO.RankerType = null;
                 queryDTO.Context = new QueryDTOContext
                 {
                     PreviousQnaId = previousQnAId,
