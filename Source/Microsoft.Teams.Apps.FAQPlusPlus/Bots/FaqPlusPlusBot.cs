@@ -930,6 +930,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             Attachment userCard = null;         // Acknowledgement to the user
             TicketEntity newTicket = null;      // New ticket
             FeedbackEntity newFeedback = null;      // New Feedback
+            List<ExpertEntity> experts = null;
 
             UserActionEntity userAction = await this.GeneratePersonalActionEntityAsync(turnContext, cancellationToken);
 
@@ -954,9 +955,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     newTicket = await AdaptiveCardHelper.AskAnExpertSubmitText(message, turnContext, cancellationToken, this.ticketsProvider).ConfigureAwait(false);
                     if (newTicket != null)
                     {
-                        var experts = await this.expertProvider.GetExpertsAsync().ConfigureAwait(false);
+                        experts = await this.expertProvider.GetExpertsAsync().ConfigureAwait(false);
                         smeTeamCard = new SmeTicketCard(newTicket, experts).ToAttachment(message?.LocalTimestamp, this.appBaseUri);
-                        userCard = new UserNotificationCard(newTicket).ToAttachment(Strings.NotificationCardContent, message?.LocalTimestamp);
+                        userCard = new UserNotificationCard(newTicket,this.appBaseUri).ToAttachment(Strings.NotificationCardContent, message?.LocalTimestamp);
                     }
 
                     userAction.Action = nameof(UserActionType.AskExpert);
@@ -972,6 +973,21 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     }
 
                     userAction.Action = nameof(UserActionType.ShareFeedback);
+                    break;
+
+                case UserNotificationCard.TicketFeedback:
+                    this.logger.LogInformation("Received ticket feedback");
+                    var ticketFeedbackPayload = ((JObject)message.Value).ToObject<TicketFeedbackPayload>();
+                    var ticket = await this.ticketsProvider.GetTicketAsync(ticketFeedbackPayload.TicketId).ConfigureAwait(false);
+                    ticket.Feedback = ticketFeedbackPayload.Rating;
+                    await this.ticketsProvider.UpsertTicketAsync(ticket).ConfigureAwait(false);
+
+                    await turnContext.SendActivityAsync(MessageFactory.Text(Strings.ThankYouTextContent)).ConfigureAwait(false);
+
+                    experts = await this.expertProvider.GetExpertsAsync().ConfigureAwait(false);
+                    smeTeamCard = new SmeTicketCard(ticket, experts).ToAttachment(message?.LocalTimestamp, this.appBaseUri);
+
+                    userAction.Action = nameof(UserActionType.ShareTicketFeedback);
                     break;
 
                 default:
@@ -1198,7 +1214,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 case ChangeTicketStatusPayload.PendingAction:
                     smeNotification = string.Format(CultureInfo.InvariantCulture, Strings.SMEPendingStatus, message.From.Name);
 
-                    userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket).ToAttachment(Strings.PendingTicketUserNotification, message.LocalTimestamp));
+                    userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket, this.appBaseUri).ToAttachment(Strings.PendingTicketUserNotification, message.LocalTimestamp));
                     userNotification.Summary = Strings.PendingTicketUserNotification;
                     break;
 
@@ -1213,17 +1229,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     smeNotification = string.Format(CultureInfo.InvariantCulture, Strings.SMEAssignedStatus, ticket.AssignedToName);
                     if (previousState == (int)TicketState.Resolved)
                     {
-                        userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket).ToAttachment(Strings.ReopenedTicketUserNotification, message.LocalTimestamp));
+                        userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket, this.appBaseUri).ToAttachment(Strings.ReopenedTicketUserNotification, message.LocalTimestamp));
                         userNotification.Summary = Strings.ReopenedTicketUserNotification;
                     }
                     else if (previousState == (int)TicketState.Assigned)
                     {
-                        userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket).ToAttachment(Strings.ReAssigneTicketUserNotification, message.LocalTimestamp));
+                        userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket, this.appBaseUri).ToAttachment(Strings.ReAssigneTicketUserNotification, message.LocalTimestamp));
                         userNotification.Summary = Strings.ReAssigneTicketUserNotification;
                     }
                     else
                     {
-                        userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket).ToAttachment(Strings.AssignedTicketUserNotification, message.LocalTimestamp));
+                        userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket, this.appBaseUri).ToAttachment(Strings.AssignedTicketUserNotification, message.LocalTimestamp));
                         userNotification.Summary = Strings.AssignedTicketUserNotification;
                     }
 
@@ -1242,17 +1258,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
                     if (previousState == (int)TicketState.Resolved)
                     {
-                        userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket).ToAttachment(Strings.ReopenedTicketUserNotification, message.LocalTimestamp));
+                        userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket, this.appBaseUri).ToAttachment(Strings.ReopenedTicketUserNotification, message.LocalTimestamp));
                         userNotification.Summary = Strings.ReopenedTicketUserNotification;
                     }
                     else if (previousState == (int)TicketState.Assigned)
                     {
-                        userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket).ToAttachment(Strings.ReAssigneTicketUserNotification, message.LocalTimestamp));
+                        userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket, this.appBaseUri).ToAttachment(Strings.ReAssigneTicketUserNotification, message.LocalTimestamp));
                         userNotification.Summary = Strings.ReAssigneTicketUserNotification;
                     }
                     else
                     {
-                        userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket).ToAttachment(Strings.AssignedTicketUserNotification, message.LocalTimestamp));
+                        userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket, this.appBaseUri).ToAttachment(Strings.AssignedTicketUserNotification, message.LocalTimestamp));
                         userNotification.Summary = Strings.AssignedTicketUserNotification;
                     }
 

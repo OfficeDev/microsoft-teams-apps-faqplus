@@ -133,6 +133,29 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     cardBodyToConstruct.Add(container);
                 }
             }
+            else
+            {
+                cardBodyToConstruct.Add(new AdaptiveColumnSet
+                {
+                    Separator = true,
+                    Columns = new List<AdaptiveColumn>
+                    {
+                        new AdaptiveColumn
+                        {
+                            Items = new List<AdaptiveElement>
+                            {
+                                new AdaptiveTextBlock
+                                {
+                                    Weight = AdaptiveTextWeight.Lighter,
+                                    Text = Strings.ResponseFooterText,
+                                    Wrap = true,
+                                },
+                            },
+                        },
+                    },
+                });
+
+            }
 
             return cardBodyToConstruct;
         }

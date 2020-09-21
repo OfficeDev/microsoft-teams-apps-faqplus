@@ -31,6 +31,11 @@
         ShareFeedback,
 
         /// <summary>
+        /// share feedback when ticket resolved.
+        /// </summary>
+        ShareTicketFeedback,
+
+        /// <summary>
         /// Take a tour in personal chat.
         /// </summary>
         TakeATour,

@@ -14,6 +14,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Helpers
     using Microsoft.Teams.Apps.FAQPlusPlus.Cards;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
 
@@ -39,7 +40,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Helpers
             var askAnExpertSubmitTextPayload = ((JObject)message.Value).ToObject<AskAnExpertCardPayload>();
 
             // Validate required fields.
-            if (string.IsNullOrWhiteSpace(askAnExpertSubmitTextPayload?.Title))
+            if (string.IsNullOrWhiteSpace(askAnExpertSubmitTextPayload?.Title) || askAnExpertSubmitTextPayload.Description.Length > 500)
             {
                 var updateCardActivity = new Activity(ActivityTypes.Message)
                 {
@@ -47,7 +48,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Helpers
                     Conversation = turnContext.Activity.Conversation,
                     Attachments = new List<Attachment> { AskAnExpertCard.GetCard(askAnExpertSubmitTextPayload) },
                 };
-                await turnContext.UpdateActivityAsync(updateCardActivity, cancellationToken).ConfigureAwait(false);
+                try
+                {
+                    await turnContext.UpdateActivityAsync(updateCardActivity, cancellationToken).ConfigureAwait(false);
+                }
+                catch (ErrorResponseException)
+                {
+                    await turnContext.SendActivityAsync(Strings.InputTooLongWarning).ConfigureAwait(false);
+                }
+
                 return null;
             }
 
@@ -74,7 +83,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Helpers
             var shareFeedbackSubmitTextPayload = ((JObject)message.Value).ToObject<ShareFeedbackCardPayload>();
 
             // Validate required fields.
-            if (!Enum.TryParse(shareFeedbackSubmitTextPayload?.Rating, out FeedbackRating rating))
+            if (!Enum.TryParse(shareFeedbackSubmitTextPayload?.Rating, out FeedbackRating rating) || shareFeedbackSubmitTextPayload.DescriptionHelpful?.Length > 500 || shareFeedbackSubmitTextPayload.DescriptionNeedsImprovement?.Length > 500 || shareFeedbackSubmitTextPayload.DescriptionNotHelpful?.Length > 500)
             {
                 var updateCardActivity = new Activity(ActivityTypes.Message)
                 {
@@ -82,7 +91,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Helpers
                     Conversation = turnContext.Activity.Conversation,
                     Attachments = new List<Attachment> { ShareFeedbackCard.GetCard(shareFeedbackSubmitTextPayload, appBaseUri) },
                 };
-                await turnContext.UpdateActivityAsync(updateCardActivity, cancellationToken).ConfigureAwait(false);
+                try
+                {
+                    await turnContext.UpdateActivityAsync(updateCardActivity, cancellationToken).ConfigureAwait(false);
+                }
+                catch (ErrorResponseException)
+                {
+                    await turnContext.SendActivityAsync(Strings.InputTooLongWarning).ConfigureAwait(false);
+                }
                 return null;
             }
 

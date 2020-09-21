@@ -16,17 +16,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
     /// </summary>
     public class UserNotificationCard
     {
+        /// <summary>
+        /// Text associated with share feedback command.
+        /// </summary>
+        public const string TicketFeedback = "TicketFeedback";
+
         private readonly TicketEntity ticket;
         private string appBaseUri;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="UserNotificationCard"/> class.
-        /// </summary>
-        /// <param name="ticket">The ticket to create a card from.</param>
-        public UserNotificationCard(TicketEntity ticket)
-        {
-            this.ticket = ticket;
-        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UserNotificationCard"/> class.
@@ -47,14 +43,63 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <returns>An adaptive card as an attachment.</returns>
         public Attachment ToAttachment(string message, DateTimeOffset? activityLocalTimestamp)
         {
+            string urlString = this.appBaseUri + "/content/ticket_reopen.png";
+
+            if (string.Compare(message, Strings.NotificationCardContent) == 0)
+            {
+                urlString = this.appBaseUri + "/content/ticket_created.png";
+            }
+            if (string.Compare(message, Strings.PendingTicketUserNotification) == 0)
+            {
+                urlString = this.appBaseUri + "/content/ticket_pending.png";
+            }
+            else if (string.Compare(message, Strings.ClosedTicketUserNotification) == 0)
+            {
+                urlString = this.appBaseUri + "/content/ticket_resolved.png";
+            }
+            else if (string.Compare(message, Strings.ReopenedTicketUserNotification) == 0 || string.Compare(message, Strings.ReAssigneTicketUserNotification) == 0)
+            {
+                urlString = this.appBaseUri + "/content/ticket_reopen.png";
+            }
+            else if (string.Compare(message, Strings.AssignedTicketUserNotification) == 0)
+            {
+                urlString = this.appBaseUri + "/content/ticket_assigned.png";
+            }
+
             var card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
             {
                 Body = new List<AdaptiveElement>
                 {
-                    new AdaptiveTextBlock
+                    new AdaptiveColumnSet
                     {
-                        Text = message,
-                        Wrap = true,
+                        Columns = new List<AdaptiveColumn>
+                        {
+                            new AdaptiveColumn
+                            {
+                                Items = new List<AdaptiveElement>
+                                {
+                                    new AdaptiveImage
+                                    {
+                                        Style = AdaptiveImageStyle.Default,
+                                        Size = AdaptiveImageSize.Medium,
+                                        Url = new Uri(urlString),
+                                    },
+                                },
+                                Width = "auto",
+                            },
+                            new AdaptiveColumn
+                            {
+                                Items = new List<AdaptiveElement>
+                                {
+                                    new AdaptiveTextBlock
+                                    {
+                                        Text = message,
+                                        Wrap = true,
+                                    },
+                                },
+                                Width = "stretch",
+                            },
+                        },
                     },
                     new AdaptiveFactSet
                     {
@@ -63,6 +108,29 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 },
                 Actions = BuildActions(this.ticket, this.appBaseUri),
             };
+
+            if (this.ticket.Status == (int)TicketState.Resolved)
+            {
+                card.Body.Add(new AdaptiveColumnSet
+                {
+                    Separator = true,
+                    Columns = new List<AdaptiveColumn>
+                    {
+                        new AdaptiveColumn
+                        {
+                            Items = new List<AdaptiveElement>
+                            {
+                                new AdaptiveTextBlock
+                                {
+                                    Weight = AdaptiveTextWeight.Lighter,
+                                    Text = Strings.UserNotificationFooterText,
+                                    Wrap = true,
+                                },
+                            },
+                        },
+                    },
+                });
+            }
 
             return new Attachment
             {
@@ -85,17 +153,48 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 {
                     new AdaptiveSubmitAction
                     {
-                        Title = Strings.AskAnExpertButtonText,
-                        Data = new TeamsAdaptiveSubmitActionData
+                        Title = " ",
+                        Data = new TicketFeedbackPayload
                         {
                             MsTeams = new CardAction
                             {
                                 Type = ActionTypes.MessageBack,
-                                DisplayText = Strings.AskAnExpertDisplayText,
-                                Text = Strings.AskAnExpertDisplayText,
+                                Text = TicketFeedback,
                             },
+                            Rating = nameof(TicketSatisficationRating.Satisfied),
+                            TicketId = ticket.TicketId,
                         },
-                        IconUrl = appBaseUri + "/content/expert.png",
+                        IconUrl = appBaseUri + "/content/face_smile.png",
+                    },
+                    new AdaptiveSubmitAction
+                    {
+                        Title = " ",
+                        Data = new TicketFeedbackPayload
+                        {
+                            MsTeams = new CardAction
+                            {
+                                Type = ActionTypes.MessageBack,
+                                Text = TicketFeedback,
+                            },
+                            Rating = nameof(TicketSatisficationRating.Neutral),
+                            TicketId = ticket.TicketId,
+                        },
+                        IconUrl = appBaseUri + "/content/face_straigh.png",
+                    },
+                    new AdaptiveSubmitAction
+                    {
+                        Title = " ",
+                        Data = new TicketFeedbackPayload
+                        {
+                            MsTeams = new CardAction
+                            {
+                                Type = ActionTypes.MessageBack,
+                                Text = TicketFeedback,
+                            },
+                            TicketId = ticket.TicketId,
+                            Rating = nameof(TicketSatisficationRating.Disappointed),
+                        },
+                        IconUrl = appBaseUri + "/content/face_sad.png",
                     },
                 };
             }
@@ -112,6 +211,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         private List<AdaptiveFact> BuildFactSet(TicketEntity ticket, DateTimeOffset? activityLocalTimestamp)
         {
             List<AdaptiveFact> factList = new List<AdaptiveFact>();
+
+            if (!string.IsNullOrEmpty(ticket.TicketId))
+            {
+                factList.Add(new AdaptiveFact
+                {
+                    Title = Strings.TicketIDFact,
+                    Value = ticket.TicketId.Substring(0, 8),
+                });
+            }
+
             factList.Add(new AdaptiveFact
             {
                 Title = Strings.StatusFactTitle,

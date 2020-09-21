@@ -684,4 +684,20 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <value>{0}, the request already assigned to {1} !</value>
     <comment>Message posted to the thread when try to assign ticket to same one. {1} = name of SME who trigger the action, {1} = name of SME whom the ticket is assigned</comment>
   </data>
+  <data name="UserNotificationFooterText" xml:space="preserve">
+    <value>How do you feel about the service?</value>
+    <comment>UserNotification footer-letting the user share their feedback.</comment>
+  </data>
+  <data name="InputTooLongWarning" xml:space="preserve">
+    <value>Failed, your input is too long!</value>
+    <comment>warn user when input too much to cause request exception</comment>
+  </data>
+  <data name="MaxCharactersText" xml:space="preserve">
+    <value>500 characters max</value>
+    <comment>Text that warn the user input exceed max characters limit.</comment>
+  </data>
+  <data name="TicketIDFact" xml:space="preserve">
+    <value>Ticket ID:</value>
+    <comment>Title fact is used to show the title ID.</comment>
+  </data>
 </root>

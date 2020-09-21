@@ -556,6 +556,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed, your input is too long!.
+        /// </summary>
+        public static string InputTooLongWarning {
+            get {
+                return ResourceManager.GetString("InputTooLongWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Image URL is not valid..
         /// </summary>
         public static string InvalidImageUrlErrorText {
@@ -597,6 +606,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         public static string ManuallyAddedQuestionMessage {
             get {
                 return ResourceManager.GetString("ManuallyAddedQuestionMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 500 characters max.
+        /// </summary>
+        public static string MaxCharactersText {
+            get {
+                return ResourceManager.GetString("MaxCharactersText", resourceCulture);
             }
         }
         
@@ -1213,6 +1231,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ticket ID:.
+        /// </summary>
+        public static string TicketIDFact {
+            get {
+                return ResourceManager.GetString("TicketIDFact", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Title:.
         /// </summary>
         public static string TitleFact {
@@ -1290,6 +1317,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         public static string UpdateHistoryHeadersText {
             get {
                 return ResourceManager.GetString("UpdateHistoryHeadersText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to How do you feel about the service?.
+        /// </summary>
+        public static string UserNotificationFooterText {
+            get {
+                return ResourceManager.GetString("UserNotificationFooterText", resourceCulture);
             }
         }
         

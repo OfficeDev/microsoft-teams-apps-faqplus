@@ -54,56 +54,101 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <returns>Returns the attachment that will be sent in a message.</returns>
         public Attachment ToAttachment(DateTimeOffset? localTimestamp, string appBaseUri)
         {
+
+            List<AdaptiveColumn> columns = new List<AdaptiveColumn>
+            {
+                new AdaptiveColumn
+                {
+                    Items = new List<AdaptiveElement>
+                    {
+                        new AdaptiveImage
+                        {
+                            Style = AdaptiveImageStyle.Default,
+                            Size = AdaptiveImageSize.Medium,
+                            Url = new Uri(appBaseUri + "/content/request_channel.png"),
+                        },
+                    },
+                    Width = "auto",
+                },
+                new AdaptiveColumn
+                {
+                    Items = new List<AdaptiveElement>
+                    {
+                        new AdaptiveTextBlock()
+                        {
+                            Text = this.Ticket.Title,
+                            Weight = AdaptiveTextWeight.Bolder,
+                            Wrap = true,
+                        },
+                        new AdaptiveTextBlock()
+                        {
+                            Text = string.Format(CultureInfo.InvariantCulture, Strings.QuestionForExpertSubHeaderText, this.Ticket.RequesterName),
+                            Spacing = AdaptiveSpacing.None,
+                            IsSubtle = true,
+                            Wrap = true,
+                        },
+                    },
+                    Width = "stretch",
+                },
+            };
+
+            if (this.ticket.Feedback != null)
+            {
+                string feedbackEmjio = null;
+                if (this.ticket.Feedback == nameof(TicketSatisficationRating.Satisfied))
+                {
+                    feedbackEmjio = "face_smile.png";
+                }
+                else if (this.ticket.Feedback == nameof(TicketSatisficationRating.Neutral))
+                {
+                    feedbackEmjio = "face_straigh.png";
+                }
+                else if (this.ticket.Feedback == nameof(TicketSatisficationRating.Disappointed))
+                {
+                    feedbackEmjio = "face_sad.png";
+                }
+
+                if (feedbackEmjio != null)
+                {
+                    columns.Add(new AdaptiveColumn
+                    {
+                        Items = new List<AdaptiveElement>
+                    {
+                        new AdaptiveImage
+                        {
+                            Style = AdaptiveImageStyle.Default,
+                            Size = AdaptiveImageSize.Small,
+                            Url = new Uri(appBaseUri + "/content/" + feedbackEmjio),
+                            HorizontalAlignment = AdaptiveHorizontalAlignment.Right,
+                        },
+                    },
+                        Width = "auto",
+                        VerticalContentAlignment = AdaptiveVerticalContentAlignment.Top,
+                    });
+                }
+            }
+
             var card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
             {
                 Body = new List<AdaptiveElement>
                 {
                     new AdaptiveColumnSet
                     {
-                        Columns = new List<AdaptiveColumn>
-                        {
-                            new AdaptiveColumn
-                            {
-                                Items = new List<AdaptiveElement>
-                                {
-                                    new AdaptiveImage
-                                    {
-                                        Style = AdaptiveImageStyle.Default,
-                                        Size = AdaptiveImageSize.Medium,
-                                        Url = new Uri(appBaseUri + "/content/ticket_channel.png"),
-                                    },
-                                },
-                                Width = "auto",
-                            },
-                            new AdaptiveColumn
-                            {
-                                Items = new List<AdaptiveElement>
-                                {
-                                    new AdaptiveTextBlock()
-                                    {
-                                        Text = this.Ticket.Title,
-                                        Weight = AdaptiveTextWeight.Bolder,
-                                        Wrap = true,
-                                    },
-                                    new AdaptiveTextBlock()
-                                    {
-                                        Text = string.Format(CultureInfo.InvariantCulture, Strings.QuestionForExpertSubHeaderText, this.Ticket.RequesterName),
-                                        Spacing = AdaptiveSpacing.None,
-                                        IsSubtle = true,
-                                        Wrap = true,
-                                    },
-                                },
-                                Width = "stretch",
-                            },
-                        },
+                        Columns = columns,
                     },
                     new AdaptiveFactSet
                     {
                         Facts = this.BuildFactSet(localTimestamp),
                     },
                 },
+
                 Actions = this.BuildActions(appBaseUri),
             };
+
+            //if (this.Ticket.Status == (int)TicketState.Resolved && this.ticket.Feedback != null)
+            //{
+            //    card.Body.
+            //}
 
             return new Attachment
             {
@@ -344,6 +389,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         {
             List<AdaptiveFact> factList = new List<AdaptiveFact>();
 
+            if (!string.IsNullOrEmpty(this.Ticket.TicketId))
+            {
+                factList.Add(new AdaptiveFact
+                {
+                    Title = Strings.TicketIDFact,
+                    Value = this.Ticket.TicketId.Substring(0, 8),
+                });
+            }
+
             if (!string.IsNullOrEmpty(this.Ticket.Subject))
             {
                 factList.Add(new AdaptiveFact
@@ -377,12 +431,27 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 Value = CardHelper.GetTicketDisplayStatusForSme(this.Ticket),
             });
 
+            if (this.Ticket.Status == (int)TicketState.Pending)
+            {
+                factList.Add(new AdaptiveFact
+                {
+                    Title = Strings.CommentText,
+                    Value = this.Ticket.PendingComment,
+                });
+            }
+
             if (this.Ticket.Status == (int)TicketState.Resolved)
             {
                 factList.Add(new AdaptiveFact
                 {
                     Title = Strings.ClosedFactTitle,
                     Value = CardHelper.GetFormattedDateInUserTimeZone(this.Ticket.DateClosed.Value, localTimestamp),
+                });
+
+                factList.Add(new AdaptiveFact
+                {
+                    Title = Strings.CommentText,
+                    Value = this.Ticket.ResolveComment,
                 });
             }
 
@@ -413,67 +482,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             }
 
             choiceSet.Choices = choices;
-            choiceSet.Value = $"{this.experts[0].Name}:{this.experts[0].ID}";
-
-            //if (this.Ticket.Status == (int)TicketState.UnAssigned)
-            //{
-            //    if (!this.Ticket.IsAssigned())
-            //    {
-            //        choiceSet.Value = ChangeTicketStatusPayload.AssignToSelfAction;
-            //        choiceSet.Choices = new List<AdaptiveChoice>
-            //        {
-            //            new AdaptiveChoice
-            //            {
-            //                Title = Strings.AssignToMeActionChoiceTitle,
-            //                Value = ChangeTicketStatusPayload.AssignToSelfAction,
-            //            },
-            //            new AdaptiveChoice
-            //            {
-            //                Title = Strings.CloseActionChoiceTitle,
-            //                Value = ChangeTicketStatusPayload.ResolveAction,
-            //            },
-            //        };
-            //    }
-            //    else
-            //    {
-            //        choiceSet.Value = ChangeTicketStatusPayload.ResolveAction;
-            //        choiceSet.Choices = new List<AdaptiveChoice>
-            //        {
-            //            //new AdaptiveChoice
-            //            //{
-            //            //    Title = Strings.UnassignActionChoiceTitle,
-            //            //    Value = ChangeTicketStatusPayload.ReopenAction,
-            //            //},
-            //            new AdaptiveChoice
-            //            {
-            //                Title = Strings.AssignToMeActionChoiceTitle,
-            //                Value = ChangeTicketStatusPayload.AssignToSelfAction,
-            //            },
-            //            new AdaptiveChoice
-            //            {
-            //                Title = Strings.CloseActionChoiceTitle,
-            //                Value = ChangeTicketStatusPayload.ResolveAction,
-            //            },
-            //        };
-            //    }
-            //}
-            //else if (this.Ticket.Status == (int)TicketState.Resolved)
-            //{
-            //    //choiceSet.Value = ChangeTicketStatusPayload.ReopenAction;
-            //    choiceSet.Choices = new List<AdaptiveChoice>
-            //    {
-            //        //new AdaptiveChoice
-            //        //{
-            //        //    Title = Strings.ReopenActionChoiceTitle,
-            //        //    Value = ChangeTicketStatusPayload.ReopenAction,
-            //        //},
-            //        new AdaptiveChoice
-            //        {
-            //            Title = Strings.ReopenAssignToMeActionChoiceTitle,
-            //            Value = ChangeTicketStatusPayload.AssignToSelfAction,
-            //        },
-            //    };
-            //}
+            if (this.experts.Count > 0)
+            {
+                choiceSet.Value = $"{this.experts[0].Name}:{this.experts[0].ID}";
+            }
 
             return choiceSet;
         }

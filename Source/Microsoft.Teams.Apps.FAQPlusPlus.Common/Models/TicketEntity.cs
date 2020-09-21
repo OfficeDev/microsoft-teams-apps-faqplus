@@ -158,6 +158,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         public string KnowledgeBaseAnswer { get; set; }
 
         /// <summary>
+        /// Gets or sets the feedback for this ticket.
+        /// </summary>
+        [JsonProperty("feedback")]
+        public string Feedback { get; set; }
+
+        /// <summary>
         /// Gets timestamp from storage table.
         /// </summary>
         [IsSortable]

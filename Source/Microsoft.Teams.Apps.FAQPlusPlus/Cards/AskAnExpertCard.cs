@@ -120,10 +120,36 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         Spacing = AdaptiveSpacing.Small,
                         Value = cardPayload?.Title,
                     },
-                    new AdaptiveTextBlock
+                    new AdaptiveColumnSet
                     {
-                        Text = Strings.DescriptionText,
-                        Wrap = true,
+                        Columns = new List<AdaptiveColumn>
+                        {
+                            new AdaptiveColumn
+                            {
+                                Width = AdaptiveColumnWidth.Auto,
+                                Items = new List<AdaptiveElement>
+                                {
+                                    new AdaptiveTextBlock
+                                    {
+                                        Text = Strings.DescriptionText,
+                                        Wrap = true,
+                                    },
+                                },
+                            },
+                            new AdaptiveColumn
+                            {
+                                Items = new List<AdaptiveElement>
+                                {
+                                    new AdaptiveTextBlock
+                                    {
+                                        Text = (showValidationErrors && cardPayload?.Description.Length > 500) ? Strings.MaxCharactersText : string.Empty,
+                                        Color = AdaptiveTextColor.Attention,
+                                        HorizontalAlignment = AdaptiveHorizontalAlignment.Right,
+                                        Wrap = true,
+                                    },
+                                },
+                            },
+                        },
                     },
                     new AdaptiveTextInput
                     {

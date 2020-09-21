@@ -97,15 +97,42 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 {
                     new AdaptiveShowCardAction
                     {
+                        IconUrl = appBaseUri + "/content/face_smile.png",
                         Title = " ",
                         Card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
                         {
                            Body = new List<AdaptiveElement>
                             {
-                                new AdaptiveTextBlock
+                                new AdaptiveColumnSet
                                 {
-                                    Text = Strings.DescriptionText,
-                                    Wrap = true,
+                                    Columns = new List<AdaptiveColumn>
+                                    {
+                                         new AdaptiveColumn
+                                         {
+                                            Width = AdaptiveColumnWidth.Auto,
+                                            Items = new List<AdaptiveElement>
+                                            {
+                                                 new AdaptiveTextBlock
+                                                {
+                                                    Text = Strings.DescriptionText,
+                                                    Wrap = true,
+                                                },
+                                            },
+                                         },
+                                         new AdaptiveColumn
+                                         {
+                                            Items = new List<AdaptiveElement>
+                                            {
+                                                new AdaptiveTextBlock
+                                                {
+                                                    Text = (showValidationErrors && data?.DescriptionHelpful?.Length > 500) ? Strings.MaxCharactersText : string.Empty,
+                                                    Color = AdaptiveTextColor.Attention,
+                                                    HorizontalAlignment = AdaptiveHorizontalAlignment.Right,
+                                                    Wrap = true,
+                                                },
+                                            },
+                                         },
+                                    },
                                 },
                                 new AdaptiveTextInput
                                 {
@@ -113,6 +140,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                     Id = nameof(ShareFeedbackCardPayload.DescriptionHelpful),
                                     Placeholder = Strings.FeedbackDescriptionPlaceholderText,
                                     IsMultiline = true,
+                                    Value = data?.DescriptionHelpful,
                                 },
                             },
                            Actions = new List<AdaptiveAction>
@@ -138,15 +166,42 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     },
                     new AdaptiveShowCardAction
                     {
+                        IconUrl =  appBaseUri + "/content/face_straigh.png",
                         Title = " ",
                         Card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
                         {
                            Body = new List<AdaptiveElement>
                            {
-                               new AdaptiveTextBlock
+                               new AdaptiveColumnSet
                                {
-                                   Text = Strings.DescriptionText,
-                                   Wrap = true,
+                                   Columns = new List<AdaptiveColumn>
+                                   {
+                                        new AdaptiveColumn
+                                        {
+                                           Width = AdaptiveColumnWidth.Auto,
+                                           Items = new List<AdaptiveElement>
+                                           {
+                                                new AdaptiveTextBlock
+                                               {
+                                                   Text = Strings.DescriptionText,
+                                                   Wrap = true,
+                                               },
+                                           },
+                                        },
+                                        new AdaptiveColumn
+                                        {
+                                           Items = new List<AdaptiveElement>
+                                           {
+                                               new AdaptiveTextBlock
+                                               {
+                                                   Text = (showValidationErrors && data?.DescriptionNeedsImprovement?.Length > 500) ? Strings.MaxCharactersText : string.Empty,
+                                                   Color = AdaptiveTextColor.Attention,
+                                                   HorizontalAlignment = AdaptiveHorizontalAlignment.Right,
+                                                   Wrap = true,
+                                               },
+                                           },
+                                        },
+                                   },
                                },
                                new AdaptiveTextInput
                                {
@@ -154,6 +209,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                    Id = nameof(ShareFeedbackCardPayload.DescriptionNeedsImprovement),
                                    Placeholder = Strings.FeedbackDescriptionPlaceholderText,
                                    IsMultiline = true,
+                                   Value = data?.DescriptionNeedsImprovement,
                                },
                            },
                            Actions = new List<AdaptiveAction>
@@ -179,15 +235,42 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     },
                     new AdaptiveShowCardAction
                     {
+                        IconUrl = appBaseUri + "/content/face_sad.png",
                         Title = " ",
                         Card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
                         {
                            Body = new List<AdaptiveElement>
                            {
-                               new AdaptiveTextBlock
+                               new AdaptiveColumnSet
                                {
-                                   Text = Strings.DescriptionText,
-                                   Wrap = true,
+                                   Columns = new List<AdaptiveColumn>
+                                   {
+                                        new AdaptiveColumn
+                                        {
+                                           Width = AdaptiveColumnWidth.Auto,
+                                           Items = new List<AdaptiveElement>
+                                           {
+                                                new AdaptiveTextBlock
+                                               {
+                                                   Text = Strings.DescriptionText,
+                                                   Wrap = true,
+                                               },
+                                           },
+                                        },
+                                        new AdaptiveColumn
+                                        {
+                                           Items = new List<AdaptiveElement>
+                                           {
+                                               new AdaptiveTextBlock
+                                               {
+                                                   Text = (showValidationErrors && data?.DescriptionNotHelpful?.Length > 500) ? Strings.MaxCharactersText : string.Empty,
+                                                   Color = AdaptiveTextColor.Attention,
+                                                   HorizontalAlignment = AdaptiveHorizontalAlignment.Right,
+                                                   Wrap = true,
+                                               },
+                                           },
+                                        },
+                                   },
                                },
                                new AdaptiveTextInput
                                {
@@ -195,6 +278,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                    Id = nameof(ShareFeedbackCardPayload.DescriptionNotHelpful),
                                    Placeholder = Strings.FeedbackDescriptionPlaceholderText,
                                    IsMultiline = true,
+                                   Value = data?.DescriptionNotHelpful,
                                },
                            },
                            Actions = new List<AdaptiveAction>
@@ -221,9 +305,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 },
             };
 
-            shareFeedbackCard.Actions[0].AdditionalProperties.Add("iconUrl", appBaseUri + "/content/face_smile.png");
-            shareFeedbackCard.Actions[1].AdditionalProperties.Add("iconUrl", appBaseUri + "/content/face_straigh.png");
-            shareFeedbackCard.Actions[2].AdditionalProperties.Add("iconUrl", appBaseUri + "/content/face_sad.png");
+            //shareFeedbackCard.Actions[0].AdditionalProperties.Add("iconUrl", appBaseUri + "/content/face_smile.png");
+            //shareFeedbackCard.Actions[1].AdditionalProperties.Add("iconUrl", appBaseUri + "/content/face_straigh.png");
+            //shareFeedbackCard.Actions[2].AdditionalProperties.Add("iconUrl", appBaseUri + "/content/face_sad.png");
 
             return new Attachment
             {
