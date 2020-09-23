@@ -1,0 +1,82 @@
+{
+    "TenantId": {
+        "Value": "<<value>>",
+        "Description": "Azure tenant Id."
+    },
+    "SubscriptionId": {
+        "Value": "<<value>>",
+        "Description": "Azure active subscription Id."
+    },
+    "Location": {
+        "Value": "<<value>>",
+        "Description": "Azure region resources will be created in."
+    },
+    "ResourceGroupName": {
+        "Value": "<<value>>",
+        "Description": "The resource group name that will contain all resources created."
+    },
+    "BaseAppName": {
+        "Value": "<<value>>",
+        "Description": "The base app name that will be used to create bot app and config app."
+    },
+    "BaseResourceName": {
+        "Value": "<<value>>",
+        "Description": "The base name to use for the resources that will be provisioned."
+    },
+    "ConfigAdminUPNList": {
+        "Value": "<<value>>",
+        "Description": "Semicolon-delimited list of the user principal names (UPNs) allowed to access the configuration app."
+    },
+    "CompanyName": {
+        "Value": "<<value>>",
+        "Description": "Company name."
+    },
+    "WebsiteUrl": {
+        "Value": "<<value>>",
+        "Description": "Company website."
+    },
+    "PrivacyUrl": {
+        "Value": "<<value>>",
+        "Description": "Company privacy url."
+    },
+    "TermsOfUseUrl": {
+        "Value": "<<value>>",
+        "Description": "Company terms of use url."
+    },
+    "AppDisplayName": {
+        "Value": "FAQ Plus",
+        "Description": "The app (and bot) display name."
+    },
+    "AppDescription": {
+        "Value": "A friendly FAQ bot that answers questions and connects you to experts.",
+        "Description": "The app (and bot) description."
+    },
+    "AppIconUrl": {
+        "Value": "https://raw.githubusercontent.com/OfficeDev/microsoft-teams-apps-faqplus/master/Manifest/color.png",
+        "Description": "The link to the icon for the app. It must resolve to a PNG file."
+    },
+    "Sku": {
+        "Value": "Standard",
+        "Description": "The pricing tier for the hosting plan."
+    },
+    "PlanSize": {
+        "Value": "2",
+        "Description": "The size of the hosting plan (small, medium, or large)."
+    },
+    "QnaMakerSku": {
+        "Value": "S0 ($10 per month for unlimited documents, 3 transactions per second, 100 transactions per minute)",
+        "Description": "The pricing tier for the QnAMaker service."
+    },
+    "SearchServiceSku": {
+        "Value": "B (15 indexes)",
+        "Description": "The pricing tier for the Azure Search service."
+    },
+    "GitRepoUrl": {
+        "Value": "https://github.com/OfficeDev/microsoft-teams-apps-faqplus.git",
+        "Description": "The URL to the GitHub repository to deploy."
+    },
+    "GitBranch": {
+        "Value": "master",
+        "Description": "The branch of the GitHub repository to deploy."
+    }
+}

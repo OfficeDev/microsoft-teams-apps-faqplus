@@ -14,144 +14,112 @@ To begin, you will need:
 * A team in Microsoft Teams with your group of experts. (You can add and remove team members later!)
 * A copy of the FAQ Plus app GitHub repo (https://github.com/OfficeDev/microsoft-teams-apps-faqplus)
 * A reasonable set of Question and Answer pairs to set up the knowledge base for the bot.
+* A user on the Azure subscription with a contributor role or higher.
 
-## Step 1: Register Azure AD applications
+## Step 1: Deploy to your Azure subscription
 
-Register two Azure AD applications in your tenant's directory: one for the bot, and another for the configuration app.
+** For manual deployment (old approach) please use this [deployment guide](/Wiki/Deployment-Guide-manual.md).
 
-1. Log in to the Azure Portal for your subscription, and go to the "App registrations" blade [here](https://portal.azure.com/#blade/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/RegisteredApps).
+Please follow below steps to deploy app template:
 
-2. Click on "New registration", and create an Azure AD application.
-	1. **Name**: The name of your Teams app - if you are following the template for a default deployment, we recommend "FAQ Plus".
-	2. **Supported account types**: Select "Accounts in any organizational directory"
-	3. Leave the "Redirect URL" field blank.
+* Download the whole solution folder from [GitHub](https://github.com/OfficeDev/microsoft-teams-apps-faqplus)
+![Screenshot of code download](/Wiki/Images/download-repo-github.png)
+* Open the PowerShell in **administrator** mode
+* Navigate to [deploy.ps1](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/blob/master/Deployment/deploy.ps1) in your local machine.
+	* cd `<`PathToLocalFolder`>`\Deployment
+* Before running the script, some installations are needed for the user who is running the script for the first time. Please find the steps below: 
+   - In the above-navigated path in PowerShell, run the command "**Set-ExecutionPolicy -ExecutionPolicy RemoteSigned**". This command will allow the user to run deploy.ps1 as execution policy is restricted by default. You can change it to restricted again after successful deployment. 
+   - You will need to unblock the deployment script file before executing the script "**Unblock-File -Path .\deploy.ps1**"
+   - Install Azure CLI module by running the command below:
+   "**Invoke-WebRequest -Uri https://aka.ms/installazurecliwindows -OutFile .\AzureCLI.msi; Start-Process msiexec.exe -Wait -ArgumentList '/I AzureCLI.msi /quiet'**" 
+   - Reboot the machine after installing the CLI module.
+   - Open a new PowerShell window and in administrator mode. Go to the path of deploy.ps1 script file again. 
 
-![Azure registration page](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/multitenant_app_creation.png)
+* Fill-in the Deployment\Parameters.json file with required parameters values for the script. Replace `<<`value`>>` with the correct value for each parameter.
+![Screenshot of parameters file](/Wiki/Images/parameters-file.png)
 
-3. Click on the "Register" button.
+The script requires the following parameters:
 
-4. When the app is registered, you'll be taken to the app's "Overview" page. Copy the **Application (client) ID** and **Directory (tenant) ID**; we will need it later. Verify that the "Supported account types" is set to **Multiple organizations**.
+* TenantId - Id of the tenant to deploy to (If you are not sure how to get Tenant ID, please check Azure Active Directory in Azure Portal. Under Manage, click Properties. The tenant ID is shown in the Directory ID box). e.g 98f3ece2-3a5a-428b-aa4f-4c41b3f6eef0
+![Screenshot of Azure Active Directory](/Wiki/Images/azure-active-directory.png)
+![Screenshot of Tenant Info](/Wiki/Images/fetch-tenant-id.png)
 
-![Azure overview page](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/multitenant_app_overview.png)
 
-5. On the side rail in the Manage section, navigate to the "Certificates & secrets" section. In the Client secrets section, click on "+ New client secret". Add a description of the secret and select an expiry time. Click "Add".
+* SubscriptionId - Azure subscription to deploy the solution to (MUST be associated with the Azure AD of the Office 365 tenant that you wish to deploy this solution to.) e.g. 22f602c4-1b8f-46df-8b73-45d7bdfbf58e
+![Screenshot of Subscription](/Wiki/Images/subscriptions_blade.png)
+![Screenshot of Subscription](/Wiki/Images/subscriptions_id.png)
 
-![Azure AD overview page](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/multitenant_app_secret.png)
-
-6. Once the client secret is created, copy its **Value**; we will need it later.
-
-7. Go back to “App registrations”, then repeat steps 2-3 to create another Azure AD application for the configuration app.
-	1. **Name**: The name of your configuration app. We advise appending “Configuration” to the name of this app; for example, “FAQ Plus Configuration”.
-	2. **Supported account types**: Select "Account in this organizational directory only"
-	3. Leave the "Redirect URL" field blank for now.
-
-At this point you have 4 unique values:
-
-* Application (client) ID for the bot
-* Client secret for the bot
-* Application (client) ID for the configuration app
-* Directory (tenant) ID, which is the same for both apps
-
-We recommend that you copy these values into a text file, using an application like Notepad. We will need these values later.
-
-![Configuration step 3](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/azure-config-app-step3.png)
-
-## Step 2: Deploy to your Azure subscription
-
-1. Click on the "Deploy to Azure" button below.
-
-[![Deploy to Azure](https://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FOfficeDev%2Fmicrosoft-teams-apps-faqplus%2Fmaster%2FDeployment%2Fazuredeploy.json)
-
-2. When prompted, log in to your Azure subscription.
-
-3. Azure will create a "Custom deployment" based on the ARM template and ask you to fill in the template parameters.
-
-4. Select a subscription and resource group.
-* We recommend creating a new resource group.
-* The resource group location MUST be in a data center that supports:
+* Location - Azure region in which to create the resources. The internal name should be used e.g. uksouth. The location MUST be in a data center that supports:
 	* Application Insights
 	* Azure Search
 	* QnA Maker.
-* For an up-to-date list, click [here](https://azure.microsoft.com/en-us/global-infrastructure/services/?products=logic-apps,cognitive-services,search,monitor), and select a region where the following services are available:
-	* Application Insights
-	* QnA Maker
-	* Azure Search
+	* For an up-to-date list, click [Valid Azure Locations](https://azure.microsoft.com/en-us/global-infrastructure/services/?products=logic-apps,cognitive-services,search,monitor), and select a region where the above services are available.
 
-5. Enter a "Base Resource Name", which the template uses to generate names for the other resources.
-* The app service names `[Base Resource Name]`, `[Base Resource Name]-config`, and `[Base Resource Name]-qnamaker` must be available. For example, if you select `contosofaqplus` as the base name, the names `contosofaqplus`, `contosofaqplus-config`, and `contosofaqplus-qnamaker` must be available (not taken); otherwise, the deployment will fail with a conflict error.
-* Remember the base resource name that you selected. We will need it later.
+* ResourceGroupName - Name for a new resource group to deploy the solution to - the script will create this resource group. e.g. FAQPlusResourceGroup.
 
-6. Fill in the various IDs in the template:
+* BaseAppName - Name for the Azure AD app that will be created e.g. FAQPlus.
 
-	1. **Bot Client ID**: The application (client) ID of the Microsoft Teams Bot app
+* BaseResourceName - Name which the template uses to generate names for the other resources.
+	* The app service names `[Base Resource Name]`, `[Base Resource Name]-config`, and `[Base Resource Name]-qnamaker` must be available. For example, if you select `contosofaqplus` as the base name, the names `contosofaqplus`, `contosofaqplus-config`, and `contosofaqplus-qnamaker` must be available (not taken in other resource groups/tenants); otherwise, the deployment will fail with a conflict error.
+	* Remember the base resource name that you selected. We will need it later.
 
-	2. **Bot Client Secret**: The client secret of the Microsoft Teams Bot app
+* ConfigAdminUPNList - A semicolon-delimited list of users who will be allowed to access the configuration app. e.g. adminuser@contoso.onmicrosoft.com;user2@contoso.onmicrosoft.com
 
-	3. **Config App Client Id**: The application (client) ID of the configuration app
+* CompanyName - Your company name which will added to the app metadata.
 
-	4. **Tenant Id**: The tenant ID registered in Step 1. If your Microsoft Teams tenant is the same as Azure subscription tenant, then we would recommend keeping the default values.
+* WebsiteUrl - The https:// URL to the company's website. This link should take users to your company or product-specific landing page. Url must start with **https** prefix.
 
-Make sure that the values are copied as-is, with no extra spaces. The template checks that GUIDs are exactly 36 characters.
+* PrivacyUrl - The https:// URL to the developer's privacy policy. Url must start with **https** prefix.
 
-7. Fill in the "Config Admin UPN List", which is a semicolon-delimited list of users who will be allowed to access the configuration app.
-* For example, to allow Megan Bowen (meganb@contoso.com) and Adele Vance (adelev@contoso.com) to access the configuration app, set this parameter to `meganb@contoso.com;adelv@contoso.com`.
-* You can change this list later by going to the configuration app service's "Configuration" blade.
+* TermsOfUseUrl - The https:// URL to the developer's terms of use. Url must start with **https** prefix.
 
-8. If you wish to change the app name, description, and icon from the defaults, modify the corresponding template parameters.
+The script has some optional parameters with default values. You can change the default values to fit your needs:
 
-9. Agree to the Azure terms and conditions by clicking on the checkbox "I agree to the terms and conditions stated above" located at the bottom of the page.
+* AppDisplayName - The app (and bot) display name. Default value: FAQ Plus.
+* AppDescription - The app (and bot) description. Default value: A friendly FAQ bot that answers questions and connects you to experts.
+* AppIconUrl - The link to the icon for the app. It must resolve to a PNG file. Default value https://raw.githubusercontent.com/OfficeDev/microsoft-teams-apps-faqplus/master/Manifest/color.png
+* Sku - The pricing tier for the hosting plan. Default value: Standard
+* PlanSize - The size of the hosting plan (small, medium, or large). Default value: 2
+* QnaMakerSku - The pricing tier for the QnAMaker service. Default value: S0
+* SearchServiceSku - The pricing tier for the Azure Search service. Default value: B (15 indexes)
+* GitRepoUrl - The URL to the GitHub repository to deploy. Default value: https://github.com/OfficeDev/microsoft-teams-apps-faqplus.git
+* GitBranch - The branch of the GitHub repository to deploy. Default value: master
 
-10. Click on "Purchase" to start the deployment.
+* Execute the following script in Powershell window:
 
-11. Wait for the deployment to finish. You can check the progress of the deployment from the "Notifications" pane of the Azure Portal. It can take more than 10 minutes for the deployment to finish.
+`>.\deploy.ps1`
 
-12. Once the deployment has finished, you would be directed to a page that has the following fields:
-* botId - This is the Microsoft Application ID for the FAQ Plus bot.
-* appDomain - This is the base domain for the FAQ Plus Bot.
-* configurationAppUrl - This is the URL for the configuration web application.
 
-## Step 3: Set up authentication for the configuration app
+*The script will prompt for authentication twice during execution, once to get access to the Azure subscription, and the other to get access to Azure Active Directory. Please login using an account that has **contributor** role or higher.*
+![Screenshot of Authentication Window](/Wiki/Images/auth-window.png)
+![Screenshot of Authentication Window](/Wiki/Images/auth-window-browser.png)
 
-1. Note the location of the configuration app that you deployed, which is `https://[BaseResourceName]-config.azurewebsites.net`. For example, if you chose "contosofaqplus" as the base name, the configuration app will be at `https://contosofaqplus-config.azurewebsites.net`
+*Then the script will validate the existence of Azure resources in the selected region and whether the resources names are available or not. If resources with same name already exist, the script will show a confirmation box to proceed with updating existing resources.*
+![Screenshot of Resources Update Confirmation](/Wiki/Images/update-resources-confirmation.png)
 
-2. Go back to the "App Registrations" page [here](https://portal.azure.com/#blade/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/RegisteredAppsPreview).
+*If Azure AD applications already exist on tenant, The script will show confirmation dialog to update current applications' configurations.*
+![Screenshot of Apps Update Confirmation](/Wiki/Images/ad-app-update-confirmation.png)
 
-3. Click on the configuration app in the application list. Under "Manage", click on "Authentication" to bring up authentication settings.
+When the script has completed a "DEPLOYMENT SUCCEEDED" message will be displayed.
 
-4. Click on Add a platform, select Web.
+* After running the script. AD apps, Bot/Config Apps, and all required resources will be created.
 
-![Adding Redirect URI1](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/AuthenticationImage1.png)
+* If PowerShell script breaks during deployment, you may run the deployment again if there is no conflict (a resource name already exist in other resource group or another tenant) or refer to [Troubleshooting](/Wiki/Troubleshooting.md) page.
 
-5. Add new entry to "Redirect URIs":
-	If your configuration app's URL is https://contosofaqplus-config.azurewebsites.net, then add the following entry as the Redirect URIs:
-	- https://contosofaqplus-config.azurewebsites.net
+* If PowerShell script keeps failing, you may share deployment logs (generated in Deployment\\logs.zip) with the app template support team.
+![Screenshot of logs file](/Wiki/Images/logs-share.png)
 
-	Note: Please refer to Step 3.1 for more details about the URL. 
-
-6. Under "Implicit grant", check "ID tokens" and "Access tokens". The reason to check "ID tokens" is because you are using only the accounts on your current Azure tenant and using that to authenticate yourself in the configuration app. Click configure.
-
-![Adding Redirect URI2](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/AuthenticationImage2.png)
-
-7. Add new entries to "Redirect URIs":
-	If your configuration app's URL is https://contosofaqplus-config.azurewebsites.net, then add the following entry as the Redirect URIs:
-	- https://contosofaqplus-config.azurewebsites.net/signin
-	- https://contosofaqplus-config.azurewebsites.net/configuration
-
-![Adding Redirect URI3](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/AuthenticationImage3.png)
-
-8. Click "Save" to commit your changes.
-
-## Step 4: Create the QnA Maker knowledge base
+## Step 2: Create the QnA Maker knowledge base
 
 Create a knowledge base on the [QnA Maker portal](https://www.qnamaker.ai/Create), following the instructions in the QnA Maker documentation [QnA Maker documentation](https://docs.microsoft.com/en-us/azure/cognitive-services/qnamaker/tutorials/create-publish-query-in-portal#create-a-knowledge-base).
 
-Skip the step, "Create a QnA service in Microsoft Azure", because the ARM template that you deployed in Step 2 "Deploy to your Azure subscription" already created the QnA service. Proceed directly to the next step, "Connect your QnA service to your KB".
+Skip the step, "Create a QnA service in Microsoft Azure", because the script that you deployed in Step 1 "Deploy to your Azure subscription" already created the QnA service. Proceed directly to the next step, "Connect your QnA service to your KB".
 
 Use the following values when connecting to the QnA service:
 
-* **Microsoft Azure Directory ID**: The tenant associated with the Azure subscription selected in Step 2.1.
-* **Azure subscription name**: The Azure subscription to which the ARM template was deployed.
-* **Azure QnA service**: The QnA service was created during the deployment. This is the same as the "Base resource name"; for example, if you chose "contosofaqplus" as the base name, the QnA Maker service will be named `contosofaqplus`.
+* **Microsoft Azure Directory ID**: The tenant associated with the Azure subscription selected in Step 1.
+* **Azure subscription name**: The Azure subscription to which the template was deployed.
+* **Azure QnA service**: The QnA service created during the deployment. This is the same as the "Base resource name"; for example, if you chose "contosofaqplus" as the base name, the QnA Maker service will be named `contosofaqplus`.
 
 ![Screenshot of settings](https://docs.microsoft.com/en-us/azure/cognitive-services/qnamaker/media/qnamaker-tutorial-create-publish-query-in-portal/create-kb-step-2.png)
 
@@ -162,92 +130,57 @@ With the new updates to the FAQ Plus app template, the knowledge base can now su
 
 After [publishing the knowledge base](https://docs.microsoft.com/en-us/azure/cognitive-services/qnamaker/tutorials/create-publish-query-in-portal#publish-to-get-knowledge-base-endpoints), note the knowledge base ID (see screenshot).
 
-![Screenshot of the publishing page](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/kb_publishing.png)
+![Screenshot of the publishing page](/Wiki/Images/kb_publishing.png)
 
 Remember the knowledge base ID: we will need it in the next step.
 
-## Step 5: Finish configuring the FAQ Plus app
+## Step 3: Finish configuring the FAQ Plus app
 
 1. Go to the configuration app, which is at `https://[BaseResourceName]-config.azurewebsites.net`. For example, if you chose “contosofaqplus” as the base name, the configuration app will be at `https://contosofaqplus-config.azurewebsites.net`.
 
 2. You will be prompted to log in with your credentials. Make sure that you log in with an account that is in the list of users allowed to access the configuration app.
 
-![Config web app page](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/config-web-app-login.png)
+![Config web app page](/Wiki/Images/config-web-app-login.png)
 
 3. Get the link to the team with your experts from the Teams client. To do so, open Microsoft Teams, and navigate to the team. Click on the "..." next to the team name, then select "Get link to team".
 
-![Get link to Team](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/get-link-to-Team.png)
+![Get link to Team](/Wiki/Images/get-link-to-Team.png)
 
 Click on "Copy" to copy the link to the clipboard.
 
-![Link to team](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/link-to-team.png)
+![Link to team](/Wiki/Images/link-to-team.png)
 
 4. Paste the copied link into the "Team Id" field, then press "OK".
 
-![Add team link form](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/fill-in-team-link.png)
+![Add team link form](/Wiki/Images/fill-in-team-link.png)
 
 5. Enter the QnA Maker knowledge base ID into the "Knowledge base ID" field, then press "OK".
 
-6. Customize the "Welcome message" that's sent to your End-users when they install the app. This message supports basic markdown, such as bold, italics, bulleted lists, numbered lists, and hyperlinks. See [here](https://docs.microsoft.com/en-us/adaptive-cards/authoring-cards/text-features#markdown) for complete details on what Markdown features are supported.
+6. Customize the "Welcome message" that is sent to your End-users when they install the app. This message supports basic markdown, such as bold, italics, bulleted lists, numbered lists, and hyperlinks. See [here](https://docs.microsoft.com/en-us/adaptive-cards/authoring-cards/text-features#markdown) for complete details on what Markdown features are supported.
 
 ### Notes
 
 Remember to click on "OK" after changing a setting. To edit the setting later, click on "Edit" to make the text box editable.
 
-## Step 6: Create the Teams app packages
+## Step 4: Run the apps in Microsoft Teams
 
-Create two Teams app packages: one for end-users to install personally, and one to be installed to the experts' team.
+In step #1, The powershell script created two Teams app packages: one for end-users to install personally, and one to be installed to the experts' team.
 
-1. Open the `Manifest\manifest_enduser.json` file in a text editor.
+1. Open the `Manifest` folder in file explorer.
 
-2. Change the placeholder fields in the manifest to values appropriate for your organization.
+2. There should be 2 ZIP packages with the names `faqplus-enduser.zip`, `faqplus-sme.zip`
+![File Explorer](/Wiki/Images/file-explorer.png)
 
-* `developer.name` ([What's this?](https://docs.microsoft.com/en-us/microsoftteams/platform/resources/schema/manifest-schema#developer))
+3. If your tenant has sideloading apps enabled, you can install your app by following the instructions [here](https://docs.microsoft.com/en-us/microsoftteams/platform/concepts/apps/apps-upload#load-your-package-into-teams)
 
-* `developer.websiteUrl`
+4. You can also upload it to your tenant's app catalog so that it can be available for everyone in your tenant to install. See [here](https://docs.microsoft.com/en-us/microsoftteams/tenant-apps-catalog-teams)
 
-* `developer.privacyUrl`
-
-* `developer.termsOfUseUrl`
-
-3. Replace all the occurrences of `<<botId>>` placeholder to your Azure AD application's ID from above. This is the same GUID that you entered in the template under "Bot Client ID".
-
-4. In the "validDomains" section, replace all the occurrences of `<<appDomain>>` with your Bot App Service's domain. This will be `[BaseResourceName].azurewebsites.net`. For example, if you chose "contosofaqplus" as the base name, change the placeholder to `contosofaqplus.azurewebsites.net`.
-
-5. Save and Rename `manifest_enduser.json` file to a file named `manifest.json`.
-
-6. Create a ZIP package with the `manifest.json`,`color.png`, and `outline.png`. The two image files are the icons for your app in Teams.
-* Name this package `faqplus-enduser.zip`, so you know that this is the app for end-users.
-* Make sure that the 3 files are the _top level_ of the ZIP package, with no nested folders.
-![File Explorer](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/file-explorer.png)
-
-7. Rename the `manifest.json` file to `manifest_enduser.json` for reusing the file.
-
-8.  Open the `Manifest\manifest_sme.json` file in a text editor.
-
-9. Repeat the steps from 2 to 4 to replace all the placeholders in the file.
-
-10. Save and Rename `manifest_sme.json` file to a file named `manifest.json`.
-
-11. Create a ZIP package with the `manifest.json`,`color.png`, and `outline.png`. The two image files are the icons for your app in Teams.
-* Name this package `faqplus-experts.zip`, so you know that this is the app for end-users.
-* Make sure that the 3 files are the _top level_ of the ZIP package, with no nested folders.
-![File Explorer](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/file-explorer.png)
-
-12. Rename the `manifest.json` file to `manifest_sme.json` for reusing the file.
-
-## Step 7: Run the apps in Microsoft Teams
-
-1. If your tenant has sideloading apps enabled, you can install your app by following the instructions [here](https://docs.microsoft.com/en-us/microsoftteams/platform/concepts/apps/apps-upload#load-your-package-into-teams)
-
-2. You can also upload it to your tenant's app catalog so that it can be available for everyone in your tenant to install. See [here](https://docs.microsoft.com/en-us/microsoftteams/tenant-apps-catalog-teams)
-
-3. Install the experts' app (the `faqplus-experts.zip` package) to your team of subject-matter experts. This **MUST** be the same team that you selected in Step 5.3 above.
+5. Install the experts' app (the `faqplus-experts.zip` package) to your team of subject-matter experts. This **MUST** be the same team that you selected in Step 3.3 above.
 
 * We recommend using [app permission policies](https://docs.microsoft.com/en-us/microsoftteams/teams-app-permission-policies) to restrict access to this app to the members of the experts' team.
 
-4. Install the end-user app (the `faqplus-enduser.zip` package) to your users.
+6. Install the end-user app (the `faqplus-enduser.zip` package) to your users.
 
 ## Troubleshooting
 
-Please see our [Troubleshooting](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Troubleshooting) page.
+Please see our [Troubleshooting](/Wiki/Troubleshooting.md) page.
