@@ -475,7 +475,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Let me team of experts know how I&apos;m doing so they can make me even better!.
+        ///   Looks up a localized string similar to Let my team of experts know how I&apos;m doing so they can make me even better!.
         /// </summary>
         public static string FeedbackText1 {
             get {

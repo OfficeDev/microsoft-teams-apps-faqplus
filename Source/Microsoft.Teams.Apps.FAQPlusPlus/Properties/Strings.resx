@@ -130,7 +130,7 @@
     <comment>Helps the user in understanding there is an expert team to connect to.</comment>
   </data>
   <data name="FeedbackText1" xml:space="preserve">
-    <value>Let me team of experts know how I'm doing so they can make me even better!</value>
+    <value>Let my team of experts know how I'm doing so they can make me even better!</value>
     <comment>Text suggests that user is invited to share his feedback on his experience using bot.</comment>
   </data>
   <data name="FunctionCardText1" xml:space="preserve">

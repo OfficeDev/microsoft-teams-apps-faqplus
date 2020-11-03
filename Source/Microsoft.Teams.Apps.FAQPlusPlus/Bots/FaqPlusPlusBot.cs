@@ -984,8 +984,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
                     await turnContext.SendActivityAsync(MessageFactory.Text(Strings.ThankYouTextContent)).ConfigureAwait(false);
 
-                    experts = await this.expertProvider.GetExpertsAsync().ConfigureAwait(false);
-                    smeTeamCard = new SmeTicketCard(ticket, experts).ToAttachment(message?.LocalTimestamp, this.appBaseUri);
+                    //experts = await this.expertProvider.GetExpertsAsync().ConfigureAwait(false);
+                    //smeTeamCard = new SmeTicketCard(ticket, experts).ToAttachment(message?.LocalTimestamp, this.appBaseUri);
 
                     userAction.Action = nameof(UserActionType.ShareTicketFeedback);
                     break;
@@ -1807,7 +1807,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             await this.expertProvider.UpserExpertsAsync(experts);
         }
 
-
         private async Task<Mention> MentionSomeoneByName(ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken, string name)
         {
             var members = await this.GetTeamsChannelMembers(turnContext, cancellationToken);
@@ -1826,24 +1825,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
             return null;
         }
-        //        @ someone
-        //        var members = await this.GetTeamsChannelMembers(turnContext, cancellationToken);
-        //foreach (TeamsChannelAccount member in members)
-        //        {
-        //            if (member.Name.Equals("Chen Qiang (River)"))
-        //            {
-        //                var mention = new Mention
-        //                {
-        //                    Mentioned = member,
-        //                    Text = $"<at>{XmlConvert.EncodeName("General")}</at>",
-        //                };
-
-        //                var replyActivity = MessageFactory.Text($"Hello {mention.Text}.");
-        //                replyActivity.Entities = new List<Entity> { mention };
-
-        //                await turnContext.SendActivityAsync(replyActivity, cancellationToken);
-        //            }
-        //        }
 
     }
 }
