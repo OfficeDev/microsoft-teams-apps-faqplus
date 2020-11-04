@@ -98,6 +98,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         private readonly IQnaServiceProvider qnaServiceProvider;
         private readonly BotState conversationState;
         private readonly BotState userState;
+        private readonly RecommendConfiguration recommendConfiguration;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FaqPlusPlusBot"/> class.
@@ -117,8 +118,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <param name="knowledgeBaseSearchService">KnowledgeBaseSearchService dependency injection.</param>
         /// <param name="optionsAccessor">A set of key/value application configuration properties for FaqPlusPlus bot.</param>
         /// <param name="logger">Instance to send logs to the Application Insights service.</param>
-        /// <param name="conversationState">conversation sate cache</param>
-        /// <param name="userState">user state cache</param>
+        /// <param name="conversationState">conversation sate cache.</param>
+        /// <param name="userState">user state cache.</param>
+        /// <param name="recommendConfiguration">configuration to decide recommend.</param>
         public FaqPlusPlusBot(
             Common.Providers.IConfigurationDataProvider configurationProvider,
             MicrosoftAppCredentials microsoftAppCredentials,
@@ -136,7 +138,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             IOptionsMonitor<BotSettings> optionsAccessor,
             ILogger<FaqPlusPlusBot> logger,
             ConversationState conversationState,
-            UserState userState)
+            UserState userState,
+            RecommendConfiguration recommendConfiguration)
         {
             this.configurationProvider = configurationProvider;
             this.microsoftAppCredentials = microsoftAppCredentials;
@@ -165,6 +168,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             this.knowledgeBaseSearchService = knowledgeBaseSearchService;
             this.conversationState = conversationState;
             this.userState = userState;
+            this.recommendConfiguration = recommendConfiguration;
         }
 
         /// <summary>
@@ -957,7 +961,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     {
                         experts = await this.expertProvider.GetExpertsAsync().ConfigureAwait(false);
                         smeTeamCard = new SmeTicketCard(newTicket, experts).ToAttachment(message?.LocalTimestamp, this.appBaseUri);
-                        userCard = new UserNotificationCard(newTicket,this.appBaseUri).ToAttachment(Strings.NotificationCardContent, message?.LocalTimestamp);
+                        userCard = new UserNotificationCard(newTicket, this.appBaseUri).ToAttachment(Strings.NotificationCardContent, message?.LocalTimestamp);
                     }
 
                     userAction.Action = nameof(UserActionType.AskExpert);
@@ -984,9 +988,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
                     await turnContext.SendActivityAsync(MessageFactory.Text(Strings.ThankYouTextContent)).ConfigureAwait(false);
 
-                    //experts = await this.expertProvider.GetExpertsAsync().ConfigureAwait(false);
-                    //smeTeamCard = new SmeTicketCard(ticket, experts).ToAttachment(message?.LocalTimestamp, this.appBaseUri);
-
+                    // experts = await this.expertProvider.GetExpertsAsync().ConfigureAwait(false);
+                    // smeTeamCard = new SmeTicketCard(ticket, experts).ToAttachment(message?.LocalTimestamp, this.appBaseUri);
                     userAction.Action = nameof(UserActionType.ShareTicketFeedback);
                     break;
 
@@ -1000,7 +1003,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     }
                     else
                     {
-                        this.logger.LogWarning($"Unexpected text in submit payload: {message.Text}");
+                        var payloadRecommend = ((JObject)message.Value).ToObject<RecommendCardPayload>();
+                        if (payloadRecommend.Question != null)
+                        {
+                            this.logger.LogInformation("User select from recommend list");
+                            await this.GetQuestionAnswerReplyAsync(turnContext, message, cancellationToken).ConfigureAwait(false);
+                        }
+                        else
+                        {
+                            this.logger.LogWarning($"Unexpected text in submit payload: {message.Text}");
+                        }
                     }
 
                     break;
@@ -1159,7 +1171,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     break;
 
                 case ChangeTicketStatusPayload.AssignToSelfAction:
-                    // if already assigned 
+                    // if already assigned
                     if (ticket.Status == (int)TicketState.Assigned && ticket.AssignedToName == message.From.Name)
                     {
                         var mention = await this.MentionSomeoneByName(turnContext, cancellationToken, message.From.Name).ConfigureAwait(false);
@@ -1708,7 +1720,29 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 }
                 else
                 {
-                    await turnContext.SendActivityAsync(MessageFactory.Attachment(UnrecognizedInputCard.GetCard(text, this.appBaseUri))).ConfigureAwait(false);
+                    var conPro = await this.GetConversationInfoAsync(turnContext, cancellationToken);
+                    conPro.ContinousFailureTimes++;
+
+                    bool isRecommended = false;
+                    if (conPro.ContinousFailureTimes >= this.recommendConfiguration.RecommendationContinousFailureTimes && DateTime.Now > conPro.LastRecommendTime.AddMinutes(this.recommendConfiguration.RecommendationIntervalInMinutes))
+                    {
+                        var conList = await this.GetRecommendQuestionsAsync();
+                        if (conList.Count > 0)
+                        {
+                            isRecommended = true;
+
+                            // Send recommend
+                            await turnContext.SendActivityAsync(MessageFactory.Attachment(RecommendCard.GetCard(conList, this.appBaseUri))).ConfigureAwait(false);
+
+                            conPro.ContinousFailureTimes = 0;
+                            conPro.LastRecommendTime = DateTime.Now;
+                        }
+                    }
+
+                    if (!isRecommended)
+                    {
+                        await turnContext.SendActivityAsync(MessageFactory.Attachment(UnrecognizedInputCard.GetCard(text, this.appBaseUri))).ConfigureAwait(false);
+                    }
                 }
 
                 var userDetails = await AdaptiveCardHelper.GetUserDetailsInPersonalChatAsync(turnContext, cancellationToken).ConfigureAwait(false);
@@ -1744,7 +1778,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// </summary>
         /// <param name="turnContext">Context object containing information cached for a single turn of conversation with a user.</param>
         /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
-        /// <returns>user action entity</returns>
+        /// <returns>user action entity.</returns>
         private async Task<UserActionEntity> GeneratePersonalActionEntityAsync(ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
         {
             UserActionEntity userAction = new UserActionEntity();
@@ -1826,5 +1860,65 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             return null;
         }
 
+        /// <summary>
+        /// Get current conversation info.
+        /// </summary>
+        /// <returns>conversation info.</returns>
+        private async Task<ConversationProperty> GetConversationInfoAsync(
+            ITurnContext turnContext,
+            CancellationToken cancellationToken)
+        {
+            var conversationStateAccessors = this.conversationState.CreateProperty<ConversationProperty>(nameof(ConversationProperty));
+            var conProperty = await conversationStateAccessors.GetAsync(turnContext, () => new ConversationProperty(), cancellationToken);
+            return conProperty;
+        }
+
+        /// <summary>
+        /// Get recommend question list.
+        /// </summary>
+        /// <returns>recommend 6 question list.</returns>
+        private async Task<List<string>> GetRecommendQuestionsAsync()
+        {
+            var ceList = await this.conversationProvider.GetRecentAskedQnAListAsync(30);
+            Dictionary<int, int> idCountDic = new Dictionary<int, int>();
+            foreach (ConversationEntity ce in ceList)
+            {
+                int qnaID = Convert.ToInt32(ce.QnAID);
+                if (!idCountDic.ContainsKey(qnaID))
+                {
+                    idCountDic.Add(qnaID, 1);
+                }
+                else
+                {
+                    idCountDic[qnaID]++;
+                }
+            }
+
+            List<string> result = new List<string>();
+
+            var list = idCountDic.OrderByDescending(r => r.Value).ToList();
+            int suggestionCount = list.Count > 6 ? 6 : list.Count;
+            int randomRange = list.Count > 15 ? 15 : list.Count - 1;
+
+            List<int> listNumbers = new List<int>();
+            int number;
+            Random ran = new Random();
+            for (int i = 0; i < suggestionCount; i++)
+            {
+                do
+                {
+                    number = ran.Next(0, randomRange);
+                }
+                while (listNumbers.Contains(number));
+                listNumbers.Add(number);
+            }
+
+            foreach (int i in listNumbers)
+            {
+                result.Add(ceList.Where(r => { return Convert.ToInt32(r.QnAID) == list[i].Key; }).FirstOrDefault().Question);
+            }
+
+            return result;
+        }
     }
 }

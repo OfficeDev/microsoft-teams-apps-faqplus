@@ -1,6 +1,7 @@
 ﻿namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
 {
     using System;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.WindowsAzure.Storage;
@@ -53,6 +54,46 @@
             var searchResult = await this.conversationCloudTable.ExecuteAsync(searchOperation).ConfigureAwait(false);
 
             return (ConversationEntity)searchResult.Result;
+        }
+
+        /// <summary>
+        /// get recently asked questions with answers.
+        /// </summary>
+        /// <param name="days">recent n days.</param>
+        /// <returns>list of conversation entity.</returns>
+        public async Task<List<ConversationEntity>> GetRecentAskedQnAListAsync(int days)
+        {
+            List<ConversationEntity> activities = new List<ConversationEntity>();
+            string filterTime = TableQuery.GenerateFilterConditionForDate("Timestamp", QueryComparisons.GreaterThanOrEqual, DateTimeOffset.Now.AddDays(-days).Date);
+            string filterAnswer = TableQuery.GenerateFilterCondition("Answer", QueryComparisons.NotEqual, "null");
+            string filterProject = TableQuery.GenerateFilterCondition("Project", QueryComparisons.NotEqual, "common");
+
+            string finalFilter = TableQuery.CombineFilters(TableQuery.CombineFilters(filterTime, TableOperators.And, filterAnswer), TableOperators.And, filterProject);
+
+            TableContinuationToken continuationToken = null;
+
+            await this.EnsureInitializedAsync().ConfigureAwait(false);
+            do
+            {
+                var result = await this.conversationCloudTable.ExecuteQuerySegmentedAsync(new TableQuery<ConversationEntity>().Where(finalFilter), continuationToken);
+                continuationToken = result.ContinuationToken;
+                int index = 0;
+                if (result.Results != null)
+                {
+                    foreach (ConversationEntity entity in result.Results)
+                    {
+                        activities.Add(entity);
+                        index++;
+                        if (index == 500)
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+            while (continuationToken != null);
+
+            return activities;
         }
 
         /// <summary>

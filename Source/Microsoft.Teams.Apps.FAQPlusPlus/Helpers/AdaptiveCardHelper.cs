@@ -71,7 +71,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Helpers
         /// <param name="appBaseUri">The base URI where the app is hosted.</param>
         /// <param name="turnContext">Context object containing information cached for a single turn of conversation with a user.</param>
         /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
-        /// <param name="feedbackProvider">Feedback Provider</param>
+        /// <param name="feedbackProvider">Feedback Provider.</param>
         /// <returns>A task that represents the work queued to execute.</returns>
         public static async Task<FeedbackEntity> ShareFeedbackSubmitText(
             IMessageActivity message,
@@ -99,6 +99,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Helpers
                 {
                     await turnContext.SendActivityAsync(Strings.InputTooLongWarning).ConfigureAwait(false);
                 }
+
                 return null;
             }
 

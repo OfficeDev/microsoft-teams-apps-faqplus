@@ -81,5 +81,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         /// <param name="knowledgeBaseId">Knowledgebase id.</param>
         /// <returns>A <see cref="Task"/> of type bool where true represents knowledgebase has published atleast once while false indicates that knowledgebase has not published yet.</returns>
         Task<bool> GetInitialPublishedStatusAsync(string knowledgeBaseId);
+
+        /// <summary>
+        /// This method returns the knowledgebase documents.
+        /// </summary>
+        /// <returns>Json string.</returns>
+        Task<IEnumerable<QnADTO>> GetAllKnowledgebaseAsnyc();
     }
 }

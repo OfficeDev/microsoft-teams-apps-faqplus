@@ -54,7 +54,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <returns>Returns the attachment that will be sent in a message.</returns>
         public Attachment ToAttachment(DateTimeOffset? localTimestamp, string appBaseUri)
         {
-
             List<AdaptiveColumn> columns = new List<AdaptiveColumn>
             {
                 new AdaptiveColumn
@@ -144,11 +143,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
 
                 Actions = this.BuildActions(appBaseUri),
             };
-
-            //if (this.Ticket.Status == (int)TicketState.Resolved && this.ticket.Feedback != null)
-            //{
-            //    card.Body.
-            //}
 
             return new Attachment
             {

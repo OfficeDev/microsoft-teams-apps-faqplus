@@ -19,6 +19,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Options;
     using Microsoft.Teams.Apps.FAQPlusPlus.Bots;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models.Configuration;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers;
 
@@ -127,6 +128,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
             // You can inspect the ConversationState
             services.AddSingleton<ConversationState>();
             services.AddTransient<IBot, FaqPlusPlusBot>();
+
+            // Recommend configuration
+            RecommendConfiguration con = new RecommendConfiguration();
+            con.RecommendationContinousFailureTimes = Convert.ToInt32(this.Configuration["RecommendationContinousFailureTimes"]);
+            con.RecommendationIntervalInMinutes = Convert.ToInt32(this.Configuration["RecommendationIntervalInMinutes"]);
+            services.AddSingleton<RecommendConfiguration>(con);
 
             // Create the telemetry middleware(used by the telemetry initializer) to track conversation events
             services.AddSingleton<TelemetryLoggerMiddleware>();

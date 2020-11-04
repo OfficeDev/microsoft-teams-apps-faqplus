@@ -166,7 +166,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     },
                     new AdaptiveShowCardAction
                     {
-                        IconUrl =  appBaseUri + "/content/face_straigh.png",
+                        IconUrl = appBaseUri + "/content/face_straigh.png",
                         Title = " ",
                         Card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
                         {

@@ -49,6 +49,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             {
                 urlString = this.appBaseUri + "/content/ticket_created.png";
             }
+
             if (string.Compare(message, Strings.PendingTicketUserNotification) == 0)
             {
                 urlString = this.appBaseUri + "/content/ticket_pending.png";

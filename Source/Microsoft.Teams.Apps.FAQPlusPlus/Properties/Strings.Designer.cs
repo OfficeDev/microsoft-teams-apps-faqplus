@@ -808,6 +808,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to I didn&apos;t find a relevant answer for your question. you can try ask me:.
+        /// </summary>
+        public static string RecommendMessage {
+            get {
+                return ResourceManager.GetString("RecommendMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Redirection URL.
         /// </summary>
         public static string RedirectionLabelText {

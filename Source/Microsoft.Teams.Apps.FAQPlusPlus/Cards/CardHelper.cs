@@ -83,7 +83,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             if (ticket?.Status == (int)TicketState.UnAssigned)
             {
                 return Strings.SMETicketUnassignedStatus;
-
             }
             else if (ticket?.Status == (int)TicketState.Assigned)
             {

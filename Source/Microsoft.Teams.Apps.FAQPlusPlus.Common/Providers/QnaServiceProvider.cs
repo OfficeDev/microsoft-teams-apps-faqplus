@@ -225,6 +225,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         }
 
         /// <summary>
+        /// This method returns the knowledgebase documents.
+        /// </summary>
+        /// <returns>Json string.</returns>
+        public async Task<IEnumerable<QnADTO>> GetAllKnowledgebaseAsnyc()
+        {
+            var knowledgeBaseId = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.KnowledgeBaseId).ConfigureAwait(false);
+            var qnaDocuments = await this.qnaMakerClient.Knowledgebase.DownloadAsync(knowledgeBaseId, environment: EnvironmentType).ConfigureAwait(false);
+            return qnaDocuments.QnaDocuments;
+        }
+
+        /// <summary>
         /// Checks whether knowledgebase need to be published.
         /// </summary>
         /// <param name="knowledgeBaseId">Knowledgebase id.</param>

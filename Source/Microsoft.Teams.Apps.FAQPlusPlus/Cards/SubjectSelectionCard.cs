@@ -21,8 +21,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <summary>
         /// Construct the subject selection card - select subject before asking question.
         /// </summary>
-        /// <param name="subjects">the array of subjects</param>
-        /// <param name="currentSubject">current selected subject</param>
+        /// <param name="subjects">the array of subjects.</param>
+        /// <param name="currentSubject">current selected subject.</param>
         /// <param name="appBaseUri">The base URI where the app is hosted.</param>
         /// <returns>Response card.</returns>
         public static IEnumerable<Attachment> GetCards(Subject subjects, string currentSubject, string appBaseUri)
@@ -68,7 +68,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                            },
                        });
                     }
-
                 }
             }
 

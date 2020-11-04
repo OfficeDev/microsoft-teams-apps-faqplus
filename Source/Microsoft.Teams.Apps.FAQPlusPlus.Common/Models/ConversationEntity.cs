@@ -1,4 +1,7 @@
-﻿namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
+﻿// <copyright file="ConversationEntity.cs" company="Microsoft">
+// Copyright (c) Microsoft. All rights reserved.
+// </copyright>
+namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
 {
     using System;
     using System.Collections.Generic;

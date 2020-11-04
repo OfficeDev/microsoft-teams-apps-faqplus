@@ -4,16 +4,15 @@
 
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
 {
-    using Newtonsoft.Json;
     using System.Collections.Generic;
     using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker.Models;
+    using Newtonsoft.Json;
 
     /// <summary>
     /// Represents the payload of a response card.
     /// </summary>
     public class ResponseCardPayload : TeamsAdaptiveSubmitActionData
     {
-
         /// <summary>
         /// Gets or sets the QnAID of prompts by the user.
         /// </summary>
