@@ -24,10 +24,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// Construct the response card - when user asks a question to the QnA Maker through the bot.
         /// </summary>
         /// <param name="questionsList">Question list to build the card.</param>
+        /// <param name="appId">app id which you provided when configuring the tab.</param>
+        /// <param name="appBaseUri">The base URI where the app is hosted.</param>
         /// <returns>The recommend card to append to a message as an attachment.</returns>
-        public static Attachment GetCard(List<string> questionsList, string appBaseUri)
+        public static Attachment GetCard(List<string> questionsList, string appId, string appBaseUri)
         {
-            List<AdaptiveAction> actions = null;
+            List<AdaptiveAction> actions = BuildActions(appBaseUri, appId);
 
             AdaptiveCard responseCard = new AdaptiveCard(new AdaptiveSchemaVersion(1, 2))
             {
@@ -46,6 +48,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// This method builds the body of the response card, and helps to render the follow up prompts if the response contains any.
         /// </summary>
         /// <param name="questionsList">Question list to build the card.</param>
+        /// <param name="appBaseUri">The base URI where the app is hosted.</param>
         /// <returns>A list of adaptive elements which makes up the body of the adaptive card.</returns>
         private static List<AdaptiveElement> BuildRecommendCardBody(List<string> questionsList, string appBaseUri)
         {
@@ -117,7 +120,65 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 }
             }
 
+            cardBodyToConstruct.Add(new AdaptiveColumnSet
+            {
+                Separator = true,
+                Columns = new List<AdaptiveColumn>
+                    {
+                        new AdaptiveColumn
+                        {
+                            Items = new List<AdaptiveElement>
+                            {
+                                new AdaptiveTextBlock
+                                {
+                                    Weight = AdaptiveTextWeight.Lighter,
+                                    Text = Strings.ResponseFooterText,
+                                    Wrap = true,
+                                },
+                            },
+                        },
+                    },
+            });
+
             return cardBodyToConstruct;
+        }
+
+        /// <summary>
+        /// This method will build the necessary list of actions.
+        /// </summary>
+        /// <param name="appBaseUri">The base URI where the app is hosted.</param>
+        /// <param name="appId">app id which you provided when configuring the tab.</param>
+        /// <returns>A list of adaptive actions.</returns>
+        private static List<AdaptiveAction> BuildActions(string appBaseUri, string appId)
+        {
+            List<AdaptiveAction> actionsList = new List<AdaptiveAction>
+            {
+                // Adds the "Ask an expert" button.
+                new AdaptiveSubmitAction
+                {
+                    Title = Strings.AskAnExpertButtonText,
+                    Data = new ResponseCardPayload
+                    {
+                        MsTeams = new CardAction
+                        {
+                            Type = ActionTypes.MessageBack,
+                            DisplayText = Strings.AskAnExpertDisplayText,
+                            Text = Constants.AskAnExpert,
+                        },
+                    },
+                    IconUrl = appBaseUri + "/content/expert.png",
+                },
+
+                // Adds the "User Guide" button.
+                new AdaptiveOpenUrlAction
+                {
+                   Title = Strings.UserGuideButtonText,
+                   Url = new Uri($"https://teams.microsoft.com/l/entity/" + appId + "/help"),
+                   IconUrl = appBaseUri + "/content/guide.png",
+                },
+            };
+
+            return actionsList;
         }
     }
 }

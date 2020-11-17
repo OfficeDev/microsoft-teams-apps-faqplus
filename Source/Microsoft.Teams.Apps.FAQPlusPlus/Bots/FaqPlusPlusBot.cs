@@ -1732,7 +1732,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                             isRecommended = true;
 
                             // Send recommend
-                            await turnContext.SendActivityAsync(MessageFactory.Attachment(RecommendCard.GetCard(conList, this.appBaseUri))).ConfigureAwait(false);
+                            await turnContext.SendActivityAsync(MessageFactory.Attachment(RecommendCard.GetCard(conList, this.options.AppId, this.appBaseUri))).ConfigureAwait(false);
 
                             conPro.ContinousFailureTimes = 0;
                             conPro.LastRecommendTime = DateTime.Now;

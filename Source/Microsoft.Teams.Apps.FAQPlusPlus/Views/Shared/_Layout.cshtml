@@ -1,0 +1,64 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Hyper - Responsive Bootstrap 4 Admin Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
+    <meta content="Coderthemes" name="author" />
+
+    <!-- third party css -->
+    @RenderSection("Styles", false/*required*/)
+    <!-- third party css end -->
+    <!-- App css -->
+    <link href="~/lib/tab/css/icons.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/lib/tab/css/app-modern.css" rel="stylesheet" type="text/css"
+          id="light-style" />
+    <link href="~/lib/tab/css/app-modern-dark.css" rel="stylesheet" type="text/css"
+          id="dark-style" />
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="~/lib/microsoft-teams/dist//MicrosoftTeams.js"></script>
+    <script src="~/lib/tab/js/vue.js"></script>
+    <script src="~/lib/tab/js/axios.js"></script>
+
+    <script>
+        microsoftTeams.initialize();
+        let params = getQueryParameters();
+        setTheme(params["theme"]);
+
+        // Parse the query parameters
+        function getQueryParameters() {
+            let queryParams = {};
+            location.search.substr(1).split("&").forEach(function (item) {
+                let s = item.split("="),
+                    k = s[0],
+                    v = s[1] && decodeURIComponent(s[1]);
+                queryParams[k] = v;
+            });
+            return queryParams;
+        }
+
+        // Set appropriate dark/contrast/default theme for the controls based on current theme
+        function setTheme(currentTheme) {
+            if (currentTheme === "dark" || currentTheme === "contrast") {
+                $("#light-style").attr("disabled", true);
+                $("#dark-style").attr("disabled", false);
+            }
+            else {
+                $("#light-style").attr("disabled", false);
+                $("#dark-style").attr("disabled", true);
+            }
+        }
+
+        // Listen for theme changes
+        microsoftTeams.registerOnThemeChangeHandler(setTheme);
+    </script>
+</head>
+<body data-layout-config='{"leftSideBarTheme":"dark","layoutBoxed":false, "leftSidebarCondensed":false, "leftSidebarScrollable":false,"darkMode":true, "showRightSidebarOnStart": false}'>
+    @RenderBody()
+    <script src="~/lib/tab/js/vendor.js"></script>
+    <script src="~/lib/tab/js/app.js"></script>
+
+    @RenderSection("Scripts", false/*required*/)
+</body>
+</html>

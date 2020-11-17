@@ -1330,6 +1330,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to User Guide.
+        /// </summary>
+        public static string UserGuideButtonText {
+            get {
+                return ResourceManager.GetString("UserGuideButtonText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to How do you feel about the service?.
         /// </summary>
         public static string UserNotificationFooterText {

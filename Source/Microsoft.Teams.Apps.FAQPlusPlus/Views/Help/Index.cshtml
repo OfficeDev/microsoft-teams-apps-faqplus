@@ -1,57 +1,302 @@
-﻿@model string;
-<head>
-    <script type="text/javascript" src="~/lib/jquery/jquery.min.js"></script>
-    <script type="text/javascript" src="~/lib/microsoft-teams/dist/MicrosoftTeams.min.js"></script>
-</head>
+﻿@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="content">
+    <div class="row">
+        <div class="col-xl-4 col-lg-5">
+            <div class="card text-center">
+                <div class="card-body" id="app">
+                    <img src="~/Content/PS_Logo_Mini_v3.png" class=" avatar-lg img-thumbnail"
+                         alt="profile-image">
+                    <h4 class="mb-0 mt-2">Dolphin</h4>
+                    <p class="text-muted font-14">CTU Production Services</p>
+                    <button type="button" class="btn btn-primary btn-sm mb-2" v-on:click="deepLinkToChat()">Message</button>
+                    <div class="text-left mt-3">
+                        <h4 class="font-13 text-uppercase">About Me :</h4>
+                        <p class="text-muted font-13 mb-3">
+                            Dolphin was created by CTU Production Services team with the goal of getting you the answers you need in your daily work. We sincerely invite you and your teammates to chat with Dolphin more!
+                        </p>
+                        <p class="text-muted font-13 mb-3">
+                            If you have any suggestions or feedback, you can drop us a line anytime at :
+                        </p>
+                        <a href="mailto:CTU-PS_Products@ubisoft.com?subject=[PS] Question for Dolphin" class="btn btn-success btn-sm mt-2"><i class="mdi mdi-email-outline mr-1"></i> CTU PS Products</a>
+                    </div>
+                </div> <!-- end card-body -->
+            </div> <!-- end card -->
+        </div> <!-- end col-->
 
-<body class="theme-default">
-    <div class="helpTab">@Html.Raw(Model)</div>
+        <div class="col-xl-8 col-lg-7">
+            <div class="card">
+                <div class="card-body">
+                    <ul class="nav nav-pills bg-nav-pills nav-justified mb-3">
+                        <li class="nav-item">
+                            <a href="#feature" data-toggle="tab" aria-expanded="false" class="nav-link rounded-0 active">
+                                Feature
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#timeline" data-toggle="tab" aria-expanded="true" class="nav-link rounded-0">
+                                Timeline
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#faq" data-toggle="tab" aria-expanded="false" class="nav-link rounded-0">
+                                FAQ
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="feature">
 
-    <script>
+                            <div class="timeline-alt pb-0">
+                                <div class="timeline-item">
+                                    <i class="mdi mdi-circle bg-info-lighten text-info timeline-icon"></i>
+                                    <div class="timeline-item-info">
+                                        <h5 class="mt-0 mb-1">QnA <span class="ml-2 font-12">[Apr.2020]</span></h5>
+                                        <p class="text-muted mt-2 mb-0 pb-3">
+                                            Dolphin could provide the Prod teams the daily troubleshooting answers, as well as benefits / policy of HR part or IT queries.
+                                        </p>
+                                    </div>
+                                </div>
 
-        microsoftTeams.initialize();
+                                <div class="timeline-item">
+                                    <i class="mdi mdi-circle bg-primary-lighten text-primary timeline-icon"></i>
+                                    <div class="timeline-item-info">
+                                        <h5 class="mt-0 mb-1">Ask an expert  <span class="ml-2 font-12">[Jun.2020]</span></h5>
+                                        <p class="text-muted mt-2 mb-0 pb-3">
+                                            For non-relevant answers or extra support, Dolphin also provides the ticket system to inform the expert among the Production Services team.  
+                                        </p>
 
-        let params = getQueryParameters();
-        setTheme(params["theme"]);
+                                    </div>
+                                </div>
 
-        // Parse the query parameters
-        function getQueryParameters() {
-            let queryParams = {};
-            location.search.substr(1).split("&").forEach(function (item) {
-                let s = item.split("="),
-                    k = s[0],
-                    v = s[1] && decodeURIComponent(s[1]);
-                queryParams[k] = v;
-            });
-            return queryParams;
-        }
+                                <div class="timeline-item">
+                                    <i class="mdi mdi-circle bg-info-lighten text-info timeline-icon"></i>
 
-        // Set appropriate dark/contrast/default theme for the controls based on current theme
-        function setTheme(currentTheme) {
-            if (currentTheme === "dark" || currentTheme === "contrast") {
-                $(".theme-default").addClass("theme-dark-contrast").removeClass("theme-default");
+                                    <div class="timeline-item-info">
+                                        <h5 class="mt-0 mb-1">Feedback <span class="ml-2 font-12">[Aug.2020]</span></h5>
+                                        <p class="text-muted mt-2 mb-0 pb-3">
+                                            Not only for certain questions, but we also sincerely waiting for your feedback for Dolphin, but it will also help us build a smarter, stronger Dolphin!
+                                        </p>
+
+                                    </div>
+                                </div>
+
+                                <div class="timeline-item">
+                                    <i class="mdi mdi-circle bg-primary-lighten text-primary timeline-icon"></i>
+                                    <div class="timeline-item-info">
+                                        <h5 class="mt-0 mb-1">
+                                            New features is approaching!
+                                        </h5>
+                                        <p class="text-muted mt-2 mb-0 pb-3">
+                                            Stay tuned! We will keep you posted once released new features in Dolphin!
+                                        </p>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xl-8">
+                                <div class="embed-responsive embed-responsive-16by9" height='300'>
+                                    <iframe class="embed-responsive-item" src="https://videocdn01.ubisoft.org/PROD/player/index.aspx?c=yfmfe&amp;s=0&amp;bgcolor=white"></iframe>
+                                </div>
+                            </div>
+                        </div> <!-- end tab-pane -->
+                        <!-- end Feature section content -->
+
+                        <div class="tab-pane show " id="timeline">
+
+                            <div class="text-center">
+                                <img src="~/Content/Help-Page_Timeline_V1.png" height="350" alt="File not found Image">
+                              
+                            </div> <!-- end /.text-center-->
+                        </div>
+                        <!-- end timeline content-->
+
+                        <div class="tab-pane" id="faq">
+                            <div class="content">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="text-center">
+                                            <h3 class="">Frequently Asked Questions</h3>
+                                            <p class="text-muted mt-3">
+                                                Here we would like to provide you the most frequently asked questions about Dolphin!<br /> If you want to know more about Dolphin! Don’t hesitate to contact us via Email.
+                                            </p>
+                                        </div>
+                                    </div><!-- end col -->
+                                </div><!-- end row -->
+
+                                <div class="row pt-5">
+                                    <div class="col-lg-10 offset-lg-1">
+                                        <!-- Question/Answer -->
+                                        <div>
+                                            <div class="faq-question-q-box">Q.</div>
+                                            <h4 class="faq-question" data-wow-delay=".1s">
+                                                What can I do with Dolphin?
+                                            </h4>
+                                            <p class="faq-answer mb-4">
+                                                Dolphin is created as the personal assistant about all the production issues or benefit questions. You can refer to the follow list which others would like to ask previously:
+                                                <table class="table table-sm table-striped  table-bordered table-centered mb-0 faq-answer">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>
+                                                                Product Questions
+                                                            </th>
+                                                            <th>
+                                                                IT/HR Questions
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>
+                                                                P4 server address
+
+                                                            </td>
+                                                            <td>
+                                                                工资明细/Salary
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                Liberty Anvil Installation Failed
+                                                            </td>
+                                                            <td>
+                                                                出差补贴及报销/Business Trip Reimbursement and Per diem
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                ForHonor What if Microsoft Build Tools install fail
+                                                            </td>
+                                                            <td>
+                                                                集体户口迁入
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                Orpheus How to get a new big file
+                                                            </td>
+                                                            <td>
+                                                                How to create SOS ticket
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                ACK How to get the latest big file
+                                                            </td>
+                                                            <td>
+                                                                How to set up printers
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                Liberty 3dMax Unable to use maxhammer
+                                                            </td>
+                                                            <td>
+                                                                Wifi password
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                Liberty Bloomberg unable to launch
+                                                            </td>
+                                                            <td>
+                                                                How to install OpenVPN
+                                                            </td>
+
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <!--/col-md-10 -->
+
+
+                                    <div class="col-lg-5 offset-lg-1">
+                                        <!-- Question/Answer -->
+                                        <div>
+                                            <div class="faq-question-q-box">Q.</div>
+                                            <h4 class="faq-question" data-wow-delay=".1s">
+                                                What can I do if there is no answer I want from Dolphin?
+                                            </h4>
+                                            <p class="faq-answer mb-4">Dolphin provided ticket system for the request she can’t answer properly. Ask an expert will help you get extra support from PS team.</p>
+                                        </div>
+
+                                        <!-- Question/Answer -->
+                                        <div>
+                                            <div class="faq-question-q-box">Q.</div>
+                                            <h4 class="faq-question">
+                                                What can I do if I want share my feedback for Dolphin?
+                                            </h4>
+                                            <p class="faq-answer mb-4">Share feedback button below all the answers or direct type the command (<strong>Share feedback</strong> in the chat box) will help you provide your opinion to PS team directly.</p>
+                                        </div>
+
+                                    </div>
+                                    <!--/col-md-5 -->
+
+                                    <div class="col-lg-5">
+                                        <!-- Question/Answer -->
+                                        <div>
+                                            <div class="faq-question-q-box">Q.</div>
+                                            <h4 class="faq-question">
+                                                What if I want Extra feature for Dolphin?
+                                            </h4>
+                                            <p class="faq-answer mb-4">Great and for sure we are delightful to hear your voice about how to empower Dolphin, don’t hesitate to contact us in Teams Channel <br /><strong>Production Services</strong><br /> or share the rough idea via email to our Products email group<br /><strong>CTU-PS_Products CTU-PS_Products@ubisoft.com</strong>.</p>
+                                        </div>
+
+                                        <!-- Question/Answer -->
+                                        <div>
+                                            <div class="faq-question-q-box">Q.</div>
+                                            <h4 class="faq-question" data-wow-delay=".1s">
+                                                What can I do if I want to create collaboration with Dolphin?
+                                            </h4>
+                                            <p class="faq-answer mb-4">Contact us! Anything is permitted! Let’s creating the unknown together.</p>
+                                        </div>
+
+                                    </div>
+                                    <!--/col-md-5-->
+                                </div>
+                                <!-- end row -->
+                            </div> <!-- End Content -->
+                        </div>
+                        <!-- end FAQ content-->
+                    </div> <!-- end tab-content -->
+                </div> <!-- end card body -->
+            </div> <!-- end card -->
+        </div> <!-- end col -->
+    </div>
+    <!-- end row-->
+
+</div> <!-- End Content -->
+
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            appid:""
+        },
+        methods: {
+            opendeeplink: function (link) {
+                microsoftTeams.executeDeepLink(link);
+            },
+            deepLinkToChat: function () {
+                var link = "https://teams.microsoft.com/l/chat/0/0?users=28:" + this.appid;
+                this.opendeeplink(link);
+
             }
-            else {
-                $(".theme-dark-contrast").addClass("theme-default").removeClass("theme-dark-contrast");
-            }
-        }
-
-        // Listen for theme changes
-        microsoftTeams.registerOnThemeChangeHandler(setTheme);
-
-    </script>
-</body>
-<style>
-    .helpTab {
-        font-family: 'Segoe UI', Tahoma, Helvetica, sans-serif;
-        font-size: 14px;
-    }
-
-    .theme-dark-contrast {
-        color: #fff;
-    }
-
-    .theme-default {
-        color: #252423;
-    }
-</style>
+        },
+        mounted() {
+            axios
+                .post('/help/appID')
+                .then((response) => {
+                    this.appid = response.data["appid"];
+                })
+                .catch(function (error) { // 请求失败处理
+                    console.log(error);
+                });
+        },
+    })
+</script>

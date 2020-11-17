@@ -704,4 +704,8 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <value>I didn't find a relevant answer for your question. you can try ask me:</value>
     <comment>Message when bot recommend user questions.</comment>
   </data>
+  <data name="UserGuideButtonText" xml:space="preserve">
+    <value>User Guide</value>
+    <comment>Action button which invokes open user guide tab.</comment>
+  </data>
 </root>

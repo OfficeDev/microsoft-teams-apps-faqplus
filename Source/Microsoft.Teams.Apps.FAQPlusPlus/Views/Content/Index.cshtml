@@ -1,0 +1,323 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles
+    {
+    <link href="~/lib/tab/css/vendor/dataTables.bootstrap4.css" rel="stylesheet" type="text/css" />
+    <link href="~/lib/tab/css/vendor/responsive.bootstrap4.css" rel="stylesheet" type="text/css" />
+}
+
+<div class="container-fluid" id="app">
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="inbox-widget">
+                <div class="inbox-item">
+                    <div class="inbox-item-img"><img src="~/Content/dolphin.png" class="rounded-circle" alt=""></div>
+                    <p class="inbox-item-author">Dolphin</p>
+                    <p class="inbox-item-text">Ticket Management</p>
+                </div>
+            </div> <!-- end inbox-widget -->
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card ribbon-box">
+                <div class="card-body">
+                    <div class="ribbon ribbon-primary ribbon-danger float-left">
+                        <i class="mdi mdi-access-point mr-1"></i>
+                        Unresolved Ticket
+                    </div>
+                    <div v-if="isUnResolveddLoading">
+                        <div class="spinner-border avatar-md text-primary" role="status"></div>
+                    </div>
+                    <div v-else-if="isUnResolveddLoading == false" class="table-responsive">
+                        <table class="table table-centered w-100 dt-responsive nowrap" id="tickets-unresolved-datatable">
+                            <thead class="thead-light">
+                                <tr>
+                                    @*<th class="all" style="width: 20px;">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="customCheck1">
+                                            <label class="custom-control-label" for="customCheck1">&nbsp;</label>
+                                        </div>
+                                    </th>*@
+                                    <th class="all">Title</th>
+                                    <th>Description</th>
+                                    <th>Catagory</th>
+                                    <th>Request By</th>
+                                    <th>CreateTime</th>
+                                    <th>Status</th>
+                                    <th>Assignee</th>
+                                    <th style="width: 85px;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="ticket in unResolvedTickets">
+                                    @*<td>
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="customCheck2">
+                                            <label class="custom-control-label" for="customCheck2">&nbsp;</label>
+                                        </div>
+                                    </td>*@
+                                    <td>{{ticket.Title}}</td>
+                                    <td>
+                                        {{ticket.Description|description_short}}
+                                        <a v-if="ticket.Description.length > 30" href="javascript:void(0);" class="action-icon" data-toggle="tooltip" v-bind:title="ticket.Description"><span class="text-primary"> <i class="mdi mdi-eye"></i></span></a>
+                                    </td>
+                                    <td>{{ticket.Subject}}</td>
+                                    <td>{{ticket.RequesterName}} <a href="javascript:void(0);" class="action-icon" data-toggle="tooltip" title="chat with user" v-on:click="opendeeplink(ticket.RequesterUserPrincipalName)"> <span class="text-primary"><i class="dripicons-message"></i></span></a></td>
+                                    <td>{{ticket.DateCreated|time_local}}</td>
+                                    <td v-if="ticket.Status == '0'"><span class="badge badge-secondary badge-pill">{{ticket.Status|status}}</span></td>
+                                    <td v-else-if="ticket.Status == '1'"><span class="badge badge-success badge-pill">{{ticket.Status|status}}</span></td>
+                                    <td v-else-if="ticket.Status == '2'"><span class="badge badge-warning badge-pill">{{ticket.Status|status}}</span></td>
+                                    <td>{{ticket.AssignedToName}}</td>
+                                    <td class="table-action">
+                                        <a href="javascript:void(0);" class="action-icon" data-toggle="tooltip" title="go to ticket card" v-on:click="deepLinkToTicket(ticket.SmeThreadConversationId)"><span class="text-primary"><i class="dripicons-enter"></i></span></a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div> <!-- end card-body -->
+            </div> <!-- end card-->
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card ribbon-box">
+                <div class="card-body">
+                    <div class="ribbon ribbon-primary ribbon-success float-left">
+                        <i class="mdi mdi-access-point mr-1"></i>
+                        Resolved Ticket
+                    </div>
+                    <div v-if="isResolvedLoading">
+                        <div class="spinner-border avatar-md text-primary" role="status"></div>
+                    </div>
+                    <div v-else-if="isResolvedLoading == false" class="table-responsive">
+                        <table class="table table-centered w-100 dt-responsive nowrap" id="tickets-resolved-datatable">
+                            <thead class="thead-light">
+                                <tr>
+                                    @*<th class="all" style="width: 20px;">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="customCheck1">
+                                            <label class="custom-control-label" for="customCheck1">&nbsp;</label>
+                                        </div>
+                                    </th>*@
+                                    <th class="all">Title</th>
+                                    <th>Description</th>
+                                    <th>Catagory</th>
+                                    <th>Request By</th>
+                                    <th>CreateTime</th>
+                                    <th>ResolveTime</th>
+                                    <th>Assignee</th>
+                                    <th style="width: 85px;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="ticket in resolvedTickets">
+                                    @*<td>
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="customCheck2">
+                                            <label class="custom-control-label" for="customCheck2">&nbsp;</label>
+                                        </div>
+                                    </td>*@
+                                    <td>{{ticket.Title}}</td>
+                                    <td>
+                                        {{ticket.Description|description_short}}
+                                        <a v-if="ticket.Description.length > 30" href="javascript:void(0);" class="action-icon" data-toggle="tooltip" v-bind:title="ticket.Description"><span class="text-primary"> <i class="mdi mdi-eye"></i></span></a>
+                                    </td>
+                                    <td>{{ticket.Subject}}</td>
+                                    <td>{{ticket.RequesterName}} </td>
+                                    <td>{{ticket.DateCreated|time_local}}</td>
+                                    <td>{{ticket.DateClosed|time_local}}</td>
+                                    <td>{{ticket.AssignedToName}}</td>
+                                    <td class="table-action">
+                                        <a href="javascript:void(0);" class="action-icon" data-toggle="tooltip" title="go to ticket card" v-on:click="deepLinkToTicket(ticket.SmeThreadConversationId)"><span class="text-primary"><i class="dripicons-enter"></i></span></a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div> <!-- end card-body -->
+            </div> <!-- end card-->
+        </div>
+    </div>
+</div>
+<!-- third party js -->
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            isResolvedLoading: true,
+            isUnResolveddLoading: true,
+            unResolvedTickets: [],
+            resolvedTickets: [],
+            teamId: "",
+            tenantId: "",
+            groupId: "",
+            teamName: "",
+            channelName: "",
+        },
+        methods: {
+            updateUnresolvedData: function (data) {
+                this.isUnResolveddLoading = false
+                this.unResolvedTickets = data;
+            },
+            updateResolvedData: function (data) {
+                this.isResolvedLoading = false
+                this.resolvedTickets = data;
+            },
+            opendeeplink: function (link) {
+                microsoftTeams.executeDeepLink(link);
+            },
+            deepLinkToTicket: function (messageId) {
+                var link = "https://teams.microsoft.com/l/message/" + this.teamId + "/" + messageId + "?tenantId=" + this.tenantId + "&groupId=" + this.groupId + "&parentMessageId=" + messageId + "&teamName=" + encodeURIComponent(this.teamName) + "&channelName=" + encodeURIComponent(this.channelName);
+                this.opendeeplink(link);
+            }
+        },
+        mounted() {
+            microsoftTeams.getContext((context) => {
+                this.teamId = context.teamId;
+                this.tenantId = context.tid;
+                this.groupId = context.groupId;
+                this.teamName = context.teamName;
+                this.channelName = context.channelName;
+            });
+            axios
+                .post('/content/tickets', { isResolved: false })
+                .then((response) => {
+                    this.updateUnresolvedData(response.data);
+                })
+                .catch(function (error) { // 请求失败处理
+                    console.log(error);
+                });
+            axios
+                .post('/content/tickets', { isResolved: true })
+                .then((response) => {
+                    this.updateResolvedData(response.data);
+                })
+                .catch(function (error) { // 请求失败处理
+                    console.log(error);
+                });
+        },
+        filters: {
+            status: function (value) {
+                if (value == 0)
+                    return "unassigned"
+                if (value == 1)
+                    return "assigned"
+                if (value == 2)
+                    return "pending"
+            },
+            description_short: function (value) {
+                if (value.length > 30)
+                    return value.substring(0, 30) + "……"
+                else return value
+            },
+            time_local: function (value) {
+                var localDate = new Date(value);
+                return formatDate(localDate, "yyyy-MM-d h:mm dddd");
+            }
+        }
+    })
+    function formatDate(date, format, utc) {
+        var MMMM = ["\x00", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        var MMM = ["\x01", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        var dddd = ["\x02", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        var ddd = ["\x03", "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+        function ii(i, len) {
+            var s = i + "";
+            len = len || 2;
+            while (s.length < len) s = "0" + s;
+            return s;
+        }
+
+        var y = utc ? date.getUTCFullYear() : date.getFullYear();
+        format = format.replace(/(^|[^\\])yyyy+/g, "$1" + y);
+        format = format.replace(/(^|[^\\])yy/g, "$1" + y.toString().substr(2, 2));
+        format = format.replace(/(^|[^\\])y/g, "$1" + y);
+
+        var M = (utc ? date.getUTCMonth() : date.getMonth()) + 1;
+        format = format.replace(/(^|[^\\])MMMM+/g, "$1" + MMMM[0]);
+        format = format.replace(/(^|[^\\])MMM/g, "$1" + MMM[0]);
+        format = format.replace(/(^|[^\\])MM/g, "$1" + ii(M));
+        format = format.replace(/(^|[^\\])M/g, "$1" + M);
+
+        var d = utc ? date.getUTCDate() : date.getDate();
+        format = format.replace(/(^|[^\\])dddd+/g, "$1" + dddd[0]);
+        format = format.replace(/(^|[^\\])ddd/g, "$1" + ddd[0]);
+        format = format.replace(/(^|[^\\])dd/g, "$1" + ii(d));
+        format = format.replace(/(^|[^\\])d/g, "$1" + d);
+
+        var H = utc ? date.getUTCHours() : date.getHours();
+        format = format.replace(/(^|[^\\])HH+/g, "$1" + ii(H));
+        format = format.replace(/(^|[^\\])H/g, "$1" + H);
+
+        var h = H > 12 ? H - 12 : H == 0 ? 12 : H;
+        format = format.replace(/(^|[^\\])hh+/g, "$1" + ii(h));
+        format = format.replace(/(^|[^\\])h/g, "$1" + h);
+
+        var m = utc ? date.getUTCMinutes() : date.getMinutes();
+        format = format.replace(/(^|[^\\])mm+/g, "$1" + ii(m));
+        format = format.replace(/(^|[^\\])m/g, "$1" + m);
+
+        var s = utc ? date.getUTCSeconds() : date.getSeconds();
+        format = format.replace(/(^|[^\\])ss+/g, "$1" + ii(s));
+        format = format.replace(/(^|[^\\])s/g, "$1" + s);
+
+        var f = utc ? date.getUTCMilliseconds() : date.getMilliseconds();
+        format = format.replace(/(^|[^\\])fff+/g, "$1" + ii(f, 3));
+        f = Math.round(f / 10);
+        format = format.replace(/(^|[^\\])ff/g, "$1" + ii(f));
+        f = Math.round(f / 10);
+        format = format.replace(/(^|[^\\])f/g, "$1" + f);
+
+        var T = H < 12 ? "AM" : "PM";
+        format = format.replace(/(^|[^\\])TT+/g, "$1" + T);
+        format = format.replace(/(^|[^\\])T/g, "$1" + T.charAt(0));
+
+        var t = T.toLowerCase();
+        format = format.replace(/(^|[^\\])tt+/g, "$1" + t);
+        format = format.replace(/(^|[^\\])t/g, "$1" + t.charAt(0));
+
+        var tz = -date.getTimezoneOffset();
+        var K = utc || !tz ? "Z" : tz > 0 ? "+" : "-";
+        if (!utc) {
+            tz = Math.abs(tz);
+            var tzHrs = Math.floor(tz / 60);
+            var tzMin = tz % 60;
+            K += ii(tzHrs) + ":" + ii(tzMin);
+        }
+        format = format.replace(/(^|[^\\])K/g, "$1" + K);
+
+        var day = (utc ? date.getUTCDay() : date.getDay()) + 1;
+        format = format.replace(new RegExp(dddd[0], "g"), dddd[day]);
+        format = format.replace(new RegExp(ddd[0], "g"), ddd[day]);
+
+        format = format.replace(new RegExp(MMMM[0], "g"), MMMM[M]);
+        format = format.replace(new RegExp(MMM[0], "g"), MMM[M]);
+
+        format = format.replace(/\\(.)/g, "$1");
+
+        return format;
+    };
+</script>
+
+@section Scripts
+    {
+    <!-- third party js -->
+    <script src="~/lib/tab/js/vendor/jquery.dataTables.min.js"></script>
+    <script src="~/lib/tab/js/vendor/dataTables.bootstrap4.js"></script>
+    <script src="~/lib/tab/js/vendor/dataTables.responsive.min.js"></script>
+    <script src="~/lib/tab/js/vendor/responsive.bootstrap4.min.js"></script>
+    <script src="~/lib/tab/js/vendor/dataTables.checkboxes.min.js"></script>
+    <!-- third party js ends -->
+    <!-- demo app -->
+    <script src="~/lib/tab/js/pages/demo.tickets.js"></script>
+    <!-- end demo js-->
+}
+

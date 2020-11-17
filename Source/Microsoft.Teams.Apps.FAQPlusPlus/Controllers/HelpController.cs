@@ -5,7 +5,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Controllers
 {
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Options;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models.Configuration;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers;
 
     /// <summary>
@@ -16,14 +18,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Controllers
     public class HelpController : Controller
     {
         private readonly IConfigurationDataProvider configurationProvider;
+        private readonly BotSettings options;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HelpController"/> class.
         /// </summary>
         /// <param name="configurationProvider">Configuration provider dependency injection.</param>
-        public HelpController(IConfigurationDataProvider configurationProvider)
+        /// <param name="optionsAccessor">A set of key/value application configuration properties for FaqPlusPlus bot.</param>
+        public HelpController(IConfigurationDataProvider configurationProvider, IOptionsMonitor<BotSettings> optionsAccessor)
         {
             this.configurationProvider = configurationProvider;
+            this.options = optionsAccessor.CurrentValue;
         }
 
         /// <summary>
@@ -35,9 +40,25 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Controllers
             string helpTabText = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.HelpTabText).ConfigureAwait(false);
 
             var marked = new MarkedNet.Marked();
-            var helpTabHtml = marked.Parse(helpTabText);
+            return this.View(nameof(this.Index));
+        }
 
-            return this.View(nameof(this.Index), helpTabHtml);
+        /// <summary>
+        /// Get unresolved ticket detail.
+        /// </summary>
+        /// <returns>unresolved tickets list in json format.</returns>
+        [HttpPost]
+        [Route("/help/appID")]
+        public async Task<ActionResult> AppIDAsync()
+        {
+            Parameter p = new Parameter();
+            p.APPID = this.options.MicrosoftAppId;
+            return this.Json(p);
+        }
+
+        public class Parameter
+        {
+            public string APPID { get; set; }
         }
     }
 }

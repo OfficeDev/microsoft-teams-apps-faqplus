@@ -199,7 +199,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Helpers
             {
                 TicketId = Guid.NewGuid().ToString(),
                 Status = (int)TicketState.UnAssigned,
-                DateCreated = DateTime.UtcNow.AddHours(8),
+                DateCreated = DateTime.Now,
                 Title = data.Title,
                 Description = data.Description,
                 RequesterName = member.Name,

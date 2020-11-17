@@ -4,6 +4,8 @@
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Exceptions;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
@@ -63,6 +65,51 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
             var searchResult = await this.ticketCloudTable.ExecuteAsync(searchOperation).ConfigureAwait(false);
 
             return (TicketEntity)searchResult.Result;
+        }
+
+        /// <summary>
+        /// get all unresolved tickets.
+        /// </summary>
+        /// <param name="isResolved">is ticket resolved.</param>
+        /// <returns>list of unresolved tickets.</returns>
+        public async Task<List<TicketEntity>> GetTicketsAsync(bool isResolved)
+        {
+            List<TicketEntity> tickets = new List<TicketEntity>();
+
+            string filterStatus;
+            if (isResolved)
+            {
+                filterStatus = TableQuery.GenerateFilterConditionForInt("Status", QueryComparisons.Equal, 3);
+            }
+            else
+            {
+                filterStatus = TableQuery.GenerateFilterConditionForInt("Status", QueryComparisons.NotEqual, 3);
+            }
+
+            TableContinuationToken continuationToken = null;
+
+            await this.EnsureInitializedAsync().ConfigureAwait(false);
+            do
+            {
+                var result = await this.ticketCloudTable.ExecuteQuerySegmentedAsync(new TableQuery<TicketEntity>().Where(filterStatus), continuationToken);
+                continuationToken = result.ContinuationToken;
+                int index = 0;
+                if (result.Results != null)
+                {
+                    foreach (TicketEntity entity in result.Results)
+                    {
+                        tickets.Add(entity);
+                        index++;
+                        if (index == 500)
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+            while (continuationToken != null);
+
+            return tickets.OrderBy(i => i.Status).ToList();
         }
 
         /// <summary>

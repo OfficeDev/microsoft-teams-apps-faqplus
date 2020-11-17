@@ -90,6 +90,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
                 botSettings.AppBaseUri = this.Configuration["AppBaseUri"];
                 botSettings.MicrosoftAppId = this.Configuration["MicrosoftAppId"];
                 botSettings.TenantId = this.Configuration["TenantId"];
+                botSettings.AppId = this.Configuration["APPId"];
             });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);

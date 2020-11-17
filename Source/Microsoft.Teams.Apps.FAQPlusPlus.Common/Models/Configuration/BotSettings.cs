@@ -28,5 +28,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models.Configuration
         /// Gets or sets access tenant id string.
         /// </summary>
         public string TenantId { get; set; }
+
+        /// <summary>
+        /// Gets or sets access app id string.
+        /// </summary>
+        public string AppId { get; set; }
     }
 }

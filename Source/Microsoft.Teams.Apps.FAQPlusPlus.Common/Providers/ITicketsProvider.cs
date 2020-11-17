@@ -3,6 +3,7 @@
 // </copyright>
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
 {
+    using System.Collections.Generic;
     using System.Threading.Tasks;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
 
@@ -24,5 +25,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         /// <param name="ticketId">ticket id received from bot based on which appropriate row data will be fetched.</param>
         /// <returns><see cref="Task"/> Already saved entity detail.</returns>
         Task<TicketEntity> GetTicketAsync(string ticketId);
+
+        /// <summary>
+        /// get all tickets.
+        /// </summary>
+        /// <param name="isResolved">is ticket resolved.</param>
+        /// <returns>list of tickets.</returns>
+        Task<List<TicketEntity>> GetTicketsAsync(bool isResolved);
     }
 }
