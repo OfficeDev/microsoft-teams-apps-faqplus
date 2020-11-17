@@ -37,12 +37,6 @@
                         <table class="table table-centered w-100 dt-responsive nowrap" id="tickets-unresolved-datatable">
                             <thead class="thead-light">
                                 <tr>
-                                    @*<th class="all" style="width: 20px;">
-                                        <div class="custom-control custom-checkbox">
-                                            <input type="checkbox" class="custom-control-input" id="customCheck1">
-                                            <label class="custom-control-label" for="customCheck1">&nbsp;</label>
-                                        </div>
-                                    </th>*@
                                     <th class="all">Title</th>
                                     <th>Description</th>
                                     <th>Catagory</th>
@@ -55,16 +49,13 @@
                             </thead>
                             <tbody>
                                 <tr v-for="ticket in unResolvedTickets">
-                                    @*<td>
-                                        <div class="custom-control custom-checkbox">
-                                            <input type="checkbox" class="custom-control-input" id="customCheck2">
-                                            <label class="custom-control-label" for="customCheck2">&nbsp;</label>
-                                        </div>
-                                    </td>*@
-                                    <td>{{ticket.Title}}</td>
                                     <td>
-                                        {{ticket.Description|description_short}}
-                                        <a v-if="ticket.Description.length > 30" href="javascript:void(0);" class="action-icon" data-toggle="tooltip" v-bind:title="ticket.Description"><span class="text-primary"> <i class="mdi mdi-eye"></i></span></a>
+                                        {{ticket.Title|string_short(titleMaxLength)}}
+                                        <a v-if="ticket.Title.length > titleMaxLength" href="javascript:void(0);" class="action-icon" data-toggle="tooltip" v-bind:title="ticket.Title"><span class="text-primary"> <i class="mdi mdi-eye"></i></span></a>
+                                    </td>
+                                    <td>
+                                        {{ticket.Description|string_short(descriptionMaxLength)}}
+                                        <a v-if="ticket.Description.length > descriptionMaxLength" href="javascript:void(0);" class="action-icon" data-toggle="tooltip" v-bind:title="ticket.Description"><span class="text-primary"> <i class="mdi mdi-eye"></i></span></a>
                                     </td>
                                     <td>{{ticket.Subject}}</td>
                                     <td>{{ticket.RequesterName}} <a href="javascript:void(0);" class="action-icon" data-toggle="tooltip" title="chat with user" v-on:click="opendeeplink(ticket.RequesterUserPrincipalName)"> <span class="text-primary"><i class="dripicons-message"></i></span></a></td>
@@ -100,17 +91,10 @@
                         <table class="table table-centered w-100 dt-responsive nowrap" id="tickets-resolved-datatable">
                             <thead class="thead-light">
                                 <tr>
-                                    @*<th class="all" style="width: 20px;">
-                                        <div class="custom-control custom-checkbox">
-                                            <input type="checkbox" class="custom-control-input" id="customCheck1">
-                                            <label class="custom-control-label" for="customCheck1">&nbsp;</label>
-                                        </div>
-                                    </th>*@
                                     <th class="all">Title</th>
                                     <th>Description</th>
                                     <th>Catagory</th>
                                     <th>Request By</th>
-                                    <th>CreateTime</th>
                                     <th>ResolveTime</th>
                                     <th>Assignee</th>
                                     <th style="width: 85px;">Action</th>
@@ -118,20 +102,17 @@
                             </thead>
                             <tbody>
                                 <tr v-for="ticket in resolvedTickets">
-                                    @*<td>
-                                        <div class="custom-control custom-checkbox">
-                                            <input type="checkbox" class="custom-control-input" id="customCheck2">
-                                            <label class="custom-control-label" for="customCheck2">&nbsp;</label>
-                                        </div>
-                                    </td>*@
-                                    <td>{{ticket.Title}}</td>
                                     <td>
-                                        {{ticket.Description|description_short}}
-                                        <a v-if="ticket.Description.length > 30" href="javascript:void(0);" class="action-icon" data-toggle="tooltip" v-bind:title="ticket.Description"><span class="text-primary"> <i class="mdi mdi-eye"></i></span></a>
+                                        {{ticket.Title|string_short(titleMaxLength)}}
+                                        <a v-if="ticket.Title.length > titleMaxLength" href="javascript:void(0);" class="action-icon" data-toggle="tooltip" v-bind:title="ticket.Title"><span class="text-primary"> <i class="mdi mdi-eye"></i></span></a>
+                                    </td>
+                                    <td>
+                                        {{ticket.Description|string_short(descriptionMaxLength)}}
+                                        <a v-if="ticket.Description.length > descriptionMaxLength" href="javascript:void(0);" class="action-icon" data-toggle="tooltip" v-bind:title="ticket.Description"><span class="text-primary"> <i class="mdi mdi-eye"></i></span></a>
                                     </td>
                                     <td>{{ticket.Subject}}</td>
                                     <td>{{ticket.RequesterName}} </td>
-                                    <td>{{ticket.DateCreated|time_local}}</td>
+                                    @*<td>{{ticket.DateCreated|time_local}}</td>*@
                                     <td>{{ticket.DateClosed|time_local}}</td>
                                     <td>{{ticket.AssignedToName}}</td>
                                     <td class="table-action">
@@ -160,15 +141,104 @@
             groupId: "",
             teamName: "",
             channelName: "",
+            titleMaxLength: 10,
+            descriptionMaxLength: 15,
         },
         methods: {
             updateUnresolvedData: function (data) {
                 this.isUnResolveddLoading = false
                 this.unResolvedTickets = data;
+                this.sleep(200).then(() => {
+                    $("#tickets-unresolved-datatable").DataTable({
+                        language: {
+                            paginate: {
+                                previous: "<i class='mdi mdi-chevron-left'>",
+                                next: "<i class='mdi mdi-chevron-right'>"
+                            },
+                            info: "Showing tickets _START_ to _END_ of _TOTAL_",
+                            lengthMenu: 'Display <select class=\'custom-select custom-select-sm ml-1 mr-1\'><option value="5">5</option><option value="10">10</option><option value="20">20</option><option value="-1">All</option></select> tickets'
+                        },
+                        pageLength: 5,
+                        columns: [
+                            {
+                                orderable: !0
+                            },
+                            {
+                                orderable: !0
+                            },
+                            {
+                                orderable: !0
+                            },
+                            {
+                                orderable: !0
+                            },
+                            {
+                                orderable: !0
+                            },
+                            {
+                                orderable: !0
+                            },
+                            {
+                                orderable: !0
+                            },
+                            {
+                                orderable: !1
+                            }],
+                        select: {
+                            style: "multi"
+                        },
+                        order: [[1, "asc"]],
+                        drawCallback: function () {
+                            $(".dataTables_paginate > .pagination").addClass("pagination-rounded")
+                        }
+                    })
+                });
             },
             updateResolvedData: function (data) {
                 this.isResolvedLoading = false
                 this.resolvedTickets = data;
+                this.sleep(200).then(() => {
+                    $("#tickets-resolved-datatable").DataTable({
+                        language: {
+                            paginate: {
+                                previous: "<i class='mdi mdi-chevron-left'>",
+                                next: "<i class='mdi mdi-chevron-right'>"
+                            },
+                            info: "Showing tickets _START_ to _END_ of _TOTAL_",
+                            lengthMenu: 'Display <select class=\'custom-select custom-select-sm ml-1 mr-1\'><option value="5">5</option><option value="10">10</option><option value="20">20</option><option value="-1">All</option></select> tickets'
+                        },
+                        pageLength: 5,
+                        columns: [
+                            {
+                                orderable: !0
+                            },
+                            {
+                                orderable: !0
+                            },
+                            {
+                                orderable: !0
+                            },
+                            {
+                                orderable: !0
+                            },
+                            {
+                                orderable: !0
+                            },
+                            {
+                                orderable: !0
+                            },
+                            {
+                                orderable: !1
+                            }],
+                        select: {
+                            style: "multi"
+                        },
+                        order: [[1, "asc"]],
+                        drawCallback: function () {
+                            $(".dataTables_paginate > .pagination").addClass("pagination-rounded")
+                        }
+                    })
+                });
             },
             opendeeplink: function (link) {
                 microsoftTeams.executeDeepLink(link);
@@ -176,6 +246,9 @@
             deepLinkToTicket: function (messageId) {
                 var link = "https://teams.microsoft.com/l/message/" + this.teamId + "/" + messageId + "?tenantId=" + this.tenantId + "&groupId=" + this.groupId + "&parentMessageId=" + messageId + "&teamName=" + encodeURIComponent(this.teamName) + "&channelName=" + encodeURIComponent(this.channelName);
                 this.opendeeplink(link);
+            },
+            sleep: function (time) {
+                return new Promise((resolve) => setTimeout(resolve, time));
             }
         },
         mounted() {
@@ -212,14 +285,14 @@
                 if (value == 2)
                     return "pending"
             },
-            description_short: function (value) {
-                if (value.length > 30)
-                    return value.substring(0, 30) + "……"
+            string_short: function (value, maxlength) {
+                if (value.length > maxlength)
+                    return value.substring(0, maxlength) + "……"
                 else return value
             },
             time_local: function (value) {
                 var localDate = new Date(value);
-                return formatDate(localDate, "yyyy-MM-d h:mm dddd");
+                return formatDate(localDate, "yyyy-MM-d h:mm");
             }
         }
     })
@@ -316,8 +389,5 @@
     <script src="~/lib/tab/js/vendor/responsive.bootstrap4.min.js"></script>
     <script src="~/lib/tab/js/vendor/dataTables.checkboxes.min.js"></script>
     <!-- third party js ends -->
-    <!-- demo app -->
-    <script src="~/lib/tab/js/pages/demo.tickets.js"></script>
-    <!-- end demo js-->
 }
 

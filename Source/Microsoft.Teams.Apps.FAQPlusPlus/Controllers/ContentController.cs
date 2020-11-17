@@ -50,8 +50,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Controllers
             foreach (TicketEntity ticket in tickets)
             {
                 ticket.RequesterUserPrincipalName = $"https://teams.microsoft.com/l/chat/0/0?users=" + Uri.EscapeDataString(ticket.RequesterUserPrincipalName);
-                var index = ticket.SmeThreadConversationId.IndexOf('=');
-                ticket.SmeThreadConversationId = ticket.SmeThreadConversationId.Substring(index + 1, ticket.SmeThreadConversationId.Length - index - 1);
+                if (ticket.SmeThreadConversationId != null)
+                {
+                    var index = ticket.SmeThreadConversationId.IndexOf('=');
+                    ticket.SmeThreadConversationId = ticket.SmeThreadConversationId.Substring(index + 1, ticket.SmeThreadConversationId.Length - index - 1);
+                }
             }
 
             return this.Json(tickets);
