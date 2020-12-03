@@ -502,7 +502,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             CancellationToken cancellationToken)
         {
             Attachment smeTeamCard = null;      // Notification to SME team
-            Attachment userCard = null;         // Acknowledgement to the user
+            Activity updateCardActivity = null;
             TicketEntity newTicket = null;      // New ticket
             FeedbackEntity newFeedback = null;      // New Feedback
             List<ExpertEntity> experts = null;
@@ -532,7 +532,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     {
                         experts = await this.expertProvider.GetExpertsAsync().ConfigureAwait(false);
                         smeTeamCard = new SmeTicketCard(newTicket, experts).ToAttachment(message?.LocalTimestamp, this.appBaseUri);
-                        userCard = new UserNotificationCard(newTicket, this.appBaseUri).ToAttachment(Strings.NotificationCardContent, message?.LocalTimestamp);
+                        Attachment userCard = new UserNotificationCard(newTicket, this.appBaseUri).ToAttachment(Strings.NotificationCardContent, message?.LocalTimestamp);
+
+                        updateCardActivity = new Activity(ActivityTypes.Message)
+                        {
+                            Id = turnContext.Activity.ReplyToId,
+                            Conversation = turnContext.Activity.Conversation,
+                            Attachments = new List<Attachment> { userCard },
+                        };
+
                     }
 
                     userAction.Action = nameof(UserActionType.AskExpert);
@@ -544,7 +552,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     if (newFeedback != null)
                     {
                         smeTeamCard = SmeFeedbackCard.GetCard(newFeedback, this.appBaseUri);
-                        await turnContext.SendActivityAsync(MessageFactory.Text(Strings.ThankYouTextContent)).ConfigureAwait(false);
+                        Attachment userCard = UserNotificationCard.ToAttachmentString(Strings.ThankYouTextContent);
+
+                        updateCardActivity = new Activity(ActivityTypes.Message)
+                        {
+                            Id = turnContext.Activity.ReplyToId,
+                            Conversation = turnContext.Activity.Conversation,
+                            Attachments = new List<Attachment> { userCard },
+                        };
                     }
 
                     userAction.Action = nameof(UserActionType.ShareFeedback);
@@ -605,10 +620,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 }
             }
 
-            // Send acknowledgment to the user
-            if (userCard != null)
+            // Send acknowledgment to the user by updating the original card
+            if (updateCardActivity != null)
             {
-                await turnContext.SendActivityAsync(MessageFactory.Attachment(userCard), cancellationToken).ConfigureAwait(false);
+                await turnContext.UpdateActivityAsync(updateCardActivity, cancellationToken).ConfigureAwait(false);
             }
 
             // Save user action

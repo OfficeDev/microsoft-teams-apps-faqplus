@@ -36,6 +36,45 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         }
 
         /// <summary>
+        /// Returns a user notification card which contains a single string.
+        /// </summary>
+        /// <param name="message">The message to add to the card.</param>
+        /// <returns>An adaptive card as an attachment.</returns>
+        public static Attachment ToAttachmentString(string message)
+        {
+            var card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
+            {
+                Body = new List<AdaptiveElement>
+                {
+                    new AdaptiveColumnSet
+                    {
+                        Columns = new List<AdaptiveColumn>
+                        {
+                            new AdaptiveColumn
+                            {
+                                Items = new List<AdaptiveElement>
+                                {
+                                    new AdaptiveTextBlock
+                                    {
+                                        Text = message,
+                                        Wrap = true,
+                                    },
+                                },
+                                Width = "stretch",
+                            },
+                        },
+                    },
+                },
+            };
+
+            return new Attachment
+            {
+                ContentType = AdaptiveCard.ContentType,
+                Content = card,
+            };
+        }
+
+        /// <summary>
         /// Returns a user notification card for the ticket.
         /// </summary>
         /// <param name="message">The status message to add to the card.</param>

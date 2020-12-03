@@ -152,7 +152,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                         MsTeams = new CardAction
                                         {
                                             Type = ActionTypes.MessageBack,
-                                            DisplayText = Strings.ShareFeedbackDisplayText,
                                             Text = ShareFeedbackSubmitText,
                                         },
                                         UserQuestion = data.UserQuestion,
@@ -221,7 +220,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                        MsTeams = new CardAction
                                        {
                                            Type = ActionTypes.MessageBack,
-                                           DisplayText = Strings.ShareFeedbackDisplayText,
                                            Text = ShareFeedbackSubmitText,
                                        },
                                        UserQuestion = data.UserQuestion,
@@ -290,7 +288,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                         MsTeams = new CardAction
                                         {
                                             Type = ActionTypes.MessageBack,
-                                            DisplayText = Strings.ShareFeedbackDisplayText,
                                             Text = ShareFeedbackSubmitText,
                                         },
                                         UserQuestion = data.UserQuestion,
@@ -304,10 +301,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     },
                 },
             };
-
-            //shareFeedbackCard.Actions[0].AdditionalProperties.Add("iconUrl", appBaseUri + "/content/face_smile.png");
-            //shareFeedbackCard.Actions[1].AdditionalProperties.Add("iconUrl", appBaseUri + "/content/face_straigh.png");
-            //shareFeedbackCard.Actions[2].AdditionalProperties.Add("iconUrl", appBaseUri + "/content/face_sad.png");
 
             return new Attachment
             {

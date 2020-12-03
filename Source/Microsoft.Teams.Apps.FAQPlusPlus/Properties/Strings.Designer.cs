@@ -1222,7 +1222,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Thanks for your feedback! I&apos;ve shared it with the experts. This helps me learn and improve..
+        ///   Looks up a localized string similar to Thanks for your feedback!  ❤~ I&apos;ve shared it with the experts. This helps me learn and improve..
         /// </summary>
         public static string ThankYouTextContent {
             get {
