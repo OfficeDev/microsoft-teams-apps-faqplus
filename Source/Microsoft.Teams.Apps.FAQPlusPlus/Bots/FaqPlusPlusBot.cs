@@ -1045,20 +1045,20 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     conPro.ContinousFailureTimes++;
 
                     bool isRecommended = false;
-                    if (conPro.ContinousFailureTimes >= this.recommendConfiguration.RecommendationContinousFailureTimes && DateTime.Now > conPro.LastRecommendTime.AddMinutes(this.recommendConfiguration.RecommendationIntervalInMinutes))
+                    //if (conPro.ContinousFailureTimes >= this.recommendConfiguration.RecommendationContinousFailureTimes && DateTime.Now > conPro.LastRecommendTime.AddMinutes(this.recommendConfiguration.RecommendationIntervalInMinutes))
+                    //{
+                    var conList = await this.GetRecommendQuestionsAsync();
+                    if (conList.Count > 0)
                     {
-                        var conList = await this.GetRecommendQuestionsAsync();
-                        if (conList.Count > 0)
-                        {
-                            isRecommended = true;
+                        isRecommended = true;
 
-                            // Send recommend
-                            await turnContext.SendActivityAsync(MessageFactory.Attachment(RecommendCard.GetCard(conList, this.options.AppId, this.appBaseUri))).ConfigureAwait(false);
+                        // Send recommend
+                        await turnContext.SendActivityAsync(MessageFactory.Attachment(RecommendCard.GetCard(conList, this.options.AppId, this.appBaseUri))).ConfigureAwait(false);
 
-                            conPro.ContinousFailureTimes = 0;
-                            conPro.LastRecommendTime = DateTime.Now;
-                        }
+                        conPro.ContinousFailureTimes = 0;
+                        conPro.LastRecommendTime = DateTime.Now;
                     }
+                    //}
 
                     if (!isRecommended)
                     {
@@ -1242,10 +1242,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
             foreach (int i in listNumbers)
             {
-                result.Add(list[i].Key);
+                result.Add(QnaHelper.UpperProcessing(list[i].Key));
             }
 
             return result;
         }
+
+
     }
+
 }

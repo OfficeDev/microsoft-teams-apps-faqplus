@@ -127,6 +127,27 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Helpers
         }
 
         /// <summary>
+        /// capitalize all words in a string. 
+        /// </summary>
+        /// <param name="str">input string.</param>
+        /// <returns>processed string.</returns>
+        public static string UpperProcessing(string str)
+        {
+            string[] strArray = str.Split(" ".ToCharArray());
+            string result = string.Empty;
+            for (int i = 0; i < strArray.Length; i++)
+            {
+                result += Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(strArray[i]);
+                if (i != strArray.Length - 1)
+                {
+                    result += " ";
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// Checks whether question exist in production/test knowledgebase.
         /// </summary>
         /// <param name="provider">Qna service provider.</param>
@@ -163,5 +184,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Helpers
             // Check if question asked and result returned from the knowledgebase are same.
             return questionAnswerResponse.Questions.First().ToUpperInvariant() == question?.ToUpperInvariant().Trim();
         }
+
+
     }
 }
