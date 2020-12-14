@@ -216,7 +216,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <summary>
         /// Create change state actions.
         /// </summary>
-        /// <returns>action list</returns>
+        /// <returns>action list.</returns>
         private List<AdaptiveAction> BuildChangeStatesActions()
         {
             List<AdaptiveAction> actionsList = new List<AdaptiveAction>();

@@ -39,9 +39,9 @@
                                 <tr>
                                     <th class="all">Title</th>
                                     <th>Description</th>
-                                    <th>Catagory</th>
                                     <th>Request By</th>
                                     <th>CreateTime</th>
+                                    <th>Last Time</th>
                                     <th>Status</th>
                                     <th>Assignee</th>
                                     <th style="width: 85px;">Action</th>
@@ -57,9 +57,9 @@
                                         {{ticket.Description|string_short(descriptionMaxLength)}}
                                         <a v-if="ticket.Description.length > descriptionMaxLength" href="javascript:void(0);" class="action-icon" data-toggle="tooltip" v-bind:title="ticket.Description"><span class="text-primary"> <i class="mdi mdi-eye"></i></span></a>
                                     </td>
-                                    <td>{{ticket.Subject}}</td>
                                     <td>{{ticket.RequesterName}} <a href="javascript:void(0);" class="action-icon" data-toggle="tooltip" title="chat with user" v-on:click="opendeeplink(ticket.RequesterUserPrincipalName)"> <span class="text-primary"><i class="dripicons-message"></i></span></a></td>
                                     <td>{{ticket.DateCreated|time_local}}</td>
+                                    <td>{{ticket.DateCreated|lastTimeUnResolved}}</td>
                                     <td v-if="ticket.Status == '0'"><span class="badge badge-secondary badge-pill">{{ticket.Status|status}}</span></td>
                                     <td v-else-if="ticket.Status == '1'"><span class="badge badge-success badge-pill">{{ticket.Status|status}}</span></td>
                                     <td v-else-if="ticket.Status == '2'"><span class="badge badge-warning badge-pill">{{ticket.Status|status}}</span></td>
@@ -93,10 +93,11 @@
                                 <tr>
                                     <th class="all">Title</th>
                                     <th>Description</th>
-                                    <th>Catagory</th>
                                     <th>Request By</th>
+                                    <th>Resolved By</th>
                                     <th>ResolveTime</th>
-                                    <th>Assignee</th>
+                                    <th>Last Time</th>
+
                                     <th style="width: 85px;">Action</th>
                                 </tr>
                             </thead>
@@ -110,11 +111,10 @@
                                         {{ticket.Description|string_short(descriptionMaxLength)}}
                                         <a v-if="ticket.Description.length > descriptionMaxLength" href="javascript:void(0);" class="action-icon" data-toggle="tooltip" v-bind:title="ticket.Description"><span class="text-primary"> <i class="mdi mdi-eye"></i></span></a>
                                     </td>
-                                    <td>{{ticket.Subject}}</td>
                                     <td>{{ticket.RequesterName}} </td>
-                                    @*<td>{{ticket.DateCreated|time_local}}</td>*@
-                                    <td>{{ticket.DateClosed|time_local}}</td>
                                     <td>{{ticket.AssignedToName}}</td>
+                                    <td>{{ticket.DateClosed|time_local}}</td>
+                                    <td>{{ticket.DateCreated|lastTimeResolved(ticket.DateClosed)}}</td>
                                     <td class="table-action">
                                         <a href="javascript:void(0);" class="action-icon" data-toggle="tooltip" title="go to ticket card" v-on:click="deepLinkToTicket(ticket.SmeThreadConversationId)"><span class="text-primary"><i class="dripicons-enter"></i></span></a>
                                     </td>
@@ -143,6 +143,10 @@
             channelName: "",
             titleMaxLength: 10,
             descriptionMaxLength: 15,
+        },
+        beforeCreate() {
+            this.$options.filters.lastTimeResolved = this.$options.filters.lastTimeResolved.bind(this);
+            this.$options.filters.lastTimeUnResolved = this.$options.filters.lastTimeUnResolved.bind(this)
         },
         methods: {
             updateUnresolvedData: function (data) {
@@ -293,6 +297,36 @@
             time_local: function (value) {
                 var localDate = new Date(value);
                 return formatDate(localDate, "yyyy-MM-d h:mm");
+            },
+            timeJet: function (dateBegin, dateEnd) {
+
+                var dateDiff = dateEnd.getTime() - dateBegin.getTime();//时间差的毫秒数
+                var dayDiff = Math.floor(dateDiff / (24 * 3600 * 1000));//计算出相差天数
+                var leave1 = dateDiff % (24 * 3600 * 1000)    //计算天数后剩余的毫秒数
+                var hours = Math.floor(leave1 / (3600 * 1000))//计算出小时数
+                //计算相差分钟数
+                var leave2 = leave1 % (3600 * 1000)    //计算小时数后剩余的毫秒数
+                var minutes = Math.floor(leave2 / (60 * 1000))//计算相差分钟数
+                //计算相差秒数
+                var leave3 = leave2 % (60 * 1000)      //计算分钟数后剩余的毫秒数
+                var seconds = Math.round(leave3 / 1000)
+
+                var result = "";
+                if (dayDiff > 0) { result += dayDiff + "d " }
+                if (hours > 0) { result += hours + "h " }
+                if (minutes > 0) { result += minutes + "m " }
+
+                return result;
+            },
+            lastTimeResolved: function (value, endtime) {
+                var dateBegin = new Date(value);
+                var dateEnd = new Date(endtime);
+                return this.$options.filters.timeJet(dateBegin, dateEnd)
+            },
+            lastTimeUnResolved: function (value) {
+                var dateBegin = new Date(value);
+                var dateEnd = new Date();
+                return this.$options.filters.timeJet(dateBegin, dateEnd)
             }
         }
     })

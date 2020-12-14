@@ -540,7 +540,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                             Conversation = turnContext.Activity.Conversation,
                             Attachments = new List<Attachment> { userCard },
                         };
-
                     }
 
                     userAction.Action = nameof(UserActionType.AskExpert);
@@ -993,7 +992,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     payload = ((JObject)message.Value).ToObject<ResponseCardPayload>();
                 }
 
-                queryResult = await this.qnaServiceProvider.GenerateAnswerAsync(question: text, isTestKnowledgeBase: false, payload.PreviousQuestions?.First().Id.ToString(), payload.PreviousQuestions?.First().Questions.First(), payload.QnAID).ConfigureAwait(false);
+                queryResult = await this.qnaServiceProvider.GenerateAnswerAsync(question: text, isTestKnowledgeBase: false, payload.PreviousQuestions?.Last().Id.ToString(), payload.PreviousQuestions?.Last().Questions.First(), payload.QnAID).ConfigureAwait(false);
 
                 if (queryResult.Answers.First().Id != -1)
                 {
@@ -1003,7 +1002,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     conInfo.Answer = answerData.Answer;
                     conInfo.Score = answerData.Score.ToString();
                     conInfo.Project = (from r in answerData.Metadata where r.Name.Equals("project") select r).FirstOrDefault()?.Value;
-                    conInfo.PreviousQnAID = payload.PreviousQuestions?.First().Id.ToString();
+                    conInfo.PreviousQnAID = payload.PreviousQuestions?.Last().Id.ToString();
 
                     StringBuilder sb = new StringBuilder();
                     if (answerData?.Context.Prompts.Count > 0)
@@ -1209,17 +1208,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         private async Task<List<string>> GetRecommendQuestionsAsync()
         {
             var ceList = await this.conversationProvider.GetRecentAskedQnAListAsync(30);
-            Dictionary<int, int> idCountDic = new Dictionary<int, int>();
+            Dictionary<string, int> idCountDic = new Dictionary<string, int>();
             foreach (ConversationEntity ce in ceList)
             {
-                int qnaID = Convert.ToInt32(ce.QnAID);
-                if (!idCountDic.ContainsKey(qnaID))
+                if (!idCountDic.ContainsKey(ce.Question))
                 {
-                    idCountDic.Add(qnaID, 1);
+                    idCountDic.Add(ce.Question, 1);
                 }
                 else
                 {
-                    idCountDic[qnaID]++;
+                    idCountDic[ce.Question]++;
                 }
             }
 
@@ -1244,7 +1242,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
             foreach (int i in listNumbers)
             {
-                result.Add(ceList.Where(r => { return Convert.ToInt32(r.QnAID) == list[i].Key; }).FirstOrDefault().Question);
+                result.Add(list[i].Key);
             }
 
             return result;

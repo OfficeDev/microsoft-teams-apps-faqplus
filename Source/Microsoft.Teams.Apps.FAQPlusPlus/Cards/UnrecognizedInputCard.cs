@@ -20,6 +20,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// This method will construct the card when unrecognized input is sent by the user.
         /// </summary>
         /// <param name="userQuestion">Actual question asked by the user to the bot.</param>
+        /// <param name="appBaseUri">url of App.</param>
         /// <returns>UnrecognizedInput Card.</returns>
         public static Attachment GetCard(string userQuestion, string appBaseUri)
         {
