@@ -273,7 +273,7 @@
     </Compile>
     <Compile Include="Models\KnowledgeBaseViewModel.cs" />
     <Compile Include="Models\HelpTabViewModel.cs" />
-    <Compile Include="Models\SubjectsViewModel.cs" />
+    <Compile Include="Models\SLAViewModel.cs" />
     <Compile Include="Models\TeamViewModel.cs" />
     <Compile Include="Models\WelcomeMessageViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -323,9 +323,9 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
-    <Content Include="Views\Home\_HelpTab.cshtml" />
     <Content Include="Views\Shared\_Spinner.cshtml" />
-    <Content Include="Views\Home\_Subjects.cshtml" />
+    <Content Include="Views\Home\_SLA.cshtml" />
+    <None Include="Properties\PublishProfiles\dev-dolphin-config - Web Deploy.pubxml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Strings.resx">

@@ -23,16 +23,19 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
 
         private readonly TicketEntity ticket;
         private string appBaseUri;
+        private string appId;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UserNotificationCard"/> class.
         /// </summary>
         /// <param name="appBaseUri">The base URI where the app is hosted.</param>
         /// <param name="ticket">The ticket to create a card from.</param>
-        public UserNotificationCard(TicketEntity ticket, string appBaseUri)
+        /// <param name="appId">app id which you provided when configuring the tab.</param>
+        public UserNotificationCard(TicketEntity ticket, string appBaseUri, string appId)
         {
             this.ticket = ticket;
             this.appBaseUri = appBaseUri;
+            this.appId = appId;
         }
 
         /// <summary>
@@ -42,7 +45,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <returns>An adaptive card as an attachment.</returns>
         public static Attachment ToAttachmentString(string message)
         {
-            var card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
+            var card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 2))
             {
                 Body = new List<AdaptiveElement>
                 {
@@ -106,7 +109,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 urlString = this.appBaseUri + "/content/ticket_assigned.png";
             }
 
-            var card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
+            var card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 2))
             {
                 Body = new List<AdaptiveElement>
                 {
@@ -146,15 +149,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                       Facts = this.BuildFactSet(this.ticket, activityLocalTimestamp),
                     },
                 },
-                Actions = BuildActions(this.ticket, this.appBaseUri),
+                Actions = BuildActions(this.ticket, this.appBaseUri, this.appId),
             };
 
-            if (this.ticket.Status == (int)TicketState.Resolved)
+            card.Body.Add(new AdaptiveColumnSet
             {
-                card.Body.Add(new AdaptiveColumnSet
-                {
-                    Separator = true,
-                    Columns = new List<AdaptiveColumn>
+                Separator = true,
+                Columns = new List<AdaptiveColumn>
                     {
                         new AdaptiveColumn
                         {
@@ -163,14 +164,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                 new AdaptiveTextBlock
                                 {
                                     Weight = AdaptiveTextWeight.Lighter,
-                                    Text = Strings.UserNotificationFooterText,
+                                    Text = this.ticket.Status == (int)TicketState.Resolved ? Strings.UserNotificationFooterText : Strings.UserNotificationUpdateFooterText,
                                     Wrap = true,
                                 },
                             },
                         },
                     },
-                });
-            }
+            });
 
             return new Attachment
             {
@@ -184,8 +184,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// </summary>
         /// <param name="ticket">The current ticket information.</param>
         /// <param name="appBaseUri">The base URI where the app is hosted.</param>
+        /// <param name="appId">app id which you provided when configuring the tab.</param>
         /// <returns>A list of adaptive card actions.</returns>
-        private static List<AdaptiveAction> BuildActions(TicketEntity ticket, string appBaseUri)
+        private static List<AdaptiveAction> BuildActions(TicketEntity ticket, string appBaseUri, string appId)
         {
             if (ticket.Status == (int)TicketState.Resolved)
             {
@@ -238,8 +239,18 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     },
                 };
             }
-
-            return null;
+            else
+            {
+                return new List<AdaptiveAction>
+                {
+                    new AdaptiveOpenUrlAction
+                    {
+                        Title = Strings.MyTicketButtonText,
+                        Url = new Uri($"https://teams.microsoft.com/l/entity/" + appId + "/my"),
+                        IconUrl = appBaseUri + "/content/my_ticket.png",
+                    },
+                };
+            }
         }
 
         /// <summary>

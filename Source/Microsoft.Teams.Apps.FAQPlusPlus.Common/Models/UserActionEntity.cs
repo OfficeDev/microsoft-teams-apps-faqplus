@@ -60,6 +60,21 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         DeleteQnAPari,
 
         /// <summary>
+        /// trigger recommend.
+        /// </summary>
+        Recommended,
+
+        /// <summary>
+        /// view my tab.
+        /// </summary>
+        ViewMyTab,
+
+        /// <summary>
+        /// view help tab.
+        /// </summary>
+        ViewHelpTab,
+
+        /// <summary>
         /// Not defined.
         /// </summary>
         NotDefined,

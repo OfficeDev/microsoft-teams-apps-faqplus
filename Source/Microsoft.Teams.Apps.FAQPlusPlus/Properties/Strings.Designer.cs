@@ -619,6 +619,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to My tickets.
+        /// </summary>
+        public static string MyTicketButtonText {
+            get {
+                return ResourceManager.GetString("MyTicketButtonText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Needs Improvement.
         /// </summary>
         public static string NeedsImprovementRatingText {
@@ -1344,6 +1353,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         public static string UserNotificationFooterText {
             get {
                 return ResourceManager.GetString("UserNotificationFooterText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to View your tickets:.
+        /// </summary>
+        public static string UserNotificationUpdateFooterText {
+            get {
+                return ResourceManager.GetString("UserNotificationUpdateFooterText", resourceCulture);
             }
         }
         

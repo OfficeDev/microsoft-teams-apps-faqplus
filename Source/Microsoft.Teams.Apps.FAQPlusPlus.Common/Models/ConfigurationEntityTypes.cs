@@ -29,6 +29,21 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         public const string HelpTabText = "HelpTabText";
 
         /// <summary>
+        /// AssignTimeout text entity.
+        /// </summary>
+        public const string AssignTimeout = "AssignTimeoutText";
+
+        /// <summary>
+        /// PendingTimeout text entity.
+        /// </summary>
+        public const string PendingTimeout = "PendingTimeoutText";
+
+        /// <summary>
+        /// ResolveTimeout text entity.
+        /// </summary>
+        public const string ResolveTimeout = "ResolveTimeoutText";
+
+        /// <summary>
         /// QnaMaker endpoint key entity.
         /// </summary>
         public const string QnAMakerEndpointKey = "QnaMakerEndpointKey";

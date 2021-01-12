@@ -196,7 +196,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
                 QnaId = QnAID,
                 IsTest = isTestKnowledgeBase,
                 Question = question?.Trim(),
-                ScoreThreshold = Convert.ToDouble(this.options.ScoreThreshold),
+                ScoreThreshold = Convert.ToDouble(this.options.ScoreThreshold, CultureInfo.InvariantCulture),
                 RankerType = "QuestionOnly",
             };
 

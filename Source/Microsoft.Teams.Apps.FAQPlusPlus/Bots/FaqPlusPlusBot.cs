@@ -74,6 +74,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// </summary>
         private const string ChangeStatus = "change status";
 
+        private static readonly string TeamRenamedEventType = "teamRenamed";
+
         /// <summary>
         /// Represents a set of key/value application configuration properties for FaqPlusPlus bot.
         /// </summary>
@@ -99,6 +101,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         private readonly BotState conversationState;
         private readonly BotState userState;
         private readonly RecommendConfiguration recommendConfiguration;
+        private readonly TeamsDataCapture teamsDataCapture;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FaqPlusPlusBot"/> class.
@@ -121,6 +124,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <param name="conversationState">conversation sate cache.</param>
         /// <param name="userState">user state cache.</param>
         /// <param name="recommendConfiguration">configuration to decide recommend.</param>
+        /// <param name="teamsDataCapture">Teams data capture service.</param>
         public FaqPlusPlusBot(
             Common.Providers.IConfigurationDataProvider configurationProvider,
             MicrosoftAppCredentials microsoftAppCredentials,
@@ -139,7 +143,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             ILogger<FaqPlusPlusBot> logger,
             ConversationState conversationState,
             UserState userState,
-            RecommendConfiguration recommendConfiguration)
+            RecommendConfiguration recommendConfiguration,
+            TeamsDataCapture teamsDataCapture)
         {
             this.configurationProvider = configurationProvider;
             this.microsoftAppCredentials = microsoftAppCredentials;
@@ -169,6 +174,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             this.conversationState = conversationState;
             this.userState = userState;
             this.recommendConfiguration = recommendConfiguration;
+            this.teamsDataCapture = teamsDataCapture ?? throw new ArgumentNullException(nameof(teamsDataCapture));
         }
 
         /// <summary>
@@ -279,25 +285,43 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 this.logger.LogInformation("Received conversationUpdate activity");
                 this.logger.LogInformation($"conversationType: {activity.Conversation.ConversationType}, membersAdded: {activity.MembersAdded?.Count}, membersRemoved: {activity.MembersRemoved?.Count}");
 
+                var isTeamRenamed = this.IsTeamInformationUpdated(activity);
+                if (isTeamRenamed)
+                {
+                    await this.teamsDataCapture.OnTeamInformationUpdatedAsync(activity);
+                }
+
+                // members removed
+                if (activity.MembersRemoved != null)
+                {
+                    await this.teamsDataCapture.OnBotRemovedAsync(activity);
+                }
+
                 if (activity?.MembersAdded?.Count == 0)
                 {
                     this.logger.LogInformation("Ignoring conversationUpdate that was not a membersAdded event");
                     return;
                 }
 
+                // members added
                 switch (activity.Conversation.ConversationType.ToLower())
                 {
                     case ConversationTypePersonal:
                         await this.OnMembersAddedToPersonalChatAsync(activity.MembersAdded, turnContext).ConfigureAwait(false);
-                        return;
+                        break;
 
                     case ConversationTypeChannel:
                         await this.OnMembersAddedToTeamAsync(activity.MembersAdded, turnContext, cancellationToken).ConfigureAwait(false);
-                        return;
+                        break;
 
                     default:
                         this.logger.LogInformation($"Ignoring event from conversation type {activity.Conversation.ConversationType}");
-                        return;
+                        break;
+                }
+
+                if (activity.MembersAdded != null)
+                {
+                    await this.teamsDataCapture.OnBotAddedAsync(activity);
                 }
             }
             catch (Exception ex)
@@ -323,7 +347,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 // User started chat with the bot in personal scope, for the first time.
                 this.logger.LogInformation($"Bot added to 1:1 chat {activity.Conversation.Id}");
                 var welcomeText = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.WelcomeMessageText).ConfigureAwait(false);
-                var userWelcomeCardAttachment = WelcomeCard.GetCard(welcomeText);
+                var userWelcomeCardAttachment = WelcomeCard.GetCard(welcomeText, this.appBaseUri);
                 await turnContext.SendActivityAsync(MessageFactory.Attachment(userWelcomeCardAttachment)).ConfigureAwait(false);
             }
         }
@@ -348,7 +372,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
                 var teamDetails = ((JObject)turnContext.Activity.ChannelData).ToObject<TeamsChannelData>();
                 var botDisplayName = turnContext.Activity.Recipient.Name;
-                var teamWelcomeCardAttachment = WelcomeTeamCard.GetCard();
+                var teamWelcomeCardAttachment = WelcomeTeamCard.GetCard(this.appBaseUri);
                 await this.SendCardToTeamAsync(turnContext, teamWelcomeCardAttachment, teamDetails.Team.Id, cancellationToken).ConfigureAwait(false);
             }
         }
@@ -532,7 +556,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     {
                         experts = await this.expertProvider.GetExpertsAsync().ConfigureAwait(false);
                         smeTeamCard = new SmeTicketCard(newTicket, experts).ToAttachment(message?.LocalTimestamp, this.appBaseUri);
-                        Attachment userCard = new UserNotificationCard(newTicket, this.appBaseUri).ToAttachment(Strings.NotificationCardContent, message?.LocalTimestamp);
+                        Attachment userCard = new UserNotificationCard(newTicket, this.appBaseUri, this.options.AppId).ToAttachment(Strings.NotificationCardContent, message?.LocalTimestamp);
 
                         updateCardActivity = new Activity(ActivityTypes.Message)
                         {
@@ -615,14 +639,22 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 {
                     newTicket.SmeCardActivityId = resourceResponse.ActivityId;
                     newTicket.SmeThreadConversationId = resourceResponse.Id;
-                    await this.ticketsProvider.UpsertTicketAsync(newTicket).ConfigureAwait(false);
                 }
             }
 
             // Send acknowledgment to the user by updating the original card
             if (updateCardActivity != null)
             {
-                await turnContext.UpdateActivityAsync(updateCardActivity, cancellationToken).ConfigureAwait(false);
+                var resourceResponse = await turnContext.UpdateActivityAsync(updateCardActivity, cancellationToken).ConfigureAwait(false);
+                if (newTicket != null)
+                {
+                    newTicket.RequesterCardActivityId = updateCardActivity.Id;
+                }
+            }
+
+            if (newTicket != null)
+            {
+                await this.ticketsProvider.UpsertTicketAsync(newTicket).ConfigureAwait(false);
             }
 
             // Save user action
@@ -805,39 +837,59 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             this.logger.LogInformation($"Card for ticket {ticket.TicketId} updated to status ({ticket.Status}, {ticket.AssignedToObjectId}), activityId = {updateResponse.Id}");
 
             // Post update to user and SME team thread.
-            IMessageActivity userNotification = null;
+            Activity updateUserCardActivity = null;
             switch (payload.Action)
             {
                 case ChangeTicketStatusPayload.PendingAction:
                     smeNotification = string.Format(CultureInfo.InvariantCulture, Strings.SMEPendingStatus, message.From.Name);
 
-                    userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket, this.appBaseUri).ToAttachment(Strings.PendingTicketUserNotification, message.LocalTimestamp));
-                    userNotification.Summary = Strings.PendingTicketUserNotification;
+                    updateUserCardActivity = new Activity(ActivityTypes.Message)
+                    {
+                        Id = ticket.RequesterCardActivityId,
+                        Conversation = new ConversationAccount { Id = ticket.RequesterConversationId },
+                        Attachments = new List<Attachment> { new UserNotificationCard(ticket, this.appBaseUri, this.options.AppId).ToAttachment(Strings.PendingTicketUserNotification, message.LocalTimestamp) },
+                    };
                     break;
 
                 case ChangeTicketStatusPayload.ResolveAction:
                     smeNotification = string.Format(CultureInfo.InvariantCulture, Strings.SMEClosedStatus, ticket.LastModifiedByName);
 
-                    userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket, this.appBaseUri).ToAttachment(Strings.ClosedTicketUserNotification, message.LocalTimestamp));
-                    userNotification.Summary = Strings.ClosedTicketUserNotification;
+                    updateUserCardActivity = new Activity(ActivityTypes.Message)
+                    {
+                        Id = ticket.RequesterCardActivityId,
+                        Conversation = new ConversationAccount { Id = ticket.RequesterConversationId },
+                        Attachments = new List<Attachment> { new UserNotificationCard(ticket, this.appBaseUri, this.options.AppId).ToAttachment(Strings.ClosedTicketUserNotification, message.LocalTimestamp) },
+                    };
                     break;
 
                 case ChangeTicketStatusPayload.AssignToSelfAction:
                     smeNotification = string.Format(CultureInfo.InvariantCulture, Strings.SMEAssignedStatus, ticket.AssignedToName);
                     if (previousState == (int)TicketState.Resolved)
                     {
-                        userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket, this.appBaseUri).ToAttachment(Strings.ReopenedTicketUserNotification, message.LocalTimestamp));
-                        userNotification.Summary = Strings.ReopenedTicketUserNotification;
+                        updateUserCardActivity = new Activity(ActivityTypes.Message)
+                        {
+                            Id = ticket.RequesterCardActivityId,
+                            Conversation = new ConversationAccount { Id = ticket.RequesterConversationId },
+                            Attachments = new List<Attachment> { new UserNotificationCard(ticket, this.appBaseUri, this.options.AppId).ToAttachment(Strings.ReopenedTicketUserNotification, message.LocalTimestamp) },
+                        };
                     }
                     else if (previousState == (int)TicketState.Assigned)
                     {
-                        userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket, this.appBaseUri).ToAttachment(Strings.ReAssigneTicketUserNotification, message.LocalTimestamp));
-                        userNotification.Summary = Strings.ReAssigneTicketUserNotification;
+                        updateUserCardActivity = new Activity(ActivityTypes.Message)
+                        {
+                            Id = ticket.RequesterCardActivityId,
+                            Conversation = new ConversationAccount { Id = ticket.RequesterConversationId },
+                            Attachments = new List<Attachment> { new UserNotificationCard(ticket, this.appBaseUri, this.options.AppId).ToAttachment(Strings.ReAssigneTicketUserNotification, message.LocalTimestamp) },
+                        };
                     }
                     else
                     {
-                        userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket, this.appBaseUri).ToAttachment(Strings.AssignedTicketUserNotification, message.LocalTimestamp));
-                        userNotification.Summary = Strings.AssignedTicketUserNotification;
+                        updateUserCardActivity = new Activity(ActivityTypes.Message)
+                        {
+                            Id = ticket.RequesterCardActivityId,
+                            Conversation = new ConversationAccount { Id = ticket.RequesterConversationId },
+                            Attachments = new List<Attachment> { new UserNotificationCard(ticket, this.appBaseUri, this.options.AppId).ToAttachment(Strings.AssignedTicketUserNotification, message.LocalTimestamp) },
+                        };
                     }
 
                     break;
@@ -855,34 +907,51 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
                     if (previousState == (int)TicketState.Resolved)
                     {
-                        userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket, this.appBaseUri).ToAttachment(Strings.ReopenedTicketUserNotification, message.LocalTimestamp));
-                        userNotification.Summary = Strings.ReopenedTicketUserNotification;
+                        updateUserCardActivity = new Activity(ActivityTypes.Message)
+                        {
+                            Id = ticket.RequesterCardActivityId,
+                            Conversation = new ConversationAccount { Id = ticket.RequesterConversationId },
+                            Attachments = new List<Attachment> { new UserNotificationCard(ticket, this.appBaseUri, this.options.AppId).ToAttachment(Strings.ReopenedTicketUserNotification, message.LocalTimestamp) },
+                        };
                     }
                     else if (previousState == (int)TicketState.Assigned)
                     {
-                        userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket, this.appBaseUri).ToAttachment(Strings.ReAssigneTicketUserNotification, message.LocalTimestamp));
-                        userNotification.Summary = Strings.ReAssigneTicketUserNotification;
+                        updateUserCardActivity = new Activity(ActivityTypes.Message)
+                        {
+                            Id = ticket.RequesterCardActivityId,
+                            Conversation = new ConversationAccount { Id = ticket.RequesterConversationId },
+                            Attachments = new List<Attachment> { new UserNotificationCard(ticket, this.appBaseUri, this.options.AppId).ToAttachment(Strings.ReAssigneTicketUserNotification, message.LocalTimestamp) },
+                        };
                     }
                     else
                     {
-                        userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket, this.appBaseUri).ToAttachment(Strings.AssignedTicketUserNotification, message.LocalTimestamp));
-                        userNotification.Summary = Strings.AssignedTicketUserNotification;
+                        updateUserCardActivity = new Activity(ActivityTypes.Message)
+                        {
+                            Id = ticket.RequesterCardActivityId,
+                            Conversation = new ConversationAccount { Id = ticket.RequesterConversationId },
+                            Attachments = new List<Attachment> { new UserNotificationCard(ticket, this.appBaseUri, this.options.AppId).ToAttachment(Strings.AssignedTicketUserNotification, message.LocalTimestamp) },
+                        };
                     }
 
                     break;
             }
-
             if (!string.IsNullOrEmpty(smeNotification))
             {
                 var smeResponse = await turnContext.SendActivityAsync(smeNotification).ConfigureAwait(false);
                 this.logger.LogInformation($"SME team notified of update to ticket {ticket.TicketId}, activityId = {smeResponse.Id}");
             }
 
-            if (userNotification != null)
+            if (updateUserCardActivity != null)
             {
-                userNotification.Conversation = new ConversationAccount { Id = ticket.RequesterConversationId };
-                var userResponse = await turnContext.Adapter.SendActivitiesAsync(turnContext, new Activity[] { (Activity)userNotification }, cancellationToken).ConfigureAwait(false);
-                this.logger.LogInformation($"User notified of update to ticket {ticket.TicketId}, activityId = {userResponse.FirstOrDefault()?.Id}");
+                var userResponse = await turnContext.Adapter.UpdateActivityAsync(turnContext, updateUserCardActivity, cancellationToken).ConfigureAwait(false);
+                this.logger.LogInformation($"Update user ticket {ticket.TicketId}, activityId = {userResponse?.Id}");
+
+                IMessageActivity userNotification = null;
+                userNotification = MessageFactory.Text($"Your request [{ticket.TicketId.Substring(0, 8)}] updated to status: {CardHelper.GetUserTicketDisplayStatus(ticket)} ");
+                userNotification.Conversation = updateUserCardActivity.Conversation;
+                var userNotificationResponse = await turnContext.Adapter.SendActivitiesAsync(turnContext, new Activity[] { (Activity)userNotification }, cancellationToken).ConfigureAwait(false);
+                this.logger.LogInformation($"User notified of update to ticket {ticket.TicketId}, activityId = {userNotificationResponse.FirstOrDefault()?.Id}");
+
             }
 
             // record user action
@@ -1045,20 +1114,26 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     conPro.ContinousFailureTimes++;
 
                     bool isRecommended = false;
-                    //if (conPro.ContinousFailureTimes >= this.recommendConfiguration.RecommendationContinousFailureTimes && DateTime.Now > conPro.LastRecommendTime.AddMinutes(this.recommendConfiguration.RecommendationIntervalInMinutes))
-                    //{
-                    var conList = await this.GetRecommendQuestionsAsync();
-                    if (conList.Count > 0)
+                    if (conPro.ContinousFailureTimes >= this.recommendConfiguration.RecommendationContinousFailureTimes && DateTime.Now > conPro.LastRecommendTime.AddMinutes(this.recommendConfiguration.RecommendationIntervalInMinutes))
                     {
-                        isRecommended = true;
+                        var conList = await this.GetRecommendQuestionsAsync();
+                        if (conList.Count > 0)
+                        {
+                            isRecommended = true;
 
-                        // Send recommend
-                        await turnContext.SendActivityAsync(MessageFactory.Attachment(RecommendCard.GetCard(conList, this.options.AppId, this.appBaseUri))).ConfigureAwait(false);
+                            // Send recommend
+                            await turnContext.SendActivityAsync(MessageFactory.Attachment(RecommendCard.GetCard(conList, this.options.AppId, this.appBaseUri))).ConfigureAwait(false);
 
-                        conPro.ContinousFailureTimes = 0;
-                        conPro.LastRecommendTime = DateTime.Now;
+                            // Save user action
+                            UserActionEntity userAction = await this.GeneratePersonalActionEntityAsync(turnContext, cancellationToken);
+                            userAction.Action = nameof(UserActionType.Recommended);
+                            userAction.Remark = text;
+                            await this.userActionProvider.UpsertUserActionAsync(userAction).ConfigureAwait(false);
+
+                            conPro.ContinousFailureTimes = 0;
+                            conPro.LastRecommendTime = DateTime.Now;
+                        }
                     }
-                    //}
 
                     if (!isRecommended)
                     {
@@ -1242,13 +1317,32 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
             foreach (int i in listNumbers)
             {
-                result.Add(QnaHelper.UpperProcessing(list[i].Key));
+                result.Add(QnaHelper.CapitalizeString(list[i].Key));
             }
 
             return result;
         }
 
+        /// <summary>
+        ///  Is information of Teams where this app installed updated
+        /// </summary>
+        /// <param name="activity">activity.</param>
+        /// <returns>true or false.</returns>
+        private bool IsTeamInformationUpdated(IConversationUpdateActivity activity)
+        {
+            if (activity == null)
+            {
+                return false;
+            }
 
+            var channelData = activity.GetChannelData<TeamsChannelData>();
+            if (channelData == null)
+            {
+                return false;
+            }
+
+            return FaqPlusPlusBot.TeamRenamedEventType.Equals(channelData.EventType, StringComparison.OrdinalIgnoreCase);
+        }
     }
 
 }

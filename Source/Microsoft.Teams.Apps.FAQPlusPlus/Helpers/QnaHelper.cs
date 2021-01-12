@@ -127,11 +127,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Helpers
         }
 
         /// <summary>
-        /// capitalize all words in a string. 
+        /// capitalize all words in a string.
         /// </summary>
         /// <param name="str">input string.</param>
         /// <returns>processed string.</returns>
-        public static string UpperProcessing(string str)
+        public static string CapitalizeString(string str)
         {
             string[] strArray = str.Split(" ".ToCharArray());
             string result = string.Empty;

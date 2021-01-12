@@ -76,6 +76,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         public string RequesterGivenName { get; set; }
 
         /// <summary>
+        /// Gets or sets the activity id of the root card for the user.
+        /// </summary>
+        [JsonProperty("RequesterCardActivityId")]
+        public string RequesterCardActivityId { get; set; }
+
+        /// <summary>
         /// Gets or sets the conversation id of the 1:1 chat with the user that created the ticket.
         /// </summary>
         [JsonProperty("RequesterConversationId")]

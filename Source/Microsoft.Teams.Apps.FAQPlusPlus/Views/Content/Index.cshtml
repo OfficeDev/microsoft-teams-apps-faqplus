@@ -30,10 +30,10 @@
                         <i class="mdi mdi-access-point mr-1"></i>
                         Unresolved Ticket
                     </div>
-                    <div v-if="isUnResolveddLoading">
+                    <div v-if="isUnResolvedLoading">
                         <div class="spinner-border avatar-md text-primary" role="status"></div>
                     </div>
-                    <div v-else-if="isUnResolveddLoading == false" class="table-responsive">
+                    <div v-else-if="isUnResolvedLoading == false" class="table-responsive">
                         <table class="table table-centered w-100 dt-responsive nowrap" id="tickets-unresolved-datatable">
                             <thead class="thead-light">
                                 <tr>
@@ -133,7 +133,7 @@
         el: '#app',
         data: {
             isResolvedLoading: true,
-            isUnResolveddLoading: true,
+            isUnResolvedLoading: true,
             unResolvedTickets: [],
             resolvedTickets: [],
             teamId: "",
@@ -150,7 +150,7 @@
         },
         methods: {
             updateUnresolvedData: function (data) {
-                this.isUnResolveddLoading = false
+                this.isUnResolvedLoading = false
                 this.unResolvedTickets = data;
                 this.sleep(200).then(() => {
                     $("#tickets-unresolved-datatable").DataTable({
@@ -288,6 +288,8 @@
                     return "assigned"
                 if (value == 2)
                     return "pending"
+                if (value == 3)
+                    return "resolved"
             },
             string_short: function (value, maxlength) {
                 if (value.length > maxlength)
@@ -296,7 +298,7 @@
             },
             time_local: function (value) {
                 var localDate = new Date(value);
-                return formatDate(localDate, "yyyy-MM-d h:mm");
+                return formatDate(localDate, "yyyy-MM-d H:mm");
             },
             timeJet: function (dateBegin, dateEnd) {
 

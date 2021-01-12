@@ -32,5 +32,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         /// <param name="isResolved">is ticket resolved.</param>
         /// <returns>list of tickets.</returns>
         Task<List<TicketEntity>> GetTicketsAsync(bool isResolved);
+
+        /// <summary>
+        /// get all tickets of sepcific user.
+        /// </summary>
+        /// <param name="userPrincipleName">user PrincipleName(email).</param>
+        /// <returns>list of tickets.</returns>
+        Task<List<TicketEntity>> GetUserTicketsAsync(string userPrincipleName);
     }
 }

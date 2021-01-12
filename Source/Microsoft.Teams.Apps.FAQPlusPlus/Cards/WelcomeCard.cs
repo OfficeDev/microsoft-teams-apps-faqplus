@@ -21,8 +21,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// This method will construct the user welcome card when bot is added in personal scope.
         /// </summary>
         /// <param name="welcomeText">Gets welcome text.</param>
+        /// <param name="appBaseUri">The base URI where the app is hosted.</param>
         /// <returns>User welcome card.</returns>
-        public static Attachment GetCard(string welcomeText)
+        public static Attachment GetCard(string welcomeText, string appBaseUri)
         {
             AdaptiveCard userWelcomeCard = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
             {
@@ -49,6 +50,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                               Text = Constants.TakeATour,
                             },
                         },
+                         IconUrl = appBaseUri + "/content/take_tour.png",
                     },
                 },
             };

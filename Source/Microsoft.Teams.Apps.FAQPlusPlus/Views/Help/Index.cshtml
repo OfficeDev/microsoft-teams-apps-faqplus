@@ -290,7 +290,8 @@
     new Vue({
         el: '#app',
         data: {
-            appid: ""
+            appid: "",
+            userName: "",
         },
         methods: {
             opendeeplink: function (link) {
@@ -303,14 +304,18 @@
             }
         },
         mounted() {
-            axios
-                .post('/help/appID')
-                .then((response) => {
-                    this.appid = response.data["appid"];
-                })
-                .catch(function (error) { // 请求失败处理
-                    console.log(error);
-                });
+            microsoftTeams.getContext((context) => {
+                this.userName = context.userPrincipalName;
+                axios
+                    .post('/help/appID', { UserPrincipleName: this.userName })
+                    .then((response) => {
+                        this.appid = response.data["appid"];
+                    })
+                    .catch(function (error) { // 请求失败处理
+                        console.log(error);
+                    });
+            });
+
         },
     })
 </script>

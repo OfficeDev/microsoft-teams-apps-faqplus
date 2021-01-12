@@ -708,4 +708,12 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <value>User Guide</value>
     <comment>Action button which invokes open user guide tab.</comment>
   </data>
+  <data name="MyTicketButtonText" xml:space="preserve">
+    <value>My tickets</value>
+    <comment>Action button which invokes open my tab.</comment>
+  </data>
+  <data name="UserNotificationUpdateFooterText" xml:space="preserve">
+    <value>View your tickets:</value>
+    <comment>UserNotification update footer-letting the user check all his/her tickets.</comment>
+  </data>
 </root>

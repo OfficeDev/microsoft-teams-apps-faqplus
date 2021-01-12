@@ -117,6 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="DefaultAssignTimeout" xml:space="preserve">
+    <value>10</value>
+    <comment>Default AssignTimeout to be stored in configuration app</comment>
+  </data>
   <data name="DefaultHelpTabText" xml:space="preserve">
     <value>Hi, I'm your friendly Q&amp;A bot. You can ask me questions, and I'll do my best to answer. If I can't help, I'll connect you to an expert.
 
@@ -126,6 +130,14 @@ My key features:
 * Ask an expert
 * Share feedback</value>
     <comment>Default help static tab text to be stored in configuration app</comment>
+  </data>
+  <data name="DefaultPendingTimeout" xml:space="preserve">
+    <value>240</value>
+    <comment>Default DefaultPendingTimeout to be stored in configuration app</comment>
+  </data>
+  <data name="DefaultResolveTimeout" xml:space="preserve">
+    <value>30</value>
+    <comment>Default DefaultResolveTimeout to be stored in configuration app</comment>
   </data>
   <data name="DefaultSubjects" xml:space="preserve">
     <value>{"Project":"ForHonor,Liberty,ACK,APEX,Orpheus,Yutu","Other":"IT,HR"}</value>
@@ -147,6 +159,10 @@ You can ask the following questions:
   <data name="KnowledgeBaseToolTipHoverMessage" xml:space="preserve">
     <value>Provide a valid knowledgebase id which will be used by bot and then click on Ok to add or Edit to modify</value>
     <comment>Message for knowledgebase id when information icon is hovered</comment>
+  </data>
+  <data name="SLAToolTipHoverMessage" xml:space="preserve">
+    <value>Provide SLA to send notification and anaylysis service quality then click on Ok to add or Edit to modify</value>
+    <comment>Message for SLA when information icon is hovered</comment>
   </data>
   <data name="SubjectsToolTipHoverMessage" xml:space="preserve">
     <value>Provide options show in subject selection card in json format and then click on Ok to add or Edit to modify</value>

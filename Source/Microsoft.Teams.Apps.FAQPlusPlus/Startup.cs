@@ -22,6 +22,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models.Configuration;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers;
+    using Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.Repositories;
+    using Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.Repositories.TeamData;
+    using Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.Repositories.UserData;
+    using Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.Services;
 
     /// <summary>
     /// This a Startup class for this Bot.
@@ -92,6 +96,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
                 botSettings.TenantId = this.Configuration["TenantId"];
                 botSettings.AppId = this.Configuration["APPId"];
             });
+            services.AddOptions<RepositoryOptions>().Configure<IConfiguration>((repositoryOptions, configuration) =>
+            {
+                repositoryOptions.StorageAccountConnectionString =
+                    configuration.GetValue<string>("StorageConnectionString");
+
+                // Setting this to true because the main application should ensure that all
+                // tables exist.
+                repositoryOptions.EnsureTableExists = true;
+            });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddSingleton<Common.Providers.IConfigurationDataProvider>(new Common.Providers.ConfigurationDataProvider(this.Configuration["StorageConnectionString"]));
@@ -126,6 +139,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
             // You can inspect the UserState
             services.AddSingleton<UserState>();
 
+            // Add TeamDataCapture services
+            services.AddTransient<TeamsDataCapture>();
+
+            // Add repositories
+            services.AddSingleton<TeamDataRepository>();
+            services.AddSingleton<UserDataRepository>();
+            services.AddSingleton<AppConfigRepository>();
+
             // You can inspect the ConversationState
             services.AddSingleton<ConversationState>();
             services.AddTransient<IBot, FaqPlusPlusBot>();
@@ -139,6 +160,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
             // Create the telemetry middleware(used by the telemetry initializer) to track conversation events
             services.AddSingleton<TelemetryLoggerMiddleware>();
             services.AddMemoryCache();
+
+            // Add miscellaneous dependencies.
+            services.AddSingleton<IAppSettingsService, AppSettingsService>();
         }
     }
 }

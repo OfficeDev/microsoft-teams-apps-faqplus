@@ -12,6 +12,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
     using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Models;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
 
@@ -189,14 +190,18 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         /// <summary>
         /// Save or update help tab text to be used by bot in table storage which is received from View.
         /// </summary>
-        /// <param name="helpTabText">help tab text.</param>
+        /// <param name="assignTimeout">timeout from unassigned to assigned.</param>
+        /// <param name="pendingTimeout">timeout from pending to resolve.</param>
+        /// <param name="resolveTimeout">timeout from assigned to resolve.</param>
         /// <returns>View.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> SaveHelpTabTextAsync(string helpTabText)
+        public async Task<ActionResult> SaveSLAAsync(string assignTimeout, string pendingTimeout, string resolveTimeout)
         {
-            bool saved = await this.configurationPovider.UpsertEntityAsync(helpTabText, ConfigurationEntityTypes.HelpTabText).ConfigureAwait(false);
-            if (saved)
+            bool savedAssignTimeout = await this.configurationPovider.UpsertEntityAsync(assignTimeout, ConfigurationEntityTypes.AssignTimeout).ConfigureAwait(false);
+            bool savedPendingTimeout = await this.configurationPovider.UpsertEntityAsync(pendingTimeout, ConfigurationEntityTypes.PendingTimeout).ConfigureAwait(false);
+            bool savedResolveTimeout = await this.configurationPovider.UpsertEntityAsync(resolveTimeout, ConfigurationEntityTypes.ResolveTimeout).ConfigureAwait(false);
+            if (savedAssignTimeout && savedPendingTimeout && savedResolveTimeout)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.OK);
             }
@@ -210,59 +215,30 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         /// Get already saved help tab message from table storage.
         /// </summary>
         /// <returns>Help tab text.</returns>
-        public async Task<string> GetSavedHelpTabTextAsync()
+        [HttpGet]
+        public async Task<string> GetSavedSLAAsync()
         {
-            var helpText = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.HelpTabText).ConfigureAwait(false);
-            if (string.IsNullOrWhiteSpace(helpText))
+            var assignTimeout = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.AssignTimeout).ConfigureAwait(false);
+            var pendingTimeout = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.PendingTimeout).ConfigureAwait(false);
+            var resolveTimeout = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.ResolveTimeout).ConfigureAwait(false);
+            if (string.IsNullOrWhiteSpace(assignTimeout) || string.IsNullOrWhiteSpace(pendingTimeout) || string.IsNullOrWhiteSpace(resolveTimeout))
             {
-                await this.SaveHelpTabTextAsync(Strings.DefaultHelpTabText).ConfigureAwait(false);
+                await this.SaveSLAAsync(
+                    string.IsNullOrWhiteSpace(assignTimeout) ? Strings.DefaultAssignTimeout : assignTimeout,
+                    string.IsNullOrWhiteSpace(pendingTimeout) ? Strings.DefaultPendingTimeout : pendingTimeout,
+                    string.IsNullOrWhiteSpace(resolveTimeout) ? Strings.DefaultResolveTimeout : resolveTimeout).ConfigureAwait(false);
             }
 
-            return await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.HelpTabText).ConfigureAwait(false);
-        }
+            assignTimeout = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.AssignTimeout).ConfigureAwait(false);
+            pendingTimeout = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.PendingTimeout).ConfigureAwait(false);
+            resolveTimeout = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.ResolveTimeout).ConfigureAwait(false);
 
-        /// <summary>
-        /// Save or update help tab text to be used by bot in table storage which is received from View.
-        /// </summary>
-        /// <param name="subjects">help tab text.</param>
-        /// <returns>View.</returns>
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> SaveSubjectsAsync(string subjects)
-        {
-            try
+            return JsonConvert.SerializeObject(new SLAViewModel()
             {
-                JToken.Parse(subjects);
-            }
-            catch (JsonReaderException jex)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Subjects must be json format");
-            }
-
-            bool saved = await this.configurationPovider.UpsertEntityAsync(subjects, ConfigurationEntityTypes.Subjects).ConfigureAwait(false);
-            if (saved)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.OK);
-            }
-            else
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Sorry, unable to save the subjects due to an internal error. Try again.");
-            }
-        }
-
-        /// <summary>
-        /// Get already saved subjects from table storage.
-        /// </summary>
-        /// <returns>subjects json.</returns>
-        public async Task<string> GetSavedSubjectsAsync()
-        {
-            var helpText = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.Subjects).ConfigureAwait(false);
-            if (string.IsNullOrWhiteSpace(helpText))
-            {
-                await this.SaveHelpTabTextAsync(Strings.DefaultSubjects).ConfigureAwait(false);
-            }
-
-            return await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.Subjects).ConfigureAwait(false);
+                AssignTimeOut = assignTimeout,
+                PendingTimeOut = pendingTimeout,
+                ResolveTimeOut = resolveTimeout,
+            });
         }
 
         /// <summary>
