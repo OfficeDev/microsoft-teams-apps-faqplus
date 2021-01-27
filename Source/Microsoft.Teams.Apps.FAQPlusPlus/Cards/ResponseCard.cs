@@ -224,7 +224,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         private static List<QnADTO> BuildListOfPreviousQuestions(int id, string userQuestion, string answer, ResponseCardPayload payload)
         {
             var previousQuestions = payload.PreviousQuestions ?? new List<QnADTO>();
-
+            previousQuestions.Clear();
             previousQuestions.Add(new QnADTO
             {
                 Id = id,

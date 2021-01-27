@@ -40,11 +40,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.NotificationPrepareToSe
         public const string StoreMessageActivity = nameof(StoreMessageActivity);
 
         /// <summary>
-        /// Sync all users activity function.
-        /// </summary>
-        public const string SyncAllUsersActivity = nameof(SyncAllUsersActivity);
-
-        /// <summary>
         /// Sync Team members acitivity function.
         /// </summary>
         public const string SyncTeamMembersActivity = nameof(SyncTeamMembersActivity);
@@ -53,6 +48,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.NotificationPrepareToSe
         /// Sync group members acitivity function.
         /// </summary>
         public const string SyncGroupMembersActivity = nameof(SyncGroupMembersActivity);
+
+        /// <summary>
+        /// Sync group members acitivity function.
+        /// </summary>
+        public const string SyncUsersActivity = nameof(SyncUsersActivity);
 
         /// <summary>
         /// Sync Teams acitivity function.

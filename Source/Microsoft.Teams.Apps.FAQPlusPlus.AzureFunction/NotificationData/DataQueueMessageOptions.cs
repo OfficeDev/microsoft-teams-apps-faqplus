@@ -10,6 +10,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.NotificationData
     public class DataQueueMessageOptions
     {
         /// <summary>
+        /// Gets or sets the value for the delay to be applied to the data queue message.
+        /// </summary>
+        public double MessageDelayInSeconds { get; set; }
+
+        /// <summary>
         /// Gets or sets the value for the delay to be applied to the
         /// requeued data queue trigger message if the trigger message
         /// is to be requeued in the first ten minutes of the notification

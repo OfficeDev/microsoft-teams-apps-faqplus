@@ -18,6 +18,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.NotificationPrepareToSe
         public static readonly RetryOptions DefaultRetryOptions
             = new RetryOptions(
                 firstRetryInterval: TimeSpan.FromSeconds(5),
-                maxNumberOfAttempts: 3);
+                maxNumberOfAttempts: 1);
     }
 }

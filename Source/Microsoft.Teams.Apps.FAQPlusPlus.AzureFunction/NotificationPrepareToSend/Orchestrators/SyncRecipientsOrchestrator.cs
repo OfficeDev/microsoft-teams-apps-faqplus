@@ -3,7 +3,7 @@
 // </copyright>
 
 namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.NotificationPrepareToSend
-{ 
+{
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -36,16 +36,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.NotificationPrepareToSe
                 FunctionNames.UpdateNotificationStatusActivity,
                 FunctionSettings.DefaultRetryOptions,
                 (notification.Id, NotificationStatus.SyncingRecipients));
-
-            // All users.
-            //if (notification.AllUsers)
-            //{
-            //    await context.CallActivityWithRetryAsync(
-            //        FunctionNames.SyncAllUsersActivity,
-            //        FunctionSettings.DefaultRetryOptions,
-            //        notification);
-            //    return;
-            //}
 
             // Members of specific teams.
             //if (notification.Rosters.Any())
@@ -93,6 +83,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.NotificationPrepareToSe
             //        notification);
             //    return;
             //}
+
+            if (notification.UserIdInString != null)
+            {
+                await context.CallActivityWithRetryAsync(
+                    FunctionNames.SyncUsersActivity,
+                    FunctionSettings.DefaultRetryOptions,
+                    (notification.Id, notification.UserIdInString));
+                return;
+            }
 
             // Invalid audience.
             var errorMessage = $"Invalid audience select for notification id: {notification.Id}";

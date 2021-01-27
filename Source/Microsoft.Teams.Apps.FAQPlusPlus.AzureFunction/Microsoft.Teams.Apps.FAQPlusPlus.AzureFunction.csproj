@@ -27,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Microsoft.Teams.Apps.FAQPlusPlus.Common\Microsoft.Teams.Apps.FAQPlusPlus.Common.csproj" />
     <ProjectReference Include="..\Microsoft.Teams.Apps.FAQPlusPlus.FunctionCommon\Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.csproj" />
   </ItemGroup>
   <ItemGroup>

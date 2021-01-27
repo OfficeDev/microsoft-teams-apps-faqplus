@@ -732,6 +732,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             {
                 case ChangeTicketStatusPayload.PendingAction:
                     ticket.Status = (int)TicketState.Pending;
+                    ticket.DatePending = DateTime.UtcNow;
                     ticket.PendingComment = payload.PendingComment;
 
                     userAction.Remark += $" to Pending";
@@ -739,7 +740,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
                 case ChangeTicketStatusPayload.ResolveAction:
                     ticket.Status = (int)TicketState.Resolved;
-                    ticket.DateClosed = DateTime.UtcNow.AddHours(8);
+                    ticket.DateClosed = DateTime.UtcNow;
+                    ticket.DatePending = null;
                     ticket.ResolveComment = payload.ResolveComment;
 
                     userAction.Remark += $" to Resolved";
@@ -774,7 +776,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     }
 
                     ticket.Status = (int)TicketState.Assigned;
-                    ticket.DateAssigned = DateTime.UtcNow.AddHours(8);
+                    ticket.DateAssigned = DateTime.UtcNow;
 
                     if (info?.Length == 2)
                     {
@@ -783,6 +785,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     }
 
                     ticket.DateClosed = null;
+                    ticket.DatePending = null;
 
                     userAction.Remark += $" to Assigned";
                     break;
@@ -803,10 +806,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     }
 
                     ticket.Status = (int)TicketState.Assigned;
-                    ticket.DateAssigned = DateTime.UtcNow.AddHours(8);
+                    ticket.DateAssigned = DateTime.UtcNow;
                     ticket.AssignedToName = message.From.Name;
                     ticket.AssignedToObjectId = message.From.AadObjectId;
                     ticket.DateClosed = null;
+                    ticket.DatePending = null;
                     ticket.PendingComment = null;
                     ticket.ResolveComment = null;
 

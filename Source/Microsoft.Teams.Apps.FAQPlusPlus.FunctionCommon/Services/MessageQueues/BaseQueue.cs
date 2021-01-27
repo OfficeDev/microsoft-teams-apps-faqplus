@@ -39,15 +39,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.Services.MessageQ
         public BaseQueue(string serviceBusConnectionString, string queueName)
         {
             this.messageSender = new MessageSender(serviceBusConnectionString, queueName);
-            QueueClient client = new QueueClient(serviceBusConnectionString, queueName);
-            string messageBody = $"Message 11111";
-            var message = new Message(Encoding.UTF8.GetBytes(messageBody));
-
-            // Write the body of the message to the console.
-            Console.WriteLine($"Sending message: {messageBody}");
-
-            // Send the message to the queue.
-            client.SendAsync(message);
         }
 
         /// <summary>

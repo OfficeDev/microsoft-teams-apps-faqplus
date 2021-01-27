@@ -128,6 +128,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         public DateTime? DateClosed { get; set; }
 
         /// <summary>
+        /// Gets or sets the UTC date and time the ticket was closed.
+        /// </summary>
+        [IsSortable]
+        [JsonProperty("DatePending")]
+        public DateTime? DatePending { get; set; }
+
+        /// <summary>
         /// Gets or sets the display name of the user that last modified the ticket.
         /// </summary>
         [JsonProperty("LastModifiedByName")]
@@ -175,5 +182,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         [IsSortable]
         [JsonProperty("Timestamp")]
         public new DateTimeOffset Timestamp => base.Timestamp;
+
+        /// <summary>
+        /// Gets or sets the UTC date and time send notification according to SLA.
+        /// </summary>
+        [IsSortable]
+        [JsonProperty("DateSendNotification")]
+        public DateTime? DateSendNotification { get; set; }
     }
 }

@@ -58,7 +58,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Controllers
             UserActionEntity userAction = new UserActionEntity();
             userAction.UserPrincipalName = para.UserPrincipleName;
             userAction.UserActionId = Guid.NewGuid().ToString();
-            userAction.Action = nameof(UserActionType.ViewMyTab);
+            userAction.Action = nameof(UserActionType.ViewHelpTab);
             await this.userActionProvider.UpsertUserActionAsync(userAction).ConfigureAwait(false);
 
             return this.Json(p);

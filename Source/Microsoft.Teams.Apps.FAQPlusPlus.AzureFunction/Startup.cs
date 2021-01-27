@@ -14,6 +14,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction
     using System;
     using System.Globalization;
     using Microsoft.Azure.WebJobs;
+    using Microsoft.Bot.Builder.Integration.AspNet.Core;
+    using Microsoft.Bot.Connector.Authentication;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Options;
@@ -38,6 +40,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction
     using Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.Services.MessageQueues.SendQueue;
     using Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.Services.MicrosoftGraph;
     using Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.Services.Teams;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers;
     using Beta = BetaLib::Microsoft.Graph;
 
     /// <summary>
@@ -51,19 +54,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction
         /// <param name="builder">Webjobs builder.</param>
         public void Configure(IWebJobsBuilder builder)
         {
-
-            #region Archived
-            //IQnAMakerClient qnaMakerClient = new QnAMakerClient(new ApiKeyServiceClientCredentials(Environment.GetEnvironmentVariable("QnAMakerSubscriptionKey"))) { Endpoint = Environment.GetEnvironmentVariable("QnAMakerApiUrl") };
-            //builder.Services.AddSingleton<IQnaServiceProvider>((provider) => new QnaServiceProvider(
-            //    provider.GetRequiredService<IConfigurationDataProvider>(), provider.GetRequiredService<IOptionsMonitor<QnAMakerSettings>>(), qnaMakerClient));
-            //builder.Services.AddSingleton<IConfigurationDataProvider, Common.Providers.ConfigurationDataProvider>();
-            //builder.Services.AddSingleton<ISearchServiceDataProvider>((provider) => new SearchServiceDataProvider(provider.GetRequiredService<IQnaServiceProvider>(), Environment.GetEnvironmentVariable("StorageConnectionString")));
-            //builder.Services.AddSingleton<IConfigurationDataProvider>(new Common.Providers.ConfigurationDataProvider(Environment.GetEnvironmentVariable("StorageConnectionString")));
-            //builder.Services.AddSingleton<IKnowledgeBaseSearchService, KnowledgeBaseSearchService>();
-            //builder.Services.AddSingleton<IKnowledgeBaseSearchService>((provider) => new KnowledgeBaseSearchService(Environment.GetEnvironmentVariable("SearchServiceName"), Environment.GetEnvironmentVariable("SearchServiceQueryApiKey"), Environment.GetEnvironmentVariable("SearchServiceAdminApiKey"), Environment.GetEnvironmentVariable("StorageConnectionString")));
-            #endregion
-
-            //#region PrepareToSend
             // Add all options set from configuration values.
             builder.Services.AddOptions<RepositoryOptions>()
                 .Configure<IConfiguration>((repositoryOptions, configuration) =>
@@ -77,6 +67,22 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction
                     repositoryOptions.EnsureTableExists =
                         !configuration.GetValue<bool>("IsItExpectedThatTableAlreadyExists", true);
                 });
+
+            builder.Services.AddOptions<TicketExpertOptions>()
+                .Configure<IConfiguration>((ticketExpertOptions, configuration) =>
+                {
+                    ticketExpertOptions.TeamId =
+                        configuration.GetValue<string>("ExpertTeamID");
+                    ticketExpertOptions.TenantId =
+                         configuration.GetValue<string>("ExpertTenantID");
+                    ticketExpertOptions.GroupId =
+                         configuration.GetValue<string>("ExpertGroupID");
+                    ticketExpertOptions.TeamName =
+                         configuration.GetValue<string>("ExpertTeamName");
+                    ticketExpertOptions.ChannelName =
+                         configuration.GetValue<string>("ExpertChannelName");
+                });
+
             builder.Services.AddOptions<MessageQueueOptions>()
                 .Configure<IConfiguration>((messageQueueOptions, configuration) =>
                 {
@@ -84,219 +90,62 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction
                         configuration.GetValue<string>("ServiceBusConnection");
                 });
 
-            builder.Services.AddSingleton<PrepareToSendQueue>();
-            //builder.Services.AddOptions<BotOptions>()
-            //    .Configure<IConfiguration>((botOptions, configuration) =>
-            //    {
-            //        botOptions.MicrosoftAppId =
-            //            configuration.GetValue<string>("MicrosoftAppId");
-            //        botOptions.MicrosoftAppPassword =
-            //            configuration.GetValue<string>("MicrosoftAppPassword");
-            //    });
-            //builder.Services.AddOptions<DataQueueMessageOptions>()
-            //    .Configure<IConfiguration>((dataQueueMessageOptions, configuration) =>
-            //    {
-            //        dataQueueMessageOptions.MessageDelayInSeconds =
-            //            configuration.GetValue<double>("DataQueueMessageDelayInSeconds", 5);
-            //    });
+            builder.Services.AddOptions<BotOptions>()
+               .Configure<IConfiguration>((botOptions, configuration) =>
+               {
+                   botOptions.MicrosoftAppId =
+                       configuration.GetValue<string>("MicrosoftAppId");
 
-            //builder.Services.AddOptions<TeamsConversationOptions>()
-            //    .Configure<IConfiguration>((options, configuration) =>
-            //    {
-            //        options.ProactivelyInstallUserApp =
-            //            configuration.GetValue<bool>("ProactivelyInstallUserApp", true);
+                   botOptions.MicrosoftAppPassword =
+                       configuration.GetValue<string>("MicrosoftAppPassword");
+               });
 
-            //        options.MaxAttemptsToCreateConversation =
-            //            configuration.GetValue<int>("MaxAttemptsToCreateConversation", 2);
-            //    });
+            builder.Services.AddOptions<NotificationData.DataQueueMessageOptions>()
+                .Configure<IConfiguration>((dataQueueMessageOptions, configuration) =>
+                {
+                    dataQueueMessageOptions.MessageDelayInSeconds =
+                       configuration.GetValue<double>("DataQueueMessageDelayInSeconds", 5);
 
-            //builder.Services.AddOptions<ConfidentialClientApplicationOptions>().
-            //    Configure<IConfiguration>((confidentialClientApplicationOptions, configuration) =>
-            //    {
-            //        confidentialClientApplicationOptions.ClientId = configuration.GetValue<string>("MicrosoftAppId");
-            //        confidentialClientApplicationOptions.ClientSecret = configuration.GetValue<string>("MicrosoftAppPassword");
-            //        confidentialClientApplicationOptions.TenantId = configuration.GetValue<string>("TenantId");
-            //    });
+                    dataQueueMessageOptions.FirstTenMinutesRequeueMessageDelayInSeconds =
+                        configuration.GetValue<double>("FirstTenMinutesRequeueMessageDelayInSeconds", 20);
 
-            //builder.Services.AddLocalization();
+                    dataQueueMessageOptions.RequeueMessageDelayInSeconds =
+                        configuration.GetValue<double>("RequeueMessageDelayInSeconds", 120);
+                });
 
-            //// Set current culture.
-            //var culture = Environment.GetEnvironmentVariable("i18n:DefaultCulture");
-            //CultureInfo.DefaultThreadCurrentCulture = new CultureInfo(culture);
-            //CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo(culture);
+            builder.Services.AddSingleton<ITicketsProvider>(new TicketsProvider(Environment.GetEnvironmentVariable("StorageAccountConnectionString")));
+            builder.Services.AddSingleton<IConfigurationDataProvider>(new ConfigurationDataProvider(Environment.GetEnvironmentVariable("StorageAccountConnectionString")));
 
-            //// Add orchestration.
-            ////builder.Services.AddTransient<ExportOrchestration>();
-
-            //// Add activities.
-            ////builder.Services.AddTransient<UpdateExportDataActivity>();
-            ////builder.Services.AddTransient<GetMetadataActivity>();
-            ////builder.Services.AddTransient<UploadActivity>();
-            ////builder.Services.AddTransient<SendFileCardActivity>();
-            ////builder.Services.AddTransient<HandleExportFailureActivity>();
-
-            //// Add bot services.
-            //builder.Services.AddSingleton<CommonMicrosoftAppCredentials>();
-            //builder.Services.AddSingleton<ICredentialProvider, CommonBotCredentialProvider>();
-            //builder.Services.AddSingleton<BotFrameworkHttpAdapter>();
+            builder.Services.AddLocalization();
 
             //// Add repositories.
             builder.Services.AddSingleton<NotificationDataRepository>();
-            ////builder.Services.AddSingleton<SendingNotificationDataRepository>();
+            builder.Services.AddSingleton<SendingNotificationDataRepository>();
             builder.Services.AddSingleton<SentNotificationDataRepository>();
-            //builder.Services.AddSingleton<UserDataRepository>();
-            //builder.Services.AddSingleton<TeamDataRepository>();
-            ////builder.Services.AddSingleton<ExportDataRepository>();
-            //builder.Services.AddSingleton<AppConfigRepository>();
+            builder.Services.AddSingleton<UserDataRepository>();
+            builder.Services.AddSingleton<GlobalSendingNotificationDataRepository>();
 
             //// Add service bus message queues.
-            //builder.Services.AddSingleton<SendQueue>();
-            //builder.Services.AddSingleton<DataQueue>();
-            ////builder.Services.AddSingleton<ExportQueue>();
+            builder.Services.AddSingleton<PrepareToSendQueue>();
+            builder.Services.AddSingleton<SendQueue>();
+            builder.Services.AddSingleton<DataQueue>();
 
             //// Add miscellaneous dependencies.
-            //builder.Services.AddTransient<TableRowKeyGenerator>();
-            //builder.Services.AddTransient<AdaptiveCardCreator>();
-            //builder.Services.AddSingleton<IAppSettingsService, AppSettingsService>();
-
-            //// Add Teams services.
-            //builder.Services.AddTransient<ITeamMembersService, TeamMembersService>();
-            //builder.Services.AddTransient<IConversationService, ConversationService>();
-
-            //// Add graph services.
-            //this.AddGraphServices(builder);
-
-            ////builder.Services.AddTransient<IDataStreamFacade, DataStreamFacade>();
-            //#endregion
-
-            //#region NotificationSend
-            //// Add all options set from configuration values.
-            //builder.Services.AddOptions<SendFunctionOptions>()
-            //    .Configure<IConfiguration>((companyCommunicatorSendFunctionOptions, configuration) =>
-            //    {
-            //        companyCommunicatorSendFunctionOptions.MaxNumberOfAttempts =
-            //            configuration.GetValue<int>("MaxNumberOfAttempts", 1);
-
-            //        companyCommunicatorSendFunctionOptions.SendRetryDelayNumberOfSeconds =
-            //            configuration.GetValue<double>("SendRetryDelayNumberOfSeconds", 660);
-            //    });
-            //builder.Services.AddOptions<BotOptions>()
-            //    .Configure<IConfiguration>((botOptions, configuration) =>
-            //    {
-            //        botOptions.MicrosoftAppId =
-            //            configuration.GetValue<string>("MicrosoftAppId");
-
-            //        botOptions.MicrosoftAppPassword =
-            //            configuration.GetValue<string>("MicrosoftAppPassword");
-            //    });
-            //builder.Services.AddOptions<RepositoryOptions>()
-            //    .Configure<IConfiguration>((repositoryOptions, configuration) =>
-            //    {
-            //        repositoryOptions.StorageAccountConnectionString =
-            //            configuration.GetValue<string>("StorageAccountConnectionString");
-
-            //        // Defaulting this value to true because the main app should ensure all
-            //        // tables exist. It is here as a possible configuration setting in
-            //        // case it needs to be set differently.
-            //        repositoryOptions.EnsureTableExists =
-            //            !configuration.GetValue<bool>("IsItExpectedThatTableAlreadyExists", true);
-            //    });
-            //builder.Services.AddOptions<MessageQueueOptions>()
-            //    .Configure<IConfiguration>((messageQueueOptions, configuration) =>
-            //    {
-            //        messageQueueOptions.ServiceBusConnection =
-            //            configuration.GetValue<string>("ServiceBusConnection");
-            //    });
-
-            //builder.Services.AddLocalization();
+            builder.Services.AddTransient<TableRowKeyGenerator>();
+            builder.Services.AddTransient<AdaptiveCardCreator>();
 
             //// Add bot services.
-            //builder.Services.AddSingleton<CommonMicrosoftAppCredentials>();
-            //builder.Services.AddSingleton<ICredentialProvider, CommonBotCredentialProvider>();
-            //builder.Services.AddSingleton<BotFrameworkHttpAdapter>();
+            builder.Services.AddSingleton<CommonMicrosoftAppCredentials>();
+            builder.Services.AddSingleton<ICredentialProvider, CommonBotCredentialProvider>();
+            builder.Services.AddSingleton<BotFrameworkHttpAdapter>();
 
             //// Add teams services.
-            //builder.Services.AddTransient<IMessageService, MessageService>();
-
-            //// Add repositories.
-            //builder.Services.AddSingleton<SendingNotificationDataRepository>();
-            //builder.Services.AddSingleton<GlobalSendingNotificationDataRepository>();
-            //builder.Services.AddSingleton<SentNotificationDataRepository>();
-
-            //// Add service bus message queues.
-            //builder.Services.AddSingleton<SendQueue>();
+            builder.Services.AddTransient<IMessageService, MessageService>();
 
             //// Add the Notification service.
-            //builder.Services.AddTransient<INotificationService, NotificationService>();
-            //#endregion
-
-            //#region NotificationData
-            //// Add all options set from configuration values.
-            //builder.Services.AddOptions<RepositoryOptions>()
-            //    .Configure<IConfiguration>((repositoryOptions, configuration) =>
-            //    {
-            //        repositoryOptions.StorageAccountConnectionString =
-            //            configuration.GetValue<string>("StorageAccountConnectionString");
-
-            //        // Defaulting this value to true because the main app should ensure all
-            //        // tables exist. It is here as a possible configuration setting in
-            //        // case it needs to be set differently.
-            //        repositoryOptions.EnsureTableExists =
-            //            !configuration.GetValue<bool>("IsItExpectedThatTableAlreadyExists", true);
-            //    });
-            //builder.Services.AddOptions<MessageQueueOptions>()
-            //    .Configure<IConfiguration>((messageQueueOptions, configuration) =>
-            //    {
-            //        messageQueueOptions.ServiceBusConnection =
-            //            configuration.GetValue<string>("ServiceBusConnection");
-            //    });
-            //builder.Services.AddOptions<BotOptions>()
-            //   .Configure<IConfiguration>((botOptions, configuration) =>
-            //   {
-            //       botOptions.MicrosoftAppId =
-            //           configuration.GetValue<string>("MicrosoftAppId");
-
-            //       botOptions.MicrosoftAppPassword =
-            //           configuration.GetValue<string>("MicrosoftAppPassword");
-            //   });
-
-            //builder.Services.AddOptions<NotificationData.DataQueueMessageOptions>()
-            //    .Configure<IConfiguration>((dataQueueMessageOptions, configuration) =>
-            //    {
-            //        dataQueueMessageOptions.FirstTenMinutesRequeueMessageDelayInSeconds =
-            //            configuration.GetValue<double>("FirstTenMinutesRequeueMessageDelayInSeconds", 20);
-
-            //        dataQueueMessageOptions.RequeueMessageDelayInSeconds =
-            //            configuration.GetValue<double>("RequeueMessageDelayInSeconds", 120);
-            //    });
-
-            //builder.Services.AddLocalization();
-
-            //// Add blob client.
-            ////builder.Services.AddSingleton(sp => new BlobContainerClient(
-            ////    sp.GetService<IConfiguration>().GetValue<string>("StorageAccountConnectionString"),
-            ////    Common.Constants.BlobContainerName));
-
-            //// Add bot services.
-            //builder.Services.AddSingleton<CommonMicrosoftAppCredentials>();
-            //builder.Services.AddSingleton<ICredentialProvider, CommonBotCredentialProvider>();
-            //builder.Services.AddSingleton<BotFrameworkHttpAdapter>();
-
-            //// Add services.
-            ////builder.Services.AddSingleton<IFileCardService, FileCardService>();
-
-            //// Add notification data services.
-            //builder.Services.AddTransient<AggregateSentNotificationDataService>();
-            //builder.Services.AddTransient<UpdateNotificationDataService>();
-
-            //// Add repositories.
-            //builder.Services.AddSingleton<NotificationDataRepository>();
-            //builder.Services.AddSingleton<SentNotificationDataRepository>();
-            //builder.Services.AddSingleton<UserDataRepository>();
-
-            //// Add service bus message queues.
-            //builder.Services.AddSingleton<DataQueue>();
-            //#endregion
+            builder.Services.AddTransient<INotificationService, NotificationService>();
+            builder.Services.AddTransient<AggregateSentNotificationDataService>();
+            builder.Services.AddTransient<UpdateNotificationDataService>();
         }
 
         /// <summary>

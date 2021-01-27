@@ -24,15 +24,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.Repositories.Noti
         /// </summary>
         public string Id { get; set; }
 
+        ///// <summary>
+        ///// Gets or sets the type of notification 0:info, 1:warning, 2:error.
+        ///// </summary>
+        public int Type { get; set; }
+
         /// <summary>
         /// Gets or sets the title text of the notification's content.
         /// </summary>
         public string Title { get; set; }
-
-        /// <summary>
-        /// Gets or sets the image link of the notification's content.
-        /// </summary>
-        public string ImageLink { get; set; }
 
         /// <summary>
         /// Gets or sets the summary text of the notification's content.
@@ -43,6 +43,21 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.Repositories.Noti
         /// Gets or sets the author text of the notification's content.
         /// </summary>
         public string Author { get; set; }
+
+        /// <summary>
+        /// Gets or sets the facts of the notification's content.
+        /// </summary>
+        public string FactsInString { get; set; }
+
+        /// <summary>
+        /// Gets or sets Teams audience collection.
+        /// </summary>
+        [IgnoreProperty]
+        public IEnumerable<NotificationFact> Facts
+        {
+            get => FactsInString == null ? null : JsonConvert.DeserializeObject<IEnumerable<NotificationFact>>(this.FactsInString);
+            set => this.FactsInString = JsonConvert.SerializeObject(value);
+        }
 
         /// <summary>
         /// Gets or sets the button title of the notification's content.
@@ -68,11 +83,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.Repositories.Noti
         /// Gets or sets the DateTime the notification's sending was completed.
         /// </summary>
         public DateTime? SentDate { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether the notification is a draft.
-        /// </summary>
-        public bool IsDraft { get; set; }
 
         /// <summary>
         /// Gets or sets the TeamsInString value.
@@ -138,15 +148,30 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.Repositories.Noti
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether a notification should be sent to all the
-        /// known users - this is equivalent to all of the users stored in the User Data table.
+        /// Gets or sets the UserIdInString value.
+        /// This property helps to save the user ad id list in the Azure Table storage.
+        /// Table storage doesn't support an array type of the property directly
+        /// so this is a comma separated list of the group ids for which the members
+        /// are the recipients.
         /// </summary>
-        public bool AllUsers { get; set; }
+        public string UserIdInString { get; set; }
 
-        /// <summary>
-        /// Gets or sets the message version number.
-        /// </summary>
-        public string MessageVersion { get; set; }
+        ///// <summary>
+        ///// Gets or sets the ad id of the user collection.
+        ///// </summary>
+        //[IgnoreProperty]
+        //public IEnumerable<string> Users
+        //{
+        //    get
+        //    {
+        //        return JsonConvert.DeserializeObject<IEnumerable<string>>(this.UserIdInString);
+        //    }
+
+        //    set
+        //    {
+        //        this.GroupsInString = JsonConvert.SerializeObject(value);
+        //    }
+        //}
 
         /// <summary>
         /// Gets or sets the number of recipients who have received the notification successfully.
