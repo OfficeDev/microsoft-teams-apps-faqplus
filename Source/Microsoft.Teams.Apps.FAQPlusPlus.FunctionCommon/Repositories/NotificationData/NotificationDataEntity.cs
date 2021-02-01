@@ -50,7 +50,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.Repositories.Noti
         public string FactsInString { get; set; }
 
         /// <summary>
-        /// Gets or sets Teams audience collection.
+        /// Gets or sets facts collection.
         /// </summary>
         [IgnoreProperty]
         public IEnumerable<NotificationFact> Facts
@@ -60,14 +60,19 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.Repositories.Noti
         }
 
         /// <summary>
-        /// Gets or sets the button title of the notification's content.
+        /// Gets or sets the open url buttons.
         /// </summary>
-        public string ButtonTitle { get; set; }
+        public string ButtonsInString { get; set; }
 
         /// <summary>
-        /// Gets or sets the button link of the notification's content.
+        /// Gets or sets  open url buttons collection.
         /// </summary>
-        public string ButtonLink { get; set; }
+        [IgnoreProperty]
+        public IEnumerable<NotificationButton> Buttons
+        {
+            get => FactsInString == null ? null : JsonConvert.DeserializeObject<IEnumerable<NotificationButton>>(this.ButtonsInString);
+            set => this.ButtonsInString = JsonConvert.SerializeObject(value);
+        }
 
         /// <summary>
         /// Gets or sets the information for the user that created the notification.
@@ -154,24 +159,24 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.Repositories.Noti
         /// so this is a comma separated list of the group ids for which the members
         /// are the recipients.
         /// </summary>
-        public string UserIdInString { get; set; }
+        public string UsersIdInString { get; set; }
 
-        ///// <summary>
-        ///// Gets or sets the ad id of the user collection.
-        ///// </summary>
-        //[IgnoreProperty]
-        //public IEnumerable<string> Users
-        //{
-        //    get
-        //    {
-        //        return JsonConvert.DeserializeObject<IEnumerable<string>>(this.UserIdInString);
-        //    }
+        /// <summary>
+        /// Gets or sets the ad id of the user collection.
+        /// </summary>
+        [IgnoreProperty]
+        public IEnumerable<string> Users
+        {
+            get
+            {
+                return JsonConvert.DeserializeObject<IEnumerable<string>>(this.UsersIdInString);
+            }
 
-        //    set
-        //    {
-        //        this.GroupsInString = JsonConvert.SerializeObject(value);
-        //    }
-        //}
+            set
+            {
+                this.UsersIdInString = JsonConvert.SerializeObject(value);
+            }
+        }
 
         /// <summary>
         /// Gets or sets the number of recipients who have received the notification successfully.

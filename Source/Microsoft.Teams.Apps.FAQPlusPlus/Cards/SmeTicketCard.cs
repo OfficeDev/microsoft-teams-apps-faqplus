@@ -471,7 +471,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 choices.Add(new AdaptiveChoice()
                 {
                     Title = expert.Name,
-                    Value = $"{expert.Name}:{expert.ID}",
+                    Value = $"{expert.Name}:{expert.ID}:{expert.UserPrincipalName}",
                 });
             }
 

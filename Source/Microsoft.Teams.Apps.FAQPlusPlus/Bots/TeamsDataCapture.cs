@@ -6,7 +6,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 {
     using System;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.Bot.Builder;
     using Microsoft.Bot.Schema;
     using Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.Repositories.TeamData;
     using Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.Repositories.UserData;
@@ -110,6 +112,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         public async Task OnTeamInformationUpdatedAsync(IConversationUpdateActivity activity)
         {
             await this.teamDataRepository.SaveTeamDataAsync(activity);
+        }
+
+        /// <summary>
+        /// save user data in personal Chat
+        /// </summary>
+        /// <param name="turnContex">Context object containing information cached for a single turn of conversation with a user.</param>
+        /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
+        public async Task OnPersonalTurnAsync(ITurnContext turnContex, CancellationToken cancellationToken)
+        {
+            await this.userDataRepository.SaveUserDataAsync(turnContex, cancellationToken);
         }
 
         private async Task UpdateServiceUrl(string serviceUrl)

@@ -84,12 +84,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.NotificationPrepareToSe
             //    return;
             //}
 
-            if (notification.UserIdInString != null)
+            if (notification.Users.Any())
             {
                 await context.CallActivityWithRetryAsync(
-                    FunctionNames.SyncUsersActivity,
-                    FunctionSettings.DefaultRetryOptions,
-                    (notification.Id, notification.UserIdInString));
+                  FunctionNames.SyncUsersActivity,
+                  FunctionSettings.DefaultRetryOptions,
+                  (notification.Id, notification.Users));
                 return;
             }
 

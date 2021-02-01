@@ -5,7 +5,9 @@
 namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.CheckSLA
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
+    using System.Text.Encodings.Web;
     using System.Threading.Tasks;
     using Microsoft.Azure.WebJobs;
     using Microsoft.Azure.WebJobs.Host;
@@ -18,8 +20,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.CheckSLA
     using Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.Services.MessageQueues.PrepareToSendQueue;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers;
-    using System.Text.Encodings.Web;
-    using System.Collections.Generic;
 
     public class CheckSLAFunction
     {
@@ -50,79 +50,160 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.CheckSLA
         }
 
         [FunctionName("CheckSLAFunction")]
-        public async void Run([TimerTrigger("0 */3 * * * *")]TimerInfo myTimer, ILogger log)
+        public async void Run([TimerTrigger("0 */5 * * * *")]TimerInfo myTimer, ILogger log)
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
             var assignTimeout = Convert.ToInt32(await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.AssignTimeout));
             var pendingTimeout = Convert.ToInt32(await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.PendingTimeout));
             var resolveTimeout = Convert.ToInt32(await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.ResolveTimeout));
+            var cc = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.ExpertsAdmins);
 
             var unResolvedTickets = await this.ticketProvider.GetTicketsAsync(false);
 
-            var tasks = unResolvedTickets.Select(i => this.ProcessTicketAsync(i, assignTimeout, pendingTimeout, resolveTimeout));
+            var tasks = unResolvedTickets.Select(i => this.ProcessTicketAsync(i, assignTimeout, pendingTimeout, resolveTimeout, cc));
 
             var results = await Task.WhenAll(tasks);
 
             log.LogInformation($"new message count: {results.Where(i => i == true).ToList().Count()}");
         }
 
-        private async Task<bool> ProcessTicketAsync(TicketEntity ticket, int assignTimeout, int pendingTimeout, int resolveTimeout)
+        private async Task<bool> ProcessTicketAsync(TicketEntity ticket, int assignTimeout, int pendingTimeout, int resolveTimeout, string cc)
         {
             if (this.ShouldSendNotification(ticket, assignTimeout, pendingTimeout, resolveTimeout))
             {
-                var newSentNotificationId = this.tableRowKeyGenerator.CreateNewKeyOrderingMostRecentToOldest();
-
-                var sentNotificationEntity = new NotificationDataEntity
+                if (ticket.Status != 0)
                 {
-                    PartitionKey = NotificationDataTableNames.SentNotificationsPartition,
-                    RowKey = newSentNotificationId,
-                    Id = newSentNotificationId,
-                    Type = (int)NotificationType.Warning,
-                    Title = "Ticket need to update",
-                    Summary = "You receive this notification because a ticket is exceed the time defined in  SLA",
-                    ButtonTitle = "Go to Ticket",
-                    ButtonLink = this.BuildTicketLink(ticket.SmeThreadConversationId),
-                    Author = "CTU Production Services",
-                    CreatedBy = "Dolphin",
-                    CreatedDate = DateTime.Now,
-                    Facts = new List<NotificationFact>()
+                    // pending or resolve timeout, send notification to assignee
+                    var newSentNotificationId = this.tableRowKeyGenerator.CreateNewKeyOrderingMostRecentToOldest();
+                    var sentNotificationEntity = new NotificationDataEntity
                     {
-                        new NotificationFact
+                        PartitionKey = NotificationDataTableNames.SentNotificationsPartition,
+                        RowKey = newSentNotificationId,
+                        Id = newSentNotificationId,
+                        Type = (int)NotificationType.Warning,
+                        Title = "Ticket need to update",
+                        Summary = "You receive this notification because a ticket is exceed the time defined in  SLA",
+                        Buttons = new List<NotificationButton>()
                         {
-                            Title = "Requester:",
-                            Value = ticket.RequesterName,
+                             new NotificationButton
+                             {
+                                 Title = "Go to Ticket",
+                                 Link = this.BuildTicketLink(ticket.SmeThreadConversationId),
+                             },
                         },
-                        new NotificationFact
+                        Author = "CTU Production Services",
+                        CreatedBy = "Dolphin",
+                        CreatedDate = DateTime.Now,
+                        Facts = new List<NotificationFact>()
                         {
-                            Title = "Title:",
-                            Value = ticket.Title,
+                            new NotificationFact
+                            {
+                                Title = "Requester:",
+                                Value = ticket.RequesterName,
+                            },
+                            new NotificationFact
+                            {
+                                Title = "Title:",
+                                Value = ticket.Title,
+                            },
+                            new NotificationFact
+                            {
+                                Title = "Status:",
+                                Value = ((TicketState)Enum.ToObject(typeof(TicketState), ticket.Status)).ToString(),
+                            },
                         },
-                        new NotificationFact
+                        SentDate = null,
+                        Succeeded = 0,
+                        Failed = 0,
+                        Throttled = 0,
+                        SendingStartedDate = DateTime.UtcNow,
+                        Status = NotificationStatus.Queued.ToString(),
+                        GroupsInString = string.Empty,
+                        RostersInString = string.Empty,
+                        TeamsInString = string.Empty,
+                        Users = new List<string>()
                         {
-                            Title = "Status:",
-                            Value = ((TicketState)Enum.ToObject(typeof(TicketState), ticket.Status)).ToString(),
+                            ticket.AssignedToUserPrincipalName,
                         },
-                    },
-                    SentDate = null,
-                    Succeeded = 0,
-                    Failed = 0,
-                    Throttled = 0,
-                    SendingStartedDate = DateTime.UtcNow,
-                    Status = NotificationStatus.Queued.ToString(),
-                    GroupsInString = string.Empty,
-                    RostersInString = string.Empty,
-                    TeamsInString = string.Empty,
-                    UserIdInString = ticket.AssignedToObjectId,
-                };
+                    };
 
-                await this.notificationDataRepository.CreateOrUpdateAsync(sentNotificationEntity);
+                    await this.notificationDataRepository.CreateOrUpdateAsync(sentNotificationEntity);
 
-                var prepareToSendQueueMessageContent = new PrepareToSendQueueMessageContent
+                    var prepareToSendQueueMessageContent = new PrepareToSendQueueMessageContent
+                    {
+                        NotificationId = sentNotificationEntity.Id,
+                    };
+
+                    await this.prepareToSendQueue.SendAsync(prepareToSendQueueMessageContent);
+                }
+
+                // send notification to cc
+                List<string> notificationCC = cc.Split(';').ToList();
+                if (notificationCC?.Count > 0)
                 {
-                    NotificationId = sentNotificationEntity.Id,
-                };
+                    var newSentNotificationIdCC = this.tableRowKeyGenerator.CreateNewKeyOrderingMostRecentToOldest();
+                    var sentNotificationEntityCC = new NotificationDataEntity
+                    {
+                        PartitionKey = NotificationDataTableNames.SentNotificationsPartition,
+                        RowKey = newSentNotificationIdCC,
+                        Id = newSentNotificationIdCC,
+                        Type = (int)NotificationType.Warning,
+                        Title = "Ticket need to update",
+                        Summary = "You receive this notification because a ticket is exceed the time defined in  SLA",
+                        Buttons = new List<NotificationButton>()
+                        {
+                             new NotificationButton
+                             {
+                                 Title = "Go to Ticket",
+                                 Link = this.BuildTicketLink(ticket.SmeThreadConversationId),
+                             },
+                        },
+                        Author = "CTU Production Services",
+                        CreatedBy = "Dolphin",
+                        CreatedDate = DateTime.Now,
+                        Facts = new List<NotificationFact>()
+                        {
+                            new NotificationFact
+                            {
+                                Title = "Requester:",
+                                Value = ticket.RequesterName,
+                            },
+                            new NotificationFact
+                            {
+                                Title = "Title:",
+                                Value = ticket.Title,
+                            },
+                            new NotificationFact
+                            {
+                                Title = "Status:",
+                                Value = ((TicketState)Enum.ToObject(typeof(TicketState), ticket.Status)).ToString(),
+                            },
+                        },
+                        SentDate = null,
+                        Succeeded = 0,
+                        Failed = 0,
+                        Throttled = 0,
+                        SendingStartedDate = DateTime.UtcNow,
+                        Status = NotificationStatus.Queued.ToString(),
+                        GroupsInString = string.Empty,
+                        RostersInString = string.Empty,
+                        TeamsInString = string.Empty,
+                        Users = notificationCC,
+                    };
 
-                await this.prepareToSendQueue.SendAsync(prepareToSendQueueMessageContent);
+                    await this.notificationDataRepository.CreateOrUpdateAsync(sentNotificationEntityCC);
+
+                    var prepareToSendQueueMessageContentCC = new PrepareToSendQueueMessageContent
+                    {
+                        NotificationId = sentNotificationEntityCC.Id,
+                    };
+
+                    await this.prepareToSendQueue.SendAsync(prepareToSendQueueMessageContentCC);
+                }
+
+                ticket.DateSendNotification = DateTime.UtcNow;
+
+                await this.ticketProvider.UpsertTicketAsync(ticket);
                 return true;
             }
 
@@ -178,7 +259,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.CheckSLA
 
         private bool IsTimeout(DateTime time, int timeoutMin)
         {
-            DateTime now = DateTime.UtcNow.AddHours(8);
+            DateTime now = DateTime.UtcNow;
             return (now - time).TotalMinutes >= timeoutMin;
         }
 

@@ -174,6 +174,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.Repositories.Sent
         public string UserId { get; set; }
 
         /// <summary>
+        /// Gets or sets the user name for the recipient.
+        /// </summary>
+        public string UserName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the user principle name for the recipient.
+        /// </summary>
+        public string userPrincipleName { get; set; }
+
+        /// <summary>
         /// Gets or sets the error message for the last recorded error the bot encountered
         /// when attempting to process the queue message. If a request
         /// is retried and eventually is successful, this field will still be filled

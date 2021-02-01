@@ -18,14 +18,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Options;
-    using Microsoft.Teams.Apps.FAQPlusPlus.Bots;
-    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
-    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models.Configuration;
-    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers;
     using Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.Repositories;
     using Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.Repositories.TeamData;
     using Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.Repositories.UserData;
     using Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.Services;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Bots;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models.Configuration;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers;
 
     /// <summary>
     /// This a Startup class for this Bot.

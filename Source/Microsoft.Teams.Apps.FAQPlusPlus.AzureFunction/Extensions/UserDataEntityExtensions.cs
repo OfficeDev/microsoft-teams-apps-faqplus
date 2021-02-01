@@ -35,6 +35,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.NotificationPrepareToSe
                 TenantId = userDataEntity.TenantId,
                 UserId = userDataEntity.UserId,
                 ServiceUrl = userDataEntity.ServiceUrl,
+                UserName = userDataEntity.Name,
+                userPrincipleName = userDataEntity.Upn,
             };
         }
     }

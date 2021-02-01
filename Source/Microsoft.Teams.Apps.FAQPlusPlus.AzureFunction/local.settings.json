@@ -1,8 +1,8 @@
 {
   "IsEncrypted": false,
   "Values": {
-    "ServiceBusConnection": "Endpoint=sb://dev-dolphin.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=cl+3Eq8UzOYue5ICcvPSB52Ev6wY/O2onBTGELUZgeQ=",
-    "StorageAccountConnectionString": "DefaultEndpointsProtocol=https;AccountName=ybkauf6gdaqhw;AccountKey=GJpEg+FJ1cM2Y91TsTMJ64ryLd3NBtuJAWb55Ro2smCD+oP9Kfvg7SM2zxbR/Opp9qVQA2SyPdSn0Ri+71EMVQ==",
+    "ServiceBusConnection": "",
+    "StorageAccountConnectionString": "",
     "IsItExpectedThatTableAlreadyExists": false,
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
     "AzureWebJobsDashboard": "UseDevelopmentStorage=true",

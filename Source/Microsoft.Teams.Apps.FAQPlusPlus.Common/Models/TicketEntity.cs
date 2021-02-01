@@ -115,6 +115,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         public string AssignedToName { get; set; }
 
         /// <summary>
+        /// Gets or sets the UserPrincipalName of the assigned SME currently working on the ticket.
+        /// </summary>
+        [IsSearchable]
+        [IsFilterable]
+        [JsonProperty("AssignedToUserPrincipalName")]
+        public string AssignedToUserPrincipalName { get; set; }
+
+        /// <summary>
         /// Gets or sets the AAD object id of the assigned SME currently working on the ticket.
         /// </summary>
         [JsonProperty("AssignedToObjectId")]

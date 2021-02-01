@@ -25,15 +25,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.Services.Adaptive
             switch (notificationDataEntity.Type)
             {
                 case (int)NotificationType.Info:
-                    imgUrl = "https://dev-dolphin.azurewebsites.net/content/Information.png";
+                    imgUrl = "https://dev-dolphin.azurewebsites.net/content/notification_info.png";
                     break;
                 case (int)NotificationType.Warning:
-                    imgUrl = "https://dev-dolphin.azurewebsites.net/content/warning.png";
+                    imgUrl = "https://dev-dolphin.azurewebsites.net/content/notification_warning.png";
                     break;
                 case (int)NotificationType.Error:
-                    imgUrl = "https://dev-dolphin.azurewebsites.net/content/error.png";
+                    imgUrl = "https://dev-dolphin.azurewebsites.net/content/notification_error.png";
                     break;
-
+                default: break;
             }
 
             AdaptiveCard card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 2));
@@ -57,7 +57,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.Services.Adaptive
                              {
                                  new AdaptiveImage()
                                  {
-                                     Style = AdaptiveImageStyle.Default,
+                                     Style = AdaptiveImageStyle.Person,
                                      Size = AdaptiveImageSize.Medium,
                                      Url = new Uri(imgUrl),
                                  },
@@ -110,87 +110,19 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.Services.Adaptive
                 card.Body.Add(factset);
             }
 
-
-
-            if (!string.IsNullOrWhiteSpace(notificationDataEntity.ButtonTitle) && !string.IsNullOrWhiteSpace(notificationDataEntity.ButtonLink))
+            if (!string.IsNullOrWhiteSpace(notificationDataEntity.ButtonsInString))
             {
-                card.Actions.Add(new AdaptiveOpenUrlAction()
+                foreach (NotificationButton button in notificationDataEntity.Buttons)
                 {
-                    Title = notificationDataEntity.ButtonTitle,
-                    Url = new Uri(notificationDataEntity.ButtonLink),
-                });
+                    card.Actions.Add(new AdaptiveOpenUrlAction()
+                    {
+                        Title = button.Title,
+                        Url = new Uri(button.Link),
+                    });
+                }
             }
             return card;
-            //return this.CreateAdaptiveCard(
-            //    notificationDataEntity.Title,
-            //    //notificationDataEntity.ImageLink,
-            //    notificationDataEntity.Summary,
-            //    notificationDataEntity.Author,
-            //    notificationDataEntity.ButtonTitle,
-            //    notificationDataEntity.ButtonLink,
-            //    notificationDataEntity.Facts);
         }
 
-        /// <summary>
-        /// Create an adaptive card instance.
-        /// </summary>
-        /// <param name="title">The adaptive card's title value.</param>
-        /// <param name="imageUrl">The adaptive card's image URL.</param>
-        /// <param name="summary">The adaptive card's summary value.</param>
-        /// <param name="author">The adaptive card's author value.</param>
-        /// <param name="buttonTitle">The adaptive card's button title value.</param>
-        /// <param name="buttonUrl">The adaptive card's button url value.</param>
-        /// <returns>The created adaptive card instance.</returns>
-        public AdaptiveCard CreateAdaptiveCard(
-            string title,
-            //string imageUrl,
-            string summary,
-            string author,
-            string buttonTitle,
-            string buttonUrl)
-        {
-            var version = new AdaptiveSchemaVersion(1, 2);
-            AdaptiveCard card = new AdaptiveCard(version);
-
-            card.Body.Add(new AdaptiveTextBlock()
-            {
-                Text = title,
-                Size = AdaptiveTextSize.ExtraLarge,
-                Weight = AdaptiveTextWeight.Bolder,
-                Wrap = true,
-            });
-
-            if (!string.IsNullOrWhiteSpace(summary))
-            {
-                card.Body.Add(new AdaptiveTextBlock()
-                {
-                    Text = summary,
-                    Wrap = true,
-                });
-            }
-
-            if (!string.IsNullOrWhiteSpace(author))
-            {
-                card.Body.Add(new AdaptiveTextBlock()
-                {
-                    Text = author,
-                    Size = AdaptiveTextSize.Small,
-                    Weight = AdaptiveTextWeight.Lighter,
-                    Wrap = true,
-                });
-            }
-
-            if (!string.IsNullOrWhiteSpace(buttonTitle)
-                && !string.IsNullOrWhiteSpace(buttonUrl))
-            {
-                card.Actions.Add(new AdaptiveOpenUrlAction()
-                {
-                    Title = buttonTitle,
-                    Url = new Uri(buttonUrl),
-                });
-            }
-
-            return card;
-        }
     }
 }

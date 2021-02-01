@@ -12,6 +12,8 @@
             <span class="mandatoryField">*</span>
             @Html.LabelFor(model => model.ResolveTimeOut, htmlAttributes: new { @class = "font-bold" })
             <span class="mandatoryField">*</span>
+            @Html.LabelFor(model => model.ExpertsAdmins, htmlAttributes: new { @class = "font-bold" })
+            <span class="mandatoryField">*</span>
         </div>
         <div class="col-lg-5">
             @Html.TextBoxFor(model => model.AssignTimeOut, htmlAttributes: new { @class = "form-control SLAIdTextBox toggleTextBox", @id = "SLAAssignTimeOut", @placeholder = "Enter a number." })
@@ -22,6 +24,9 @@
 
             @Html.TextBoxFor(model => model.ResolveTimeOut, htmlAttributes: new { @class = "form-control SLAIdTextBox toggleTextBox", @id = "SLAResolveTimeOut", @placeholder = "Enter a number." })
             @Html.ValidationMessageFor(model => model.ResolveTimeOut, "", htmlAttributes: new { @class = "error-message" })
+
+            @Html.TextBoxFor(model => model.ExpertsAdmins, htmlAttributes: new { @class = "form-control SLAIdTextBox toggleTextBox", @id = "SLAExpertsAdmins", @placeholder = "Enter emails spearated by ';'." })
+            @Html.ValidationMessageFor(model => model.ExpertsAdmins, "", htmlAttributes: new { @class = "error-message" })
         </div>
         <div class="col-lg-1">
             <span id="SLAStorageStatusIcon"></span>

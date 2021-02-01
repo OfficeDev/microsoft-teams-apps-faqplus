@@ -21,6 +21,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Prep.Func.PreparingToSend
     using Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.NotificationPrepareToSend;
     using Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.NotificationPrepareToSend.Extensions;
     using Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.Resources;
+    using Microsoft.Azure.Cosmos.Table;
 
     /// <summary>
     /// Syncs group members to Sent notification table.
@@ -60,22 +61,22 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Prep.Func.PreparingToSend
         /// <returns>It returns the group transitive members first page and next page url.</returns>
         [FunctionName(FunctionNames.SyncUsersActivity)]
         public async Task RunAsync(
-        [ActivityTrigger](string notificationId, string userAdId) input, ILogger log)
+        [ActivityTrigger](string notificationId, IEnumerable<string> userPcns) input, ILogger log)
         {
             var notificationId = input.notificationId;
-            var userAdId = input.userAdId;
+            var userPcns = input.userPcns;
 
             try
             {
                 // Convert to Recipients
-                var recipients = await this.GetRecipientsAsync(notificationId, userAdId);
+                var recipients = await this.GetRecipientsAsync(notificationId, userPcns);
 
                 // Store.
                 await this.sentNotificationDataRepository.BatchInsertOrMergeAsync(recipients);
             }
             catch (Exception ex)
             {
-                var errorMessage = this.localizer.GetString("FailedToGetMembersForGroupFormat", userAdId, ex.Message);
+                var errorMessage = this.localizer.GetString("FailedToGetMembersForGroupFormat", userPcns, ex.Message);
                 log.LogError(ex, errorMessage);
                 await this.notificationDataRepository.SaveWarningInNotificationDataEntityAsync(notificationId, errorMessage);
             }
@@ -85,27 +86,28 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Prep.Func.PreparingToSend
         /// Reads corresponding user entity from User table and creates a recipient for every user.
         /// </summary>
         /// <param name="notificationId">Notification Id.</param>
-        /// <param name="users">Users.</param>
+        /// <param name="usePcns">Users.</param>
         /// <returns>List of recipients.</returns>
-        private async Task<IEnumerable<SentNotificationDataEntity>> GetRecipientsAsync(string notificationId, string userAdId)
+        private async Task<IEnumerable<SentNotificationDataEntity>> GetRecipientsAsync(string notificationId, IEnumerable<string> usePcns)
         {
             var recipients = new ConcurrentBag<SentNotificationDataEntity>();
 
             // Get User Entities.
-            //var maxParallelism = Math.Min(100, users.Count());
-            //await Task.WhenAll(users.ForEachAsync(maxParallelism, async user =>
-            //{
-            var userEntity = await this.userDataRepository.GetAsync(UserDataTableNames.UserDataPartition, userAdId);
-            if (userEntity == null)
+            var maxParallelism = Math.Min(100, usePcns.Count());
+            await Task.WhenAll(usePcns.ForEachAsync(maxParallelism, async userPcn =>
             {
-                userEntity = new UserDataEntity()
+                var filter = TableQuery.GenerateFilterCondition(nameof(UserDataEntity.Upn), QueryComparisons.Equal, userPcn);
+                var userEntity = (await this.userDataRepository.GetWithFilterAsync(filter)).FirstOrDefault();
+                if (userEntity == null)
                 {
-                    AadId = userAdId,
-                };
-            }
+                    userEntity = new UserDataEntity()
+                    {
+                        Upn = userPcn,
+                    };
+                }
 
-            recipients.Add(userEntity.CreateInitialSentNotificationDataEntity(partitionKey: notificationId));
-            //}));
+                recipients.Add(userEntity.CreateInitialSentNotificationDataEntity(partitionKey: notificationId));
+            }));
 
             return recipients;
         }

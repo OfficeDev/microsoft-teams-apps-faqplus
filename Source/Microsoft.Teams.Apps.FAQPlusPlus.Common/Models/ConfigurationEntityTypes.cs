@@ -44,6 +44,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         public const string ResolveTimeout = "ResolveTimeoutText";
 
         /// <summary>
+        /// ExpertsAdmins text entity.
+        /// </summary>
+        public const string ExpertsAdmins = "ExpertsAdminsText";
+
+        /// <summary>
         /// QnaMaker endpoint key entity.
         /// </summary>
         public const string QnAMakerEndpointKey = "QnaMakerEndpointKey";

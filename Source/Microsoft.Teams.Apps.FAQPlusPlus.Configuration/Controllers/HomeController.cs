@@ -19,7 +19,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
     /// <summary>
     /// Home Controller.
     /// </summary>
-    [Authorize]
+    //[Authorize]
     public class HomeController : Controller
     {
         private readonly IConfigurationDataProvider configurationPovider;
@@ -193,15 +193,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         /// <param name="assignTimeout">timeout from unassigned to assigned.</param>
         /// <param name="pendingTimeout">timeout from pending to resolve.</param>
         /// <param name="resolveTimeout">timeout from assigned to resolve.</param>
+        /// <param name="expertsAdmins">admins of expert channel</param>
         /// <returns>View.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> SaveSLAAsync(string assignTimeout, string pendingTimeout, string resolveTimeout)
+        public async Task<ActionResult> SaveSLAAsync(string assignTimeout, string pendingTimeout, string resolveTimeout, string expertsAdmins)
         {
             bool savedAssignTimeout = await this.configurationPovider.UpsertEntityAsync(assignTimeout, ConfigurationEntityTypes.AssignTimeout).ConfigureAwait(false);
             bool savedPendingTimeout = await this.configurationPovider.UpsertEntityAsync(pendingTimeout, ConfigurationEntityTypes.PendingTimeout).ConfigureAwait(false);
             bool savedResolveTimeout = await this.configurationPovider.UpsertEntityAsync(resolveTimeout, ConfigurationEntityTypes.ResolveTimeout).ConfigureAwait(false);
-            if (savedAssignTimeout && savedPendingTimeout && savedResolveTimeout)
+            bool savedExpertsAdmins = await this.configurationPovider.UpsertEntityAsync(expertsAdmins, ConfigurationEntityTypes.ExpertsAdmins).ConfigureAwait(false);
+            if (savedAssignTimeout && savedPendingTimeout && savedResolveTimeout && savedExpertsAdmins)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.OK);
             }
@@ -221,23 +223,27 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
             var assignTimeout = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.AssignTimeout).ConfigureAwait(false);
             var pendingTimeout = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.PendingTimeout).ConfigureAwait(false);
             var resolveTimeout = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.ResolveTimeout).ConfigureAwait(false);
+            var expertsAdmins = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.ExpertsAdmins).ConfigureAwait(false);
             if (string.IsNullOrWhiteSpace(assignTimeout) || string.IsNullOrWhiteSpace(pendingTimeout) || string.IsNullOrWhiteSpace(resolveTimeout))
             {
                 await this.SaveSLAAsync(
                     string.IsNullOrWhiteSpace(assignTimeout) ? Strings.DefaultAssignTimeout : assignTimeout,
                     string.IsNullOrWhiteSpace(pendingTimeout) ? Strings.DefaultPendingTimeout : pendingTimeout,
-                    string.IsNullOrWhiteSpace(resolveTimeout) ? Strings.DefaultResolveTimeout : resolveTimeout).ConfigureAwait(false);
+                    string.IsNullOrWhiteSpace(resolveTimeout) ? Strings.DefaultResolveTimeout : resolveTimeout,
+                    string.IsNullOrWhiteSpace(expertsAdmins) ? string.Empty : expertsAdmins).ConfigureAwait(false);
             }
 
             assignTimeout = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.AssignTimeout).ConfigureAwait(false);
             pendingTimeout = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.PendingTimeout).ConfigureAwait(false);
             resolveTimeout = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.ResolveTimeout).ConfigureAwait(false);
+            expertsAdmins = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.ExpertsAdmins).ConfigureAwait(false);
 
             return JsonConvert.SerializeObject(new SLAViewModel()
             {
                 AssignTimeOut = assignTimeout,
                 PendingTimeOut = pendingTimeout,
                 ResolveTimeOut = resolveTimeout,
+                ExpertsAdmins = expertsAdmins,
             });
         }
 

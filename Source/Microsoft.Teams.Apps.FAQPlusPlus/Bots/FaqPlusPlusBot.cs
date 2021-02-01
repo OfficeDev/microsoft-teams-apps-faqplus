@@ -23,6 +23,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
     using Microsoft.Extensions.Caching.Memory;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
+    using Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.Repositories.UserData;
     using Microsoft.Teams.Apps.FAQPlusPlus.Cards;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
@@ -235,6 +236,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             {
                 var message = turnContext?.Activity;
                 this.logger.LogInformation($"from: {message.From?.Id}, conversation: {message.Conversation.Id}, replyToId: {message.ReplyToId}");
+
                 await this.SendTypingIndicatorAsync(turnContext).ConfigureAwait(false);
 
                 switch (message.Conversation.ConversationType.ToLower())
@@ -433,6 +435,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             {
                 await this.userActionProvider.UpsertUserActionAsync(userAction).ConfigureAwait(false);
             }
+
+            await this.teamsDataCapture.OnPersonalTurnAsync(turnContext, cancellationToken);
         }
 
         /// <summary>
@@ -751,10 +755,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     var info = payload.OtherAssigneeInfo.Split(':');
                     string assigneeName = null;
                     string assigneeID = null;
-                    if (info?.Length == 2)
+                    string assigneeUserPrincilpeName = null;
+                    if (info?.Length == 3)
                     {
                         assigneeName = info[0];
                         assigneeID = info?[1];
+                        assigneeUserPrincilpeName = info?[2];
                     }
                     else
                     {
@@ -778,10 +784,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     ticket.Status = (int)TicketState.Assigned;
                     ticket.DateAssigned = DateTime.UtcNow;
 
-                    if (info?.Length == 2)
+                    if (info?.Length == 3)
                     {
                         ticket.AssignedToName = assigneeName;
                         ticket.AssignedToObjectId = assigneeID;
+                        ticket.AssignedToUserPrincipalName = assigneeUserPrincilpeName;
                     }
 
                     ticket.DateClosed = null;
@@ -805,9 +812,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                         }
                     }
 
+                    var member = await TeamsInfo.GetMemberAsync(turnContext, turnContext.Activity.From.Id, cancellationToken);
                     ticket.Status = (int)TicketState.Assigned;
                     ticket.DateAssigned = DateTime.UtcNow;
                     ticket.AssignedToName = message.From.Name;
+                    ticket.AssignedToUserPrincipalName = member.UserPrincipalName;
                     ticket.AssignedToObjectId = message.From.AadObjectId;
                     ticket.DateClosed = null;
                     ticket.DatePending = null;
@@ -1328,7 +1337,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         }
 
         /// <summary>
-        ///  Is information of Teams where this app installed updated
+        ///  Is information of Teams where this app installed updated.
         /// </summary>
         /// <param name="activity">activity.</param>
         /// <returns>true or false.</returns>

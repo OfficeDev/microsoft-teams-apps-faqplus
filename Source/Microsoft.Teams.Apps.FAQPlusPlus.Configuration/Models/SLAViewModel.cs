@@ -36,5 +36,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Models
         [DataType(DataType.Text)]
         [Display(Name = "PendingTimeOut")]
         public string PendingTimeOut { get; set; }
+
+        /// <summary>
+        /// Gets or sets welcome message text box to be used in View.
+        /// </summary>
+        [Required(ErrorMessage = "Enter emails separated by ';'.")]
+        [MinLength(11)]
+        [DataType(DataType.Text)]
+        [Display(Name = "ExpertsAdmins")]
+        public string ExpertsAdmins { get; set; }
     }
 }
