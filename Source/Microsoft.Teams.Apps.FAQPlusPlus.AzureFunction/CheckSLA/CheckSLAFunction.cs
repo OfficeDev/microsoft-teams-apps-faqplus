@@ -6,6 +6,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.CheckSLA
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using System.Text.Encodings.Web;
     using System.Threading.Tasks;
@@ -24,17 +25,24 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.CheckSLA
     public class CheckSLAFunction
     {
         private readonly NotificationDataRepository notificationDataRepository;
-        private readonly SentNotificationDataRepository sentNotificationDataRepository;
         private readonly PrepareToSendQueue prepareToSendQueue;
         private readonly ITicketsProvider ticketProvider;
         private readonly IConfigurationDataProvider configurationProvider;
         private readonly TableRowKeyGenerator tableRowKeyGenerator;
         private readonly IOptions<TicketExpertOptions> ticketExpertOptions;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CheckSLAFunction"/> class.
+        /// </summary>
+        /// <param name="ticketExpertOptions">ticket options.</param>
+        /// <param name="notificationDataRepository">table storage to store notification data.</param>
+        /// <param name="prepareToSendQueu">service bus prepare queue.</param>
+        /// <param name="tableRowKeyGenerator">to generate key of table row.</param>
+        /// <param name="ticketProvider">table storage to store ticket.</param>
+        /// <param name="configurationProvider">table storage wehere store SLA configuration.</param>
         public CheckSLAFunction(
             IOptions<TicketExpertOptions> ticketExpertOptions,
             NotificationDataRepository notificationDataRepository,
-            SentNotificationDataRepository sentNotificationDataRepository,
             PrepareToSendQueue prepareToSendQueu,
             TableRowKeyGenerator tableRowKeyGenerator,
             ITicketsProvider ticketProvider,
@@ -42,7 +50,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.CheckSLA
         {
             this.ticketExpertOptions = ticketExpertOptions;
             this.notificationDataRepository = notificationDataRepository;
-            this.sentNotificationDataRepository = sentNotificationDataRepository;
             this.prepareToSendQueue = prepareToSendQueu;
             this.tableRowKeyGenerator = tableRowKeyGenerator;
             this.ticketProvider = ticketProvider;
@@ -50,7 +57,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.CheckSLA
         }
 
         [FunctionName("CheckSLAFunction")]
-        public async void Run([TimerTrigger("0 */5 * * * *")]TimerInfo myTimer, ILogger log)
+        public async void Run([TimerTrigger("0 */3 * * * *")]TimerInfo myTimer, ILogger log)
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
             var assignTimeout = Convert.ToInt32(await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.AssignTimeout));
@@ -73,6 +80,24 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.CheckSLA
             {
                 if (ticket.Status != 0)
                 {
+                    string title = string.Empty;
+                    string description = string.Empty;
+
+                    switch (ticket.Status)
+                    {
+                        // assigned but not resolved
+                        case 1:
+                            title = TicketNotificationStrings.TitleUnResolved;
+                            description = string.Format(CultureInfo.InvariantCulture, TicketNotificationStrings.DescriptionUnresolved, (DateTime.UtcNow - (DateTime)ticket.DateAssigned).TotalHours.ToString("#0.0"));
+                            break;
+
+                        // pending
+                        case 2:
+                            title = TicketNotificationStrings.TitlePending;
+                            description = string.Format(CultureInfo.InvariantCulture, TicketNotificationStrings.DescriptionPending, (DateTime.UtcNow - (DateTime)ticket.DatePending).TotalHours.ToString("#0.0"));
+                            break;
+                    }
+
                     // pending or resolve timeout, send notification to assignee
                     var newSentNotificationId = this.tableRowKeyGenerator.CreateNewKeyOrderingMostRecentToOldest();
                     var sentNotificationEntity = new NotificationDataEntity
@@ -81,8 +106,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.CheckSLA
                         RowKey = newSentNotificationId,
                         Id = newSentNotificationId,
                         Type = (int)NotificationType.Warning,
-                        Title = "Ticket need to update",
-                        Summary = "You receive this notification because a ticket is exceed the time defined in  SLA",
+                        Title = title,
+                        Summary = description,
                         Buttons = new List<NotificationButton>()
                         {
                              new NotificationButton
@@ -91,16 +116,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.CheckSLA
                                  Link = this.BuildTicketLink(ticket.SmeThreadConversationId),
                              },
                         },
-                        Author = "CTU Production Services",
-                        CreatedBy = "Dolphin",
-                        CreatedDate = DateTime.Now,
+                        Author = ticket.RequesterName,
+                        CreatedBy = ticket.RequesterName,
+                        CreatedDate = ticket.DateCreated.ToLocalTime(),
                         Facts = new List<NotificationFact>()
                         {
-                            new NotificationFact
-                            {
-                                Title = "Requester:",
-                                Value = ticket.RequesterName,
-                            },
                             new NotificationFact
                             {
                                 Title = "Title:",
@@ -126,6 +146,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.CheckSLA
                             ticket.AssignedToUserPrincipalName,
                         },
                     };
+                    if (!string.IsNullOrEmpty(ticket.Description))
+                    {
+                        sentNotificationEntity.Facts.Append(new NotificationFact
+                        {
+                            Title = "Description:",
+                            Value = ticket.Description,
+                        });
+                    }
 
                     await this.notificationDataRepository.CreateOrUpdateAsync(sentNotificationEntity);
 
@@ -141,6 +169,30 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.CheckSLA
                 List<string> notificationCC = cc.Split(';').ToList();
                 if (notificationCC?.Count > 0)
                 {
+                    string title = string.Empty;
+                    string description = string.Empty;
+                    switch (ticket.Status)
+                    {
+                        // assigned but not resolved
+                        case 0:
+                            title = TicketNotificationStrings.TitleUnassigned;
+                            description = TicketNotificationStrings.DescriptionUnassigned;
+                            break;
+                        case 1:
+                            title = TicketNotificationStrings.TitleUnResolved;
+                            description = string.Format(CultureInfo.InvariantCulture, TicketNotificationStrings.DescriptionUnresolvedCC, ticket.AssignedToName, (DateTime.UtcNow - (DateTime)ticket.DateAssigned).TotalHours.ToString("#0.0"));
+                            break;
+
+                        // pending
+                        case 2:
+                            title = TicketNotificationStrings.TitlePending;
+                            description = string.Format(CultureInfo.InvariantCulture, TicketNotificationStrings.DescriptionPendingCC, ticket.AssignedToName, (DateTime.UtcNow - (DateTime)ticket.DatePending).TotalHours.ToString("#0.0"));
+                            break;
+                    }
+
+                    var messageToSend = string.Format(CultureInfo.InvariantCulture, "RE:{0}", ticket.Title);
+                    var encodedMessage = Uri.EscapeDataString(messageToSend);
+
                     var newSentNotificationIdCC = this.tableRowKeyGenerator.CreateNewKeyOrderingMostRecentToOldest();
                     var sentNotificationEntityCC = new NotificationDataEntity
                     {
@@ -148,8 +200,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.CheckSLA
                         RowKey = newSentNotificationIdCC,
                         Id = newSentNotificationIdCC,
                         Type = (int)NotificationType.Warning,
-                        Title = "Ticket need to update",
-                        Summary = "You receive this notification because a ticket is exceed the time defined in  SLA",
+                        Title = title,
+                        Summary = description,
                         Buttons = new List<NotificationButton>()
                         {
                              new NotificationButton
@@ -157,17 +209,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.CheckSLA
                                  Title = "Go to Ticket",
                                  Link = this.BuildTicketLink(ticket.SmeThreadConversationId),
                              },
+                             new NotificationButton
+                             {
+                                 Title = $"Chat with {ticket.AssignedToName}",
+                                 Link = $"https://teams.microsoft.com/l/chat/0/0?users={Uri.EscapeDataString(ticket.RequesterUserPrincipalName)}&message={encodedMessage}",
+                             },
                         },
-                        Author = "CTU Production Services",
-                        CreatedBy = "Dolphin",
-                        CreatedDate = DateTime.Now,
+                        Author = ticket.RequesterName,
+                        CreatedBy = ticket.RequesterName,
+                        CreatedDate = ticket.DateCreated.ToLocalTime(),
                         Facts = new List<NotificationFact>()
                         {
-                            new NotificationFact
-                            {
-                                Title = "Requester:",
-                                Value = ticket.RequesterName,
-                            },
                             new NotificationFact
                             {
                                 Title = "Title:",
@@ -190,6 +242,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.CheckSLA
                         TeamsInString = string.Empty,
                         Users = notificationCC,
                     };
+                    if (!string.IsNullOrEmpty(ticket.Description))
+                    {
+                        sentNotificationEntityCC.Facts.Append(new NotificationFact
+                        {
+                            Title = "Description:",
+                            Value = ticket.Description,
+                        });
+                    }
 
                     await this.notificationDataRepository.CreateOrUpdateAsync(sentNotificationEntityCC);
 
