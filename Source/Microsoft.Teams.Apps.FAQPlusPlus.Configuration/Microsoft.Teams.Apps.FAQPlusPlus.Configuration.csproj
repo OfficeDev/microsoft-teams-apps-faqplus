@@ -326,6 +326,7 @@
     <Content Include="Views\Shared\_Spinner.cshtml" />
     <Content Include="Views\Home\_SLA.cshtml" />
     <None Include="Properties\PublishProfiles\dev-dolphin-config - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\prod-dolphin-config - Web Deploy.pubxml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Strings.resx">

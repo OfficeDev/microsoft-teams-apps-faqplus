@@ -11,7 +11,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Models
     public class SLAViewModel
     {
         /// <summary>
-        /// Gets or sets welcome message text box to be used in View.
+        /// Gets or sets assigne timeout to send .
         /// </summary>
         [Required(ErrorMessage = "Enter a number.")]
         [MinLength(1)]
@@ -20,7 +20,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Models
         public string AssignTimeOut { get; set; }
 
         /// <summary>
-        /// Gets or sets welcome message text box to be used in View.
+        /// Gets or sets interval to send  when ticket unassigned.
+        /// </summary>
+        [Required(ErrorMessage = "Enter a number.")]
+        [MinLength(1)]
+        [DataType(DataType.Text)]
+        [Display(Name = "UnAssigneInterval")]
+        public string UnAssigneInterval { get; set; }
+
+        /// <summary>
+        /// Gets or sets resolve timeout to send .
         /// </summary>
         [Required(ErrorMessage = "Enter a number.")]
         [MinLength(1)]
@@ -29,13 +38,49 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Models
         public string ResolveTimeOut { get; set; }
 
         /// <summary>
-        /// Gets or sets welcome message text box to be used in View.
+        /// Gets or sets interval to send  when ticket unresolve.
+        /// </summary>
+        [Required(ErrorMessage = "Enter a number.")]
+        [MinLength(1)]
+        [DataType(DataType.Text)]
+        [Display(Name = "UnResolveInterval")]
+        public string UnResolveInterval { get; set; }
+
+        /// <summary>
+        /// Gets or sets interval to send cc  when ticket unresolve.
+        /// </summary>
+        [Required(ErrorMessage = "Enter a number.")]
+        [MinLength(1)]
+        [DataType(DataType.Text)]
+        [Display(Name = "UnResolveCCInterval")]
+        public string UnResolveCCInterval { get; set; }
+
+        /// <summary>
+        /// Gets or sets pending timeout to send .
         /// </summary>
         [Required(ErrorMessage = "Enter a number.")]
         [MinLength(1)]
         [DataType(DataType.Text)]
         [Display(Name = "PendingTimeOut")]
         public string PendingTimeOut { get; set; }
+
+        /// <summary>
+        /// Gets or sets interval to send  when ticket pending.
+        /// </summary>
+        [Required(ErrorMessage = "Enter a number.")]
+        [MinLength(1)]
+        [DataType(DataType.Text)]
+        [Display(Name = "PendingInterval")]
+        public string PendingInterval { get; set; }
+
+        /// <summary>
+        /// Gets or sets interval to send cc  when ticket pending.
+        /// </summary>
+        [Required(ErrorMessage = "Enter a number.")]
+        [MinLength(1)]
+        [DataType(DataType.Text)]
+        [Display(Name = "PendingCCInterval")]
+        public string PendingCCInterval { get; set; }
 
         /// <summary>
         /// Gets or sets welcome message text box to be used in View.

@@ -56,27 +56,39 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.CheckSLA
             this.configurationProvider = configurationProvider;
         }
 
+        /// <summary>
+        /// Azure Function App triggered by timer.
+        /// </summary>
+        /// <param name="myTimer">The timer.</param>
+        /// <param name="log">Logger.</param>
         [FunctionName("CheckSLAFunction")]
         public async void Run([TimerTrigger("0 */3 * * * *")]TimerInfo myTimer, ILogger log)
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
             var assignTimeout = Convert.ToInt32(await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.AssignTimeout));
+            var unassignInterval = Convert.ToInt32(await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.UnassigneInterval));
             var pendingTimeout = Convert.ToInt32(await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.PendingTimeout));
+            var pendingInterval = Convert.ToInt32(await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.PendingInterval));
+            var pendingCCInterval = Convert.ToInt32(await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.PendingCCInterval));
             var resolveTimeout = Convert.ToInt32(await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.ResolveTimeout));
+            var unResolveInterval = Convert.ToInt32(await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.UnResolveInterval));
+            var unResolveCCInterval = Convert.ToInt32(await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.UnResolveCCInterval));
             var cc = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.ExpertsAdmins);
 
             var unResolvedTickets = await this.ticketProvider.GetTicketsAsync(false);
 
-            var tasks = unResolvedTickets.Select(i => this.ProcessTicketAsync(i, assignTimeout, pendingTimeout, resolveTimeout, cc));
-
+            var tasks = unResolvedTickets.Select(i => this.ProcessTicketAsync(i, pendingTimeout, pendingInterval, resolveTimeout, unResolveInterval));
             var results = await Task.WhenAll(tasks);
-
             log.LogInformation($"new message count: {results.Where(i => i == true).ToList().Count()}");
+
+            var ccTasks = unResolvedTickets.Select(i => this.ProcessTicketCCAsync(i, assignTimeout, unassignInterval, pendingTimeout, pendingCCInterval, resolveTimeout, unResolveCCInterval, cc));
+            var ccResults = await Task.WhenAll(ccTasks);
+            log.LogInformation($"new cc message count: {ccResults.Where(i => i == true).ToList().Count()}");
         }
 
-        private async Task<bool> ProcessTicketAsync(TicketEntity ticket, int assignTimeout, int pendingTimeout, int resolveTimeout, string cc)
+        private async Task<bool> ProcessTicketAsync(TicketEntity ticket, int pendingTimeout, int pendingInterval, int resolveTimeout, int unResolveInterval)
         {
-            if (this.ShouldSendNotification(ticket, assignTimeout, pendingTimeout, resolveTimeout))
+            if (this.ShouldSendNotification(ticket, pendingTimeout, pendingInterval, resolveTimeout, unResolveInterval))
             {
                 if (ticket.Status != 0)
                 {
@@ -163,8 +175,21 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.CheckSLA
                     };
 
                     await this.prepareToSendQueue.SendAsync(prepareToSendQueueMessageContent);
-                }
 
+                    ticket.DateSendNotification = DateTime.UtcNow;
+
+                    await this.ticketProvider.UpsertTicketAsync(ticket);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private async Task<bool> ProcessTicketCCAsync(TicketEntity ticket, int assignTimeout, int unassignInterval, int pendingTimeout, int pendingCCIntervalint, int resolveTimeout, int unResolveCCInterval, string cc)
+        {
+            if (this.ShouldSendCCNotification(ticket, assignTimeout, unassignInterval, pendingTimeout, pendingCCIntervalint, resolveTimeout, unResolveCCInterval))
+            {
                 // send notification to cc
                 List<string> notificationCC = cc.Split(';').ToList();
                 if (notificationCC?.Count > 0)
@@ -194,6 +219,25 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.CheckSLA
                     var encodedMessage = Uri.EscapeDataString(messageToSend);
 
                     var newSentNotificationIdCC = this.tableRowKeyGenerator.CreateNewKeyOrderingMostRecentToOldest();
+
+                    List<NotificationButton> buttons = new List<NotificationButton>()
+                        {
+                             new NotificationButton
+                             {
+                                 Title = "Go to Ticket",
+                                 Link = this.BuildTicketLink(ticket.SmeThreadConversationId),
+                             },
+                        };
+
+                    if (ticket.Status != 0)
+                    {
+                        buttons.Add(new NotificationButton
+                        {
+                            Title = $"Chat with {ticket.AssignedToName}",
+                            Link = $"https://teams.microsoft.com/l/chat/0/0?users={Uri.EscapeDataString(ticket.RequesterUserPrincipalName)}&message={encodedMessage}",
+                        });
+                    }
+
                     var sentNotificationEntityCC = new NotificationDataEntity
                     {
                         PartitionKey = NotificationDataTableNames.SentNotificationsPartition,
@@ -202,19 +246,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.CheckSLA
                         Type = (int)NotificationType.Warning,
                         Title = title,
                         Summary = description,
-                        Buttons = new List<NotificationButton>()
-                        {
-                             new NotificationButton
-                             {
-                                 Title = "Go to Ticket",
-                                 Link = this.BuildTicketLink(ticket.SmeThreadConversationId),
-                             },
-                             new NotificationButton
-                             {
-                                 Title = $"Chat with {ticket.AssignedToName}",
-                                 Link = $"https://teams.microsoft.com/l/chat/0/0?users={Uri.EscapeDataString(ticket.RequesterUserPrincipalName)}&message={encodedMessage}",
-                             },
-                        },
+                        Buttons = buttons,
                         Author = ticket.RequesterName,
                         CreatedBy = ticket.RequesterName,
                         CreatedDate = ticket.DateCreated.ToLocalTime(),
@@ -261,7 +293,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.CheckSLA
                     await this.prepareToSendQueue.SendAsync(prepareToSendQueueMessageContentCC);
                 }
 
-                ticket.DateSendNotification = DateTime.UtcNow;
+                ticket.DateSendCCNotification = DateTime.UtcNow;
 
                 await this.ticketProvider.UpsertTicketAsync(ticket);
                 return true;
@@ -270,46 +302,112 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.CheckSLA
             return false;
         }
 
-        private bool ShouldSendNotification(TicketEntity ticket, int assignTimeout, int pendingTimeout, int resolveTimeout)
+        private bool ShouldSendNotification(TicketEntity ticket, int pendingTimeout, int pendingInterval, int resolveTimeout, int unResolveInterval)
         {
             bool shouldNotify = false;
-            if (ticket.Status == 0)
+
+            // assigned
+            if (ticket.Status == 1)
             {
-                if (ticket.DateSendNotification != null)
-                {
-                    shouldNotify = this.IsTimeout((DateTime)ticket.DateSendNotification, assignTimeout);
-                }
-                else
-                {
-                    shouldNotify = this.IsTimeout((DateTime)ticket.DateCreated, assignTimeout);
-                }
-            }
-            else if (ticket.Status == 1)
-            {
-                if (ticket.DateSendNotification != null)
-                {
-                    shouldNotify = this.IsTimeout((DateTime)ticket.DateSendNotification, resolveTimeout);
-                }
-                else
+                if (ticket.DateSendNotification == null)
                 {
                     shouldNotify = this.IsTimeout((DateTime)ticket.DateAssigned, resolveTimeout);
                 }
-            }
-            else if (ticket.Status == 2)
-            {
-                if (ticket.DateSendNotification != null)
-                {
-                    shouldNotify = this.IsTimeout((DateTime)ticket.DateSendNotification, pendingTimeout);
-                }
                 else
                 {
-                    if (ticket.DatePending != null)
+                    if (ticket.DateSendNotification > ticket.DateAssigned)
                     {
-                        shouldNotify = this.IsTimeout((DateTime)ticket.DatePending, pendingTimeout);
+                        shouldNotify = this.IsTimeout((DateTime)ticket.DateSendNotification, unResolveInterval);
                     }
                     else
                     {
-                        return false;
+                        shouldNotify = this.IsTimeout((DateTime)ticket.DateAssigned, resolveTimeout);
+                    }
+                }
+            }
+
+            // pending
+            else if (ticket.Status == 2)
+            {
+                if (ticket.DateSendNotification == null)
+                {
+                    shouldNotify = this.IsTimeout((DateTime)ticket.DatePending, pendingTimeout);
+                }
+                else
+                {
+                    if (ticket.DateSendNotification > ticket.DatePending)
+                    {
+                        shouldNotify = this.IsTimeout((DateTime)ticket.DateSendNotification, pendingInterval);
+                    }
+                    else
+                    {
+                        shouldNotify = this.IsTimeout((DateTime)ticket.DatePending, pendingTimeout);
+                    }
+                }
+            }
+
+            return shouldNotify;
+        }
+
+        private bool ShouldSendCCNotification(TicketEntity ticket, int assignTimeout, int unassignInterval, int pendingTimeout, int pendingCCIntervalint, int resolveTimeout, int unResolveCCInterval)
+        {
+            bool shouldNotify = false;
+
+            if (ticket.Status == 0)
+            {
+                if (ticket.DateSendCCNotification == null)
+                {
+                    shouldNotify = this.IsTimeout((DateTime)ticket.DateCreated, assignTimeout);
+                }
+                else
+                {
+                    if (ticket.DateSendCCNotification > ticket.DateCreated)
+                    {
+                        shouldNotify = this.IsTimeout((DateTime)ticket.DateSendCCNotification, unassignInterval);
+                    }
+                    else
+                    {
+                        shouldNotify = this.IsTimeout((DateTime)ticket.DateCreated, assignTimeout);
+                    }
+                }
+            }
+
+            // assigned
+            if (ticket.Status == 1)
+            {
+                if (ticket.DateSendCCNotification == null)
+                {
+                    shouldNotify = this.IsTimeout((DateTime)ticket.DateAssigned, resolveTimeout);
+                }
+                else
+                {
+                    if (ticket.DateSendCCNotification > ticket.DateAssigned)
+                    {
+                        shouldNotify = this.IsTimeout((DateTime)ticket.DateSendCCNotification, unResolveCCInterval);
+                    }
+                    else
+                    {
+                        shouldNotify = this.IsTimeout((DateTime)ticket.DateAssigned, resolveTimeout);
+                    }
+                }
+            }
+
+            // pending
+            else if (ticket.Status == 2)
+            {
+                if (ticket.DateSendCCNotification == null)
+                {
+                    shouldNotify = this.IsTimeout((DateTime)ticket.DatePending, pendingTimeout);
+                }
+                else
+                {
+                    if (ticket.DateSendCCNotification > ticket.DatePending)
+                    {
+                        shouldNotify = this.IsTimeout((DateTime)ticket.DateSendCCNotification, pendingCCIntervalint);
+                    }
+                    else
+                    {
+                        shouldNotify = this.IsTimeout((DateTime)ticket.DatePending, pendingTimeout);
                     }
                 }
             }

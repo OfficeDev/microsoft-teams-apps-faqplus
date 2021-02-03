@@ -85,6 +85,24 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 120.
+        /// </summary>
+        public static string DefaultPendingCCInterval {
+            get {
+                return ResourceManager.GetString("DefaultPendingCCInterval", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 30.
+        /// </summary>
+        public static string DefaultPendingInterval {
+            get {
+                return ResourceManager.GetString("DefaultPendingInterval", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 240.
         /// </summary>
         public static string DefaultPendingTimeout {
@@ -108,6 +126,33 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration {
         public static string DefaultSubjects {
             get {
                 return ResourceManager.GetString("DefaultSubjects", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 10.
+        /// </summary>
+        public static string DefaultUnAssignInterval {
+            get {
+                return ResourceManager.GetString("DefaultUnAssignInterval", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 120.
+        /// </summary>
+        public static string DefaultUnResolveCCInterval {
+            get {
+                return ResourceManager.GetString("DefaultUnResolveCCInterval", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 60.
+        /// </summary>
+        public static string DefaultUnResolveInterval {
+            get {
+                return ResourceManager.GetString("DefaultUnResolveInterval", resourceCulture);
             }
         }
         

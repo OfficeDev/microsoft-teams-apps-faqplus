@@ -19,7 +19,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
     /// <summary>
     /// Home Controller.
     /// </summary>
-    //[Authorize]
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly IConfigurationDataProvider configurationPovider;
@@ -197,13 +197,18 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         /// <returns>View.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> SaveSLAAsync(string assignTimeout, string pendingTimeout, string resolveTimeout, string expertsAdmins)
+        public async Task<ActionResult> SaveSLAAsync(string assignTimeout, string UnAssigneInterval, string pendingTimeout, string pendingInterval, string pendingCCInterval, string resolveTimeout, string unResolveInterval, string unResolveCCInterval, string expertsAdmins)
         {
             bool savedAssignTimeout = await this.configurationPovider.UpsertEntityAsync(assignTimeout, ConfigurationEntityTypes.AssignTimeout).ConfigureAwait(false);
+            bool savedUnAssignInterval = await this.configurationPovider.UpsertEntityAsync(UnAssigneInterval, ConfigurationEntityTypes.UnassigneInterval).ConfigureAwait(false);
             bool savedPendingTimeout = await this.configurationPovider.UpsertEntityAsync(pendingTimeout, ConfigurationEntityTypes.PendingTimeout).ConfigureAwait(false);
+            bool savedPendingInterval = await this.configurationPovider.UpsertEntityAsync(pendingInterval, ConfigurationEntityTypes.PendingInterval).ConfigureAwait(false);
+            bool savedPendingCCInterval = await this.configurationPovider.UpsertEntityAsync(pendingCCInterval, ConfigurationEntityTypes.PendingCCInterval).ConfigureAwait(false);
             bool savedResolveTimeout = await this.configurationPovider.UpsertEntityAsync(resolveTimeout, ConfigurationEntityTypes.ResolveTimeout).ConfigureAwait(false);
+            bool savedUnResolveInterval = await this.configurationPovider.UpsertEntityAsync(unResolveInterval, ConfigurationEntityTypes.UnResolveInterval).ConfigureAwait(false);
+            bool savedUnResolveCCInterval = await this.configurationPovider.UpsertEntityAsync(unResolveCCInterval, ConfigurationEntityTypes.UnResolveCCInterval).ConfigureAwait(false);
             bool savedExpertsAdmins = await this.configurationPovider.UpsertEntityAsync(expertsAdmins, ConfigurationEntityTypes.ExpertsAdmins).ConfigureAwait(false);
-            if (savedAssignTimeout && savedPendingTimeout && savedResolveTimeout && savedExpertsAdmins)
+            if (savedAssignTimeout && savedPendingTimeout && savedResolveTimeout && savedExpertsAdmins && savedUnAssignInterval && savedPendingInterval && savedPendingCCInterval && savedUnResolveInterval && savedUnResolveCCInterval)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.OK);
             }
@@ -221,28 +226,49 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         public async Task<string> GetSavedSLAAsync()
         {
             var assignTimeout = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.AssignTimeout).ConfigureAwait(false);
+            var unAssigneInterval = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.UnassigneInterval).ConfigureAwait(false);
             var pendingTimeout = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.PendingTimeout).ConfigureAwait(false);
+            var pendingInterval = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.PendingInterval).ConfigureAwait(false);
+            var pendingCCInterval = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.PendingCCInterval).ConfigureAwait(false);
             var resolveTimeout = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.ResolveTimeout).ConfigureAwait(false);
+            var unResolveInterval = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.UnResolveInterval).ConfigureAwait(false);
+            var unResolveCCInterval = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.UnResolveCCInterval).ConfigureAwait(false);
             var expertsAdmins = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.ExpertsAdmins).ConfigureAwait(false);
-            if (string.IsNullOrWhiteSpace(assignTimeout) || string.IsNullOrWhiteSpace(pendingTimeout) || string.IsNullOrWhiteSpace(resolveTimeout))
+            if (string.IsNullOrWhiteSpace(assignTimeout) || string.IsNullOrWhiteSpace(pendingTimeout) || string.IsNullOrWhiteSpace(resolveTimeout)
+                || string.IsNullOrWhiteSpace(unAssigneInterval) || string.IsNullOrWhiteSpace(pendingInterval) || string.IsNullOrWhiteSpace(pendingCCInterval) || string.IsNullOrWhiteSpace(unResolveInterval) || string.IsNullOrWhiteSpace(unResolveCCInterval))
             {
                 await this.SaveSLAAsync(
                     string.IsNullOrWhiteSpace(assignTimeout) ? Strings.DefaultAssignTimeout : assignTimeout,
+                    string.IsNullOrWhiteSpace(unAssigneInterval) ? Strings.DefaultUnAssignInterval : unAssigneInterval,
                     string.IsNullOrWhiteSpace(pendingTimeout) ? Strings.DefaultPendingTimeout : pendingTimeout,
+                    string.IsNullOrWhiteSpace(pendingInterval) ? Strings.DefaultPendingInterval : pendingInterval,
+                    string.IsNullOrWhiteSpace(pendingCCInterval) ? Strings.DefaultPendingCCInterval : pendingCCInterval,
                     string.IsNullOrWhiteSpace(resolveTimeout) ? Strings.DefaultResolveTimeout : resolveTimeout,
+                    string.IsNullOrWhiteSpace(unResolveInterval) ? Strings.DefaultUnResolveInterval : unResolveInterval,
+                    string.IsNullOrWhiteSpace(unResolveCCInterval) ? Strings.DefaultUnResolveCCInterval : unResolveCCInterval,
                     string.IsNullOrWhiteSpace(expertsAdmins) ? string.Empty : expertsAdmins).ConfigureAwait(false);
             }
 
             assignTimeout = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.AssignTimeout).ConfigureAwait(false);
+            unAssigneInterval = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.UnassigneInterval).ConfigureAwait(false);
             pendingTimeout = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.PendingTimeout).ConfigureAwait(false);
+            pendingInterval = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.PendingInterval).ConfigureAwait(false);
+            pendingCCInterval = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.PendingCCInterval).ConfigureAwait(false);
             resolveTimeout = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.ResolveTimeout).ConfigureAwait(false);
+            unResolveInterval = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.UnResolveInterval).ConfigureAwait(false);
+            unResolveCCInterval = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.UnResolveCCInterval).ConfigureAwait(false);
             expertsAdmins = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.ExpertsAdmins).ConfigureAwait(false);
 
             return JsonConvert.SerializeObject(new SLAViewModel()
             {
                 AssignTimeOut = assignTimeout,
+                UnAssigneInterval = unAssigneInterval,
                 PendingTimeOut = pendingTimeout,
+                PendingInterval = pendingInterval,
+                PendingCCInterval = pendingCCInterval,
                 ResolveTimeOut = resolveTimeout,
+                UnResolveInterval = unResolveInterval,
+                UnResolveCCInterval = unResolveCCInterval,
                 ExpertsAdmins = expertsAdmins,
             });
         }

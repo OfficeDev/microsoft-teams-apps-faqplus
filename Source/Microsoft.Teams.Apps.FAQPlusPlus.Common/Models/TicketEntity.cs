@@ -197,5 +197,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         [IsSortable]
         [JsonProperty("DateSendNotification")]
         public DateTime? DateSendNotification { get; set; }
+
+        /// <summary>
+        /// Gets or sets the UTC date and time send cc notification according to SLA.
+        /// </summary>
+        [IsSortable]
+        [JsonProperty("DateSendCCNotification")]
+        public DateTime? DateSendCCNotification { get; set; }
     }
 }

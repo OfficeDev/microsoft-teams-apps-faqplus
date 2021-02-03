@@ -131,6 +131,12 @@ My key features:
 * Share feedback</value>
     <comment>Default help static tab text to be stored in configuration app</comment>
   </data>
+  <data name="DefaultPendingCCInterval" xml:space="preserve">
+    <value>120</value>
+  </data>
+  <data name="DefaultPendingInterval" xml:space="preserve">
+    <value>30</value>
+  </data>
   <data name="DefaultPendingTimeout" xml:space="preserve">
     <value>240</value>
     <comment>Default DefaultPendingTimeout to be stored in configuration app</comment>
@@ -142,6 +148,15 @@ My key features:
   <data name="DefaultSubjects" xml:space="preserve">
     <value>{"Project":"ForHonor,Liberty,ACK,APEX,Orpheus,Yutu","Other":"IT,HR"}</value>
     <comment>Default subjects in json format to be stored in configuration app</comment>
+  </data>
+  <data name="DefaultUnAssignInterval" xml:space="preserve">
+    <value>10</value>
+  </data>
+  <data name="DefaultUnResolveCCInterval" xml:space="preserve">
+    <value>120</value>
+  </data>
+  <data name="DefaultUnResolveInterval" xml:space="preserve">
+    <value>60</value>
   </data>
   <data name="DefaultWelcomeMessage" xml:space="preserve">
     <value>Hi, I'm your friendly Q&amp;A bot. You can ask me questions, and I'll do my best to answer. If I can't help, I'll connect you to an expert.

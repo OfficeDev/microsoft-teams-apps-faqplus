@@ -98,15 +98,10 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Prep.Func.PreparingToSend
             {
                 var filter = TableQuery.GenerateFilterCondition(nameof(UserDataEntity.Upn), QueryComparisons.Equal, userPcn);
                 var userEntity = (await this.userDataRepository.GetWithFilterAsync(filter)).FirstOrDefault();
-                if (userEntity == null)
+                if (userEntity != null)
                 {
-                    userEntity = new UserDataEntity()
-                    {
-                        Upn = userPcn,
-                    };
+                    recipients.Add(userEntity.CreateInitialSentNotificationDataEntity(partitionKey: notificationId));
                 }
-
-                recipients.Add(userEntity.CreateInitialSentNotificationDataEntity(partitionKey: notificationId));
             }));
 
             return recipients;

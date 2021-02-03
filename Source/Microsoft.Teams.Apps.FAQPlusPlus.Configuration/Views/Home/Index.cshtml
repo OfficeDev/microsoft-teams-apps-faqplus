@@ -93,8 +93,13 @@
                 if (result != "") {                //Display the default UI when no help tab text results are available for display
                     var obj = JSON.parse(result);
                     $("#SLAAssignTimeOut").val(obj.AssignTimeOut);
+                    $("#SLAUnAssigneInterval").val(obj.UnAssigneInterval);
                     $("#SLAPendingTimeOut").val(obj.PendingTimeOut);
+                    $("#SLAPendingInterval").val(obj.PendingInterval);
+                    $("#SLAPendingCCInterval").val(obj.PendingCCInterval);
                     $("#SLAResolveTimeOut").val(obj.ResolveTimeOut);
+                    $("#SLAUnResolveInterval").val(obj.UnResolveInterval);
+                    $("#SLAUnResolveCCInterval").val(obj.UnResolveCCInterval);
                     $("#SLAExpertsAdmins").val(obj.ExpertsAdmins);
                     toggleToEdit("SLA");
                 }
