@@ -191,16 +191,21 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         /// Save or update help tab text to be used by bot in table storage which is received from View.
         /// </summary>
         /// <param name="assignTimeout">timeout from unassigned to assigned.</param>
+        /// <param name="unAssigneInterval">when ticket is unassigned, send notification intervally after first notification.</param>
         /// <param name="pendingTimeout">timeout from pending to resolve.</param>
+        /// <param name="pendingInterval">when ticket is pending, send notification intervally after first notification.</param>
+        /// <param name="pendingCCInterval">when ticket is pending, send notification to admin intervally after first notification.</param>
         /// <param name="resolveTimeout">timeout from assigned to resolve.</param>
-        /// <param name="expertsAdmins">admins of expert channel</param>
+        /// <param name="unResolveInterval">when ticket is not resolved, send notification intervally after first notification.</param>
+        /// <param name="unResolveCCInterval">when ticket is not resolved, send notification to admin intervally after first notification.</param>
+        /// <param name="expertsAdmins">admins of expert channel.</param>
         /// <returns>View.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> SaveSLAAsync(string assignTimeout, string UnAssigneInterval, string pendingTimeout, string pendingInterval, string pendingCCInterval, string resolveTimeout, string unResolveInterval, string unResolveCCInterval, string expertsAdmins)
+        public async Task<ActionResult> SaveSLAAsync(string assignTimeout, string unAssigneInterval, string pendingTimeout, string pendingInterval, string pendingCCInterval, string resolveTimeout, string unResolveInterval, string unResolveCCInterval, string expertsAdmins)
         {
             bool savedAssignTimeout = await this.configurationPovider.UpsertEntityAsync(assignTimeout, ConfigurationEntityTypes.AssignTimeout).ConfigureAwait(false);
-            bool savedUnAssignInterval = await this.configurationPovider.UpsertEntityAsync(UnAssigneInterval, ConfigurationEntityTypes.UnassigneInterval).ConfigureAwait(false);
+            bool savedUnAssignInterval = await this.configurationPovider.UpsertEntityAsync(unAssigneInterval, ConfigurationEntityTypes.UnassigneInterval).ConfigureAwait(false);
             bool savedPendingTimeout = await this.configurationPovider.UpsertEntityAsync(pendingTimeout, ConfigurationEntityTypes.PendingTimeout).ConfigureAwait(false);
             bool savedPendingInterval = await this.configurationPovider.UpsertEntityAsync(pendingInterval, ConfigurationEntityTypes.PendingInterval).ConfigureAwait(false);
             bool savedPendingCCInterval = await this.configurationPovider.UpsertEntityAsync(pendingCCInterval, ConfigurationEntityTypes.PendingCCInterval).ConfigureAwait(false);

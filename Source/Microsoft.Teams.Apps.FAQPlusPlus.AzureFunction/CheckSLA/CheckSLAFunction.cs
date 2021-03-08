@@ -130,7 +130,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.CheckSLA
                         },
                         Author = ticket.RequesterName,
                         CreatedBy = ticket.RequesterName,
-                        CreatedDate = ticket.DateCreated.ToLocalTime(),
+                        CreatedDate = ticket.DateCreated.AddHours(8),
                         Facts = new List<NotificationFact>()
                         {
                             new NotificationFact
@@ -234,8 +234,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.CheckSLA
                         buttons.Add(new NotificationButton
                         {
                             Title = $"Chat with {ticket.AssignedToName}",
-                            Link = $"https://teams.microsoft.com/l/chat/0/0?users={Uri.EscapeDataString(ticket.RequesterUserPrincipalName)}&message={encodedMessage}",
+                            Link = $"https://teams.microsoft.com/l/chat/0/0?users={Uri.EscapeDataString(ticket.AssignedToUserPrincipalName)}&message={encodedMessage}",
                         });
+                    }
+
+                    if (notificationCC.Contains(ticket.AssignedToUserPrincipalName))
+                    {
+                        notificationCC.Remove(ticket.AssignedToUserPrincipalName);
                     }
 
                     var sentNotificationEntityCC = new NotificationDataEntity
@@ -249,7 +254,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.CheckSLA
                         Buttons = buttons,
                         Author = ticket.RequesterName,
                         CreatedBy = ticket.RequesterName,
-                        CreatedDate = ticket.DateCreated.ToLocalTime(),
+                        CreatedDate = ticket.DateCreated.AddHours(8),
                         Facts = new List<NotificationFact>()
                         {
                             new NotificationFact
