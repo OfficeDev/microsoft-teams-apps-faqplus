@@ -34,6 +34,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction
     using Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.Services;
     using Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.Services.AdaptiveCard;
     using Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.Services.CommonBot;
+    using Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.Services.Holiday;
     using Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.Services.MessageQueues;
     using Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.Services.MessageQueues.DataQueue;
     using Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.Services.MessageQueues.PrepareToSendQueue;
@@ -146,6 +147,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction
             builder.Services.AddTransient<INotificationService, NotificationService>();
             builder.Services.AddTransient<AggregateSentNotificationDataService>();
             builder.Services.AddTransient<UpdateNotificationDataService>();
+
+            //// Add the Holiday service.
+            builder.Services.AddSingleton<HolidayService>();
         }
 
         /// <summary>

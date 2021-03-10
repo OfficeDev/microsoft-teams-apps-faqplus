@@ -17,6 +17,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.CheckSLA
     using Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.Repositories;
     using Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.Repositories.NotificationData;
     using Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.Repositories.SentNotificationData;
+    using Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.Services.Holiday;
     using Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.Services.MessageQueues.DataQueue;
     using Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.Services.MessageQueues.PrepareToSendQueue;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
@@ -30,6 +31,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.CheckSLA
         private readonly IConfigurationDataProvider configurationProvider;
         private readonly TableRowKeyGenerator tableRowKeyGenerator;
         private readonly IOptions<TicketExpertOptions> ticketExpertOptions;
+        private readonly HolidayService holidayService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CheckSLAFunction"/> class.
@@ -38,6 +40,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.CheckSLA
         /// <param name="notificationDataRepository">table storage to store notification data.</param>
         /// <param name="prepareToSendQueu">service bus prepare queue.</param>
         /// <param name="tableRowKeyGenerator">to generate key of table row.</param>
+        /// <param name="holidayService"> to define if a date is holiday.</param>
         /// <param name="ticketProvider">table storage to store ticket.</param>
         /// <param name="configurationProvider">table storage wehere store SLA configuration.</param>
         public CheckSLAFunction(
@@ -45,6 +48,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.CheckSLA
             NotificationDataRepository notificationDataRepository,
             PrepareToSendQueue prepareToSendQueu,
             TableRowKeyGenerator tableRowKeyGenerator,
+            HolidayService holidayService,
             ITicketsProvider ticketProvider,
             IConfigurationDataProvider configurationProvider)
         {
@@ -52,6 +56,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.CheckSLA
             this.notificationDataRepository = notificationDataRepository;
             this.prepareToSendQueue = prepareToSendQueu;
             this.tableRowKeyGenerator = tableRowKeyGenerator;
+            this.holidayService = holidayService;
             this.ticketProvider = ticketProvider;
             this.configurationProvider = configurationProvider;
         }
@@ -65,6 +70,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.CheckSLA
         public async void Run([TimerTrigger("0 */3 * * * *")]TimerInfo myTimer, ILogger log)
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
+            DateTime currentDate = DateTime.UtcNow.AddHours(8);
+            if (this.holidayService.IsHoliday(currentDate.Date))
+            {
+                return;
+            }
+
             var assignTimeout = Convert.ToInt32(await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.AssignTimeout));
             var unassignInterval = Convert.ToInt32(await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.UnassigneInterval));
             var pendingTimeout = Convert.ToInt32(await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.PendingTimeout));

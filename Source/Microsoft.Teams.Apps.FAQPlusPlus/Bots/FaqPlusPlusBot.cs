@@ -681,6 +681,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             ITurnContext<IMessageActivity> turnContext,
             CancellationToken cancellationToken)
         {
+            //await SaveChannelMembers(turnContext,cancellationToken);
+
             var payload = ((JObject)message.Value).ToObject<ChangeTicketStatusPayload>();
             this.logger.LogInformation($"Received submit: ticketId={payload.TicketId} action={payload.Action}");
 
