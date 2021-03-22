@@ -673,7 +673,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0},only the owner can change this request! Assigne to yourself first..
+        ///   Looks up a localized string similar to {0},only the owner or admin can change this request! Assigne to yourself first..
         /// </summary>
         public static string NotTicketOwnerWarning {
             get {
@@ -709,11 +709,38 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Pending Comment:.
+        /// </summary>
+        public static string PendingCommentText {
+            get {
+                return ResourceManager.GetString("PendingCommentText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Your request has changed to pending state, experts will investigate and back to you soon..
         /// </summary>
         public static string PendingTicketUserNotification {
             get {
                 return ResourceManager.GetString("PendingTicketUserNotification", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update.
+        /// </summary>
+        public static string PendingUpdateActionTitle {
+            get {
+                return ResourceManager.GetString("PendingUpdateActionTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The comment of your request has been update by expert..
+        /// </summary>
+        public static string PendingUpdateTicketUserNotification {
+            get {
+                return ResourceManager.GetString("PendingUpdateTicketUserNotification", resourceCulture);
             }
         }
         
@@ -880,6 +907,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Resolve Comment:.
+        /// </summary>
+        public static string ResolveCommentText {
+            get {
+                return ResourceManager.GetString("ResolveCommentText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to If this doesn&apos;t help, you can:.
         /// </summary>
         public static string ResponseFooterText {
@@ -1020,6 +1056,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         public static string SMEPendingStatus {
             get {
                 return ResourceManager.GetString("SMEPendingStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The comment of request is updated by {0}..
+        /// </summary>
+        public static string SMEPendingUpdated {
+            get {
+                return ResourceManager.GetString("SMEPendingUpdated", resourceCulture);
             }
         }
         

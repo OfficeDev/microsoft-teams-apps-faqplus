@@ -681,7 +681,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             ITurnContext<IMessageActivity> turnContext,
             CancellationToken cancellationToken)
         {
-            //await SaveChannelMembers(turnContext,cancellationToken);
+            //await SaveChannelMembers(turnContext, cancellationToken);
 
             var payload = ((JObject)message.Value).ToObject<ChangeTicketStatusPayload>();
             this.logger.LogInformation($"Received submit: ticketId={payload.TicketId} action={payload.Action}");
@@ -702,8 +702,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             // Illegal operation, post warning to SME team thread and return
             if (payload.Action == ChangeTicketStatusPayload.PendingAction || payload.Action == ChangeTicketStatusPayload.ResolveAction)
             {
-                // if not the owner
-                if (ticket.AssignedToName != message.From.Name)
+                // if not the owner or admin
+                bool isAdmin = await this.IsExpertAdminAsync(message.From.Name);
+                if (ticket.AssignedToName != message.From.Name && !isAdmin)
                 {
                     var mention = await this.MentionSomeoneByName(turnContext, cancellationToken, message.From.Name).ConfigureAwait(false);
                     if (mention != null)
@@ -742,6 +743,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     ticket.PendingComment = payload.PendingComment;
 
                     userAction.Remark += $" to Pending";
+                    break;
+
+                case ChangeTicketStatusPayload.PendingUpdateAction:
+                    TicketEntity.AddPendingComment(ticket, payload.PendingComment);
+                    userAction.Remark = "Update pending comment";
                     break;
 
                 case ChangeTicketStatusPayload.ResolveAction:
@@ -795,6 +801,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
                     ticket.DateClosed = null;
                     ticket.DatePending = null;
+                    ticket.DatePendingUpdate = null;
 
                     userAction.Remark += $" to Assigned";
                     break;
@@ -822,6 +829,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     ticket.AssignedToObjectId = message.From.AadObjectId;
                     ticket.DateClosed = null;
                     ticket.DatePending = null;
+                    ticket.DatePendingUpdate = null;
                     ticket.PendingComment = null;
                     ticket.ResolveComment = null;
 
@@ -865,7 +873,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                         Attachments = new List<Attachment> { new UserNotificationCard(ticket, this.appBaseUri, this.options.AppId).ToAttachment(Strings.PendingTicketUserNotification, message.LocalTimestamp) },
                     };
                     break;
+                case ChangeTicketStatusPayload.PendingUpdateAction:
+                    smeNotification = string.Format(CultureInfo.InvariantCulture, Strings.SMEPendingUpdated, message.From.Name);
 
+                    updateUserCardActivity = new Activity(ActivityTypes.Message)
+                    {
+                        Id = ticket.RequesterCardActivityId,
+                        Conversation = new ConversationAccount { Id = ticket.RequesterConversationId },
+                        Attachments = new List<Attachment> { new UserNotificationCard(ticket, this.appBaseUri, this.options.AppId).ToAttachment(Strings.PendingUpdateTicketUserNotification, message.LocalTimestamp) },
+                    };
+                    break;
                 case ChangeTicketStatusPayload.ResolveAction:
                     smeNotification = string.Format(CultureInfo.InvariantCulture, Strings.SMEClosedStatus, ticket.LastModifiedByName);
 
@@ -962,7 +979,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 this.logger.LogInformation($"Update user ticket {ticket.TicketId}, activityId = {userResponse?.Id}");
 
                 IMessageActivity userNotification = null;
-                userNotification = MessageFactory.Text($"Your request [{ticket.TicketId.Substring(0, 8)}] updated to status: {CardHelper.GetUserTicketDisplayStatus(ticket)} ");
+
+                if (payload.Action == ChangeTicketStatusPayload.PendingUpdateAction)
+                {
+                    userNotification = MessageFactory.Text($"Your request [{ticket.TicketId.Substring(0, 8)}] has new comment");
+                }else
+                {
+                    userNotification = MessageFactory.Text($"Your request [{ticket.TicketId.Substring(0, 8)}] updated to status: {CardHelper.GetUserTicketDisplayStatus(ticket)} ");
+                }
+
                 userNotification.Conversation = updateUserCardActivity.Conversation;
                 var userNotificationResponse = await turnContext.Adapter.SendActivitiesAsync(turnContext, new Activity[] { (Activity)userNotification }, cancellationToken).ConfigureAwait(false);
                 this.logger.LogInformation($"User notified of update to ticket {ticket.TicketId}, activityId = {userNotificationResponse.FirstOrDefault()?.Id}");
@@ -1236,17 +1261,21 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             List<ExpertEntity> experts = new List<ExpertEntity>();
             foreach (TeamsChannelAccount account in accounts)
             {
-                experts.Add(new ExpertEntity()
+                if (account.UserPrincipalName == "xu.guo@ubisoft.com")
                 {
-                    ID = account.AadObjectId,
-                    Name = account.Name,
-                    GivenName = account.GivenName,
-                    Surname = account.Surname,
-                    Email = account.Email,
-                    UserPrincipalName = account.UserPrincipalName,
-                    TenantId = account.TenantId,
-                    UserRole = account.UserRole,
-                });
+                    experts.Add(new ExpertEntity()
+                    {
+                        ID = account.AadObjectId,
+                        Name = account.Name,
+                        GivenName = account.GivenName,
+                        Surname = account.Surname,
+                        Email = account.Email,
+                        UserPrincipalName = account.UserPrincipalName,
+                        TenantId = account.TenantId,
+                        UserRole = account.UserRole,
+                    });
+                }
+
             }
 
             await this.expertProvider.UpserExpertsAsync(experts);
@@ -1357,6 +1386,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             }
 
             return FaqPlusPlusBot.TeamRenamedEventType.Equals(channelData.EventType, StringComparison.OrdinalIgnoreCase);
+        }
+
+        private async Task<bool> IsExpertAdminAsync(string name)
+        {
+            var experts = await this.expertProvider.GetExpertsAsync();
+            var expert = experts?.Where(r => r.Name == name).FirstOrDefault();
+            var admins = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.ExpertsAdmins);
+            return admins.Split(';').Contains(expert?.UserPrincipalName);
         }
     }
 

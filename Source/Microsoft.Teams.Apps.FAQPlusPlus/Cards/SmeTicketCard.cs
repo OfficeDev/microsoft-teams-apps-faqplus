@@ -235,6 +235,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             else if (this.Ticket.Status == (int)TicketState.Pending)
             {
                 actionsList.Add(this.CreateResolveAction());
+                actionsList.Add(this.CreatePendingUpdateAction());
             }
             else if (this.Ticket.Status == (int)TicketState.Resolved)
             {
@@ -307,7 +308,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     {
                          new AdaptiveTextBlock
                          {
-                             Text = Strings.CommentText,
+                             Text = Strings.PendingCommentText,
                              Wrap = true,
                          },
                          new AdaptiveTextInput
@@ -334,6 +335,47 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         }
 
         /// <summary>
+        /// Create pending update action.
+        /// </summary>
+        /// <returns>action.</returns>
+        private AdaptiveAction CreatePendingUpdateAction()
+        {
+            return new AdaptiveShowCardAction
+            {
+                Title = Strings.PendingUpdateActionTitle,
+                Card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
+                {
+                    Body = new List<AdaptiveElement>
+                    {
+                         new AdaptiveTextBlock
+                         {
+                             Text = Strings.PendingCommentText,
+                             Wrap = true,
+                         },
+                         new AdaptiveTextInput
+                         {
+                             Spacing = AdaptiveSpacing.Small,
+                             Id = nameof(ChangeTicketStatusPayload.PendingComment),
+                             Placeholder = Strings.CommentPlachHonderText,
+                             IsMultiline = true,
+                         },
+                    },
+                    Actions = new List<AdaptiveAction>
+                    {
+                        new AdaptiveSubmitAction
+                        {
+                            Data = new ChangeTicketStatusPayload
+                            {
+                                TicketId = this.Ticket.TicketId,
+                                Action = ChangeTicketStatusPayload.PendingUpdateAction,
+                            },
+                        },
+                    },
+                },
+            };
+        }
+
+        /// <summary>
         /// Create resolve action.
         /// </summary>
         /// <returns>action.</returns>
@@ -348,7 +390,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     {
                          new AdaptiveTextBlock
                          {
-                             Text = Strings.CommentText,
+                             Text = Strings.ResolveCommentText,
                              Wrap = true,
                          },
                          new AdaptiveTextInput
@@ -430,7 +472,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 factList.Add(new AdaptiveFact
                 {
                     Title = Strings.CommentText,
-                    Value = this.Ticket.PendingComment,
+                    Value = TicketEntity.GetPendingComment(this.ticket),
                 });
             }
 

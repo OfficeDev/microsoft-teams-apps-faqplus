@@ -321,7 +321,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 factList.Add(new AdaptiveFact
                 {
                     Title = Strings.CommentText,
-                    Value = CardHelper.TruncateStringIfLonger(this.ticket.PendingComment, CardHelper.DescriptionMaxDisplayLength),
+                    Value = CardHelper.TruncateStringIfLonger(TicketEntity.GetPendingComment(this.ticket), CardHelper.DescriptionMaxDisplayLength),
                 });
             }
 

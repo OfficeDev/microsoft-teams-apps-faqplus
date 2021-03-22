@@ -345,19 +345,25 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.CheckSLA
             // pending
             else if (ticket.Status == 2)
             {
+                DateTime dt = (DateTime)ticket.DatePending;
+                if (ticket.DatePendingUpdate != null)
+                {
+                    dt = (DateTime)ticket.DatePendingUpdate;
+                }
+
                 if (ticket.DateSendNotification == null)
                 {
-                    shouldNotify = this.IsTimeout((DateTime)ticket.DatePending, pendingTimeout);
+                    shouldNotify = this.IsTimeout(dt, pendingTimeout);
                 }
                 else
                 {
-                    if (ticket.DateSendNotification > ticket.DatePending)
+                    if (ticket.DateSendNotification > dt)
                     {
                         shouldNotify = this.IsTimeout((DateTime)ticket.DateSendNotification, pendingInterval);
                     }
                     else
                     {
-                        shouldNotify = this.IsTimeout((DateTime)ticket.DatePending, pendingTimeout);
+                        shouldNotify = this.IsTimeout(dt, pendingTimeout);
                     }
                 }
             }

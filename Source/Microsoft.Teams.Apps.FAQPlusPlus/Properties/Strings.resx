@@ -642,7 +642,7 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <comment>Expert: one of the available fact set in notification cards-Expert name</comment>
   </data>
   <data name="NotTicketOwnerWarning" xml:space="preserve">
-    <value>{0},only the owner can change this request! Assigne to yourself first.</value>
+    <value>{0},only the owner or admin can change this request! Assigne to yourself first.</value>
     <comment>Message posted to the thread when the try to pending or resolve ticket owned by others. {1} = name of SME whom trigger the action.</comment>
   </data>
   <data name="PendingActionTitle" xml:space="preserve">
@@ -715,5 +715,25 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
   <data name="UserNotificationUpdateFooterText" xml:space="preserve">
     <value>View your tickets:</value>
     <comment>UserNotification update footer-letting the user check all his/her tickets.</comment>
+  </data>
+  <data name="PendingCommentText" xml:space="preserve">
+    <value>Pending Comment:</value>
+    <comment> label of the pending comment text box.</comment>
+  </data>
+  <data name="PendingUpdateActionTitle" xml:space="preserve">
+    <value>Update</value>
+    <comment>The buttonfor "pending update" for the SME ticket pending comment is being updated</comment>
+  </data>
+  <data name="ResolveCommentText" xml:space="preserve">
+    <value>Resolve Comment:</value>
+    <comment> label of the resolve comment text box.</comment>
+  </data>
+  <data name="PendingUpdateTicketUserNotification" xml:space="preserve">
+    <value>The comment of your request has been update by expert.</value>
+    <comment>Notification text sent to the user when user's ticket has been updated in  pending state</comment>
+  </data>
+  <data name="SMEPendingUpdated" xml:space="preserve">
+    <value>The comment of request is updated by {0}.</value>
+    <comment>Message posted to the thread when the ticket is updated in pending status. {0} = name of SME who updated the request.</comment>
   </data>
 </root>

@@ -136,11 +136,19 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         public DateTime? DateClosed { get; set; }
 
         /// <summary>
-        /// Gets or sets the UTC date and time the ticket was closed.
+        /// Gets or sets the UTC date and time the ticket was pending.
         /// </summary>
         [IsSortable]
         [JsonProperty("DatePending")]
         public DateTime? DatePending { get; set; }
+
+        /// <summary>
+        /// Gets or sets the UTC date and time the ticket was updated in pending status.
+        /// </summary>
+        [IsSortable]
+        [JsonProperty("DatePendingUpdate")]
+        public DateTime? DatePendingUpdate { get; set; }
+
 
         /// <summary>
         /// Gets or sets the display name of the user that last modified the ticket.
@@ -204,5 +212,34 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         [IsSortable]
         [JsonProperty("DateSendCCNotification")]
         public DateTime? DateSendCCNotification { get; set; }
+
+
+        /// <summary>
+        /// Get the pending comment fo ticket.
+        /// </summary>
+        /// <param name="ticket">ticket entity.</param>
+        /// <returns>pending comment.</returns>
+        public static string GetPendingComment(TicketEntity ticket)
+        {
+            string[] pendingComments = ticket.PendingComment.Split(new string[] { "[*]" }, StringSplitOptions.None);
+            string pendingComment = string.Empty;
+            if (pendingComments.Length > 1)
+            {
+                pendingComment = pendingComments[pendingComments.Length - 1];
+            }
+
+            return pendingComment;
+        }
+
+        /// <summary>
+        /// Add pending comment for ticket.
+        /// </summary>
+        /// <param name="ticket">ticket entity.</param>
+        /// <param name="comment">last comment.</param>
+        public static void AddPendingComment(TicketEntity ticket, string comment)
+        {
+            ticket.PendingComment += "[*]" + comment;
+            ticket.DatePendingUpdate = DateTime.UtcNow;
+        }
     }
 }

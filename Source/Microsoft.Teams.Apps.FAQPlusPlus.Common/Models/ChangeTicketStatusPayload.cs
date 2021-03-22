@@ -17,6 +17,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         public const string PendingAction = "Pending";
 
         /// <summary>
+        /// Action that change update a pending comment.
+        /// </summary>
+        public const string PendingUpdateAction = "PendingUpdate";
+
+        /// <summary>
         /// Action that resolve a ticket.
         /// </summary>
         public const string ResolveAction = "Resolve";
