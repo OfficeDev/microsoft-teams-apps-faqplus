@@ -92,7 +92,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                 {
                                     new AdaptiveTextBlock
                                     {
-                                        Text = Strings.TitleRequiredText,
+                                        Text = Strings.TitleText,
                                         Wrap = true,
                                     },
                                 },

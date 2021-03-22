@@ -349,6 +349,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Description (Optional).
+        /// </summary>
+        public static string DescriptionOptionalText {
+            get {
+                return ResourceManager.GetString("DescriptionOptionalText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Open to hear any of your feedback here (500 characters max).
         /// </summary>
         public static string DescriptionPlaceholderText {
@@ -358,7 +367,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Description (Optional).
+        ///   Looks up a localized string similar to Description.
         /// </summary>
         public static string DescriptionText {
             get {
@@ -1330,11 +1339,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Title (Required).
+        ///   Looks up a localized string similar to Title.
         /// </summary>
-        public static string TitleRequiredText {
+        public static string TitleText {
             get {
-                return ResourceManager.GetString("TitleRequiredText", resourceCulture);
+                return ResourceManager.GetString("TitleText", resourceCulture);
             }
         }
         

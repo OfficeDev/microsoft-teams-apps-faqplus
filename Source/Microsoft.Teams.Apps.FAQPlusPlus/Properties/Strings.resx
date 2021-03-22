@@ -145,7 +145,7 @@
     <value>Share feedback</value>
     <comment>Button text for share feedback show card in QnA response card.</comment>
   </data>
-  <data name="DescriptionText" xml:space="preserve">
+  <data name="DescriptionOptionalText" xml:space="preserve">
     <value>Description (Optional)</value>
     <comment>Label text for description.</comment>
   </data>
@@ -379,9 +379,9 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <value>Title:</value>
     <comment>Title fact is used to show the title entered by the user for his inquiry.</comment>
   </data>
-  <data name="TitleRequiredText" xml:space="preserve">
-    <value>Title (Required)</value>
-    <comment>Title(Required): label of the title text box.</comment>
+  <data name="TitleText" xml:space="preserve">
+    <value>Title</value>
+    <comment>Title: label of the title text box.</comment>
   </data>
   <data name="NotHelpfulRatingText" xml:space="preserve">
     <value>Not helpful</value>
@@ -731,6 +731,10 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
   <data name="PendingUpdateTicketUserNotification" xml:space="preserve">
     <value>The comment of your request has been update by expert.</value>
     <comment>Notification text sent to the user when user's ticket has been updated in  pending state</comment>
+  </data>
+  <data name="DescriptionText" xml:space="preserve">
+    <value>Description</value>
+    <comment>Label text for description.</comment>
   </data>
   <data name="SMEPendingUpdated" xml:space="preserve">
     <value>The comment of request is updated by {0}.</value>

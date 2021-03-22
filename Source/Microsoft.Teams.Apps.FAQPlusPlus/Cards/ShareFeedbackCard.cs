@@ -114,7 +114,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                             {
                                                  new AdaptiveTextBlock
                                                 {
-                                                    Text = Strings.DescriptionText,
+                                                    Text = Strings.DescriptionOptionalText,
                                                     Wrap = true,
                                                 },
                                             },
@@ -182,7 +182,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                            {
                                                 new AdaptiveTextBlock
                                                {
-                                                   Text = Strings.DescriptionText,
+                                                   Text = Strings.DescriptionOptionalText,
                                                    Wrap = true,
                                                },
                                            },
@@ -250,7 +250,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                            {
                                                 new AdaptiveTextBlock
                                                {
-                                                   Text = Strings.DescriptionText,
+                                                   Text = Strings.DescriptionOptionalText,
                                                    Wrap = true,
                                                },
                                            },
