@@ -223,7 +223,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         {
             string[] pendingComments = ticket.PendingComment.Split(new string[] { "[*]" }, StringSplitOptions.None);
             string pendingComment = string.Empty;
-            if (pendingComments.Length > 1)
+            if (pendingComments.Length >= 1)
             {
                 pendingComment = pendingComments[pendingComments.Length - 1];
             }
