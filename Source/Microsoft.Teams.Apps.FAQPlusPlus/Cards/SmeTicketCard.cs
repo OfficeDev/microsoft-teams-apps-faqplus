@@ -448,7 +448,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 factList.Add(new AdaptiveFact
                 {
                     Title = Strings.DescriptionFact,
-                    Value = this.Ticket.Description,
+                    Value = this.Ticket.Description.Replace(@"\", @"\\"),
                 });
             }
 
@@ -472,7 +472,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 factList.Add(new AdaptiveFact
                 {
                     Title = Strings.CommentText,
-                    Value = TicketEntity.GetPendingComment(this.ticket),
+                    Value = TicketEntity.GetPendingComment(this.ticket).Replace(@"\", @"\\"),
                 });
             }
 
@@ -487,7 +487,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 factList.Add(new AdaptiveFact
                 {
                     Title = Strings.CommentText,
-                    Value = this.Ticket.ResolveComment,
+                    Value = this.Ticket.ResolveComment.Replace(@"\", @"\\"),
                 });
             }
 

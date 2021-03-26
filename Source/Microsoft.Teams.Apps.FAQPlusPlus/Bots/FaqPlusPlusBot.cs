@@ -926,15 +926,21 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
                     break;
                 case ChangeTicketStatusPayload.AssignToOthersAction:
-
-                    // @ assignee
-                    var mention = await this.MentionSomeoneByName(turnContext, cancellationToken, ticket.AssignedToName).ConfigureAwait(false);
-                    if (mention != null)
+                    if (message.From.AadObjectId == ticket.AssignedToObjectId)
                     {
-                        var replyActivity = MessageFactory.Text(string.Format(CultureInfo.InvariantCulture, Strings.SMEAssignedByOthersStatus, mention.Text, message.From.Name));
-                        replyActivity.Entities = new List<Entity> { mention };
-
+                        var replyActivity = MessageFactory.Text(string.Format(CultureInfo.InvariantCulture, Strings.SMEAssignedStatus, ticket.AssignedToName));
                         await turnContext.SendActivityAsync(replyActivity, cancellationToken);
+                    }
+                    else
+                    {
+                        // @ assignee
+                        var mention = await this.MentionSomeoneByName(turnContext, cancellationToken, ticket.AssignedToName).ConfigureAwait(false);
+                        if (mention != null)
+                        {
+                            var replyActivity = MessageFactory.Text(string.Format(CultureInfo.InvariantCulture, Strings.SMEAssignedByOthersStatus, mention.Text, message.From.Name));
+                            replyActivity.Entities = new List<Entity> { mention };
+                            await turnContext.SendActivityAsync(replyActivity, cancellationToken);
+                        }
                     }
 
                     if (previousState == (int)TicketState.Resolved)
@@ -967,6 +973,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
                     break;
             }
+
             if (!string.IsNullOrEmpty(smeNotification))
             {
                 var smeResponse = await turnContext.SendActivityAsync(smeNotification).ConfigureAwait(false);
@@ -983,7 +990,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 if (payload.Action == ChangeTicketStatusPayload.PendingUpdateAction)
                 {
                     userNotification = MessageFactory.Text($"Your request [{ticket.TicketId.Substring(0, 8)}] has new comment");
-                }else
+                }
+                else
                 {
                     userNotification = MessageFactory.Text($"Your request [{ticket.TicketId.Substring(0, 8)}] updated to status: {CardHelper.GetUserTicketDisplayStatus(ticket)} ");
                 }

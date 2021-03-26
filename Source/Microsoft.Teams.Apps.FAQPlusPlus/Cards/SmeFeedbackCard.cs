@@ -126,7 +126,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
 
                 smeFeedbackCard.Body.Add(new AdaptiveTextBlock()
                 {
-                    Text = CardHelper.TruncateStringIfLonger(data.Description, CardHelper.DescriptionMaxDisplayLength),
+                    Text = CardHelper.TruncateStringIfLonger(data.Description.Replace(@"\", @"\\"), CardHelper.DescriptionMaxDisplayLength),
                     Spacing = AdaptiveSpacing.None,
                     Wrap = true,
                 });

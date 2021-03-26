@@ -147,7 +147,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.CheckSLA
                             new NotificationFact
                             {
                                 Title = "Title:",
-                                Value = ticket.Title,
+                                Value = ticket.Title.Replace(@"\", @"\\"),
                             },
                             new NotificationFact
                             {

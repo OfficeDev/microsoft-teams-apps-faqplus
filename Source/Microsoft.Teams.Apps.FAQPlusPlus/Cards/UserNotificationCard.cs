@@ -299,7 +299,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             factList.Add(new AdaptiveFact
             {
                 Title = Strings.TitleFact,
-                Value = CardHelper.TruncateStringIfLonger(this.ticket.Title, CardHelper.TitleMaxDisplayLength),
+                Value = CardHelper.TruncateStringIfLonger(this.ticket.Title.Replace(@"\", @"\\"), CardHelper.TitleMaxDisplayLength),
             });
 
             if (!string.IsNullOrEmpty(ticket.Description))
@@ -307,7 +307,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 factList.Add(new AdaptiveFact
                 {
                     Title = Strings.DescriptionFact,
-                    Value = CardHelper.TruncateStringIfLonger(this.ticket.Description, CardHelper.DescriptionMaxDisplayLength),
+                    Value = CardHelper.TruncateStringIfLonger(this.ticket.Description.Replace(@"\", @"\\"), CardHelper.DescriptionMaxDisplayLength),
                 });
             }
 
@@ -321,7 +321,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 factList.Add(new AdaptiveFact
                 {
                     Title = Strings.CommentText,
-                    Value = CardHelper.TruncateStringIfLonger(TicketEntity.GetPendingComment(this.ticket), CardHelper.DescriptionMaxDisplayLength),
+                    Value = CardHelper.TruncateStringIfLonger(TicketEntity.GetPendingComment(this.ticket).Replace(@"\", @"\\"), CardHelper.DescriptionMaxDisplayLength),
                 });
             }
 
@@ -337,7 +337,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     factList.Add(new AdaptiveFact
                     {
                         Title = Strings.CommentText,
-                        Value = CardHelper.TruncateStringIfLonger(this.ticket.ResolveComment, CardHelper.DescriptionMaxDisplayLength),
+                        Value = CardHelper.TruncateStringIfLonger(this.ticket.ResolveComment.Replace(@"\", @"\\"), CardHelper.DescriptionMaxDisplayLength),
                     });
                 }
             }
