@@ -33,6 +33,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         public string UserPrincipalName { get; set; }
 
         /// <summary>
+        /// Gets or sets user object id.
+        /// </summary>
+        public string UserObjectId { get; set; }
+
+        /// <summary>
         ///  Gets or sets the question user asked.
         /// </summary>
         public string Question { get; set; }

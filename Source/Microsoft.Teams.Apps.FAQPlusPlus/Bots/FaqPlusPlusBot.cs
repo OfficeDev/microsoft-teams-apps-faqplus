@@ -1192,6 +1192,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 var userDetails = await AdaptiveCardHelper.GetUserDetailsInPersonalChatAsync(turnContext, cancellationToken).ConfigureAwait(false);
                 conInfo.UserName = userDetails.Name;
                 conInfo.UserPrincipalName = userDetails.UserPrincipalName;
+                conInfo.UserObjectId = userDetails.AadObjectId;
 
                 await this.conversationProvider.UpsertConversationAsync(conInfo).ConfigureAwait(false);
             }
