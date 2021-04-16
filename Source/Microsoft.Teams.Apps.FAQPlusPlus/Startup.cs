@@ -95,6 +95,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
                 botSettings.MicrosoftAppId = this.Configuration["MicrosoftAppId"];
                 botSettings.TenantId = this.Configuration["TenantId"];
                 botSettings.AppId = this.Configuration["APPId"];
+                botSettings.SessionExpiryInMinutes = Convert.ToInt32(this.Configuration["SessionExpiryInMinutes"]);
             });
             services.AddOptions<RepositoryOptions>().Configure<IConfiguration>((repositoryOptions, configuration) =>
             {

@@ -6,6 +6,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.WindowsAzure.Storage;
@@ -98,6 +99,48 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
             while (continuationToken != null);
 
             return activities;
+        }
+
+        /// <summary>
+        /// Get conversation Id.
+        /// </summary>
+        /// <param name="userPrincipalName">user email.</param>
+        /// <param name="expiryMinute">session expriy in minutes.</param>
+        /// <returns>sessionId of current conversation.</returns>
+        public async Task<string> GetSessionIdAsync(string userPrincipalName, int expiryMinute)
+        {
+            List<ConversationEntity> activities = new List<ConversationEntity>();
+            string filterTime = TableQuery.GenerateFilterConditionForDate("Timestamp", QueryComparisons.GreaterThanOrEqual, DateTimeOffset.UtcNow.AddMinutes(-expiryMinute));
+            string filterUserPrinciple = TableQuery.GenerateFilterCondition("UserPrincipalName", QueryComparisons.Equal, userPrincipalName);
+            string finalFilter = TableQuery.CombineFilters(filterTime, TableOperators.And, filterUserPrinciple);
+            TableContinuationToken continuationToken = null;
+
+            await this.EnsureInitializedAsync().ConfigureAwait(false);
+            do
+            {
+                var result = await this.conversationCloudTable.ExecuteQuerySegmentedAsync(new TableQuery<ConversationEntity>().Where(finalFilter), continuationToken);
+                continuationToken = result.ContinuationToken;
+                int index = 0;
+                if (result.Results != null)
+                {
+                    foreach (ConversationEntity entity in result.Results)
+                    {
+                        activities.Add(entity);
+                        index++;
+                        if (index == 500)
+                        {
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    return Guid.NewGuid().ToString();
+                }
+            }
+            while (continuationToken != null);
+            ConversationEntity con = activities.OrderByDescending(r => r.Timestamp).FirstOrDefault();
+            return con?.SessionId == null ? Guid.NewGuid().ToString() : con.SessionId;
         }
 
         /// <summary>

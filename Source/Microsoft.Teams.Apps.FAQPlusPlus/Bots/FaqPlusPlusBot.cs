@@ -1193,6 +1193,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 conInfo.UserName = userDetails.Name;
                 conInfo.UserPrincipalName = userDetails.UserPrincipalName;
                 conInfo.UserObjectId = userDetails.AadObjectId;
+                conInfo.SessionId = await this.conversationProvider.GetSessionIdAsync(userDetails.UserPrincipalName, this.options.SessionExpiryInMinutes);
 
                 await this.conversationProvider.UpsertConversationAsync(conInfo).ConfigureAwait(false);
             }
@@ -1270,7 +1271,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             List<ExpertEntity> experts = new List<ExpertEntity>();
             foreach (TeamsChannelAccount account in accounts)
             {
-                if (account.UserPrincipalName == "xu.guo@ubisoft.com")
+                if (account.UserPrincipalName == "jun-ran.yin@ubisoft.com" || account.UserPrincipalName == "kang-min.lv@ubisoft.com")
                 {
                     experts.Add(new ExpertEntity()
                     {
