@@ -58,7 +58,7 @@
     "appIconUrl": {
       "type": "string",
       "minLength": 1,
-      "defaultValue": "https://raw.githubusercontent.com/OfficeDev/microsoft-teams-apps-faqplus/master/Manifest/color.png",
+      "defaultValue": "https://raw.githubusercontent.com/OfficeDev/microsoft-teams-apps-faqplus/master/Manifest/EndUser/color.png",
       "metadata": {
         "description": "The link to the icon for the app. It must resolve to a PNG file."
       }
@@ -112,6 +112,27 @@
       "defaultValue": "S0 ($10 per month for unlimited documents, 3 transactions per second, 100 transactions per minute)",
       "metadata": {
         "description": "The pricing tier for the QnAMaker service."
+      }
+    },
+    "defaultCulture": {
+      "type": "string",
+      "allowedValues": [
+        "en-US",
+        "ar-SA",
+        "de-DE",
+        "es-ES",
+        "fr-FR",
+        "he-IL",
+        "ja-JP",
+        "ko-KR",
+        "pt-BR",
+        "ru-RU",
+        "zh-CN",
+        "zh-TW"
+      ],
+      "defaultValue": "en-US",
+      "metadata": {
+        "description": "Default localization for app."
       }
     },
     "searchServiceSku": {
@@ -290,6 +311,14 @@
             {
               "name": "ApplicationInsightsLogLevel",
               "value": "Information"
+            },
+            {
+              "name": "i18n:DefaultCulture",
+              "value": "[parameters('defaultCulture')]"
+            },
+            {
+              "name": "i18n:SupportedCultures",
+              "value": "en-US,ar-SA,de-DE,es-ES,fr-FR,he-IL,ja-JP,ko-KR,pt-BR,ru-RU,zh-CN,zh-TW"
             }
           ]
         }

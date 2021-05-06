@@ -5,9 +5,13 @@
 namespace Microsoft.Teams.Apps.FAQPlusPlus
 {
     using System;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Localization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker;
     using Microsoft.Bot.Builder;
@@ -47,6 +51,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
         /// <param name="env">Hosting Environment.</param>
         public static void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            app.UseRequestLocalization();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -117,6 +122,26 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
             // Create the telemetry middleware(used by the telemetry initializer) to track conversation events
             services.AddSingleton<TelemetryLoggerMiddleware>();
             services.AddMemoryCache();
+
+            // Add i18n.
+            services.AddLocalization(options => options.ResourcesPath = "Resources");
+
+            services.Configure<RequestLocalizationOptions>(options =>
+            {
+                var defaultCulture = CultureInfo.GetCultureInfo(this.Configuration["i18n:DefaultCulture"]);
+                var supportedCultures = this.Configuration["i18n:SupportedCultures"].Split(',')
+                    .Select(culture => CultureInfo.GetCultureInfo(culture))
+                    .ToList();
+
+                options.DefaultRequestCulture = new RequestCulture(defaultCulture);
+                options.SupportedCultures = supportedCultures;
+                options.SupportedUICultures = supportedCultures;
+
+                options.RequestCultureProviders = new List<IRequestCultureProvider>
+                {
+                    new BotLocalizationCultureProvider(),
+                };
+            });
         }
     }
 }

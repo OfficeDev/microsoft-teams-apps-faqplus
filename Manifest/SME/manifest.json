@@ -10,6 +10,59 @@
     "privacyUrl": "<<privacyUrl>>",
     "termsOfUseUrl": "<<termsOfUseUrl>>"
   },
+  "localizationInfo": {
+    "defaultLanguageTag": "en-US",
+    "additionalLanguages": [
+      {
+        "languageTag": "en-US",
+        "file": "en-US.json"
+      },
+      {
+        "languageTag": "de-DE",
+        "file": "de-DE.json"
+      },
+      {
+        "languageTag": "fr-FR",
+        "file": "fr-FR.json"
+      },
+      {
+        "languageTag": "ar-SA",
+        "file": "ar-SA.json"
+      },
+      {
+        "languageTag": "ja-JP",
+        "file": "ja-JP.json"
+      },
+      {
+        "languageTag": "es-ES",
+        "file": "es-ES.json"
+      },
+      {
+        "languageTag": "he-IL",
+        "file": "he-IL.json"
+      },
+      {
+        "languageTag": "ko-KR",
+        "file": "ko-KR.json"
+      },
+      {
+        "languageTag": "pt-BR",
+        "file": "pt-BR.json"
+      },
+      {
+        "languageTag": "ru-RU",
+        "file": "ru-Ru.json"
+      },
+      {
+        "languageTag": "zh-CN",
+        "file": "zh-CN.json"
+      },
+      {
+        "languageTag": "zh-TW",
+        "file": "zh-TW.json"
+      }
+    ]
+  },
   "icons": {
     "color": "color.png",
     "outline": "outline.png"

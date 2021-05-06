@@ -117,6 +117,86 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="BotCommandAskAnExpert" xml:space="preserve">
+    <value>Ask an expert</value>
+    <comment>Bot command ask an expert</comment>
+  </data>
+  <data name="BotCommandAskAnExpertDescription" xml:space="preserve">
+    <value>Connect with an expert</value>
+    <comment>Bot command ask an expert description</comment>
+  </data>
+  <data name="BotCommandShareFeedback" xml:space="preserve">
+    <value>Share feedback</value>
+    <comment>bot command share feedback</comment>
+  </data>
+  <data name="BotCommandShareFeedbackDescription" xml:space="preserve">
+    <value>Send feedback</value>
+    <comment>bot command share feedback description</comment>
+  </data>
+  <data name="BotCommandTakeATour" xml:space="preserve">
+    <value>Take a tour</value>
+    <comment>Bot command take a tour</comment>
+  </data>
+  <data name="BotCommandTakeATourDescription" xml:space="preserve">
+    <value>Tour of key features</value>
+    <comment>Bot command take a tour description</comment>
+  </data>
+  <data name="ComposeExtensionCommandAddNewQuestion" xml:space="preserve">
+    <value>Add new question</value>
+    <comment>Compose extension command add new question</comment>
+  </data>
+  <data name="ComposeExtensionCommandAddNewQuestionDescription" xml:space="preserve">
+    <value>Add a new qna pair</value>
+    <comment>Compose extension command add new question description</comment>
+  </data>
+  <data name="ComposeExtensionCommandAssigned" xml:space="preserve">
+    <value>Assigned</value>
+    <comment>Compose extension command assigned</comment>
+  </data>
+  <data name="ComposeExtensionCommandAssignedDescription" xml:space="preserve">
+    <value>Search requests assigned to an expert</value>
+    <comment>Compose extension command assigned description</comment>
+  </data>
+  <data name="ComposeExtensionCommandKnowledgeBase" xml:space="preserve">
+    <value>Knowledge base</value>
+    <comment>ComposeExtension command knowledge base</comment>
+  </data>
+  <data name="ComposeExtensionCommandKnowledgeBaseDescription" xml:space="preserve">
+    <value>Search recent requests</value>
+    <comment>ComposeExtension command knowledge base description</comment>
+  </data>
+  <data name="ComposeExtensionCommandKnowledgeBaseParameterDescription" xml:space="preserve">
+    <value>Search KB QnA pairs</value>
+    <comment>Compose extension command parameter description</comment>
+  </data>
+  <data name="ComposeExtensionCommandParameter" xml:space="preserve">
+    <value>Search</value>
+    <comment>Compose extension command parameter search</comment>
+  </data>
+  <data name="ComposeExtensionCommandParameterAddAQuestion" xml:space="preserve">
+    <value>Add a question</value>
+    <comment>Compose extension command parameter add a question </comment>
+  </data>
+  <data name="ComposeExtensionCommandParameterDescription" xml:space="preserve">
+    <value>Search tickets</value>
+    <comment>Compose extension command parameter search description</comment>
+  </data>
+  <data name="ComposeExtensionCommandRecent" xml:space="preserve">
+    <value>Recent</value>
+    <comment>Compose extension command recent</comment>
+  </data>
+  <data name="ComposeExtensionCommandRecentDescription" xml:space="preserve">
+    <value>Search recent requests</value>
+    <comment>Compose extension command recent description</comment>
+  </data>
+  <data name="ComposeExtensionCommandUnassigned" xml:space="preserve">
+    <value>Unassigned</value>
+    <comment>Compose extension command unassigned</comment>
+  </data>
+  <data name="ComposeExtensionCommandUnassignedDescription" xml:space="preserve">
+    <value>Search unassigned requests not yet assigned to an expert</value>
+    <comment>Compose extension command unassigned description</comment>
+  </data>
   <data name="DefaultHelpTabText" xml:space="preserve">
     <value>Hi, I'm your friendly Q&amp;A bot. You can ask me questions, and I'll do my best to answer. If I can't help, I'll connect you to an expert.
 
@@ -136,6 +216,28 @@ You can ask the following questions:
 * What things are available here right now?</value>
     <comment>Default welcome message text to be stored in configuration app</comment>
   </data>
+  <data name="EndUserManifestFullDescription" xml:space="preserve">
+    <value>A friendly question and answer bot that answers commonly asked questions. If it can't answer, it will put you in touch with an expert as soon as they are available.</value>
+    <comment>{MaxLength=4000}
+End user manifest full description
+</comment>
+  </data>
+  <data name="EndUserManifestName" xml:space="preserve">
+    <value>FAQ Plus</value>
+    <comment>{MaxLength=30}
+End user manifest name
+</comment>
+  </data>
+  <data name="EndUserManifestShortDescription" xml:space="preserve">
+    <value>A friendly FAQ bot that answers questions and connects you to experts.</value>
+    <comment>{MaxLength=80}
+End user manifest short description
+</comment>
+  </data>
+  <data name="EndUserTabName" xml:space="preserve">
+    <value>Help</value>
+    <comment>End user tab name</comment>
+  </data>
   <data name="HelpTabTextToolTipHoverMessage" xml:space="preserve">
     <value>Provide text which will be displayed in Help tab of the bot and then click on Ok to add or Edit to modify</value>
     <comment>Message for help tab when information icon is hovered</comment>
@@ -143,6 +245,23 @@ You can ask the following questions:
   <data name="KnowledgeBaseToolTipHoverMessage" xml:space="preserve">
     <value>Provide a valid knowledgebase id which will be used by bot and then click on Ok to add or Edit to modify</value>
     <comment>Message for knowledgebase id when information icon is hovered</comment>
+  </data>
+  <data name="SmeManifestFullDescription" xml:space="preserve">
+    <value>A friendly question and answer bot that answers commonly asked questions. If it can't answer, it will put you in touch with an expert as soon as they are available.</value>
+    <comment>{MaxLength=4000}
+SME manifest full description
+</comment>
+  </data>
+  <data name="SmeManifestName" xml:space="preserve">
+    <value>FAQ Plus (Experts Team)</value>
+    <comment>{MaxLength=30}
+SME manifest name</comment>
+  </data>
+  <data name="SmeManifestShortDescription" xml:space="preserve">
+    <value>A friendly FAQ bot that answers questions and connects you to experts.</value>
+    <comment>{MaxLength=80}
+SME manifest short description
+</comment>
   </data>
   <data name="TeamIdToolTipHoverMessage" xml:space="preserve">
     <value>Provide a team id deeplink which will be used by bot and then click on Ok to add or Edit to modify</value>

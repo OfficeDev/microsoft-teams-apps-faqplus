@@ -1,0 +1,13 @@
+{
+  "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.5/MicrosoftTeams.schema.json",
+  "name.short": "FAQ Plus",
+  "description.short": "질문에 답변하고 전문가에게 연결하는 친숙한 FAQ 봇입니다.",
+  "description.full": "흔히 묻는 질문에 답변하는 친근한 질문과 대답 봇입니다. 봇이 답변할 수 없는 경우, 가능한 한 빨리 전문가와 연락할 수 있도록 연결합니다.",
+  "bots[0].commandLists[0].commands[0].title": "둘러보기",
+  "bots[0].commandLists[0].commands[0].description": "주요 기능 둘러보기",
+  "bots[0].commandLists[0].commands[1].title": "전문가에게 문의",
+  "bots[0].commandLists[0].commands[1].description": "전문가와 연결",
+  "bots[0].commandLists[0].commands[2].title": "피드백 공유",
+  "bots[0].commandLists[0].commands[2].description": "피드백 보내기",
+  "staticTabs[0].name": "도움말"
+}

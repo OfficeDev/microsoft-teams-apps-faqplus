@@ -5,9 +5,9 @@
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
 {
     using System.Collections.Generic;
+    using System.Globalization;
     using AdaptiveCards;
     using Microsoft.Bot.Schema;
-    using Microsoft.Teams.Apps.FAQPlusPlus.Common;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
 
@@ -23,6 +23,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <returns>UnrecognizedInput Card.</returns>
         public static Attachment GetCard(string userQuestion)
         {
+            var textAlignment = CultureInfo.CurrentCulture.TextInfo.IsRightToLeft ? AdaptiveHorizontalAlignment.Right : AdaptiveHorizontalAlignment.Left;
+
             AdaptiveCard unrecognizedInputCard = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
             {
                 Body = new List<AdaptiveElement>
@@ -31,6 +33,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     {
                         Text = Strings.CustomMessage,
                         Wrap = true,
+                        HorizontalAlignment = textAlignment,
                     },
                 },
                 Actions = new List<AdaptiveAction>
@@ -44,7 +47,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                             {
                                 Type = ActionTypes.MessageBack,
                                 DisplayText = Strings.AskAnExpertDisplayText,
-                                Text = Constants.AskAnExpert,
+                                Text = Strings.AskAnExpertDisplayText,
                             },
                             UserQuestion = userQuestion,
                         },

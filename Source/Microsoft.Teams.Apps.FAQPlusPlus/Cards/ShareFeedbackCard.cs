@@ -6,9 +6,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using AdaptiveCards;
     using Microsoft.Bot.Schema;
-    using Microsoft.Bot.Streaming.Payloads;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
 
@@ -73,6 +73,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <returns>Share feedback card.</returns>
         private static Attachment GetCard(ShareFeedbackCardPayload data, bool showValidationErrors)
         {
+            var textAlignment = CultureInfo.CurrentCulture.TextInfo.IsRightToLeft ? AdaptiveHorizontalAlignment.Right : AdaptiveHorizontalAlignment.Left;
+            var errorAlignment = CultureInfo.CurrentCulture.TextInfo.IsRightToLeft ? AdaptiveHorizontalAlignment.Left : AdaptiveHorizontalAlignment.Right;
+
             AdaptiveCard shareFeedbackCard = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
             {
                 Body = new List<AdaptiveElement>
@@ -83,6 +86,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         Text = !string.IsNullOrWhiteSpace(data.UserQuestion) ? Strings.ResultsFeedbackText : Strings.ShareFeedbackTitleText,
                         Size = AdaptiveTextSize.Large,
                         Wrap = true,
+                        HorizontalAlignment = textAlignment,
                     },
                     new AdaptiveColumnSet
                     {
@@ -97,6 +101,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                     {
                                         Text = !string.IsNullOrWhiteSpace(data.UserQuestion) ? Strings.FeedbackRatingRequired : Strings.ShareAppFeedbackRating,
                                         Wrap = true,
+                                        HorizontalAlignment = textAlignment,
                                     },
                                 },
                             },
@@ -108,7 +113,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                     {
                                         Text = (showValidationErrors && !Enum.TryParse(data.Rating, out FeedbackRating rating)) ? Strings.RatingMandatoryText : string.Empty,
                                         Color = AdaptiveTextColor.Attention,
-                                        HorizontalAlignment = AdaptiveHorizontalAlignment.Right,
+                                        HorizontalAlignment = errorAlignment,
                                         Wrap = true,
                                     },
                                 },
@@ -143,6 +148,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     {
                         Text = Strings.DescriptionText,
                         Wrap = true,
+                        HorizontalAlignment = textAlignment,
                     },
                     new AdaptiveTextInput
                     {
@@ -164,7 +170,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                             {
                                 Type = ActionTypes.MessageBack,
                                 DisplayText = Strings.ShareFeedbackDisplayText,
-                                Text = ShareFeedbackSubmitText,
+                                Text = Strings.ShareFeedbackSubmitText,
                             },
                             UserQuestion = data.UserQuestion,
                             KnowledgeBaseAnswer = data.KnowledgeBaseAnswer,

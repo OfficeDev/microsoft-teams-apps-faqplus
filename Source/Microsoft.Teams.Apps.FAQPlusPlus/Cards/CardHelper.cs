@@ -87,15 +87,25 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         }
 
         /// <summary>
-        /// Returns a string that will display the given date and time in the user's local time zone, when placed in an adaptive card.
+        /// Returns a string that will display the given date and time in the user's local time zone in a thumbnail card.
         /// </summary>
         /// <param name="dateTime">The date and time to format.</param>
         /// <param name="userLocalTime">The sender's local time, as determined by the local timestamp of the activity.</param>
         /// <returns>A datetime string.</returns>
         public static string GetFormattedDateInUserTimeZone(DateTime dateTime, DateTimeOffset? userLocalTime)
         {
-            // Adaptive card on mobile has a bug where it does not support DATE and TIME, so for now we convert the date and time manually.
-            return dateTime.Add(userLocalTime?.Offset ?? TimeSpan.FromMinutes(0)).ToShortDateString();
+            return dateTime.Add(userLocalTime?.Offset ?? TimeSpan.FromMinutes(0)).ToString("dddd, dd MMMM yyyy", CultureInfo.InvariantCulture);
+        }
+
+        /// <summary>
+        /// Returns a string that will display the given date and time in the user's local time zone, when placed in an adaptive card.
+        /// </summary>
+        /// <param name="dateTime">The UTC date and time to format.</param>
+        /// <returns>A localized date string for adaptive card.</returns>
+        public static string GetFormattedDateForAdaptiveCard(DateTime dateTime)
+        {
+            var utcString = dateTime.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ssZ", CultureInfo.InvariantCulture);
+            return "{{DATE(" + utcString + ", SHORT)}}";
         }
     }
 }

@@ -6,10 +6,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using AdaptiveCards;
     using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker.Models;
     using Microsoft.Bot.Schema;
-    using Microsoft.Teams.Apps.FAQPlusPlus.Common;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
 
@@ -28,7 +28,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <returns>The response card to append to a message as an attachment.</returns>
         public static Attachment GetCard(QnASearchResult response, string userQuestion, string appBaseUri, ResponseCardPayload payload)
         {
-            AdaptiveCard responseCard = new AdaptiveCard(new AdaptiveSchemaVersion(1, 2))
+            AdaptiveCard responseCard = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
             {
                 Body = BuildResponseCardBody(response, userQuestion, response.Answer, appBaseUri, payload),
                 Actions = BuildListOfActions(userQuestion, response.Answer),
@@ -52,6 +52,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <returns>A list of adaptive elements which makes up the body of the adaptive card.</returns>
         private static List<AdaptiveElement> BuildResponseCardBody(QnASearchResult response, string userQuestion, string answer, string appBaseUri, ResponseCardPayload payload)
         {
+            var textAlignment = CultureInfo.CurrentCulture.TextInfo.IsRightToLeft ? AdaptiveHorizontalAlignment.Right : AdaptiveHorizontalAlignment.Left;
             var cardBodyToConstruct = new List<AdaptiveElement>()
             {
                 new AdaptiveTextBlock
@@ -59,12 +60,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     Weight = AdaptiveTextWeight.Bolder,
                     Text = Strings.ResponseHeaderText,
                     Wrap = true,
+                    HorizontalAlignment = textAlignment,
                 },
                 new AdaptiveTextBlock
                 {
                     Text = answer,
                     Wrap = true,
                     Spacing = AdaptiveSpacing.Medium,
+                    HorizontalAlignment = textAlignment,
                 },
             };
 
@@ -109,6 +112,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                             {
                                                 Wrap = true,
                                                 Text = string.Format(Strings.SelectActionItemDisplayTextFormatting, item.DisplayText),
+                                                HorizontalAlignment = textAlignment,
                                             },
                                         },
                                         Spacing = AdaptiveSpacing.Small,
@@ -161,7 +165,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         {
                             Type = ActionTypes.MessageBack,
                             DisplayText = Strings.AskAnExpertDisplayText,
-                            Text = Constants.AskAnExpert,
+                            Text = Strings.AskAnExpertDisplayText,
                         },
                         UserQuestion = userQuestion,
                         KnowledgeBaseAnswer = answer,
@@ -178,7 +182,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         {
                             Type = ActionTypes.MessageBack,
                             DisplayText = Strings.ShareFeedbackDisplayText,
-                            Text = Constants.ShareFeedback,
+                            Text = Strings.ShareFeedbackDisplayText,
                         },
                         UserQuestion = userQuestion,
                         KnowledgeBaseAnswer = answer,
@@ -206,7 +210,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 Id = id,
                 Questions = new List<string>()
                 {
-                    userQuestion,
+                        userQuestion,
                 },
                 Answer = answer,
             });

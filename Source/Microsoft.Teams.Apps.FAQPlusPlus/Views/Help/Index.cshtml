@@ -2,14 +2,26 @@
 <head>
     <script type="text/javascript" src="~/lib/jquery/jquery.min.js"></script>
     <script type="text/javascript" src="~/lib/microsoft-teams/dist/MicrosoftTeams.min.js"></script>
+    <script type="text/javascript" src="~/lib/i18next/i18next.min.js"></script>
 </head>
 
 <body class="theme-default">
     <div class="helpTab">@Html.Raw(Model)</div>
 
     <script>
-
         microsoftTeams.initialize();
+        microsoftTeams.getContext(SetLocaleContext);
+
+        function SetLocaleContext(context) {
+            i18next.init({ lng: context.locale });
+            var isRtl = i18next.dir(context.locale) === "rtl";
+            if (isRtl) {
+                $(".helpTab").addClass("helpTab-rtl").removeClass("helpTab");
+            }
+            else {
+                $(".helpTab-rtl").addClass("helpTab").removeClass("helpTab-rtl");
+            }
+        }
 
         let params = getQueryParameters();
         setTheme(params["theme"]);
@@ -45,6 +57,12 @@
     .helpTab {
         font-family: 'Segoe UI', Tahoma, Helvetica, sans-serif;
         font-size: 14px;
+    }
+
+    .helpTab-rtl {
+        font-family: 'Segoe UI', Tahoma, Helvetica, sans-serif;
+        font-size: 14px;
+        direction: rtl;
     }
 
     .theme-dark-contrast {

@@ -1,0 +1,13 @@
+{
+  "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.5/MicrosoftTeams.schema.json",
+  "name.short": "FAQ Plus",
+  "description.short": "A friendly FAQ bot that answers questions and connects you to experts.",
+  "description.full": "A friendly question and answer bot that answers commonly asked questions. If it can't answer, it will put you in touch with an expert as soon as they are available.",
+  "bots[0].commandLists[0].commands[0].title": "Take a tour",
+  "bots[0].commandLists[0].commands[0].description": "Tour of key features",
+  "bots[0].commandLists[0].commands[1].title": "Ask an expert",
+  "bots[0].commandLists[0].commands[1].description": "Connect with an expert",
+  "bots[0].commandLists[0].commands[2].title": "Share feedback",
+  "bots[0].commandLists[0].commands[2].description": "Send feedback",
+  "staticTabs[0].name": "Help"
+}

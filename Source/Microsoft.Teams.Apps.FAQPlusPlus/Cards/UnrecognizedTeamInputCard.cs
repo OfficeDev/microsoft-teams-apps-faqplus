@@ -29,7 +29,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     {
                         Title = Strings.TakeATeamTourButtonText,
                         DisplayText = Strings.TakeATeamTourButtonText,
-                        Text = Constants.TeamTour,
+                        Text = Strings.TakeATeamTourButtonText,
                     },
                 },
             };
