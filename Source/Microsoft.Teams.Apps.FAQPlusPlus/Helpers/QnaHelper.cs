@@ -184,7 +184,5 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Helpers
             // Check if question asked and result returned from the knowledgebase are same.
             return questionAnswerResponse.Questions.First().ToUpperInvariant() == question?.ToUpperInvariant().Trim();
         }
-
-
     }
 }

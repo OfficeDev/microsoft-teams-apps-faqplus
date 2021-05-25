@@ -115,7 +115,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         }
 
         /// <summary>
-        /// save user data in personal Chat
+        /// save user data in personal Chat.
         /// </summary>
         /// <param name="turnContex">Context object containing information cached for a single turn of conversation with a user.</param>
         /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>

@@ -50,7 +50,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                               Text = Constants.TakeATour,
                             },
                         },
-                         IconUrl = appBaseUri + "/content/take_tour.png",
+                        IconUrl = appBaseUri + "/content/take_tour.png",
                     },
                 },
             };

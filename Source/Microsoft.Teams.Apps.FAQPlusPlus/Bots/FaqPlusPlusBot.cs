@@ -531,6 +531,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         {
             Attachment smeTeamCard = null;      // Notification to SME team
             Activity updateCardActivity = null;
+            Activity updateTeamsCardActivity = null;
             TicketEntity newTicket = null;      // New ticket
             FeedbackEntity newFeedback = null;      // New Feedback
             List<ExpertEntity> experts = null;
@@ -601,8 +602,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
                     await turnContext.SendActivityAsync(MessageFactory.Text(Strings.ThankYouTextContent)).ConfigureAwait(false);
 
-                    // experts = await this.expertProvider.GetExpertsAsync().ConfigureAwait(false);
-                    // smeTeamCard = new SmeTicketCard(ticket, experts).ToAttachment(message?.LocalTimestamp, this.appBaseUri);
+                    experts = await this.expertProvider.GetExpertsAsync().ConfigureAwait(false);
+                    updateTeamsCardActivity = new Activity(ActivityTypes.Message)
+                    {
+                        Id = ticket.SmeCardActivityId,
+                        Conversation = new ConversationAccount { Id = ticket.SmeThreadConversationId },
+                        Attachments = new List<Attachment> { new SmeTicketCard(ticket, experts).ToAttachment(message.LocalTimestamp, this.appBaseUri) },
+                    };
+
                     userAction.Action = nameof(UserActionType.ShareTicketFeedback);
                     break;
 
@@ -644,6 +651,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     newTicket.SmeCardActivityId = resourceResponse.ActivityId;
                     newTicket.SmeThreadConversationId = resourceResponse.Id;
                 }
+            }
+
+            if (updateTeamsCardActivity != null)
+            {
+                await turnContext.Adapter.UpdateActivityAsync(turnContext, updateTeamsCardActivity, cancellationToken).ConfigureAwait(false);
             }
 
             // Send acknowledgment to the user by updating the original card
@@ -999,7 +1011,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 userNotification.Conversation = updateUserCardActivity.Conversation;
                 var userNotificationResponse = await turnContext.Adapter.SendActivitiesAsync(turnContext, new Activity[] { (Activity)userNotification }, cancellationToken).ConfigureAwait(false);
                 this.logger.LogInformation($"User notified of update to ticket {ticket.TicketId}, activityId = {userNotificationResponse.FirstOrDefault()?.Id}");
-
             }
 
             // record user action
@@ -1285,7 +1296,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                         UserRole = account.UserRole,
                     });
                 }
-
             }
 
             await this.expertProvider.UpserExpertsAsync(experts);
@@ -1406,5 +1416,4 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             return admins.Split(';').Contains(expert?.UserPrincipalName);
         }
     }
-
 }
