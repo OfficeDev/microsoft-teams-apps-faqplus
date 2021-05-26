@@ -75,6 +75,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
                 knowledgeBaseSettings.SearchServiceAdminApiKey = this.Configuration["SearchServiceAdminApiKey"];
                 knowledgeBaseSettings.SearchIndexingIntervalInMinutes = this.Configuration["SearchIndexingIntervalInMinutes"];
                 knowledgeBaseSettings.StorageConnectionString = this.Configuration["StorageConnectionString"];
+                knowledgeBaseSettings.IsGCCHybridDeployment = this.Configuration.GetValue<bool>("IsGCCHybridDeployment");
             });
 
             services.Configure<QnAMakerSettings>(qnAMakerSettings =>
@@ -107,7 +108,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
                 qnaMakerClient,
                 new QnAMakerRuntimeClient(new EndpointKeyServiceClientCredentials(endpointKey)) { RuntimeEndpoint = this.Configuration["QnAMakerHostUrl"] }));
             services.AddSingleton<IActivityStorageProvider>((provider) => new ActivityStorageProvider(provider.GetRequiredService<IOptionsMonitor<KnowledgeBaseSettings>>()));
-            services.AddSingleton<IKnowledgeBaseSearchService>((provider) => new KnowledgeBaseSearchService(this.Configuration["SearchServiceName"], this.Configuration["SearchServiceQueryApiKey"], this.Configuration["SearchServiceAdminApiKey"], this.Configuration["StorageConnectionString"]));
+            services.AddSingleton<IKnowledgeBaseSearchService>((provider) => new KnowledgeBaseSearchService(this.Configuration["SearchServiceName"], this.Configuration["SearchServiceQueryApiKey"], this.Configuration["SearchServiceAdminApiKey"], this.Configuration["StorageConnectionString"], this.Configuration.GetValue<bool>("IsGCCHybridDeployment")));
 
             services.AddSingleton<ISearchService, SearchService>();
             services.AddSingleton<IMemoryCache, MemoryCache>();

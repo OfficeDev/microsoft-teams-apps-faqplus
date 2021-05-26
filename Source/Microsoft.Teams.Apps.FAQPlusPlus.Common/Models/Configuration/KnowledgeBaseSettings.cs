@@ -33,5 +33,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models.Configuration
         /// Gets or sets search indexing interval in minutes.
         /// </summary>
         public string SearchIndexingIntervalInMinutes { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether deployment type is GCC Hybrid.
+        /// </summary>
+        public bool IsGCCHybridDeployment { get; set; }
     }
 }
