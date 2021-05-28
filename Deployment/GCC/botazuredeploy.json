@@ -54,9 +54,7 @@
     "botAppName": "[parameters('baseResourceName')]",
     "botAppDomain": "[concat(variables('botAppName'), '.azurewebsites.us')]",
     "botAppUrl": "[concat('https://', variables('botAppDomain'))]",
-    "botAppInsightsName": "[parameters('baseResourceName')]",
-    "configAppName": "[concat(parameters('baseResourceName'), '-config')]",
-    "configAppUrl": "[concat('https://', variables('configAppName'), '.azurewebsites.us')]"
+    "botAppInsightsName": "[parameters('baseResourceName')]"
   },
   "resources": [
     {
@@ -123,10 +121,6 @@
     "appDomain": {
       "type": "string",
       "value": "[variables('botAppDomain')]"
-    },
-    "configurationAppUrl": {
-      "type": "string",
-      "value": "[variables('configAppUrl')]"
     }
   }
 }

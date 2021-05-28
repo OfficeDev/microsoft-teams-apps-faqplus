@@ -54,13 +54,6 @@
         "description": "The ID of the tenant to which the app will be deployed."
       }
     },
-	"IsGCCHybrid": {
-      "type": "bool",
-      "defaultValue": "false",
-      "metadata": {
-        "description": "Deployment tenant is GCC or any other tenant."
-      }
-    },
     "sku": {
       "type": "string",
       "allowedValues": [
@@ -276,9 +269,9 @@
               "name": "ApplicationInsightsLogLevel",
               "value": "Information"
             },
-			{
+            {
               "name": "IsGCCHybridDeployment",
-              "value": "[parameters('IsGCCHybrid')]"
+              "value": true
             }
           ]
         }
@@ -526,9 +519,9 @@
               "name": "WEBSITE_NODE_DEFAULT_VERSION",
               "value": "10.14.1"
             },
-			{
+            {
               "name": "IsGCCHybridDeployment",
-              "value": "[parameters('IsGCCHybrid')]"
+              "value": true
             }
           ]
         }

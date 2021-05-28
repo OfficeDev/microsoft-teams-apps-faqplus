@@ -184,17 +184,21 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         /// </summary>
         private void InitializeSearchService()
         {
-            var searchDnsSuffix = this.isGCCHybridDeployment == true ? "search.azure.us" : "search.windows.net";
+            var searchDnsSuffix = this.isGCCHybridDeployment ? "search.azure.us" : "search.windows.net";
             this.searchServiceClient = new SearchServiceClient(
                 this.searchServiceName,
-                new SearchCredentials(this.searchServiceAdminApiKey));
-            this.searchServiceClient.SearchDnsSuffix = searchDnsSuffix;
+                new SearchCredentials(this.searchServiceAdminApiKey))
+            {
+                SearchDnsSuffix = searchDnsSuffix,
+            };
 
             this.searchIndexClient = new SearchIndexClient(
                 this.searchServiceName,
                 this.indexName,
-                new SearchCredentials(this.searchServiceQueryApiKey));
-            this.searchIndexClient.SearchDnsSuffix = searchDnsSuffix;
+                new SearchCredentials(this.searchServiceQueryApiKey))
+            {
+                SearchDnsSuffix = searchDnsSuffix,
+            };
         }
     }
 }

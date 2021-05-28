@@ -290,6 +290,10 @@
             {
               "name": "ApplicationInsightsLogLevel",
               "value": "Information"
+            },
+            {
+              "name": "IsGCCHybridDeployment",
+              "value": false
             }
           ]
         }
@@ -593,6 +597,10 @@
             {
               "name": "WEBSITE_NODE_DEFAULT_VERSION",
               "value": "10.14.1"
+            },
+            {
+              "name": "IsGCCHybridDeployment",
+              "value": false
             }
           ]
         }
