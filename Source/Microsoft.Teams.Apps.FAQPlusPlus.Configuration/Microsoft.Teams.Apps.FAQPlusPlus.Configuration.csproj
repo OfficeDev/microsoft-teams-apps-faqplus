@@ -326,24 +326,24 @@
     <Content Include="Views\Shared\_Spinner.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Strings.ar-SA.resx">
+    <EmbeddedResource Include="Strings.ar.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Strings.de-DE.resx">
+    <EmbeddedResource Include="Strings.de.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Strings.es-ES.resx">
+    <EmbeddedResource Include="Strings.es.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Strings.fr-FR.resx">
+    <EmbeddedResource Include="Strings.fr.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Strings.he-IL.resx" />
-    <EmbeddedResource Include="Strings.ja-JP.resx" />
-    <EmbeddedResource Include="Strings.ko-KR.resx">
+    <EmbeddedResource Include="Strings.he.resx" />
+    <EmbeddedResource Include="Strings.ja.resx" />
+    <EmbeddedResource Include="Strings.ko.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Strings.pt-BR.resx">
+    <EmbeddedResource Include="Strings.pt.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Strings.resx">
@@ -351,7 +351,7 @@
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Strings.ru-RU.resx" />
+    <EmbeddedResource Include="Strings.ru.resx" />
     <EmbeddedResource Include="Strings.zh-CN.resx" />
     <EmbeddedResource Include="Strings.zh-TW.resx">
       <SubType>Designer</SubType>
