@@ -94,7 +94,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <returns>A datetime string.</returns>
         public static string GetFormattedDateInUserTimeZone(DateTime dateTime, DateTimeOffset? userLocalTime)
         {
-            return dateTime.Add(userLocalTime?.Offset ?? TimeSpan.FromMinutes(0)).ToString("dddd, dd MMMM yyyy", CultureInfo.InvariantCulture);
+            return dateTime.Add(userLocalTime?.Offset ?? TimeSpan.FromMinutes(0)).ToString("ddd, MMMM dd, yyyy", CultureInfo.InvariantCulture);
         }
 
         /// <summary>

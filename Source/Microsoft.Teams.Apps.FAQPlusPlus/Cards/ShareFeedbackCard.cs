@@ -9,6 +9,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
     using System.Globalization;
     using AdaptiveCards;
     using Microsoft.Bot.Schema;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Common;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
 
@@ -17,11 +18,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
     /// </summary>
     public static class ShareFeedbackCard
     {
-        /// <summary>
-        /// Text associated with share feedback command.
-        /// </summary>
-        public const string ShareFeedbackSubmitText = "ShareFeedback";
-
         /// <summary>
         /// This method will construct the card for share feedback, when invoked from the bot menu.
         /// </summary>
@@ -170,7 +166,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                             {
                                 Type = ActionTypes.MessageBack,
                                 DisplayText = Strings.ShareFeedbackDisplayText,
-                                Text = Strings.ShareFeedbackSubmitText,
+                                Text = Constants.ShareFeedbackSubmitText,
                             },
                             UserQuestion = data.UserQuestion,
                             KnowledgeBaseAnswer = data.KnowledgeBaseAnswer,

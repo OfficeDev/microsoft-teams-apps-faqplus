@@ -76,9 +76,19 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common
         public const string AskAnExpert = "ask an expert";
 
         /// <summary>
+        /// Text associated with ask an expert command.
+        /// </summary>
+        public const string AskAnExpertSubmitText = "QuestionForExpert";
+
+        /// <summary>
         /// Feedback - text that renders share feedback card.
         /// </summary>
         public const string ShareFeedback = "share feedback";
+
+        /// <summary>
+        /// Text associated with share feedback command.
+        /// </summary>
+        public const string ShareFeedbackSubmitText = "ShareFeedback";
 
         /// <summary>
         /// Table name where SME activity details from bot will be saved.

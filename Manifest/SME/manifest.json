@@ -11,47 +11,47 @@
     "termsOfUseUrl": "<<termsOfUseUrl>>"
   },
   "localizationInfo": {
-    "defaultLanguageTag": "en-US",
+    "defaultLanguageTag": "en",
     "additionalLanguages": [
       {
-        "languageTag": "en-US",
-        "file": "en-US.json"
+        "languageTag": "en",
+        "file": "en.json"
       },
       {
-        "languageTag": "de-DE",
-        "file": "de-DE.json"
+        "languageTag": "de",
+        "file": "de.json"
       },
       {
-        "languageTag": "fr-FR",
-        "file": "fr-FR.json"
+        "languageTag": "fr",
+        "file": "fr.json"
       },
       {
-        "languageTag": "ar-SA",
-        "file": "ar-SA.json"
+        "languageTag": "ar",
+        "file": "ar.json"
       },
       {
-        "languageTag": "ja-JP",
-        "file": "ja-JP.json"
+        "languageTag": "ja",
+        "file": "ja.json"
       },
       {
-        "languageTag": "es-ES",
-        "file": "es-ES.json"
+        "languageTag": "es",
+        "file": "es.json"
       },
       {
-        "languageTag": "he-IL",
-        "file": "he-IL.json"
+        "languageTag": "he",
+        "file": "he.json"
       },
       {
-        "languageTag": "ko-KR",
-        "file": "ko-KR.json"
+        "languageTag": "ko",
+        "file": "ko.json"
       },
       {
-        "languageTag": "pt-BR",
-        "file": "pt-BR.json"
+        "languageTag": "pt",
+        "file": "pt.json"
       },
       {
-        "languageTag": "ru-RU",
-        "file": "ru-RU.json"
+        "languageTag": "ru",
+        "file": "ru.json"
       },
       {
         "languageTag": "zh-CN",

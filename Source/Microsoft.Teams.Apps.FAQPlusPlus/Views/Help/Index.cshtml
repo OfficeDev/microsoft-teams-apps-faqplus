@@ -10,9 +10,9 @@
 
     <script>
         microsoftTeams.initialize();
-        microsoftTeams.getContext(SetLocaleContext);
+        microsoftTeams.getContext(setLocaleContext);
 
-        function SetLocaleContext(context) {
+        function setLocaleContext(context) {
             i18next.init({ lng: context.locale });
             var isRtl = i18next.dir(context.locale) === "rtl";
             if (isRtl) {

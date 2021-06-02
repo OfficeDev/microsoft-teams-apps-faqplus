@@ -10,6 +10,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
     using AdaptiveCards;
     using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker.Models;
     using Microsoft.Bot.Schema;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Common;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
 
@@ -165,7 +166,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         {
                             Type = ActionTypes.MessageBack,
                             DisplayText = Strings.AskAnExpertDisplayText,
-                            Text = Strings.AskAnExpertDisplayText,
+                            Text = Constants.AskAnExpert,
                         },
                         UserQuestion = userQuestion,
                         KnowledgeBaseAnswer = answer,
@@ -182,7 +183,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         {
                             Type = ActionTypes.MessageBack,
                             DisplayText = Strings.ShareFeedbackDisplayText,
-                            Text = Strings.ShareFeedbackDisplayText,
+                            Text = Constants.ShareFeedback,
                         },
                         UserQuestion = userQuestion,
                         KnowledgeBaseAnswer = answer,

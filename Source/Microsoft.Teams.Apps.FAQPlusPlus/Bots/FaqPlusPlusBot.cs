@@ -762,18 +762,20 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
             string text = (message.Text ?? string.Empty).Trim();
 
-            if (text.Equals(Strings.AskAnExpertDisplayText, StringComparison.InvariantCultureIgnoreCase))
+            if (text.Equals(Strings.BotCommandAskExpert, StringComparison.InvariantCultureIgnoreCase) ||
+                text.Equals(Constants.AskAnExpert, StringComparison.InvariantCultureIgnoreCase))
             {
                 this.logger.LogInformation("Sending user ask an expert card");
                 await turnContext.SendActivityAsync(MessageFactory.Attachment(AskAnExpertCard.GetCard())).ConfigureAwait(false);
             }
-            else if (text.Equals(Strings.ShareFeedbackDisplayText, StringComparison.InvariantCultureIgnoreCase))
+            else if (text.Equals(Strings.BotCommandFeedback, StringComparison.InvariantCultureIgnoreCase) ||
+                text.Equals(Constants.ShareFeedback, StringComparison.InvariantCultureIgnoreCase))
             {
                 this.logger.LogInformation("Sending user feedback card");
                 await turnContext.SendActivityAsync(MessageFactory.Attachment(ShareFeedbackCard.GetCard())).ConfigureAwait(false);
             }
-            else if (text.Equals(Strings.ResourceManager.GetString("TakeATourButtonText", CultureInfo.CurrentCulture), StringComparison.InvariantCultureIgnoreCase) ||
-                text.Equals(Strings.ResourceManager.GetString("TakeATourButtonText", CultureInfo.InvariantCulture), StringComparison.InvariantCultureIgnoreCase))
+            else if (text.Equals(Strings.TakeATourButtonText, StringComparison.InvariantCultureIgnoreCase) ||
+                text.Equals(Constants.TakeATour, StringComparison.InvariantCultureIgnoreCase))
             {
                 this.logger.LogInformation("Sending user tour card");
                 var userTourCards = TourCarousel.GetUserTourCards(this.appBaseUri);
@@ -803,40 +805,40 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             // Check if the incoming request is from SME for updating the ticket status.
             if (!string.IsNullOrEmpty(message.ReplyToId) && (message.Value != null) && ((JObject)message.Value).HasValues && !string.IsNullOrEmpty(((JObject)message.Value)["ticketId"]?.ToString()))
             {
-                text = Strings.ChangeStatusButtonText;
+                text = ChangeStatus;
             }
             else
             {
-                text = (message.Text ?? string.Empty).Trim();
+                text = message.Text?.ToLower()?.Trim() ?? string.Empty;
             }
 
             try
             {
-                if (text.Equals(Strings.ResourceManager.GetString("TakeATeamTourButtonText", CultureInfo.CurrentCulture), StringComparison.InvariantCultureIgnoreCase) ||
-                    text.Equals(Strings.ResourceManager.GetString("TakeATeamTourButtonText", CultureInfo.InvariantCulture), StringComparison.InvariantCultureIgnoreCase))
+                switch (text)
                 {
-                    this.logger.LogInformation("Sending team tour card");
-                    var teamTourCards = TourCarousel.GetTeamTourCards(this.appBaseUri);
-                    await turnContext.SendActivityAsync(MessageFactory.Carousel(teamTourCards)).ConfigureAwait(false);
-                }
-                else if (text.Equals(Strings.ChangeStatusButtonText, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    this.logger.LogInformation($"Card submit in channel {message.Value?.ToString()}");
-                    await this.OnAdaptiveCardSubmitInChannelAsync(message, turnContext, cancellationToken).ConfigureAwait(false);
-                }
-                else if (text.Equals(Strings.DeleteButtonText, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    this.logger.LogInformation($"Delete card submit in channel {message.Value?.ToString()}");
-                    await QnaHelper.DeleteQnaPair(turnContext, this.qnaServiceProvider, this.activityStorageProvider, this.logger, cancellationToken).ConfigureAwait(false);
-                }
-                else if (text.Equals(Strings.No, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    return;
-                }
-                else
-                {
-                    this.logger.LogInformation("Unrecognized input in channel");
-                    await turnContext.SendActivityAsync(MessageFactory.Attachment(UnrecognizedTeamInputCard.GetCard())).ConfigureAwait(false);
+                    case Constants.TeamTour:
+                        this.logger.LogInformation("Sending team tour card");
+                        var teamTourCards = TourCarousel.GetTeamTourCards(this.appBaseUri);
+                        await turnContext.SendActivityAsync(MessageFactory.Carousel(teamTourCards)).ConfigureAwait(false);
+                        break;
+
+                    case ChangeStatus:
+                        this.logger.LogInformation($"Card submit in channel {message.Value?.ToString()}");
+                        await this.OnAdaptiveCardSubmitInChannelAsync(message, turnContext, cancellationToken).ConfigureAwait(false);
+                        return;
+
+                    case Constants.DeleteCommand:
+                        this.logger.LogInformation($"Delete card submit in channel {message.Value?.ToString()}");
+                        await QnaHelper.DeleteQnaPair(turnContext, this.qnaServiceProvider, this.activityStorageProvider, this.logger, cancellationToken).ConfigureAwait(false);
+                        break;
+
+                    case Constants.NoCommand:
+                        return;
+
+                    default:
+                        this.logger.LogInformation("Unrecognized input in channel");
+                        await turnContext.SendActivityAsync(MessageFactory.Attachment(UnrecognizedTeamInputCard.GetCard())).ConfigureAwait(false);
+                        break;
                 }
             }
             catch (Exception ex)
@@ -882,50 +884,55 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
             string text = (message.Text ?? string.Empty).Trim();
 
-            if (text.Equals(Strings.AskAnExpertDisplayText, StringComparison.InvariantCultureIgnoreCase))
+            switch (text)
             {
-                this.logger.LogInformation("Sending user ask an expert card (from answer)");
-                var askAnExpertPayload = ((JObject)message.Value).ToObject<ResponseCardPayload>();
-                await turnContext.SendActivityAsync(MessageFactory.Attachment(AskAnExpertCard.GetCard(askAnExpertPayload))).ConfigureAwait(false);
-            }
-            else if (text.Equals(Strings.ShareFeedbackDisplayText, StringComparison.InvariantCultureIgnoreCase))
-            {
-                this.logger.LogInformation("Sending user share feedback card (from answer)");
-                var shareFeedbackPayload = ((JObject)message.Value).ToObject<ResponseCardPayload>();
-                await turnContext.SendActivityAsync(MessageFactory.Attachment(ShareFeedbackCard.GetCard(shareFeedbackPayload))).ConfigureAwait(false);
-            }
-            else if (text.Equals(Strings.AskAnExpertSubmitText, StringComparison.InvariantCultureIgnoreCase))
-            {
-                this.logger.LogInformation("Received question for expert");
-                newTicket = await AdaptiveCardHelper.AskAnExpertSubmitText(message, turnContext, cancellationToken, this.ticketsProvider).ConfigureAwait(false);
-                if (newTicket != null)
-                {
-                    smeTeamCard = new SmeTicketCard(newTicket).ToAttachment();
-                    userCard = new UserNotificationCard(newTicket).ToAttachment(Strings.NotificationCardContent);
-                }
-            }
-            else if (text.Equals(Strings.ShareFeedbackSubmitText, StringComparison.InvariantCultureIgnoreCase))
-            {
-                this.logger.LogInformation("Received app feedback");
-                smeTeamCard = await AdaptiveCardHelper.ShareFeedbackSubmitText(message, turnContext, cancellationToken).ConfigureAwait(false);
-                if (smeTeamCard != null)
-                {
-                    await turnContext.SendActivityAsync(MessageFactory.Text(Strings.ThankYouTextContent)).ConfigureAwait(false);
-                }
-            }
-            else
-            {
-                var payload = ((JObject)message.Value).ToObject<ResponseCardPayload>();
+                case Constants.AskAnExpert:
+                    this.logger.LogInformation("Sending user ask an expert card (from answer)");
+                    var askAnExpertPayload = ((JObject)message.Value).ToObject<ResponseCardPayload>();
+                    await turnContext.SendActivityAsync(MessageFactory.Attachment(AskAnExpertCard.GetCard(askAnExpertPayload))).ConfigureAwait(false);
+                    break;
 
-                if (payload.IsPrompt)
-                {
-                    this.logger.LogInformation("Sending input to QnAMaker for prompt");
-                    await this.GetQuestionAnswerReplyAsync(turnContext, message).ConfigureAwait(false);
-                }
-                else
-                {
-                    this.logger.LogWarning($"Unexpected text in submit payload: {message.Text}");
-                }
+                case Constants.ShareFeedback:
+                    this.logger.LogInformation("Sending user share feedback card (from answer)");
+                    var shareFeedbackPayload = ((JObject)message.Value).ToObject<ResponseCardPayload>();
+                    await turnContext.SendActivityAsync(MessageFactory.Attachment(ShareFeedbackCard.GetCard(shareFeedbackPayload))).ConfigureAwait(false);
+                    break;
+
+                case Constants.AskAnExpertSubmitText:
+                    this.logger.LogInformation("Received question for expert");
+                    newTicket = await AdaptiveCardHelper.AskAnExpertSubmitText(message, turnContext, cancellationToken, this.ticketsProvider).ConfigureAwait(false);
+                    if (newTicket != null)
+                    {
+                        smeTeamCard = new SmeTicketCard(newTicket).ToAttachment();
+                        userCard = new UserNotificationCard(newTicket).ToAttachment(Strings.NotificationCardContent);
+                    }
+
+                    break;
+
+                case Constants.ShareFeedbackSubmitText:
+                    this.logger.LogInformation("Received app feedback");
+                    smeTeamCard = await AdaptiveCardHelper.ShareFeedbackSubmitText(message, turnContext, cancellationToken).ConfigureAwait(false);
+                    if (smeTeamCard != null)
+                    {
+                        await turnContext.SendActivityAsync(MessageFactory.Text(Strings.ThankYouTextContent)).ConfigureAwait(false);
+                    }
+
+                    break;
+
+                default:
+                    var payload = ((JObject)message.Value).ToObject<ResponseCardPayload>();
+
+                    if (payload.IsPrompt)
+                    {
+                        this.logger.LogInformation("Sending input to QnAMaker for prompt");
+                        await this.GetQuestionAnswerReplyAsync(turnContext, message).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        this.logger.LogWarning($"Unexpected text in submit payload: {message.Text}");
+                    }
+
+                    break;
             }
 
             string expertTeamId = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.TeamId).ConfigureAwait(false);

@@ -8,6 +8,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
     using System.Globalization;
     using AdaptiveCards;
     using Microsoft.Bot.Schema;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Common;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
 
@@ -47,7 +48,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                             {
                               Type = ActionTypes.MessageBack,
                               DisplayText = Strings.TakeATourButtonText,
-                              Text = Strings.ResourceManager.GetString("TakeATourButtonText", CultureInfo.InvariantCulture),
+                              Text = Constants.TakeATour,
                             },
                         },
                     },

@@ -1,0 +1,13 @@
+{
+  "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.5/MicrosoftTeams.schema.json",
+  "name.short": "Preguntas más frecuentes Plus",
+  "description.short": "Un bot de preguntas frecuentes que responde preguntas y le conecta con expertos.",
+  "description.full": "Un bot de preguntas y respuestas descriptiva que responde a las preguntas más frecuentes. Si no puede responder, le pondrá en contacto con un experto tan pronto como esté disponible.",
+  "bots[0].commandLists[0].commands[0].title": "Visita guiada",
+  "bots[0].commandLists[0].commands[0].description": "Paseo por las características clave",
+  "bots[0].commandLists[0].commands[1].title": "Preguntar a un experto",
+  "bots[0].commandLists[0].commands[1].description": "Conectar con un experto",
+  "bots[0].commandLists[0].commands[2].title": "Compartir comentarios",
+  "bots[0].commandLists[0].commands[2].description": "Enviar comentarios",
+  "staticTabs[0].name": "Ayuda"
+}
