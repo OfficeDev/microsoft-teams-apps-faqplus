@@ -29,7 +29,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <returns>The response card to append to a message as an attachment.</returns>
         public static Attachment GetCard(QnASearchResult response, string userQuestion, string appBaseUri, ResponseCardPayload payload)
         {
-            AdaptiveCard responseCard = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
+            AdaptiveCard responseCard = new AdaptiveCard(new AdaptiveSchemaVersion(1, 2))
             {
                 Body = BuildResponseCardBody(response, userQuestion, response.Answer, appBaseUri, payload),
                 Actions = BuildListOfActions(userQuestion, response.Answer),

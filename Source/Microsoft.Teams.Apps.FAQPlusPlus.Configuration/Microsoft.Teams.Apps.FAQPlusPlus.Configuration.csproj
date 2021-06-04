@@ -343,7 +343,7 @@
     <EmbeddedResource Include="Strings.ko.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Strings.pt.resx">
+    <EmbeddedResource Include="Strings.pt-BR.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Strings.resx">

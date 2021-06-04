@@ -762,19 +762,19 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
             string text = (message.Text ?? string.Empty).Trim();
 
-            if (text.Equals(Strings.BotCommandAskExpert, StringComparison.InvariantCultureIgnoreCase) ||
+            if (text.Equals(Strings.BotCommandAskExpert, StringComparison.CurrentCultureIgnoreCase) ||
                 text.Equals(Constants.AskAnExpert, StringComparison.InvariantCultureIgnoreCase))
             {
                 this.logger.LogInformation("Sending user ask an expert card");
                 await turnContext.SendActivityAsync(MessageFactory.Attachment(AskAnExpertCard.GetCard())).ConfigureAwait(false);
             }
-            else if (text.Equals(Strings.BotCommandFeedback, StringComparison.InvariantCultureIgnoreCase) ||
+            else if (text.Equals(Strings.BotCommandFeedback, StringComparison.CurrentCultureIgnoreCase) ||
                 text.Equals(Constants.ShareFeedback, StringComparison.InvariantCultureIgnoreCase))
             {
                 this.logger.LogInformation("Sending user feedback card");
                 await turnContext.SendActivityAsync(MessageFactory.Attachment(ShareFeedbackCard.GetCard())).ConfigureAwait(false);
             }
-            else if (text.Equals(Strings.TakeATourButtonText, StringComparison.InvariantCultureIgnoreCase) ||
+            else if (text.Equals(Strings.BotCommandTour, StringComparison.CurrentCultureIgnoreCase) ||
                 text.Equals(Constants.TakeATour, StringComparison.InvariantCultureIgnoreCase))
             {
                 this.logger.LogInformation("Sending user tour card");
