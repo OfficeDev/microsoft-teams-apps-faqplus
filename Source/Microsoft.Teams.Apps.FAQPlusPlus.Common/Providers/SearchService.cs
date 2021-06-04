@@ -52,14 +52,22 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
             ILogger<SearchService> logger)
         {
             this.options = optionsAccessor.CurrentValue;
+            var searchDnsSuffix = this.options.IsGCCHybridDeployment ? "search.azure.us" : "search.windows.net";
             string searchServiceValue = this.options.SearchServiceName;
             this.searchServiceClient = new SearchServiceClient(
                 searchServiceValue,
-                new SearchCredentials(this.options.SearchServiceAdminApiKey));
+                new SearchCredentials(this.options.SearchServiceAdminApiKey))
+            {
+                SearchDnsSuffix = searchDnsSuffix,
+            };
+
             this.searchIndexClient = new SearchIndexClient(
                 searchServiceValue,
                 TicketsIndexName,
-                new SearchCredentials(this.options.SearchServiceQueryApiKey));
+                new SearchCredentials(this.options.SearchServiceQueryApiKey))
+            {
+                SearchDnsSuffix = searchDnsSuffix,
+            };
             this.searchIndexingIntervalInMinutes = Convert.ToInt32(this.options.SearchIndexingIntervalInMinutes);
 
             this.initializeTask = new Lazy<Task>(() => this.InitializeAsync(this.options.StorageConnectionString));

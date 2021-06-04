@@ -32,6 +32,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         private readonly string searchServiceQueryApiKey;
         private readonly string searchServiceAdminApiKey;
         private readonly string storageConnectionString;
+        private readonly bool isGCCHybridDeployment;
         private ISearchServiceClient searchServiceClient;
         private SearchIndexClient searchIndexClient;
 
@@ -42,7 +43,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         /// <param name="searchServiceQueryApiKey">Search service query api key.</param>
         /// <param name="searchServiceAdminApiKey">Search service admin api key.</param>
         /// <param name="storageConnectionString">Storage connection string.</param>
-        public KnowledgeBaseSearchService(string searchServiceName, string searchServiceQueryApiKey, string searchServiceAdminApiKey, string storageConnectionString)
+        /// <param name="isGCCHybridDeployment">Represents whether current deployment is GCC hybrid deployment.</param>
+        public KnowledgeBaseSearchService(string searchServiceName, string searchServiceQueryApiKey, string searchServiceAdminApiKey, string storageConnectionString, bool isGCCHybridDeployment)
         {
             this.indexName = KnowledgeBaseSearchIndexName;
             this.dataSourceName = KnowledgeBaseDataSourceName;
@@ -50,6 +52,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
             this.searchServiceQueryApiKey = searchServiceQueryApiKey;
             this.searchServiceAdminApiKey = searchServiceAdminApiKey;
             this.storageConnectionString = storageConnectionString;
+            this.isGCCHybridDeployment = isGCCHybridDeployment;
             this.InitializeSearchService();
         }
 
@@ -181,14 +184,21 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         /// </summary>
         private void InitializeSearchService()
         {
+            var searchDnsSuffix = this.isGCCHybridDeployment ? "search.azure.us" : "search.windows.net";
             this.searchServiceClient = new SearchServiceClient(
                 this.searchServiceName,
-                new SearchCredentials(this.searchServiceAdminApiKey));
+                new SearchCredentials(this.searchServiceAdminApiKey))
+            {
+                SearchDnsSuffix = searchDnsSuffix,
+            };
 
             this.searchIndexClient = new SearchIndexClient(
                 this.searchServiceName,
                 this.indexName,
-                new SearchCredentials(this.searchServiceQueryApiKey));
+                new SearchCredentials(this.searchServiceQueryApiKey))
+            {
+                SearchDnsSuffix = searchDnsSuffix,
+            };
         }
     }
 }

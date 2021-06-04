@@ -1,5 +1,5 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
     "baseResourceName": {
@@ -24,6 +24,13 @@
         "description": "The client secret of the bot Azure AD app."
       }
     },
+    "botAppInsightsKey": {
+      "type": "securestring",
+      "minLength": 1,
+      "metadata": {
+        "description": "The instrumentation key for the app insights created for the bot."
+      }
+    },
     "configAppClientId": {
       "type": "string",
       "minLength": 36,
@@ -39,33 +46,8 @@
         "description": "Semicolon-delimited list of the user principal names (UPNs) allowed to access the configuration app."
       }
     },
-    "appDisplayName": {
-      "type": "string",
-      "minLength": 1,
-      "defaultValue": "FAQ Plus",
-      "metadata": {
-        "description": "The app (and bot) display name."
-      }
-    },
-    "appDescription": {
-      "type": "string",
-      "minLength": 1,
-      "defaultValue": "A friendly FAQ bot that answers questions and connects you to experts.",
-      "metadata": {
-        "description": "The app (and bot) description."
-      }
-    },
-    "appIconUrl": {
-      "type": "string",
-      "minLength": 1,
-      "defaultValue": "https://raw.githubusercontent.com/OfficeDev/microsoft-teams-apps-faqplus/master/Manifest/color.png",
-      "metadata": {
-        "description": "The link to the icon for the app. It must resolve to a PNG file."
-      }
-    },
     "tenantId": {
       "type": "string",
-      "defaultValue": "[subscription().tenantId]",
       "minLength": 1,
       "maxLength": 36,
       "metadata": {
@@ -143,19 +125,15 @@
     }
   },
   "variables": {
-    "botName": "[parameters('baseResourceName')]",
     "botAppName": "[parameters('baseResourceName')]",
-    "botAppDomain": "[concat(variables('botAppName'), '.azurewebsites.net')]",
-    "botAppUrl": "[concat('https://', variables('botAppDomain'))]",
+    "botAppDomain": "[concat(variables('botAppName'), '.azurewebsites.us')]",
     "hostingPlanName": "[parameters('baseResourceName')]",
     "storageAccountName": "[uniquestring(concat(resourceGroup().id, parameters('baseResourceName')))]",
-    "botAppInsightsName": "[parameters('baseResourceName')]",
     "functionAppName": "[concat(parameters('baseResourceName'), '-function')]",
     "configAppName": "[concat(parameters('baseResourceName'), '-config')]",
-    "configAppUrl": "[concat('https://', variables('configAppName'), '.azurewebsites.net')]",
+    "configAppUrl": "[concat('https://', variables('configAppName'), '.azurewebsites.us')]",
     "configAppInsightsName": "[concat(parameters('baseResourceName'), '-config')]",
     "qnaMakerAccountName": "[parameters('baseResourceName')]",
-    "qnaMakerLocation": "westus",
     "qnaMakerAppServiceName": "[concat(parameters('baseResourceName'), '-qnamaker')]",
     "qnaMakerAppInsightsName": "[concat(parameters('baseResourceName'), '-qnamaker')]",
     "qnaMakerSkuValue": "[substring(parameters('qnaMakerSku'), 0, 2)]",
@@ -237,7 +215,7 @@
             },
             {
               "name": "StorageConnectionString",
-              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')),'2015-05-01-preview').key1)]"
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')),'2015-05-01-preview').key1, ';EndpointSuffix=','core.usgovcloudapi.net')]"
             },
             {
               "name": "QnAMakerHostUrl",
@@ -253,7 +231,7 @@
             },
             {
               "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-              "value": "[reference(resourceId('Microsoft.Insights/components/', variables('botAppInsightsName')), '2015-05-01').InstrumentationKey]"
+              "value": "[parameters('botAppInsightsKey')]"
             },
             {
               "name": "ScoreThreshold",
@@ -285,7 +263,7 @@
             },
             {
               "name": "QnAMakerApiEndpointUrl",
-              "value": "https://westus.api.cognitive.microsoft.com"
+              "value": "[reference(resourceId('Microsoft.CognitiveServices/accounts/', variables('qnaMakerAccountName')), '2017-04-18').endpoint]"
             },
             {
               "name": "ApplicationInsightsLogLevel",
@@ -293,7 +271,7 @@
             },
             {
               "name": "IsGCCHybridDeployment",
-              "value": false
+              "value": true
             }
           ]
         }
@@ -303,8 +281,7 @@
         "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
         "[resourceId('Microsoft.Web/sites', variables('qnaMakerAppServiceName'))]",
         "[resourceId('Microsoft.CognitiveServices/accounts/', variables('qnaMakerAccountName'))]",
-        "[resourceId('Microsoft.Search/searchServices/', variables('azureSearchName'))]",
-        "[resourceId('Microsoft.Insights/components/', variables('botAppInsightsName'))]"
+        "[resourceId('Microsoft.Search/searchServices/', variables('azureSearchName'))]"
       ],
       "resources": [
         {
@@ -320,62 +297,6 @@
             "branch": "[parameters('gitBranch')]",
             "IsManualIntegration": true
           }
-        }
-      ]
-    },
-    {
-      "apiVersion": "2015-05-01",
-      "name": "[variables('botAppInsightsName')]",
-      "type": "Microsoft.Insights/components",
-      "location": "[parameters('location')]",
-      "tags": {
-        "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', variables('botAppName'))]": "Resource"
-      },
-      "properties": {
-        "Application_Type": "web",
-        "Request_Source": "rest"
-      }
-    },
-    {
-      "apiVersion": "2018-07-12",
-      "name": "[variables('botName')]",
-      "type": "Microsoft.BotService/botServices",
-      "location": "global",
-      "sku": {
-        "name": "F0"
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Web/sites', variables('botName'))]",
-        "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]"
-      ],
-      "kind": "sdk",
-      "properties": {
-        "displayName": "[parameters('appDisplayName')]",
-        "description": "[parameters('appDescription')]",
-        "iconUrl": "[parameters('appIconUrl')]",
-        "msaAppId": "[parameters('botClientId')]",
-        "endpoint": "[concat(variables('botAppUrl'), '/api/messages')]",
-        "developerAppInsightKey": "[reference(resourceId('Microsoft.Insights/components', variables('botAppInsightsName')), '2015-05-01').InstrumentationKey]"
-      },
-      "resources": [
-        {
-          "name": "[concat(variables('botName'), '/MsTeamsChannel')]",
-          "type": "Microsoft.BotService/botServices/channels",
-          "apiVersion": "2018-07-12",
-          "location": "global",
-          "sku": {
-            "name": "F0"
-          },
-          "properties": {
-            "channelName": "MsTeamsChannel",
-            "location": "global",
-            "properties": {
-              "isEnabled": true
-            }
-          },
-          "dependsOn": [
-            "[concat('Microsoft.BotService/botServices/', variables('botName'))]"
-          ]
         }
       ]
     },
@@ -412,7 +333,7 @@
             },
             {
               "name": "StorageConnectionString",
-              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')),'2015-05-01-preview').key1)]"
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')),'2015-05-01-preview').key1, ';EndpointSuffix=','core.usgovcloudapi.net')]"
             },
             {
               "name": "QnAMakerApiEndpointUrl",
@@ -488,7 +409,7 @@
       "kind": "QnAMaker",
       "name": "[variables('qnaMakerAccountName')]",
       "apiVersion": "2017-04-18",
-      "location": "[variables('qnaMakerLocation')]",
+      "location": "[parameters('location')]",
       "sku": {
         "name": "[variables('qnaMakerSkuValue')]"
       },
@@ -548,11 +469,11 @@
             },
             {
               "name": "AzureWebJobsStorage",
-              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=',listkeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2015-05-01-preview').key1,';')]"
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=',listkeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2015-05-01-preview').key1,';EndpointSuffix=','core.usgovcloudapi.net')]"
             },
             {
               "name": "AzureWebJobsDashboard",
-              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=',listkeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2015-05-01-preview').key1,';')]"
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageAccountName'),';AccountKey=',listkeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2015-05-01-preview').key1,';EndpointSuffix=','core.usgovcloudapi.net')]"
             },
             {
               "name": "FUNCTIONS_EXTENSION_VERSION",
@@ -564,7 +485,7 @@
             },
             {
               "name": "QnAMakerApiUrl",
-              "value": "https://westus.api.cognitive.microsoft.com"
+              "value": "https://virginia.api.cognitive.microsoft.us"
             },
             {
               "name": "QnAMakerSubscriptionKey",
@@ -584,7 +505,7 @@
             },
             {
               "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
-              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')),'2015-05-01-preview').key1)]"
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')),'2015-05-01-preview').key1, ';EndpointSuffix=','core.usgovcloudapi.net')]"
             },
             {
               "name": "WEBSITE_CONTENTSHARE",
@@ -592,7 +513,7 @@
             },
             {
               "name": "StorageConnectionString",
-              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')),'2015-05-01-preview').key1)]"
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')),'2015-05-01-preview').key1, ';EndpointSuffix=','core.usgovcloudapi.net')]"
             },
             {
               "name": "WEBSITE_NODE_DEFAULT_VERSION",
@@ -600,7 +521,7 @@
             },
             {
               "name": "IsGCCHybridDeployment",
-              "value": false
+              "value": true
             }
           ]
         }
@@ -688,17 +609,5 @@
     }
   ],
   "outputs": {
-    "botId": {
-      "type": "string",
-      "value": "[parameters('botClientId')]"
-    },
-    "appDomain": {
-      "type": "string",
-      "value": "[variables('botAppDomain')]"
-    },
-    "configurationAppUrl": {
-      "type": "string",
-      "value": "[variables('configAppUrl')]"
-    }
   }
 }
