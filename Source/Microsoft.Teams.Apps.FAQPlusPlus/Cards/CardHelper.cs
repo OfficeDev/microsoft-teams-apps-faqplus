@@ -1,4 +1,4 @@
-﻿// <copyright file="CardHelper.cs" company="Microsoft">
+// <copyright file="CardHelper.cs" company="Microsoft">
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 
@@ -94,7 +94,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <returns>A datetime string.</returns>
         public static string GetFormattedDateInUserTimeZone(DateTime dateTime, DateTimeOffset? userLocalTime)
         {
-            return dateTime.Add(userLocalTime?.Offset ?? TimeSpan.FromMinutes(0)).ToString("ddd, MMMM dd, yyyy", CultureInfo.InvariantCulture);
+            // Keeping date format for ar-sa as invariant, since we don't want to convert the dates to islamic calendar dates.
+            if (CultureInfo.CurrentCulture.Name.Equals("ar", StringComparison.OrdinalIgnoreCase) || CultureInfo.CurrentCulture.Name.Equals("ar-SA", StringComparison.OrdinalIgnoreCase))
+            {
+                return dateTime.Add(userLocalTime?.Offset ?? TimeSpan.FromMinutes(0)).ToString("dd/MM/yy", CultureInfo.InvariantCulture);
+            }
+            else
+            {
+                return dateTime.Add(userLocalTime?.Offset ?? TimeSpan.FromMinutes(0)).ToShortDateString();
+            }
         }
 
         /// <summary>
