@@ -5,7 +5,9 @@
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
 {
     using System.Collections.Generic;
+    using System.IO;
     using AdaptiveCards;
+    using AdaptiveCards.Templating;
     using Microsoft.Bot.Schema;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
@@ -22,39 +24,25 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <returns>Team welcome card.</returns>
         public static Attachment GetCard()
         {
-            AdaptiveCard teamWelcomeCard = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
+            AdaptiveCard responseCard = new AdaptiveCard(new AdaptiveSchemaVersion(1, 2));
+
+            // create template instance from the template payload
+            AdaptiveCardTemplate template = new AdaptiveCardTemplate(File.ReadAllText(@".\Cards\json\WelcomeCard.json"));
+            var welcomeData = new
             {
-                Body = new List<AdaptiveElement>
-                {
-                    new AdaptiveTextBlock
-                    {
-                        Text = Strings.WelcomeTeamCardContent,
-                        Wrap = true,
-                    },
-                },
-                Actions = new List<AdaptiveAction>
-                {
-                    // Team- take a tour submit action.
-                    new AdaptiveSubmitAction
-                    {
-                        Title = Strings.TakeATeamTourButtonText,
-                        Data = new TeamsAdaptiveSubmitActionData
-                        {
-                            MsTeams = new CardAction
-                            {
-                                Type = ActionTypes.MessageBack,
-                                DisplayText = Strings.TakeATeamTourButtonText,
-                                Text = Constants.TeamTour,
-                            },
-                        },
-                    },
-                },
+                text = Strings.WelcomeTeamCardContent,
+                displytext = Strings.TakeATeamTourButtonText,
+                submitActionText = Constants.TeamTour,
             };
 
+            // "Expand" the template - this generates the final Adaptive Card payload
+            var cardJson = template.Expand(welcomeData);
+            var result = AdaptiveCard.FromJson(cardJson);
+            responseCard = result.Card;
             return new Attachment
             {
                 ContentType = AdaptiveCard.ContentType,
-                Content = teamWelcomeCard,
+                Content = responseCard,
             };
         }
     }
