@@ -607,77 +607,14 @@
   </data>
   <data name="BotCommandAskExpert" xml:space="preserve">
     <value>専門家に質問する</value>
-    <comment>bots[0].commandLists[0].commands[1].title in manifest's translated files should match with this value.</comment>
-  </data>
-  <data name="BotCommandAskExpertDescription" xml:space="preserve">
-    <value>エキスパートにつなげる</value>
+    <comment>Bot command Ask an expert. This needs to be match with manifest's command "Ask an expert" in translated json file.</comment>
   </data>
   <data name="BotCommandFeedback" xml:space="preserve">
     <value>フィードバックを共有</value>
-    <comment>bots[0].commandLists[0].commands[2].title in manifest's translated files should match with this value.</comment>
-  </data>
-  <data name="BotCommandFeedbackDescription" xml:space="preserve">
-    <value>フィードバックを送信</value>
+    <comment>Bot command Share feedback. This needs to be match with manifest's command "Share feedback" in translated json file.</comment>
   </data>
   <data name="BotCommandTour" xml:space="preserve">
     <value>ツアーを開始</value>
-    <comment>bots[0].commandLists[0].commands[0].title in manifest's translated files should match with this value.</comment>
-  </data>
-  <data name="BotCommandTourDescription" xml:space="preserve">
-    <value>主な機能のツアー</value>
-  </data>
-  <data name="EndUserManifestLongDescription" xml:space="preserve">
-    <value>よくある質問に答えるフレンドリーな質問と回答用のボットです。 回答できない場合は、専門家が対応できるようになり次第、専門家につなぎます。</value>
-  </data>
-  <data name="EndUserManifestShortDescription" xml:space="preserve">
-    <value>質問に答えて専門家に接続する、フレンドリーな FAQ ボットです。</value>
-  </data>
-  <data name="EndUserTabName" xml:space="preserve">
-    <value>ヘルプ</value>
-  </data>
-  <data name="ExpertManifestLongDescription" xml:space="preserve">
-    <value>よくある質問に答えるフレンドリーな質問と回答用のボットです。 回答できない場合は、専門家が対応できるようになり次第、専門家につなぎます。</value>
-  </data>
-  <data name="ExpertManifestShortDescription" xml:space="preserve">
-    <value>質問に答えて専門家に接続する、フレンドリーな FAQ ボットです。</value>
-  </data>
-  <data name="ExpertMEAddQuestionDescription" xml:space="preserve">
-    <value>新しい qna ペアの追加</value>
-  </data>
-  <data name="ExpertMeAddQuestionTitle" xml:space="preserve">
-    <value>新しい質問を追加する</value>
-  </data>
-  <data name="ExpertMEAssignedDescription" xml:space="preserve">
-    <value>エキスパートに割り当てられた検索リクエスト</value>
-  </data>
-  <data name="ExpertMEAssignedTitle" xml:space="preserve">
-    <value>割り当て済み</value>
-  </data>
-  <data name="ExpertMEKbDescription" xml:space="preserve">
-    <value>最近のリクエストを検索する</value>
-  </data>
-  <data name="ExpertMeKbSearchParamDescription" xml:space="preserve">
-    <value>KB QnA を検索する</value>
-  </data>
-  <data name="ExpertMEKbTitle" xml:space="preserve">
-    <value>ナレッジ ベース</value>
-  </data>
-  <data name="ExpertMERecentDescription" xml:space="preserve">
-    <value>最近のリクエストを検索する</value>
-  </data>
-  <data name="ExpertMERecentTitle" xml:space="preserve">
-    <value>最近</value>
-  </data>
-  <data name="ExpertMESearchParam" xml:space="preserve">
-    <value>検索</value>
-  </data>
-  <data name="ExpertMESearchParamDescription" xml:space="preserve">
-    <value>チケットを検索</value>
-  </data>
-  <data name="ExpertMEUnassignedDescription" xml:space="preserve">
-    <value>エキスパートにまだ割り当てられていない未割り当てのリクエストを検索する</value>
-  </data>
-  <data name="ExpertMEUnassignedTitle" xml:space="preserve">
-    <value>未割り当て</value>
+    <comment>Bot command Take a tour. This needs to be match with manifest's command "Take a tour" in translated json file.</comment>
   </data>
 </root>

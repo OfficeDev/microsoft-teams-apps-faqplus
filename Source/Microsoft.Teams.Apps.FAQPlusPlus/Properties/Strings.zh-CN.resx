@@ -607,77 +607,14 @@
   </data>
   <data name="BotCommandAskExpert" xml:space="preserve">
     <value>咨询专家</value>
-    <comment>bots[0].commandLists[0].commands[1].title in manifest's translated files should match with this value.</comment>
-  </data>
-  <data name="BotCommandAskExpertDescription" xml:space="preserve">
-    <value>与专家联系</value>
+    <comment>Bot command Ask an expert. This needs to be match with manifest's command "Ask an expert" in translated json file.</comment>
   </data>
   <data name="BotCommandFeedback" xml:space="preserve">
     <value>共享反馈</value>
-    <comment>bots[0].commandLists[0].commands[2].title in manifest's translated files should match with this value.</comment>
-  </data>
-  <data name="BotCommandFeedbackDescription" xml:space="preserve">
-    <value>发送反馈</value>
+    <comment>Bot command Share feedback. This needs to be match with manifest's command "Share feedback" in translated json file.</comment>
   </data>
   <data name="BotCommandTour" xml:space="preserve">
     <value>浏览</value>
-    <comment>bots[0].commandLists[0].commands[0].title in manifest's translated files should match with this value.</comment>
-  </data>
-  <data name="BotCommandTourDescription" xml:space="preserve">
-    <value>主要功能导览</value>
-  </data>
-  <data name="EndUserManifestLongDescription" xml:space="preserve">
-    <value>友好的问与答机器人，可解答常见问题。如果无法解答，它会在专家有空时尽快为你联系专家。</value>
-  </data>
-  <data name="EndUserManifestShortDescription" xml:space="preserve">
-    <value>友好的常见问题解答机器人，可解答问题并帮你联系专家。</value>
-  </data>
-  <data name="EndUserTabName" xml:space="preserve">
-    <value>帮助</value>
-  </data>
-  <data name="ExpertManifestLongDescription" xml:space="preserve">
-    <value>友好的问与答机器人，可解答常见问题。如果无法解答，它会在专家有空时尽快为你联系专家。</value>
-  </data>
-  <data name="ExpertManifestShortDescription" xml:space="preserve">
-    <value>友好的常见问题解答机器人，可解答问题并帮你联系专家。</value>
-  </data>
-  <data name="ExpertMEAddQuestionDescription" xml:space="preserve">
-    <value>添加新的问答对</value>
-  </data>
-  <data name="ExpertMeAddQuestionTitle" xml:space="preserve">
-    <value>添加新问题</value>
-  </data>
-  <data name="ExpertMEAssignedDescription" xml:space="preserve">
-    <value>分配给专家的搜索请求</value>
-  </data>
-  <data name="ExpertMEAssignedTitle" xml:space="preserve">
-    <value>已分配</value>
-  </data>
-  <data name="ExpertMEKbDescription" xml:space="preserve">
-    <value>搜索最近的请求</value>
-  </data>
-  <data name="ExpertMeKbSearchParamDescription" xml:space="preserve">
-    <value>搜索知识库问答对</value>
-  </data>
-  <data name="ExpertMEKbTitle" xml:space="preserve">
-    <value>知识库</value>
-  </data>
-  <data name="ExpertMERecentDescription" xml:space="preserve">
-    <value>搜索最近的请求</value>
-  </data>
-  <data name="ExpertMERecentTitle" xml:space="preserve">
-    <value>最近</value>
-  </data>
-  <data name="ExpertMESearchParam" xml:space="preserve">
-    <value>搜索</value>
-  </data>
-  <data name="ExpertMESearchParamDescription" xml:space="preserve">
-    <value>搜索票证</value>
-  </data>
-  <data name="ExpertMEUnassignedDescription" xml:space="preserve">
-    <value>搜索尚未分配给专家的未分配请求</value>
-  </data>
-  <data name="ExpertMEUnassignedTitle" xml:space="preserve">
-    <value>未分配</value>
+    <comment>Bot command Take a tour. This needs to be match with manifest's command "Take a tour" in translated json file.</comment>
   </data>
 </root>

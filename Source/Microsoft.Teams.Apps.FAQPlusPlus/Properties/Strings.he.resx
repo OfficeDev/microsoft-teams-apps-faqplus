@@ -607,77 +607,17 @@
   </data>
   <data name="BotCommandAskExpert" xml:space="preserve">
     <value>שאל מומחה</value>
-    <comment>bots[0].commandLists[0].commands[1].title in manifest's translated files should match with this value.</comment>
-  </data>
-  <data name="BotCommandAskExpertDescription" xml:space="preserve">
-    <value>קשר למומחה</value>
+    <comment>Bot command Ask an expert. This needs to be match with manifest's command "Ask an expert" in translated json file.</comment>
   </data>
   <data name="BotCommandFeedback" xml:space="preserve">
     <value>שתף משוב</value>
-    <comment>bots[0].commandLists[0].commands[2].title in manifest's translated files should match with this value.</comment>
-  </data>
-  <data name="BotCommandFeedbackDescription" xml:space="preserve">
-    <value>שלח משוב</value>
+    <comment>Bot command Share feedback. This needs to be match with manifest's command "Share feedback" in translated json file.</comment>
   </data>
   <data name="BotCommandTour" xml:space="preserve">
     <value>צא לסיור</value>
-    <comment>bots[0].commandLists[0].commands[0].title in manifest's translated files should match with this value.</comment>
-  </data>
-  <data name="BotCommandTourDescription" xml:space="preserve">
-    <value>סיבוב היכרות של תכונות מפתח</value>
-  </data>
-  <data name="EndUserManifestLongDescription" xml:space="preserve">
-    <value>bot ידידותי לניהול דיאלוג שאלות ותשובות עונה על שאלות נפוצות. אם הוא לא יודע לענות, הוא מקשר אותך למומחה ברגע שהוא זמין.</value>
-  </data>
-  <data name="EndUserManifestShortDescription" xml:space="preserve">
-    <value>FAQ bot ידידותי שעונה על שאלות נפוצות ומקשר אותך למומחים.</value>
-  </data>
-  <data name="EndUserTabName" xml:space="preserve">
-    <value>עזרה</value>
+    <comment>Bot command Take a tour. This needs to be match with manifest's command "Take a tour" in translated json file.</comment>
   </data>
   <data name="ExpertManifestLongDescription" xml:space="preserve">
     <value>bot ידידותי לניהול דיאלוג שאלות ותשובות עונה על שאלות נפוצות. אם הוא לא יודע לענות, הוא מקשר אותך למומחה ברגע שהוא זמין.</value>
-  </data>
-  <data name="ExpertManifestShortDescription" xml:space="preserve">
-    <value>FAQ bot ידידותי שעונה על שאלות נפוצות ומקשר אותך למומחים.</value>
-  </data>
-  <data name="ExpertMEAddQuestionDescription" xml:space="preserve">
-    <value>הוסף צמד חדש של שאלה ותשובה</value>
-  </data>
-  <data name="ExpertMeAddQuestionTitle" xml:space="preserve">
-    <value>הוספת שאלה חדשה</value>
-  </data>
-  <data name="ExpertMEAssignedDescription" xml:space="preserve">
-    <value>חפש בקשות שהוקצו למומחה</value>
-  </data>
-  <data name="ExpertMEAssignedTitle" xml:space="preserve">
-    <value>הוקצה</value>
-  </data>
-  <data name="ExpertMEKbDescription" xml:space="preserve">
-    <value>חפש בקשות מהזמן האחרון</value>
-  </data>
-  <data name="ExpertMeKbSearchParamDescription" xml:space="preserve">
-    <value>חפש KB בצמדי שאלות ותשובות.</value>
-  </data>
-  <data name="ExpertMEKbTitle" xml:space="preserve">
-    <value>בסיס ידע</value>
-  </data>
-  <data name="ExpertMERecentDescription" xml:space="preserve">
-    <value>חפש בקשות מהזמן האחרון</value>
-  </data>
-  <data name="ExpertMERecentTitle" xml:space="preserve">
-    <value>מהזמן האחרון</value>
-  </data>
-  <data name="ExpertMESearchParam" xml:space="preserve">
-    <value>חפש</value>
-  </data>
-  <data name="ExpertMESearchParamDescription" xml:space="preserve">
-    <value>חיפוש כרטיסים</value>
-  </data>
-  <data name="ExpertMEUnassignedDescription" xml:space="preserve">
-    <value>חפש בקשות שלא הוקצו עדיין לא הוקצו למומחים</value>
-  </data>
-  <data name="ExpertMEUnassignedTitle" xml:space="preserve">
-    <value>לא הוקצה</value>
   </data>
 </root>

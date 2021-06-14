@@ -117,86 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="BotCommandAskAnExpert" xml:space="preserve">
-    <value>Pergunte a um especialista</value>
-    <comment>Bot command ask an expert</comment>
-  </data>
-  <data name="BotCommandAskAnExpertDescription" xml:space="preserve">
-    <value>Conecte-se com um especialista</value>
-    <comment>Bot command ask an expert description</comment>
-  </data>
-  <data name="BotCommandShareFeedback" xml:space="preserve">
-    <value>Compartilhar comentários</value>
-    <comment>bot command share feedback</comment>
-  </data>
-  <data name="BotCommandShareFeedbackDescription" xml:space="preserve">
-    <value>Enviar comentários</value>
-    <comment>bot command share feedback description</comment>
-  </data>
-  <data name="BotCommandTakeATour" xml:space="preserve">
-    <value>Faça um tour</value>
-    <comment>Bot command take a tour</comment>
-  </data>
-  <data name="BotCommandTakeATourDescription" xml:space="preserve">
-    <value>Tour pelos principais recursos</value>
-    <comment>Bot command take a tour description</comment>
-  </data>
-  <data name="ComposeExtensionCommandAddNewQuestion" xml:space="preserve">
-    <value>Adicionar nova pergunta</value>
-    <comment>Compose extension command add new question</comment>
-  </data>
-  <data name="ComposeExtensionCommandAddNewQuestionDescription" xml:space="preserve">
-    <value>Adicionar um novo par de perquntas e respostas</value>
-    <comment>Compose extension command add new question description</comment>
-  </data>
-  <data name="ComposeExtensionCommandAssigned" xml:space="preserve">
-    <value>Atribuída</value>
-    <comment>Compose extension command assigned</comment>
-  </data>
-  <data name="ComposeExtensionCommandAssignedDescription" xml:space="preserve">
-    <value>Solicitações de pesquisa atribuídas a um especialista</value>
-    <comment>Compose extension command assigned description</comment>
-  </data>
-  <data name="ComposeExtensionCommandKnowledgeBase" xml:space="preserve">
-    <value>Base de dados de conhecimento</value>
-    <comment>ComposeExtension command knowledge base</comment>
-  </data>
-  <data name="ComposeExtensionCommandKnowledgeBaseDescription" xml:space="preserve">
-    <value>Pesquisar solicitações recentes</value>
-    <comment>ComposeExtension command knowledge base description</comment>
-  </data>
-  <data name="ComposeExtensionCommandKnowledgeBaseParameterDescription" xml:space="preserve">
-    <value>Pesquisar pares de Perguntas e Respostas na Base de Dados de Conhecimento</value>
-    <comment>Compose extension command parameter description</comment>
-  </data>
-  <data name="ComposeExtensionCommandParameter" xml:space="preserve">
-    <value>Pesquisar</value>
-    <comment>Compose extension command parameter search</comment>
-  </data>
-  <data name="ComposeExtensionCommandParameterAddAQuestion" xml:space="preserve">
-    <value>Adicionar uma pergunta</value>
-    <comment>Compose extension command parameter add a question </comment>
-  </data>
-  <data name="ComposeExtensionCommandParameterDescription" xml:space="preserve">
-    <value>Pesquisar tíquetes</value>
-    <comment>Compose extension command parameter search description</comment>
-  </data>
-  <data name="ComposeExtensionCommandRecent" xml:space="preserve">
-    <value>Recentes</value>
-    <comment>Compose extension command recent</comment>
-  </data>
-  <data name="ComposeExtensionCommandRecentDescription" xml:space="preserve">
-    <value>Pesquisar solicitações recentes</value>
-    <comment>Compose extension command recent description</comment>
-  </data>
-  <data name="ComposeExtensionCommandUnassigned" xml:space="preserve">
-    <value>Não atribuída</value>
-    <comment>Compose extension command unassigned</comment>
-  </data>
-  <data name="ComposeExtensionCommandUnassignedDescription" xml:space="preserve">
-    <value>Pesquisa solicitações não atribuídas que ainda não foram atribuídas a um especialista</value>
-    <comment>Compose extension command unassigned description</comment>
-  </data>
   <data name="DefaultHelpTabText" xml:space="preserve">
     <value>Olá, eu sou seu bot amigável de Perguntas e Respostas. Você pode me fazer perguntas, e eu farei o meu melhor para responder. Se eu não puder ajudar, vou conectar você a um especialista.
 
@@ -216,28 +136,6 @@ Você pode fazer as seguintes perguntas:
 * Que coisas estão disponível aqui neste momento?</value>
     <comment>Default welcome message text to be stored in configuration app</comment>
   </data>
-  <data name="EndUserManifestFullDescription" xml:space="preserve">
-    <value>Um bot de perguntas e respostas amigáveis que responde às perguntas mais frequentes. Se ele não puder responder, você entrará em contato com um especialista assim que estiver disponível.</value>
-    <comment>{MaxLength=4000}
-End user manifest full description
-</comment>
-  </data>
-  <data name="EndUserManifestName" xml:space="preserve">
-    <value>Perguntas Mais Frequentes</value>
-    <comment>{MaxLength=30}
-End user manifest name
-</comment>
-  </data>
-  <data name="EndUserManifestShortDescription" xml:space="preserve">
-    <value>Um bot amigo de FAQ que responde a perguntas e conecta você a especialistas.</value>
-    <comment>{MaxLength=80}
-End user manifest short description
-</comment>
-  </data>
-  <data name="EndUserTabName" xml:space="preserve">
-    <value>Ajuda</value>
-    <comment>End user tab name</comment>
-  </data>
   <data name="HelpTabTextToolTipHoverMessage" xml:space="preserve">
     <value>Forneça o texto que será exibido na guia ajuda do bot e clique em OK para adicionar ou editar para modificar</value>
     <comment>Message for help tab when information icon is hovered</comment>
@@ -245,23 +143,6 @@ End user manifest short description
   <data name="KnowledgeBaseToolTipHoverMessage" xml:space="preserve">
     <value>Forneça uma ID de KnowledgeBase válida que será usada pelo bot e clique em OK para adicionar ou editar para modificar</value>
     <comment>Message for knowledgebase id when information icon is hovered</comment>
-  </data>
-  <data name="SmeManifestFullDescription" xml:space="preserve">
-    <value>Um bot de perguntas e respostas amigáveis que responde às perguntas mais frequentes. Se ele não puder responder, você entrará em contato com um especialista assim que estiver disponível.</value>
-    <comment>{MaxLength=4000}
-SME manifest full description
-</comment>
-  </data>
-  <data name="SmeManifestName" xml:space="preserve">
-    <value>Perg.+ Freq. (Equipe de Esp.)</value>
-    <comment>{MaxLength=30}
-SME manifest name</comment>
-  </data>
-  <data name="SmeManifestShortDescription" xml:space="preserve">
-    <value>Um bot amigo de FAQ que responde a perguntas e conecta você a especialistas.</value>
-    <comment>{MaxLength=80}
-SME manifest short description
-</comment>
   </data>
   <data name="TeamIdToolTipHoverMessage" xml:space="preserve">
     <value>Forneça uma ID de equipe deeplink que será usada pelo bot e clique em OK para adicionar ou editar para modificar</value>

@@ -117,86 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="BotCommandAskAnExpert" xml:space="preserve">
-    <value>咨询专家</value>
-    <comment>Bot command ask an expert</comment>
-  </data>
-  <data name="BotCommandAskAnExpertDescription" xml:space="preserve">
-    <value>与专家联系</value>
-    <comment>Bot command ask an expert description</comment>
-  </data>
-  <data name="BotCommandShareFeedback" xml:space="preserve">
-    <value>分享反馈</value>
-    <comment>bot command share feedback</comment>
-  </data>
-  <data name="BotCommandShareFeedbackDescription" xml:space="preserve">
-    <value>发送反馈</value>
-    <comment>bot command share feedback description</comment>
-  </data>
-  <data name="BotCommandTakeATour" xml:space="preserve">
-    <value>浏览</value>
-    <comment>Bot command take a tour</comment>
-  </data>
-  <data name="BotCommandTakeATourDescription" xml:space="preserve">
-    <value>主要功能导览</value>
-    <comment>Bot command take a tour description</comment>
-  </data>
-  <data name="ComposeExtensionCommandAddNewQuestion" xml:space="preserve">
-    <value>添加新问题</value>
-    <comment>Compose extension command add new question</comment>
-  </data>
-  <data name="ComposeExtensionCommandAddNewQuestionDescription" xml:space="preserve">
-    <value>添加新的问答对</value>
-    <comment>Compose extension command add new question description</comment>
-  </data>
-  <data name="ComposeExtensionCommandAssigned" xml:space="preserve">
-    <value>已分配</value>
-    <comment>Compose extension command assigned</comment>
-  </data>
-  <data name="ComposeExtensionCommandAssignedDescription" xml:space="preserve">
-    <value>分配给专家的搜索请求</value>
-    <comment>Compose extension command assigned description</comment>
-  </data>
-  <data name="ComposeExtensionCommandKnowledgeBase" xml:space="preserve">
-    <value>知识库</value>
-    <comment>ComposeExtension command knowledge base</comment>
-  </data>
-  <data name="ComposeExtensionCommandKnowledgeBaseDescription" xml:space="preserve">
-    <value>搜索最近的请求</value>
-    <comment>ComposeExtension command knowledge base description</comment>
-  </data>
-  <data name="ComposeExtensionCommandKnowledgeBaseParameterDescription" xml:space="preserve">
-    <value>搜索知识库问答对</value>
-    <comment>Compose extension command parameter description</comment>
-  </data>
-  <data name="ComposeExtensionCommandParameter" xml:space="preserve">
-    <value>搜索</value>
-    <comment>Compose extension command parameter search</comment>
-  </data>
-  <data name="ComposeExtensionCommandParameterAddAQuestion" xml:space="preserve">
-    <value>添加问题</value>
-    <comment>Compose extension command parameter add a question </comment>
-  </data>
-  <data name="ComposeExtensionCommandParameterDescription" xml:space="preserve">
-    <value>搜索票证</value>
-    <comment>Compose extension command parameter search description</comment>
-  </data>
-  <data name="ComposeExtensionCommandRecent" xml:space="preserve">
-    <value>最近</value>
-    <comment>Compose extension command recent</comment>
-  </data>
-  <data name="ComposeExtensionCommandRecentDescription" xml:space="preserve">
-    <value>搜索最近的请求</value>
-    <comment>Compose extension command recent description</comment>
-  </data>
-  <data name="ComposeExtensionCommandUnassigned" xml:space="preserve">
-    <value>未分配</value>
-    <comment>Compose extension command unassigned</comment>
-  </data>
-  <data name="ComposeExtensionCommandUnassignedDescription" xml:space="preserve">
-    <value>搜索尚未分配给专家的未分配请求</value>
-    <comment>Compose extension command unassigned description</comment>
-  </data>
   <data name="DefaultHelpTabText" xml:space="preserve">
     <value>大家好，我是你们友好的问答机器人。你可以问我问题，我会尽力回答。如果我无法提供帮助，我会将你连接到专家。
 
@@ -216,28 +136,6 @@
 * 现在这里有什么可用的内容?</value>
     <comment>Default welcome message text to be stored in configuration app</comment>
   </data>
-  <data name="EndUserManifestFullDescription" xml:space="preserve">
-    <value>友好的问与答机器人，可解答常见问题。如果无法解答，它会在专家有空时尽快为你联系专家。</value>
-    <comment>{MaxLength=4000}
-End user manifest full description
-</comment>
-  </data>
-  <data name="EndUserManifestName" xml:space="preserve">
-    <value>常见问题解答增强版</value>
-    <comment>{MaxLength=30}
-End user manifest name
-</comment>
-  </data>
-  <data name="EndUserManifestShortDescription" xml:space="preserve">
-    <value>友好的常见问题解答机器人，可解答问题并帮你联系专家。</value>
-    <comment>{MaxLength=80}
-End user manifest short description
-</comment>
-  </data>
-  <data name="EndUserTabName" xml:space="preserve">
-    <value>帮助</value>
-    <comment>End user tab name</comment>
-  </data>
   <data name="HelpTabTextToolTipHoverMessage" xml:space="preserve">
     <value>提供将显示在机器人的“帮助”选项卡中的文本，然后单击“确定”以添加或编辑以进行修改</value>
     <comment>Message for help tab when information icon is hovered</comment>
@@ -245,23 +143,6 @@ End user manifest short description
   <data name="KnowledgeBaseToolTipHoverMessage" xml:space="preserve">
     <value>提供一个将由机器人使用的有效知识库 ID，然后单击“确定”以添加或编辑以进行修改</value>
     <comment>Message for knowledgebase id when information icon is hovered</comment>
-  </data>
-  <data name="SmeManifestFullDescription" xml:space="preserve">
-    <value>友好的问与答机器人，可解答常见问题。如果无法解答，它会在专家有空时尽快为你联系专家。</value>
-    <comment>{MaxLength=4000}
-SME manifest full description
-</comment>
-  </data>
-  <data name="SmeManifestName" xml:space="preserve">
-    <value>常见问题解答增强版(专家团队)</value>
-    <comment>{MaxLength=30}
-SME manifest name</comment>
-  </data>
-  <data name="SmeManifestShortDescription" xml:space="preserve">
-    <value>友好的常见问题解答机器人，可解答问题并帮你联系专家。</value>
-    <comment>{MaxLength=80}
-SME manifest short description
-</comment>
   </data>
   <data name="TeamIdToolTipHoverMessage" xml:space="preserve">
     <value>提供一个将由机器人使用的团队 ID 深层链接，然后单击“确定”以添加或编辑以进行修改</value>

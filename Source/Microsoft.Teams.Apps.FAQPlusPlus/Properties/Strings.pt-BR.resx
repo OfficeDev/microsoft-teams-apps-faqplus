@@ -607,77 +607,14 @@ Sou o seu bot de QA que ajuda você a fornecer suporte a pessoas que interagem c
   </data>
   <data name="BotCommandAskExpert" xml:space="preserve">
     <value>Pergunte a um especialista</value>
-    <comment>bots[0].commandLists[0].commands[1].title in manifest's translated files should match with this value.</comment>
-  </data>
-  <data name="BotCommandAskExpertDescription" xml:space="preserve">
-    <value>Conecte-se com um especialista</value>
+    <comment>Bot command Ask an expert. This needs to be match with manifest's command "Ask an expert" in translated json file.</comment>
   </data>
   <data name="BotCommandFeedback" xml:space="preserve">
     <value>Compartilhar comentários</value>
-    <comment>bots[0].commandLists[0].commands[2].title in manifest's translated files should match with this value.</comment>
-  </data>
-  <data name="BotCommandFeedbackDescription" xml:space="preserve">
-    <value>Enviar comentários</value>
+    <comment>Bot command Share feedback. This needs to be match with manifest's command "Share feedback" in translated json file.</comment>
   </data>
   <data name="BotCommandTour" xml:space="preserve">
     <value>Faça um tour</value>
-    <comment>bots[0].commandLists[0].commands[0].title in manifest's translated files should match with this value.</comment>
-  </data>
-  <data name="BotCommandTourDescription" xml:space="preserve">
-    <value>Tour pelos principais recursos</value>
-  </data>
-  <data name="EndUserManifestLongDescription" xml:space="preserve">
-    <value>Um bot de perguntas e respostas amigáveis que responde às perguntas mais frequentes. Se ele não puder responder, você entrará em contato com um especialista assim que estiver disponível.</value>
-  </data>
-  <data name="EndUserManifestShortDescription" xml:space="preserve">
-    <value>Um amigável bot de perguntas frequentes que responde perguntas e conecta você a especialistas.</value>
-  </data>
-  <data name="EndUserTabName" xml:space="preserve">
-    <value>Ajuda</value>
-  </data>
-  <data name="ExpertManifestLongDescription" xml:space="preserve">
-    <value>Um bot de perguntas e respostas amigáveis que responde às perguntas mais frequentes. Se ele não puder responder, você entrará em contato com um especialista assim que estiver disponível.</value>
-  </data>
-  <data name="ExpertManifestShortDescription" xml:space="preserve">
-    <value>Um amigável bot de perguntas frequentes que responde perguntas e conecta você a especialistas.</value>
-  </data>
-  <data name="ExpertMEAddQuestionDescription" xml:space="preserve">
-    <value>Adicionar um novo par de perquntas e respostas</value>
-  </data>
-  <data name="ExpertMeAddQuestionTitle" xml:space="preserve">
-    <value>Adicionar nova pergunta</value>
-  </data>
-  <data name="ExpertMEAssignedDescription" xml:space="preserve">
-    <value>Solicitações de pesquisa atribuídas a um especialista</value>
-  </data>
-  <data name="ExpertMEAssignedTitle" xml:space="preserve">
-    <value>Atribuída</value>
-  </data>
-  <data name="ExpertMEKbDescription" xml:space="preserve">
-    <value>Pesquisar solicitações recentes</value>
-  </data>
-  <data name="ExpertMeKbSearchParamDescription" xml:space="preserve">
-    <value>Pesquisa pares de perguntas e respostas da base de dados</value>
-  </data>
-  <data name="ExpertMEKbTitle" xml:space="preserve">
-    <value>Base de dados de conhecimento</value>
-  </data>
-  <data name="ExpertMERecentDescription" xml:space="preserve">
-    <value>Pesquisar solicitações recentes</value>
-  </data>
-  <data name="ExpertMERecentTitle" xml:space="preserve">
-    <value>Recentes</value>
-  </data>
-  <data name="ExpertMESearchParam" xml:space="preserve">
-    <value>Pesquisar</value>
-  </data>
-  <data name="ExpertMESearchParamDescription" xml:space="preserve">
-    <value>Pesquisar tíquetes</value>
-  </data>
-  <data name="ExpertMEUnassignedDescription" xml:space="preserve">
-    <value>Pesquisa solicitações não atribuídas que ainda não foram atribuídas a um especialista</value>
-  </data>
-  <data name="ExpertMEUnassignedTitle" xml:space="preserve">
-    <value>Não atribuída</value>
+    <comment>Bot command Take a tour. This needs to be match with manifest's command "Take a tour" in translated json file.</comment>
   </data>
 </root>

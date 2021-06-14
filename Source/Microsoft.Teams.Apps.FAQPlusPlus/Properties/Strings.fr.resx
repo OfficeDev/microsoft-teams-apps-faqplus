@@ -607,77 +607,14 @@ Je suis votre robot Questions et réponses convivial qui vous aide à prendre en
   </data>
   <data name="BotCommandAskExpert" xml:space="preserve">
     <value>Demander à un expert</value>
-    <comment>bots[0].commandLists[0].commands[1].title in manifest's translated files should match with this value.</comment>
-  </data>
-  <data name="BotCommandAskExpertDescription" xml:space="preserve">
-    <value>Contacter un expert</value>
+    <comment>Bot command Ask an expert. This needs to be match with manifest's command "Ask an expert" in translated json file.</comment>
   </data>
   <data name="BotCommandFeedback" xml:space="preserve">
     <value>Partager des commentaires</value>
-    <comment>bots[0].commandLists[0].commands[2].title in manifest's translated files should match with this value.</comment>
-  </data>
-  <data name="BotCommandFeedbackDescription" xml:space="preserve">
-    <value>Envoyer des commentaires</value>
+    <comment>Bot command Share feedback. This needs to be match with manifest's command "Share feedback" in translated json file.</comment>
   </data>
   <data name="BotCommandTour" xml:space="preserve">
     <value>Suivre la visite guidée</value>
-    <comment>bots[0].commandLists[0].commands[0].title in manifest's translated files should match with this value.</comment>
-  </data>
-  <data name="BotCommandTourDescription" xml:space="preserve">
-    <value>Aperçu des principales fonctionnalités</value>
-  </data>
-  <data name="EndUserManifestLongDescription" xml:space="preserve">
-    <value>Un robot de question/réponses amical qui répond aux questions fréquemment posées. S’il ne peut pas y répondre, il vous mettra en contact avec un expert dès que celui ou celle-ci sera disponible.</value>
-  </data>
-  <data name="EndUserManifestShortDescription" xml:space="preserve">
-    <value>Robot amical de FAQ qui répond aux questions et vous met en relation avec des experts.</value>
-  </data>
-  <data name="EndUserTabName" xml:space="preserve">
-    <value>Aide</value>
-  </data>
-  <data name="ExpertManifestLongDescription" xml:space="preserve">
-    <value>Un robot de question/réponses amical qui répond aux questions fréquemment posées. S’il ne peut pas y répondre, il vous mettra en contact avec un expert dès que celui ou celle-ci sera disponible.</value>
-  </data>
-  <data name="ExpertManifestShortDescription" xml:space="preserve">
-    <value>Robot amical de FAQ qui répond aux questions et vous met en relation avec des experts.</value>
-  </data>
-  <data name="ExpertMEAddQuestionDescription" xml:space="preserve">
-    <value>Ajouter une nouvelle paire de Q/R</value>
-  </data>
-  <data name="ExpertMeAddQuestionTitle" xml:space="preserve">
-    <value>Ajouter une nouvelle question</value>
-  </data>
-  <data name="ExpertMEAssignedDescription" xml:space="preserve">
-    <value>Rechercher parmi les demandes affectées à un expert</value>
-  </data>
-  <data name="ExpertMEAssignedTitle" xml:space="preserve">
-    <value>Attribué</value>
-  </data>
-  <data name="ExpertMEKbDescription" xml:space="preserve">
-    <value>Rechercher dans les demandes récentes</value>
-  </data>
-  <data name="ExpertMeKbSearchParamDescription" xml:space="preserve">
-    <value>Rechercher les paires en Q/R de base de connaissances.</value>
-  </data>
-  <data name="ExpertMEKbTitle" xml:space="preserve">
-    <value>Base de connaissances</value>
-  </data>
-  <data name="ExpertMERecentDescription" xml:space="preserve">
-    <value>Rechercher dans les demandes récentes</value>
-  </data>
-  <data name="ExpertMERecentTitle" xml:space="preserve">
-    <value>Récents</value>
-  </data>
-  <data name="ExpertMESearchParam" xml:space="preserve">
-    <value>Rechercher</value>
-  </data>
-  <data name="ExpertMESearchParamDescription" xml:space="preserve">
-    <value>Rechercher des tickets</value>
-  </data>
-  <data name="ExpertMEUnassignedDescription" xml:space="preserve">
-    <value>Rechercher parmi les demandes qui ne sont pas encore affectées à un expert</value>
-  </data>
-  <data name="ExpertMEUnassignedTitle" xml:space="preserve">
-    <value>Non affecté</value>
+    <comment>Bot command Take a tour. This needs to be match with manifest's command "Take a tour" in translated json file.</comment>
   </data>
 </root>

@@ -607,77 +607,14 @@
   </data>
   <data name="BotCommandAskExpert" xml:space="preserve">
     <value>سؤال خبير</value>
-    <comment>bots[0].commandLists[0].commands[1].title in manifest's translated files should match with this value.</comment>
-  </data>
-  <data name="BotCommandAskExpertDescription" xml:space="preserve">
-    <value>التواصل مع خبير</value>
+    <comment>Bot command Ask an expert. This needs to be match with manifest's command "Ask an expert" in translated json file.</comment>
   </data>
   <data name="BotCommandFeedback" xml:space="preserve">
     <value>مشاركة ملاحظات</value>
-    <comment>bots[0].commandLists[0].commands[2].title in manifest's translated files should match with this value.</comment>
-  </data>
-  <data name="BotCommandFeedbackDescription" xml:space="preserve">
-    <value>إرسال ملاحظات</value>
+    <comment>Bot command Share feedback. This needs to be match with manifest's command "Share feedback" in translated json file.</comment>
   </data>
   <data name="BotCommandTour" xml:space="preserve">
     <value>القيام بجولة</value>
-    <comment>bots[0].commandLists[0].commands[0].title in manifest's translated files should match with this value.</comment>
-  </data>
-  <data name="BotCommandTourDescription" xml:space="preserve">
-    <value>جولة للتعرّف على الميزات الأساسية</value>
-  </data>
-  <data name="EndUserManifestLongDescription" xml:space="preserve">
-    <value>روبوت الأسئلة والإجابات سهل الاستخدام الذي يجيب عن الأسئلة الشائعة المطروحة. إذا لم يستطع الإجابة، فسيوصلك بأحد الخبراء فور توفره.</value>
-  </data>
-  <data name="EndUserManifestShortDescription" xml:space="preserve">
-    <value>روبوت الأسئلة المتداولة سهل الاستخدام الذي يجيب عن الأسئلة ويوصلك بالخبراء.</value>
-  </data>
-  <data name="EndUserTabName" xml:space="preserve">
-    <value>التعليمات</value>
-  </data>
-  <data name="ExpertManifestLongDescription" xml:space="preserve">
-    <value>روبوت الأسئلة والإجابات سهل الاستخدام الذي يجيب عن الأسئلة الشائعة المطروحة. إذا لم يستطع الإجابة، فسيوصلك بأحد الخبراء فور توفره.</value>
-  </data>
-  <data name="ExpertManifestShortDescription" xml:space="preserve">
-    <value>روبوت الأسئلة المتداولة سهل الاستخدام الذي يجيب عن الأسئلة ويوصلك بالخبراء.</value>
-  </data>
-  <data name="ExpertMEAddQuestionDescription" xml:space="preserve">
-    <value>إضافة زوج جديد من الأسئلة والإجابات</value>
-  </data>
-  <data name="ExpertMeAddQuestionTitle" xml:space="preserve">
-    <value>إضافة سؤال جديد</value>
-  </data>
-  <data name="ExpertMEAssignedDescription" xml:space="preserve">
-    <value>بحث في الطلبات المعينة إلى خبير</value>
-  </data>
-  <data name="ExpertMEAssignedTitle" xml:space="preserve">
-    <value>المعينة</value>
-  </data>
-  <data name="ExpertMEKbDescription" xml:space="preserve">
-    <value>بحث في الطلبات الأخيرة</value>
-  </data>
-  <data name="ExpertMeKbSearchParamDescription" xml:space="preserve">
-    <value>بحث في أزواج الأسئلة والإجابات لقاعدة المعارف</value>
-  </data>
-  <data name="ExpertMEKbTitle" xml:space="preserve">
-    <value>قاعدة المعارف</value>
-  </data>
-  <data name="ExpertMERecentDescription" xml:space="preserve">
-    <value>بحث في الطلبات الأخيرة</value>
-  </data>
-  <data name="ExpertMERecentTitle" xml:space="preserve">
-    <value>الأخيرة</value>
-  </data>
-  <data name="ExpertMESearchParam" xml:space="preserve">
-    <value>بحث</value>
-  </data>
-  <data name="ExpertMESearchParamDescription" xml:space="preserve">
-    <value>بحث في التذاكر</value>
-  </data>
-  <data name="ExpertMEUnassignedDescription" xml:space="preserve">
-    <value>بحث في الطلبات غير المعينة بعد إلى خبير</value>
-  </data>
-  <data name="ExpertMEUnassignedTitle" xml:space="preserve">
-    <value>غير المعينة</value>
+    <comment>Bot command Take a tour. This needs to be match with manifest's command "Take a tour" in translated json file.</comment>
   </data>
 </root>

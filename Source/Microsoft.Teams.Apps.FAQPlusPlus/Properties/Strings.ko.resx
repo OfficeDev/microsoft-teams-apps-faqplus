@@ -607,77 +607,14 @@
   </data>
   <data name="BotCommandAskExpert" xml:space="preserve">
     <value>전문가에게 문의</value>
-    <comment>bots[0].commandLists[0].commands[1].title in manifest's translated files should match with this value.</comment>
-  </data>
-  <data name="BotCommandAskExpertDescription" xml:space="preserve">
-    <value>전문가와 연결</value>
+    <comment>Bot command Ask an expert. This needs to be match with manifest's command "Ask an expert" in translated json file.</comment>
   </data>
   <data name="BotCommandFeedback" xml:space="preserve">
     <value>피드백 공유</value>
-    <comment>bots[0].commandLists[0].commands[2].title in manifest's translated files should match with this value.</comment>
-  </data>
-  <data name="BotCommandFeedbackDescription" xml:space="preserve">
-    <value>피드백 보내기</value>
+    <comment>Bot command Share feedback. This needs to be match with manifest's command "Share feedback" in translated json file.</comment>
   </data>
   <data name="BotCommandTour" xml:space="preserve">
     <value>둘러보기</value>
-    <comment>bots[0].commandLists[0].commands[0].title in manifest's translated files should match with this value.</comment>
-  </data>
-  <data name="BotCommandTourDescription" xml:space="preserve">
-    <value>주요 기능 둘러보기</value>
-  </data>
-  <data name="EndUserManifestLongDescription" xml:space="preserve">
-    <value>흔히 묻는 질문에 답변하는 친근한 질문과 대답 봇입니다. 봇이 답변할 수 없는 경우, 가능한 한 빨리 전문가와 연락할 수 있도록 연결합니다.</value>
-  </data>
-  <data name="EndUserManifestShortDescription" xml:space="preserve">
-    <value>질문에 답변하고 전문가에게 연결하는 친숙한 FAQ 봇입니다.</value>
-  </data>
-  <data name="EndUserTabName" xml:space="preserve">
-    <value>도움말</value>
-  </data>
-  <data name="ExpertManifestLongDescription" xml:space="preserve">
-    <value>흔히 묻는 질문에 답변하는 친근한 질문과 대답 봇입니다. 봇이 답변할 수 없는 경우, 가능한 한 빨리 전문가와 연락할 수 있도록 연결합니다.</value>
-  </data>
-  <data name="ExpertManifestShortDescription" xml:space="preserve">
-    <value>질문에 답변하고 전문가에게 연결하는 친숙한 FAQ 봇입니다.</value>
-  </data>
-  <data name="ExpertMEAddQuestionDescription" xml:space="preserve">
-    <value>새 qna 쌍 추가</value>
-  </data>
-  <data name="ExpertMeAddQuestionTitle" xml:space="preserve">
-    <value>새 질문 추가</value>
-  </data>
-  <data name="ExpertMEAssignedDescription" xml:space="preserve">
-    <value>전문가에게 할당된 검색 요청</value>
-  </data>
-  <data name="ExpertMEAssignedTitle" xml:space="preserve">
-    <value>할당됨</value>
-  </data>
-  <data name="ExpertMEKbDescription" xml:space="preserve">
-    <value>최근 요청 검색</value>
-  </data>
-  <data name="ExpertMeKbSearchParamDescription" xml:space="preserve">
-    <value>KB QnA 쌍 검색</value>
-  </data>
-  <data name="ExpertMEKbTitle" xml:space="preserve">
-    <value>기술 자료</value>
-  </data>
-  <data name="ExpertMERecentDescription" xml:space="preserve">
-    <value>최근 요청 검색</value>
-  </data>
-  <data name="ExpertMERecentTitle" xml:space="preserve">
-    <value>최근</value>
-  </data>
-  <data name="ExpertMESearchParam" xml:space="preserve">
-    <value>검색</value>
-  </data>
-  <data name="ExpertMESearchParamDescription" xml:space="preserve">
-    <value>티켓 검색</value>
-  </data>
-  <data name="ExpertMEUnassignedDescription" xml:space="preserve">
-    <value>검색되지 않은 요청이 전문가에 아직 할당되지 않았습니다.</value>
-  </data>
-  <data name="ExpertMEUnassignedTitle" xml:space="preserve">
-    <value>할당 해제됨</value>
+    <comment>Bot command Take a tour. This needs to be match with manifest's command "Take a tour" in translated json file.</comment>
   </data>
 </root>

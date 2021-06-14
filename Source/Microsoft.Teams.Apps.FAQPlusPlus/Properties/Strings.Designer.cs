@@ -196,15 +196,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Connect with an expert.
-        /// </summary>
-        public static string BotCommandAskExpertDescription {
-            get {
-                return ResourceManager.GetString("BotCommandAskExpertDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Share feedback.
         /// </summary>
         public static string BotCommandFeedback {
@@ -214,29 +205,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Send feedback.
-        /// </summary>
-        public static string BotCommandFeedbackDescription {
-            get {
-                return ResourceManager.GetString("BotCommandFeedbackDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Take a tour.
         /// </summary>
         public static string BotCommandTour {
             get {
                 return ResourceManager.GetString("BotCommandTour", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Tour of key features.
-        /// </summary>
-        public static string BotCommandTourDescription {
-            get {
-                return ResourceManager.GetString("BotCommandTourDescription", resourceCulture);
             }
         }
         
@@ -439,33 +412,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A friendly question and answer bot that answers commonly asked questions. If it can&apos;t answer, it will put you in touch with an expert as soon as they are available..
-        /// </summary>
-        public static string EndUserManifestLongDescription {
-            get {
-                return ResourceManager.GetString("EndUserManifestLongDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to A friendly FAQ bot that answers questions and connects you to experts..
-        /// </summary>
-        public static string EndUserManifestShortDescription {
-            get {
-                return ResourceManager.GetString("EndUserManifestShortDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Help.
-        /// </summary>
-        public static string EndUserTabName {
-            get {
-                return ResourceManager.GetString("EndUserTabName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Created by.
         /// </summary>
         public static string EntryCreatedByText {
@@ -480,141 +426,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         public static string ErrorMessage {
             get {
                 return ResourceManager.GetString("ErrorMessage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to A friendly question and answer bot that answers commonly asked questions. If it can&apos;t answer, it will put you in touch with an expert as soon as they are available..
-        /// </summary>
-        public static string ExpertManifestLongDescription {
-            get {
-                return ResourceManager.GetString("ExpertManifestLongDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to A friendly FAQ bot that answers questions and connects you to experts..
-        /// </summary>
-        public static string ExpertManifestShortDescription {
-            get {
-                return ResourceManager.GetString("ExpertManifestShortDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Add a new qna pair.
-        /// </summary>
-        public static string ExpertMEAddQuestionDescription {
-            get {
-                return ResourceManager.GetString("ExpertMEAddQuestionDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Add new question.
-        /// </summary>
-        public static string ExpertMeAddQuestionTitle {
-            get {
-                return ResourceManager.GetString("ExpertMeAddQuestionTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Search requests assigned to an expert.
-        /// </summary>
-        public static string ExpertMEAssignedDescription {
-            get {
-                return ResourceManager.GetString("ExpertMEAssignedDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Assigned.
-        /// </summary>
-        public static string ExpertMEAssignedTitle {
-            get {
-                return ResourceManager.GetString("ExpertMEAssignedTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Search recent requests.
-        /// </summary>
-        public static string ExpertMEKbDescription {
-            get {
-                return ResourceManager.GetString("ExpertMEKbDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Search KB QnA pairs.
-        /// </summary>
-        public static string ExpertMeKbSearchParamDescription {
-            get {
-                return ResourceManager.GetString("ExpertMeKbSearchParamDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Knowledge base.
-        /// </summary>
-        public static string ExpertMEKbTitle {
-            get {
-                return ResourceManager.GetString("ExpertMEKbTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Search recent requests.
-        /// </summary>
-        public static string ExpertMERecentDescription {
-            get {
-                return ResourceManager.GetString("ExpertMERecentDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Recent.
-        /// </summary>
-        public static string ExpertMERecentTitle {
-            get {
-                return ResourceManager.GetString("ExpertMERecentTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Search.
-        /// </summary>
-        public static string ExpertMESearchParam {
-            get {
-                return ResourceManager.GetString("ExpertMESearchParam", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Search tickets.
-        /// </summary>
-        public static string ExpertMESearchParamDescription {
-            get {
-                return ResourceManager.GetString("ExpertMESearchParamDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Search unassigned requests not yet assigned to an expert.
-        /// </summary>
-        public static string ExpertMEUnassignedDescription {
-            get {
-                return ResourceManager.GetString("ExpertMEUnassignedDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Unassigned.
-        /// </summary>
-        public static string ExpertMEUnassignedTitle {
-            get {
-                return ResourceManager.GetString("ExpertMEUnassignedTitle", resourceCulture);
             }
         }
         
