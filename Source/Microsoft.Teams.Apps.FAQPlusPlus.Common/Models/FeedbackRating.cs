@@ -15,11 +15,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         NotHelpful,
 
         /// <summary>
-        /// Needs improvement.
-        /// </summary>
-        NeedsImprovement,
-
-        /// <summary>
         /// Helpful.
         /// </summary>
         Helpful,

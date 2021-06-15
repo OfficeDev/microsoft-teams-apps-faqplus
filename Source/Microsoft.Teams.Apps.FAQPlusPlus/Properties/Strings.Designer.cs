@@ -367,7 +367,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Description.
+        ///   Looks up a localized string similar to Description:.
         /// </summary>
         public static string DescriptionText {
             get {
@@ -835,7 +835,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rating.
+        ///   Looks up a localized string similar to Rating:.
         /// </summary>
         public static string RatingTitle {
             get {
@@ -1123,6 +1123,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The description to create SOS ticket..
+        /// </summary>
+        public static string SOSTicketDescriptionPlaceholderText {
+            get {
+                return ResourceManager.GetString("SOSTicketDescriptionPlaceholderText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Status: .
         /// </summary>
         public static string StatusFactTitle {
@@ -1294,6 +1303,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0}, you must choose an expert!.
+        /// </summary>
+        public static string TicketAssignedToEmptyWarning {
+            get {
+                return ResourceManager.GetString("TicketAssignedToEmptyWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0}, the request already assigned to {1} !.
         /// </summary>
         public static string TicketAssignedToSameOneWarning {
@@ -1339,7 +1357,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Title.
+        ///   Looks up a localized string similar to Title:.
         /// </summary>
         public static string TitleText {
             get {
@@ -1389,6 +1407,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         public static string UpdateHistoryHeadersText {
             get {
                 return ResourceManager.GetString("UpdateHistoryHeadersText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Feedback:.
+        /// </summary>
+        public static string UserfeedbackDescriptionFact {
+            get {
+                return ResourceManager.GetString("UserfeedbackDescriptionFact", resourceCulture);
             }
         }
         

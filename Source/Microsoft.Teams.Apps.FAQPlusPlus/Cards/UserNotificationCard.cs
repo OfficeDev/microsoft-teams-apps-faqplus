@@ -152,10 +152,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 Actions = BuildActions(this.ticket, this.appBaseUri, this.appId),
             };
 
-            card.Body.Add(new AdaptiveColumnSet
+            if (this.ticket.Status != (int)TicketState.Resolved)
             {
-                Separator = true,
-                Columns = new List<AdaptiveColumn>
+                card.Body.Add(new AdaptiveColumnSet
+                {
+                    Separator = true,
+                    Columns = new List<AdaptiveColumn>
                     {
                         new AdaptiveColumn
                         {
@@ -170,7 +172,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                             },
                         },
                     },
-            });
+                });
+            }
 
             return new Attachment
             {
@@ -188,58 +191,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <returns>A list of adaptive card actions.</returns>
         private static List<AdaptiveAction> BuildActions(TicketEntity ticket, string appBaseUri, string appId)
         {
-            if (ticket.Status == (int)TicketState.Resolved)
-            {
-                return new List<AdaptiveAction>
-                {
-                    new AdaptiveSubmitAction
-                    {
-                        Title = " ",
-                        Data = new TicketFeedbackPayload
-                        {
-                            MsTeams = new CardAction
-                            {
-                                Type = ActionTypes.MessageBack,
-                                Text = TicketFeedback,
-                            },
-                            Rating = nameof(TicketSatisficationRating.Satisfied),
-                            TicketId = ticket.TicketId,
-                        },
-                        IconUrl = appBaseUri + "/content/face_smile.png",
-                    },
-                    new AdaptiveSubmitAction
-                    {
-                        Title = " ",
-                        Data = new TicketFeedbackPayload
-                        {
-                            MsTeams = new CardAction
-                            {
-                                Type = ActionTypes.MessageBack,
-                                Text = TicketFeedback,
-                            },
-                            Rating = nameof(TicketSatisficationRating.Neutral),
-                            TicketId = ticket.TicketId,
-                        },
-                        IconUrl = appBaseUri + "/content/face_straigh.png",
-                    },
-                    new AdaptiveSubmitAction
-                    {
-                        Title = " ",
-                        Data = new TicketFeedbackPayload
-                        {
-                            MsTeams = new CardAction
-                            {
-                                Type = ActionTypes.MessageBack,
-                                Text = TicketFeedback,
-                            },
-                            TicketId = ticket.TicketId,
-                            Rating = nameof(TicketSatisficationRating.Disappointed),
-                        },
-                        IconUrl = appBaseUri + "/content/face_sad.png",
-                    },
-                };
-            }
-            else
+            if (ticket.Status != (int)TicketState.Resolved)
             {
                 return new List<AdaptiveAction>
                 {
@@ -250,6 +202,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         IconUrl = appBaseUri + "/content/my_ticket.png",
                     },
                 };
+            }
+            else
+            {
+                return null;
             }
         }
 

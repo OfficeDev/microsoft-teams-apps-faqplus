@@ -16,16 +16,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         public string Rating { get; set; }
 
         /// <summary>
-        /// Gets or sets the bot helpful feedback.
-        /// </summary>
-        public string DescriptionHelpful { get; set; }
-
-        /// <summary>
-        /// Gets or sets the bot needs improvement feedback.
-        /// </summary>
-        public string DescriptionNeedsImprovement { get; set; }
-
-        /// <summary>
         /// Gets or sets the bot not helpful feedback.
         /// </summary>
         public string DescriptionNotHelpful { get; set; }
@@ -46,5 +36,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         /// provided by the user on response given by bot calling QnA Maker service.
         /// </summary>
         public string KnowledgeBaseAnswer { get; set; }
+
+        /// <summary>
+        /// Gets or sets the ticket Id, when share feedback about ticket support.
+        /// </summary>
+        public string TicketId { get; set; }
     }
 }

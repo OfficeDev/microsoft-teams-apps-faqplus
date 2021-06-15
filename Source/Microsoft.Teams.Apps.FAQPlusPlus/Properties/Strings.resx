@@ -364,7 +364,7 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <comment>Needs improvement: available feedback rating scale.</comment>
   </data>
   <data name="RatingTitle" xml:space="preserve">
-    <value>Rating</value>
+    <value>Rating:</value>
     <comment>Rating fact is used in SME facing feedback card to show the rating submitted by the user from the rating dropdown in share feedback card.</comment>
   </data>
   <data name="RatingMandatoryText" xml:space="preserve">
@@ -380,7 +380,7 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <comment>Title fact is used to show the title entered by the user for his inquiry.</comment>
   </data>
   <data name="TitleText" xml:space="preserve">
-    <value>Title</value>
+    <value>Title:</value>
     <comment>Title: label of the title text box.</comment>
   </data>
   <data name="NotHelpfulRatingText" xml:space="preserve">
@@ -733,11 +733,23 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <comment>Notification text sent to the user when user's ticket has been updated in  pending state</comment>
   </data>
   <data name="DescriptionText" xml:space="preserve">
-    <value>Description</value>
+    <value>Description:</value>
     <comment>Label text for description.</comment>
   </data>
   <data name="SMEPendingUpdated" xml:space="preserve">
     <value>The comment of request is updated by {0}.</value>
     <comment>Message posted to the thread when the ticket is updated in pending status. {0} = name of SME who updated the request.</comment>
+  </data>
+  <data name="SOSTicketDescriptionPlaceholderText" xml:space="preserve">
+    <value>The description to create SOS ticket.</value>
+    <comment>Placeholder for sos ticket description</comment>
+  </data>
+  <data name="TicketAssignedToEmptyWarning" xml:space="preserve">
+    <value>{0}, you must choose an expert!</value>
+    <comment>Message posted to the thread when try to assign ticket but assignee is not selected. {1} = name of SME who trigger the action</comment>
+  </data>
+  <data name="UserfeedbackDescriptionFact" xml:space="preserve">
+    <value>Feedback:</value>
+    <comment>Available factset in user notification and SME facing cards.</comment>
   </data>
 </root>

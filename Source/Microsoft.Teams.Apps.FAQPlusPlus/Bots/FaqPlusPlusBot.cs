@@ -575,13 +575,34 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     break;
 
                 case ShareFeedbackCard.ShareFeedbackSubmitText:
-                    this.logger.LogInformation("Received app feedback");
+                    this.logger.LogInformation("Received app or answer or ticket feedback");
+                    var shareFeedbackCardPayload = ((JObject)message.Value).ToObject<ShareFeedbackCardPayload>();
                     newFeedback = await AdaptiveCardHelper.ShareFeedbackSubmitText(message, this.appBaseUri, turnContext, cancellationToken, this.feedbackProvider).ConfigureAwait(false);
                     if (newFeedback != null)
                     {
-                        smeTeamCard = SmeFeedbackCard.GetCard(newFeedback, this.appBaseUri);
-                        Attachment userCard = UserNotificationCard.ToAttachmentString(Strings.ThankYouTextContent);
+                        if (!string.IsNullOrEmpty(shareFeedbackCardPayload.TicketId))
+                        {
+                            // if is ticket feedback
+                            var ticket = await this.ticketsProvider.GetTicketAsync(shareFeedbackCardPayload.TicketId).ConfigureAwait(false);
+                            ticket.Feedback = newFeedback.Rating;
+                            ticket.FeedbackDescription = newFeedback.Description;
 
+                            await this.ticketsProvider.UpsertTicketAsync(ticket).ConfigureAwait(false);
+                            experts = await this.expertProvider.GetExpertsAsync().ConfigureAwait(false);
+                            updateTeamsCardActivity = new Activity(ActivityTypes.Message)
+                            {
+                                Id = ticket.SmeCardActivityId,
+                                Conversation = new ConversationAccount { Id = ticket.SmeThreadConversationId },
+                                Attachments = new List<Attachment> { new SmeTicketCard(ticket, experts).ToAttachment(message.LocalTimestamp, this.appBaseUri) },
+                            };
+                        }
+                        else
+                        {
+                            // is app or answer feedback
+                            smeTeamCard = SmeFeedbackCard.GetCard(newFeedback, this.appBaseUri);
+                        }
+
+                        Attachment userCard = UserNotificationCard.ToAttachmentString(Strings.ThankYouTextContent);
                         updateCardActivity = new Activity(ActivityTypes.Message)
                         {
                             Id = turnContext.Activity.ReplyToId,
@@ -592,27 +613,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
                     userAction.Action = nameof(UserActionType.ShareFeedback);
                     break;
-
-                case UserNotificationCard.TicketFeedback:
-                    this.logger.LogInformation("Received ticket feedback");
-                    var ticketFeedbackPayload = ((JObject)message.Value).ToObject<TicketFeedbackPayload>();
-                    var ticket = await this.ticketsProvider.GetTicketAsync(ticketFeedbackPayload.TicketId).ConfigureAwait(false);
-                    ticket.Feedback = ticketFeedbackPayload.Rating;
-                    await this.ticketsProvider.UpsertTicketAsync(ticket).ConfigureAwait(false);
-
-                    await turnContext.SendActivityAsync(MessageFactory.Text(Strings.ThankYouTextContent)).ConfigureAwait(false);
-
-                    experts = await this.expertProvider.GetExpertsAsync().ConfigureAwait(false);
-                    updateTeamsCardActivity = new Activity(ActivityTypes.Message)
-                    {
-                        Id = ticket.SmeCardActivityId,
-                        Conversation = new ConversationAccount { Id = ticket.SmeThreadConversationId },
-                        Attachments = new List<Attachment> { new SmeTicketCard(ticket, experts).ToAttachment(message.LocalTimestamp, this.appBaseUri) },
-                    };
-
-                    userAction.Action = nameof(UserActionType.ShareTicketFeedback);
-                    break;
-
                 default:
                     var payload = ((JObject)message.Value).ToObject<ResponseCardPayload>();
 
@@ -772,7 +772,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     break;
 
                 case ChangeTicketStatusPayload.AssignToOthersAction:
-                    var info = payload.OtherAssigneeInfo.Split(':');
+                    var info = payload.OtherAssigneeInfo?.Split(':');
                     string assigneeName = null;
                     string assigneeID = null;
                     string assigneeUserPrincilpeName = null;
@@ -784,7 +784,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     }
                     else
                     {
-                        throw new ArgumentException("assigned infor error");
+                        var mention = await this.MentionSomeoneByName(turnContext, cancellationToken, message.From.Name).ConfigureAwait(false);
+                        if (mention != null)
+                        {
+                            var replyActivity = MessageFactory.Text(string.Format(CultureInfo.InvariantCulture, Strings.TicketAssignedToEmptyWarning, mention.Text));
+                            replyActivity.Entities = new List<Entity> { mention };
+
+                            await turnContext.SendActivityAsync(replyActivity, cancellationToken);
+                        }
+
+                        return;
                     }
 
                     // if already assigned
@@ -797,8 +806,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                             replyActivity.Entities = new List<Entity> { mention };
 
                             await turnContext.SendActivityAsync(replyActivity, cancellationToken);
-                            return;
                         }
+
+                        return;
                     }
 
                     ticket.Status = (int)TicketState.Assigned;
@@ -846,6 +856,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     ticket.ResolveComment = null;
 
                     userAction.Remark += $" to Assigned";
+                    break;
+
+                case ChangeTicketStatusPayload.CreateSoSTicketAction:
+                    this.logger.LogWarning($"Unknown status command {payload.Action}");
                     break;
 
                 default:
@@ -997,6 +1011,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 var userResponse = await turnContext.Adapter.UpdateActivityAsync(turnContext, updateUserCardActivity, cancellationToken).ConfigureAwait(false);
                 this.logger.LogInformation($"Update user ticket {ticket.TicketId}, activityId = {userResponse?.Id}");
 
+                // send the text notification first
                 IMessageActivity userNotification = null;
 
                 if (payload.Action == ChangeTicketStatusPayload.PendingUpdateAction)
@@ -1011,6 +1026,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 userNotification.Conversation = updateUserCardActivity.Conversation;
                 var userNotificationResponse = await turnContext.Adapter.SendActivitiesAsync(turnContext, new Activity[] { (Activity)userNotification }, cancellationToken).ConfigureAwait(false);
                 this.logger.LogInformation($"User notified of update to ticket {ticket.TicketId}, activityId = {userNotificationResponse.FirstOrDefault()?.Id}");
+
+                // send the share feedback card
+                if (payload.Action == ChangeTicketStatusPayload.ResolveAction)
+                {
+                    ShareFeedbackCardPayload sfPayload = new ShareFeedbackCardPayload();
+                    sfPayload.TicketId = ticket.TicketId;
+                    userNotification = MessageFactory.Attachment(ShareFeedbackCard.GetCard(sfPayload, this.appBaseUri));
+                    userNotification.Conversation = updateUserCardActivity.Conversation;
+                    await turnContext.Adapter.SendActivitiesAsync(turnContext, new Activity[] { (Activity)userNotification }, cancellationToken).ConfigureAwait(false);
+                }
             }
 
             // record user action
@@ -1282,7 +1307,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             List<ExpertEntity> experts = new List<ExpertEntity>();
             foreach (TeamsChannelAccount account in accounts)
             {
-                if (account.UserPrincipalName == "jun-ran.yin@ubisoft.com" || account.UserPrincipalName == "kang-min.lv@ubisoft.com")
+                if (account.UserPrincipalName == "qian.wang@ubisoft.com")
                 {
                     experts.Add(new ExpertEntity()
                     {

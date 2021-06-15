@@ -71,19 +71,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                },
                                Width = "stretch",
                            },
+
                        },
                    },
-                   new AdaptiveTextBlock()
+                   new AdaptiveFactSet
                    {
-                       Text = Strings.RatingTitle,
-                       Weight = AdaptiveTextWeight.Bolder,
-                       Wrap = true,
-                   },
-                   new AdaptiveTextBlock()
-                   {
-                       Text = GetRatingDisplayText(data?.Rating),
-                       Spacing = AdaptiveSpacing.None,
-                       Wrap = true,
+                       Facts = BuildFactSet(data),
                    },
                },
                 Actions = new List<AdaptiveAction>
@@ -96,57 +89,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 },
             };
 
-            // Description fact is available in the card only when user enters description text.
-            if (!string.IsNullOrWhiteSpace(data.Subject))
-            {
-                smeFeedbackCard.Body.Insert(3, new AdaptiveTextBlock()
-                {
-                    Text = Strings.SubjectFact,
-                    Weight = AdaptiveTextWeight.Bolder,
-                    Wrap = true,
-                });
-
-                smeFeedbackCard.Body.Insert(4, new AdaptiveTextBlock()
-                {
-                    Text = data.Subject,
-                    Spacing = AdaptiveSpacing.None,
-                    Wrap = true,
-                });
-            }
-
-            // Description fact is available in the card only when user enters description text.
-            if (!string.IsNullOrWhiteSpace(data.Description))
-            {
-                smeFeedbackCard.Body.Add(new AdaptiveTextBlock()
-                {
-                    Text = Strings.DescriptionText,
-                    Weight = AdaptiveTextWeight.Bolder,
-                    Wrap = true,
-                });
-
-                smeFeedbackCard.Body.Add(new AdaptiveTextBlock()
-                {
-                    Text = CardHelper.TruncateStringIfLonger(data.Description.Replace(@"\", @"\\"), CardHelper.DescriptionMaxDisplayLength),
-                    Spacing = AdaptiveSpacing.None,
-                    Wrap = true,
-                });
-            }
-
             // Question asked fact and view article show card is available when feedback is on QnA Maker response.
             if (!string.IsNullOrWhiteSpace(data.KnowledgeBaseAnswer) && !string.IsNullOrWhiteSpace(data.UserQuestion))
             {
-                smeFeedbackCard.Body.Add(new AdaptiveFactSet
-                {
-                    Facts = new List<AdaptiveFact>
-                    {
-                        new AdaptiveFact()
-                        {
-                            Title = Strings.QuestionAskedFactTitle,
-                            Value = data.UserQuestion,
-                        },
-                    },
-                });
-
                 smeFeedbackCard.Actions.AddRange(new List<AdaptiveAction>
                 {
                     new AdaptiveShowCardAction
@@ -167,6 +112,23 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 });
             }
 
+            // Description fact is available in the card only when user enters description text.
+            if (!string.IsNullOrWhiteSpace(data.Description))
+            {
+                smeFeedbackCard.Body.Add(new AdaptiveTextBlock()
+                {
+                    Text = Strings.DescriptionText,
+                    Weight = AdaptiveTextWeight.Bolder,
+                    Wrap = true,
+                });
+
+                smeFeedbackCard.Body.Add(new AdaptiveTextBlock()
+                {
+                    Text = CardHelper.TruncateStringIfLonger(data.Description.Replace(@"\", @"\\"), CardHelper.DescriptionMaxDisplayLength),
+                    Spacing = AdaptiveSpacing.None,
+                    Wrap = true,
+                });
+            }
             return new Attachment
             {
                 ContentType = AdaptiveCard.ContentType,
@@ -174,7 +136,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             };
         }
 
-        // Return the display string for the given rating
+        /// <summary>
+        /// Return the display string for the given rating.
+        /// </summary>
+        /// <param name="rating">rating string.</param>
+        /// <returns>helpful or not helpful.</returns>
         private static string GetRatingDisplayText(string rating)
         {
             if (!Enum.TryParse(rating, out FeedbackRating value))
@@ -183,6 +149,38 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             }
 
             return Strings.ResourceManager.GetString($"{rating}RatingText", CultureInfo.InvariantCulture);
+        }
+
+        private static List<AdaptiveFact> BuildFactSet(FeedbackEntity data)
+        {
+            List<AdaptiveFact> factList = new List<AdaptiveFact>();
+            factList.Add(new AdaptiveFact
+            {
+                Title = Strings.RatingTitle,
+                Value = GetRatingDisplayText(data?.Rating),
+            });
+
+            // Subject fact is available in the card only when user answer has category.
+            if (!string.IsNullOrWhiteSpace(data.Subject))
+            {
+                factList.Add(new AdaptiveFact
+                {
+                    Title = Strings.SubjectFact,
+                    Value = data.Subject,
+                });
+            }
+
+            // UserQUestoin fact is available in the card only when triggered from answer.
+            if (!string.IsNullOrWhiteSpace(data.KnowledgeBaseAnswer) && !string.IsNullOrWhiteSpace(data.UserQuestion))
+            {
+                factList.Add(new AdaptiveFact()
+                {
+                    Title = Strings.QuestionAskedFactTitle,
+                    Value = data.UserQuestion,
+                });
+            }
+
+            return factList;
         }
     }
 }
