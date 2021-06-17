@@ -97,7 +97,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             // Keeping date format for ar-sa as invariant, since we don't want to convert the dates to islamic calendar dates.
             if (CultureInfo.CurrentCulture.Name.Equals("ar", StringComparison.OrdinalIgnoreCase) || CultureInfo.CurrentCulture.Name.Equals("ar-SA", StringComparison.OrdinalIgnoreCase))
             {
-                return dateTime.Add(userLocalTime?.Offset ?? TimeSpan.FromMinutes(0)).ToString("dd/MM/yy", CultureInfo.InvariantCulture);
+                return dateTime.Add(userLocalTime?.Offset ?? TimeSpan.FromMinutes(0)).ToString(CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern, CultureInfo.InvariantCulture);
             }
             else
             {
