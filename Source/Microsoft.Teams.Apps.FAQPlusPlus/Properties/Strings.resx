@@ -752,4 +752,24 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <value>Feedback:</value>
     <comment>Available factset in user notification and SME facing cards.</comment>
   </data>
+  <data name="SMETicketSOSInProgressStatus" xml:space="preserve">
+    <value>SOS In Progress</value>
+    <comment>This value represents the SME Ticket in forwarded to SOS</comment>
+  </data>
+  <data name="SMETicketSOSStatus" xml:space="preserve">
+    <value>SOS forwarded by {0} </value>
+    <comment>This value represents the SME Ticket in forwarded to SOS-{0} = who execute this operation</comment>
+  </data>
+  <data name="CreateSOSUserNotification" xml:space="preserve">
+    <value>Your request require extra support, the expert has created an SOS ticket for you, you will get help from world wide.</value>
+    <comment>Notification text sent to the user when user's ticket has been forward to SOS</comment>
+  </data>
+  <data name="SMESOSStatus" xml:space="preserve">
+    <value>This request is now forward to SOS. Forwarded by {0}.</value>
+    <comment>Message posted to the thread when the ticket is forwarded to SOS. {0} = name of SME who forward the request.</comment>
+  </data>
+  <data name="SOSFact" xml:space="preserve">
+    <value>SOS:</value>
+    <comment>Available factset in user notification and SME facing cards.</comment>
+  </data>
 </root>

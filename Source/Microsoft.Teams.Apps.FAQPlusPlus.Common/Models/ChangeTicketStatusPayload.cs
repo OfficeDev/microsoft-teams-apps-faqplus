@@ -37,6 +37,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         public const string AssignToOthersAction = "AssignToOthers";
 
         /// <summary>
+        /// Action that creat a SOS ticket.
+        /// </summary>
+        public const string CreateSoSTicketAction = "CreateSOSTicket";
+
+        /// <summary>
         /// Gets or sets the ticket id.
         /// </summary>
         [JsonProperty("ticketId")]
@@ -65,5 +70,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         /// </summary>
         [JsonProperty("otherAssigneeInfo")]
         public string OtherAssigneeInfo { get; set; }
+
+        /// <summary>
+        /// Gets or sets the SOS topic.
+        /// </summary>
+        [JsonProperty("SOSTopic")]
+        public string SOSTopic { get; set; }
+
+        /// <summary>
+        /// Gets or sets the SOS description.
+        /// </summary>
+        [JsonProperty("SOSDescription")]
+        public string SOSDescription { get; set; }
     }
 }

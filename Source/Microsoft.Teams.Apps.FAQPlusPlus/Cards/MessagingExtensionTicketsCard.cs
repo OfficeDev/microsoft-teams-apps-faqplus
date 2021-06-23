@@ -27,6 +27,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <summary>
         /// Return the appropriate set of card actions based on the state and information in the ticket.
         /// </summary>
+        /// <param name="url">Base url of this app.</param>
         /// <returns>Adaptive card actions.</returns>
         protected override List<AdaptiveAction> BuildActions(string url)
         {

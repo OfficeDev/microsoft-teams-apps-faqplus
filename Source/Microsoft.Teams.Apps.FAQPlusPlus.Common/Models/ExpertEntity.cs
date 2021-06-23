@@ -1,4 +1,8 @@
-﻿namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
+﻿// <copyright file="ExpertEntity.cs" company="Microsoft">
+// Copyright (c) Microsoft. All rights reserved.
+// </copyright>
+
+namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
 {
     using Microsoft.WindowsAzure.Storage.Table;
 

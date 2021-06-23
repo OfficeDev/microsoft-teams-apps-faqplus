@@ -277,6 +277,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Your request require extra support, the expert has created an SOS ticket for you, you will get help from world wide..
+        /// </summary>
+        public static string CreateSOSUserNotification {
+            get {
+                return ResourceManager.GetString("CreateSOSUserNotification", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to I didn&apos;t find a relevant answer for your question. Would you like me to ask an expert?.
         /// </summary>
         public static string CustomMessage {
@@ -1078,6 +1087,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This request is now forward to SOS. Forwarded by {0}..
+        /// </summary>
+        public static string SMESOSStatus {
+            get {
+                return ResourceManager.GetString("SMESOSStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Assigned to {0}.
         /// </summary>
         public static string SMETicketAssignedStatus {
@@ -1105,6 +1123,24 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to SOS In Progress.
+        /// </summary>
+        public static string SMETicketSOSInProgressStatus {
+            get {
+                return ResourceManager.GetString("SMETicketSOSInProgressStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SOS forwarded by {0} .
+        /// </summary>
+        public static string SMETicketSOSStatus {
+            get {
+                return ResourceManager.GetString("SMETicketSOSStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unassigned.
         /// </summary>
         public static string SMETicketUnassignedStatus {
@@ -1119,6 +1155,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         public static string SMEUserChatMessage {
             get {
                 return ResourceManager.GetString("SMEUserChatMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SOS:.
+        /// </summary>
+        public static string SOSFact {
+            get {
+                return ResourceManager.GetString("SOSFact", resourceCulture);
             }
         }
         

@@ -149,7 +149,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         [JsonProperty("DatePendingUpdate")]
         public DateTime? DatePendingUpdate { get; set; }
 
-
         /// <summary>
         /// Gets or sets the display name of the user that last modified the ticket.
         /// </summary>
@@ -219,6 +218,47 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         [JsonProperty("DateSendCCNotification")]
         public DateTime? DateSendCCNotification { get; set; }
 
+        /// <summary>
+        /// Gets or sets the principleName of who request the SOS.
+        /// </summary>
+        [IsSortable]
+        [JsonProperty("SOSTicketRequester")]
+        public string SOSTicketRequester { get; set; }
+
+        /// <summary>
+        /// Gets or sets the SOS ticket number.
+        /// </summary>
+        [IsSortable]
+        [JsonProperty("SOSTicketNumber")]
+        public string SOSTicketNumber { get; set; }
+
+        /// <summary>
+        /// Gets or sets the SOS ticket topic.
+        /// </summary>
+        [IsSortable]
+        [JsonProperty("SOSTopic")]
+        public string SOSTopic { get; set; }
+
+        /// <summary>
+        /// Gets or sets the SOS ticket description.
+        /// </summary>
+        [IsSortable]
+        [JsonProperty("SOSDescription")]
+        public string SOSDescription { get; set; }
+
+        /// <summary>
+        /// Gets or sets the SOS ticket system id.
+        /// </summary>
+        [IsSortable]
+        [JsonProperty("SOSLink")]
+        public string SOSLink { get; set; }
+
+        /// <summary>
+        /// Gets or sets the SOS ticket create time.
+        /// </summary>
+        [IsSortable]
+        [JsonProperty("DateSOSCreated")]
+        public DateTime? DateSOSCreated { get; set; }
 
         /// <summary>
         /// Get the pending comment fo ticket.

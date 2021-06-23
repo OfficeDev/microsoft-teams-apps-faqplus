@@ -87,12 +87,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         {
             string urlString = this.appBaseUri + "/content/ticket_reopen.png";
 
-            if (string.Compare(message, Strings.NotificationCardContent) == 0)
+            if (string.Compare(message, Strings.NotificationCardContent) == 0 || string.Compare(message, Strings.CreateSOSUserNotification) == 0)
             {
                 urlString = this.appBaseUri + "/content/ticket_created.png";
             }
-
-            if (string.Compare(message, Strings.PendingTicketUserNotification) == 0)
+            else if (string.Compare(message, Strings.PendingTicketUserNotification) == 0)
             {
                 urlString = this.appBaseUri + "/content/ticket_pending.png";
             }
@@ -219,22 +218,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         {
             List<AdaptiveFact> factList = new List<AdaptiveFact>();
 
-            if (!string.IsNullOrEmpty(ticket.TicketId))
-            {
-                factList.Add(new AdaptiveFact
-                {
-                    Title = Strings.TicketIDFact,
-                    Value = ticket.TicketId.Substring(0, 8),
-                });
-            }
-
             factList.Add(new AdaptiveFact
             {
                 Title = Strings.StatusFactTitle,
                 Value = CardHelper.GetUserTicketDisplayStatus(this.ticket),
             });
 
-            if (ticket.Status != (int)TicketState.UnAssigned)
+            if (ticket.Status != (int)TicketState.UnAssigned && !string.IsNullOrEmpty(ticket.AssignedToName))
             {
                 factList.Add(new AdaptiveFact
                 {
@@ -260,10 +250,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
 
             if (!string.IsNullOrEmpty(ticket.Description))
             {
+                string description = this.ticket.SOSDescription ?? this.ticket.Description;
                 factList.Add(new AdaptiveFact
                 {
                     Title = Strings.DescriptionFact,
-                    Value = CardHelper.TruncateStringIfLonger(this.ticket.Description.Replace(@"\", @"\\"), CardHelper.DescriptionMaxDisplayLength),
+                    Value = CardHelper.TruncateStringIfLonger(description.Replace(@"\", @"\\"), CardHelper.DescriptionMaxDisplayLength),
                 });
             }
 
@@ -296,6 +287,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         Value = CardHelper.TruncateStringIfLonger(this.ticket.ResolveComment.Replace(@"\", @"\\"), CardHelper.DescriptionMaxDisplayLength),
                     });
                 }
+            }
+
+            if (ticket.SOSTicketNumber != null)
+            {
+                factList.Add(new AdaptiveFact
+                {
+                    Title = Strings.SOSFact,
+                    Value = $"[{this.ticket.SOSTicketNumber}]({this.ticket.SOSLink})",
+                });
             }
 
             return factList;

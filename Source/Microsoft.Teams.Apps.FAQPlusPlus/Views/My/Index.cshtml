@@ -49,6 +49,7 @@
                                     <td v-else-if="ticket.Status == '1'"><span class="badge badge-info badge-pill">{{ticket.Status|status}}</span></td>
                                     <td v-else-if="ticket.Status == '2'"><span class="badge badge-warning badge-pill">{{ticket.Status|status}}</span></td>
                                     <td v-else-if="ticket.Status == '3'"><span class="badge badge-success badge-pill">{{ticket.Status|status}}</span></td>
+                                    <td v-else-if="ticket.Status == '4'"><span class="badge badge-warning badge-pill">{{ticket.Status|status}}</span></td>
                                     <td>{{ticket.AssignedToName}}</td>
                                     <td>{{ticket.DateClosed|time_local}}</td>
                                 </tr>
@@ -199,6 +200,8 @@
                     return "pending"
                 if (value == 3)
                     return "resolved"
+                if (value == 4)
+                    return "SOS"
             },
             string_short: function (value, maxlength) {
                 if (value.length > maxlength)

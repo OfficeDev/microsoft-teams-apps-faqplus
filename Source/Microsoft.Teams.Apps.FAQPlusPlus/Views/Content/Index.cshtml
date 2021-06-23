@@ -63,6 +63,7 @@
                                     <td v-if="ticket.Status == '0'"><span class="badge badge-secondary badge-pill">{{ticket.Status|status}}</span></td>
                                     <td v-else-if="ticket.Status == '1'"><span class="badge badge-success badge-pill">{{ticket.Status|status}}</span></td>
                                     <td v-else-if="ticket.Status == '2'"><span class="badge badge-warning badge-pill">{{ticket.Status|status}}</span></td>
+                                    <td v-else-if="ticket.Status == '4'"><span class="badge badge-warning badge-pill">{{ticket.Status|status}}</span></td>
                                     <td>{{ticket.AssignedToName}}</td>
                                     <td class="table-action">
                                         <a href="javascript:void(0);" class="action-icon" data-toggle="tooltip" title="go to ticket card" v-on:click="deepLinkToTicket(ticket.SmeThreadConversationId)"><span class="text-primary"><i class="dripicons-enter"></i></span></a>
@@ -290,6 +291,8 @@
                     return "pending"
                 if (value == 3)
                     return "resolved"
+                if (value == 4)
+                    return "SOS"
             },
             string_short: function (value, maxlength) {
                 if (value.length > maxlength)

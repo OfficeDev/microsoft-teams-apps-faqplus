@@ -129,6 +129,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     Wrap = true,
                 });
             }
+
             return new Attachment
             {
                 ContentType = AdaptiveCard.ContentType,

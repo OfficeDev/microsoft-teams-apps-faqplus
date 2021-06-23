@@ -103,6 +103,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         private readonly BotState userState;
         private readonly RecommendConfiguration recommendConfiguration;
         private readonly TeamsDataCapture teamsDataCapture;
+        private readonly ISOSClient sosClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FaqPlusPlusBot"/> class.
@@ -126,6 +127,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <param name="userState">user state cache.</param>
         /// <param name="recommendConfiguration">configuration to decide recommend.</param>
         /// <param name="teamsDataCapture">Teams data capture service.</param>
+        /// <param name="sosClient">Service now Client.</param>
         public FaqPlusPlusBot(
             Common.Providers.IConfigurationDataProvider configurationProvider,
             MicrosoftAppCredentials microsoftAppCredentials,
@@ -145,7 +147,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             ConversationState conversationState,
             UserState userState,
             RecommendConfiguration recommendConfiguration,
-            TeamsDataCapture teamsDataCapture)
+            TeamsDataCapture teamsDataCapture,
+            ISOSClient sosClient)
         {
             this.configurationProvider = configurationProvider;
             this.microsoftAppCredentials = microsoftAppCredentials;
@@ -176,6 +179,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             this.userState = userState;
             this.recommendConfiguration = recommendConfiguration;
             this.teamsDataCapture = teamsDataCapture ?? throw new ArgumentNullException(nameof(teamsDataCapture));
+            this.sosClient = sosClient;
         }
 
         /// <summary>
@@ -694,7 +698,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             CancellationToken cancellationToken)
         {
             //await SaveChannelMembers(turnContext, cancellationToken);
-
             var payload = ((JObject)message.Value).ToObject<ChangeTicketStatusPayload>();
             this.logger.LogInformation($"Received submit: ticketId={payload.TicketId} action={payload.Action}");
 
@@ -716,7 +719,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             {
                 // if not the owner or admin
                 bool isAdmin = await this.IsExpertAdminAsync(message.From.Name);
-                if (ticket.AssignedToName != message.From.Name && !isAdmin)
+                if (ticket.AssignedToName != message.From.Name && !isAdmin && (ticket.Status == (int)TicketState.Pending || ticket.Status == (int)TicketState.Assigned))
                 {
                     var mention = await this.MentionSomeoneByName(turnContext, cancellationToken, message.From.Name).ConfigureAwait(false);
                     if (mention != null)
@@ -859,7 +862,35 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     break;
 
                 case ChangeTicketStatusPayload.CreateSoSTicketAction:
-                    this.logger.LogWarning($"Unknown status command {payload.Action}");
+                    var accounts = await this.GetTeamsChannelMembers(turnContext, cancellationToken).ConfigureAwait(false);
+                    var trigger = accounts.Where(r => r.Name.Equals(message.From.Name)).First();
+                    SOSRequest request = new SOSRequest()
+                    {
+                        RequestFor = ticket.RequesterUserPrincipalName,
+                        Topic = payload.SOSTopic,
+                        ShortDescription = payload.SOSDescription,
+                        Description = payload.SOSDescription,
+                        WatchList = trigger?.Email,
+                    };
+
+                    SOSRequestResult sosResult = await this.sosClient.CreateRequestAsync(request);
+                    if (sosResult != null)
+                    {
+                        ticket.Status = (int)TicketState.SOSInProgress;
+                        ticket.SOSTicketNumber = sosResult.Result.Reference;
+                        ticket.SOSTopic = payload.SOSTopic;
+                        ticket.SOSDescription = payload.SOSDescription;
+                        ticket.SOSLink = $"{this.sosClient.BaseUrl}sos/request_item.do?sysparm_sys_id={sosResult.Result.SysId}";
+                        ticket.DateSOSCreated = DateTime.UtcNow;
+                        ticket.SOSTicketRequester = message.From.Name;
+
+                        this.logger.LogWarning($"SOS ticket created succeed {sosResult.Result.Reference}");
+                    }
+                    else
+                    {
+                        this.logger.LogWarning($"SOS ticket create failed");
+                    }
+
                     break;
 
                 default:
@@ -880,12 +911,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             {
                 Id = ticket.SmeCardActivityId,
                 Conversation = new ConversationAccount { Id = ticket.SmeThreadConversationId },
-                Attachments = new List<Attachment> { new SmeTicketCard(ticket, experts).ToAttachment(message.LocalTimestamp, this.appBaseUri) },
+                Attachments = new List<Attachment> { new SmeTicketCard(ticket, experts, message.From.Name).ToAttachment(message.LocalTimestamp, this.appBaseUri) },
             };
             var updateResponse = await turnContext.UpdateActivityAsync(updateCardActivity, cancellationToken).ConfigureAwait(false);
             this.logger.LogInformation($"Card for ticket {ticket.TicketId} updated to status ({ticket.Status}, {ticket.AssignedToObjectId}), activityId = {updateResponse.Id}");
 
-            // Post update to user and SME team thread.
+            // Post update to user and SME team notification thread.
             Activity updateUserCardActivity = null;
             switch (payload.Action)
             {
@@ -998,6 +1029,24 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     }
 
                     break;
+                case ChangeTicketStatusPayload.CreateSoSTicketAction:
+                    if (string.IsNullOrEmpty(ticket.SOSTicketNumber))
+                    {
+                        smeNotification = "SOS request failed";
+                    }
+                    else
+                    {
+                        smeNotification = string.Format(CultureInfo.InvariantCulture, Strings.SMESOSStatus, message.From.Name);
+
+                        updateUserCardActivity = new Activity(ActivityTypes.Message)
+                        {
+                            Id = ticket.RequesterCardActivityId,
+                            Conversation = new ConversationAccount { Id = ticket.RequesterConversationId },
+                            Attachments = new List<Attachment> { new UserNotificationCard(ticket, this.appBaseUri, this.options.AppId).ToAttachment(Strings.CreateSOSUserNotification, message.LocalTimestamp) },
+                        };
+                    }
+
+                    break;
             }
 
             if (!string.IsNullOrEmpty(smeNotification))
@@ -1016,11 +1065,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
                 if (payload.Action == ChangeTicketStatusPayload.PendingUpdateAction)
                 {
-                    userNotification = MessageFactory.Text($"Your request [{ticket.TicketId.Substring(0, 8)}] has new comment");
+                    userNotification = MessageFactory.Text($"Your request [{ticket.Title}] has new comment");
                 }
                 else
                 {
-                    userNotification = MessageFactory.Text($"Your request [{ticket.TicketId.Substring(0, 8)}] updated to status: {CardHelper.GetUserTicketDisplayStatus(ticket)} ");
+                    userNotification = MessageFactory.Text($"Your request [{ticket.Title}] updated to status: {CardHelper.GetUserTicketDisplayStatus(ticket)} ");
                 }
 
                 userNotification.Conversation = updateUserCardActivity.Conversation;

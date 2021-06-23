@@ -29,8 +29,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         Resolved = 3,
 
         /// <summary>
+        /// Represents a ticket that is forward to SOS.
+        /// </summary>
+        SOSInProgress = 4,
+
+        /// <summary>
         /// Sentinel value.
         /// </summary>
-        MaxValue = Resolved,
+        MaxValue = SOSInProgress,
     }
 }

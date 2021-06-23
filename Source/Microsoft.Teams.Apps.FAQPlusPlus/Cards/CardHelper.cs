@@ -67,6 +67,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             {
                 return Strings.PendingUserNotificationStatus;
             }
+            else if (ticket?.Status == (int)TicketState.SOSInProgress)
+            {
+                return Strings.SMETicketSOSInProgressStatus;
+            }
             else
             {
                 return Strings.ClosedUserNotificationStatus;
@@ -77,8 +81,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// Gets the current status of the ticket to display in the SME team.
         /// </summary>
         /// <param name="ticket">The current ticket information.</param>
+        /// <param name="executor">The name of whom execute this operation.</param>
         /// <returns>A status string.</returns>
-        public static string GetTicketDisplayStatusForSme(TicketEntity ticket)
+        public static string GetTicketDisplayStatusForSme(TicketEntity ticket, string executor = null)
         {
             if (ticket?.Status == (int)TicketState.UnAssigned)
             {
@@ -91,6 +96,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             else if (ticket?.Status == (int)TicketState.Pending)
             {
                 return string.Format(CultureInfo.InvariantCulture, Strings.SMETicketPendingStatus, ticket?.AssignedToName);
+            }
+            else if (ticket?.Status == (int)TicketState.SOSInProgress)
+            {
+                if (executor != null)
+                {
+                    return string.Format(CultureInfo.InvariantCulture, Strings.SMETicketSOSStatus, executor);
+                }
+
+                return Strings.SMETicketSOSInProgressStatus;
             }
             else
             {

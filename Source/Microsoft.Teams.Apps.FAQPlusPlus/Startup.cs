@@ -119,6 +119,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
             services.AddSingleton<IBotFrameworkHttpAdapter, BotFrameworkHttpAdapter>();
             services.AddSingleton(new MicrosoftAppCredentials(this.Configuration["MicrosoftAppId"], this.Configuration["MicrosoftAppPassword"]));
 
+            // Add SOS service
+            services.AddSingleton<ISOSClient>(new SOSClient(this.Configuration["SOSBaseUrl"], new SOSBasicAuth(this.Configuration["SOSUserName"], this.Configuration["SOSPassword"])));
+
             IQnAMakerClient qnaMakerClient = new QnAMakerClient(new ApiKeyServiceClientCredentials(this.Configuration["QnAMakerSubscriptionKey"])) { Endpoint = this.Configuration["QnAMakerApiEndpointUrl"] };
             string endpointKey = Task.Run(() => qnaMakerClient.EndpointKeys.GetKeysAsync()).Result.PrimaryEndpointKey;
 
@@ -162,7 +165,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
             services.AddSingleton<TelemetryLoggerMiddleware>();
             services.AddMemoryCache();
 
-            // Add miscellaneous dependencies.
+            // Add miscellaneous dependencies
             services.AddSingleton<IAppSettingsService, AppSettingsService>();
         }
     }
