@@ -319,6 +319,10 @@
             {
               "name": "i18n:SupportedCultures",
               "value": "en,ar,de,es,fr,he,ja,ko,pt-BR,ru,zh-CN,zh-TW"
+            },
+            {
+              "name": "IsGCCHybridDeployment",
+              "value": false
             }
           ]
         }
