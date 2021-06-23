@@ -4,7 +4,7 @@ languages:
 - csharp
 products:
 - office-teams
-description: FAQ Plus bot is a friendly Q&A bot that brings a human in the loop when it is unable to help with an answer from the knowledge base.
+description: FAQ Plus bot is one of the best friendly Q&A bots that bring a human in the loop when it is unable to help with an answer from the knowledge base.
 urlFragment: microsoft-teams-apps-faqplus
 ---
 #  FAQ Plus App Template

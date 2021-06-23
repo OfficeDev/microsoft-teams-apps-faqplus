@@ -8,6 +8,7 @@
     "StorageConnectionString": "",
     "SearchServiceName": "",
     "SearchServiceAdminApiKey": "",
-    "SearchServiceQueryApiKey": ""
+    "SearchServiceQueryApiKey": "",
+    "IsGCCHybridDeployment": false
   }
 }

@@ -35,7 +35,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction
             builder.Services.AddSingleton<ISearchServiceDataProvider>((provider) => new SearchServiceDataProvider(provider.GetRequiredService<IQnaServiceProvider>(), Environment.GetEnvironmentVariable("StorageConnectionString")));
             builder.Services.AddSingleton<IConfigurationDataProvider>(new Common.Providers.ConfigurationDataProvider(Environment.GetEnvironmentVariable("StorageConnectionString")));
             builder.Services.AddSingleton<IKnowledgeBaseSearchService, KnowledgeBaseSearchService>();
-            builder.Services.AddSingleton<IKnowledgeBaseSearchService>((provider) => new KnowledgeBaseSearchService(Environment.GetEnvironmentVariable("SearchServiceName"), Environment.GetEnvironmentVariable("SearchServiceQueryApiKey"), Environment.GetEnvironmentVariable("SearchServiceAdminApiKey"), Environment.GetEnvironmentVariable("StorageConnectionString")));
+            var isGCCHybridDeployment = Convert.ToBoolean(Environment.GetEnvironmentVariable("IsGCCHybridDeployment"));
+            builder.Services.AddSingleton<IKnowledgeBaseSearchService>((provider) => new KnowledgeBaseSearchService(Environment.GetEnvironmentVariable("SearchServiceName"), Environment.GetEnvironmentVariable("SearchServiceQueryApiKey"), Environment.GetEnvironmentVariable("SearchServiceAdminApiKey"), Environment.GetEnvironmentVariable("StorageConnectionString"), isGCCHybridDeployment));
         }
     }
 }
