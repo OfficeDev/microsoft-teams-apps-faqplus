@@ -1,0 +1,13 @@
+{
+  "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.5/MicrosoftTeams.schema.json",
+  "name.short": "الأسئلة المتداولة Plus",
+  "description.short": "روبوت الأسئلة المتداولة سهل الاستخدام الذي يجيب عن الأسئلة ويوصلك بالخبراء.",
+  "description.full": "روبوت الأسئلة والإجابات سهل الاستخدام الذي يجيب عن الأسئلة الشائعة المطروحة. إذا لم يستطع الإجابة، فسيوصلك بأحد الخبراء فور توفره.",
+  "bots[0].commandLists[0].commands[0].title": "القيام بجولة",
+  "bots[0].commandLists[0].commands[0].description": "جولة للتعرّف على الميزات الأساسية",
+  "bots[0].commandLists[0].commands[1].title": "سؤال خبير",
+  "bots[0].commandLists[0].commands[1].description": "التواصل مع خبير",
+  "bots[0].commandLists[0].commands[2].title": "مشاركة ملاحظات",
+  "bots[0].commandLists[0].commands[2].description": "إرسال ملاحظات",
+  "staticTabs[0].name": "التعليمات"
+}

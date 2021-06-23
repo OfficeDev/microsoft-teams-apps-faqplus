@@ -5,6 +5,7 @@
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
 {
     using System.Collections.Generic;
+    using System.Globalization;
     using AdaptiveCards;
     using Microsoft.Bot.Schema;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common;
@@ -22,6 +23,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <returns>Team welcome card.</returns>
         public static Attachment GetCard()
         {
+            var textAlignment = CultureInfo.CurrentCulture.TextInfo.IsRightToLeft ? AdaptiveHorizontalAlignment.Right : AdaptiveHorizontalAlignment.Left;
+
             AdaptiveCard teamWelcomeCard = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
             {
                 Body = new List<AdaptiveElement>
@@ -30,6 +33,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     {
                         Text = Strings.WelcomeTeamCardContent,
                         Wrap = true,
+                        HorizontalAlignment = textAlignment,
                     },
                 },
                 Actions = new List<AdaptiveAction>

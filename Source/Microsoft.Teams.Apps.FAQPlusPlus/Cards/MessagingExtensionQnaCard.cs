@@ -80,10 +80,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// Add question card task module.
         /// </summary>
         /// <param name="qnaPairEntity">Qna pair entity that contains question and answer information.</param>
-        /// <param name="appBaseUri">Application base uri.</param>
+        /// <param name="appBaseUri">Application base URI.</param>
         /// <returns>Rich card as attachment.</returns>
         public static Attachment AddQuestionForm(AdaptiveSubmitActionData qnaPairEntity, string appBaseUri)
         {
+            var textAlignment = CultureInfo.CurrentCulture.TextInfo.IsRightToLeft ? AdaptiveHorizontalAlignment.Right : AdaptiveHorizontalAlignment.Left;
+
             AdaptiveCard card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0));
 
             if (qnaPairEntity != null)
@@ -95,6 +97,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         new AdaptiveTextBlock
                         {
                             Text = Strings.QuestionLabelText,
+                            HorizontalAlignment = textAlignment,
                             Size = AdaptiveTextSize.Small,
                         },
                         new AdaptiveTextInput
@@ -108,6 +111,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         new AdaptiveTextBlock
                         {
                             Text = Strings.DescriptionLabelText,
+                            HorizontalAlignment = textAlignment,
                             Size = AdaptiveTextSize.Small,
                         },
                         new AdaptiveTextInput
@@ -143,6 +147,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                             new AdaptiveTextBlock
                                             {
                                                 Text = Strings.SuggestedText,
+                                                HorizontalAlignment = textAlignment,
                                                 Wrap = true,
                                                 Size = AdaptiveTextSize.Small,
                                             },
@@ -154,6 +159,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         new AdaptiveTextBlock
                         {
                             Text = $"**{Strings.OptionalFieldDisplayText}**",
+                            HorizontalAlignment = textAlignment,
                             Size = AdaptiveTextSize.Medium,
                             Separator = true,
                         },
@@ -161,6 +167,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         new AdaptiveTextBlock
                         {
                             Text = Strings.TitleLabelText,
+                            HorizontalAlignment = textAlignment,
                             Size = AdaptiveTextSize.Small,
                         },
                         new AdaptiveTextInput
@@ -174,6 +181,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         new AdaptiveTextBlock
                         {
                             Text = Strings.SubtitleLabelText,
+                            HorizontalAlignment = textAlignment,
                             Size = AdaptiveTextSize.Small,
                         },
                         new AdaptiveTextInput
@@ -187,6 +195,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         new AdaptiveTextBlock
                         {
                             Text = Strings.ImageLabelText,
+                            HorizontalAlignment = textAlignment,
                             Size = AdaptiveTextSize.Small,
                         },
                         new AdaptiveTextInput
@@ -200,6 +209,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         new AdaptiveTextBlock
                         {
                             Text = Strings.RedirectionLabelText,
+                            HorizontalAlignment = textAlignment,
                             Size = AdaptiveTextSize.Small,
                         },
                         new AdaptiveTextInput
@@ -220,6 +230,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     container.Items.Add(new AdaptiveTextBlock
                     {
                         Text = errorMessageText,
+                        HorizontalAlignment = textAlignment,
                         Size = AdaptiveTextSize.Small,
                         Color = AdaptiveTextColor.Attention,
                     });
@@ -229,6 +240,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     container.Items.Add(new AdaptiveTextBlock
                     {
                         Text = Strings.HTMLErrorText,
+                        HorizontalAlignment = textAlignment,
                         Size = AdaptiveTextSize.Small,
                         Color = AdaptiveTextColor.Attention,
                     });
@@ -238,6 +250,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     container.Items.Add(new AdaptiveTextBlock
                     {
                         Text = Strings.QuestionAlreadyExistsErrorText,
+                        HorizontalAlignment = textAlignment,
                         Size = AdaptiveTextSize.Small,
                         Color = AdaptiveTextColor.Attention,
                     });
@@ -249,6 +262,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         Text = Strings.InvalidImageUrlErrorText,
                         Size = AdaptiveTextSize.Small,
                         Color = AdaptiveTextColor.Attention,
+                        HorizontalAlignment = textAlignment,
                     });
                 }
                 else if (qnaPairEntity.IsInvalidRedirectUrl)
@@ -258,6 +272,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         Text = Strings.InvalidRedirectUrlText,
                         Size = AdaptiveTextSize.Small,
                         Color = AdaptiveTextColor.Attention,
+                        HorizontalAlignment = textAlignment,
                     });
                 }
 
@@ -305,6 +320,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <returns>Normal card as attachment.</returns>
         public static Attachment ShowNormalCard(AdaptiveSubmitActionData qnaPairEntity, string editedBy, string actionPerformed = "")
         {
+            var textAlignment = CultureInfo.CurrentCulture.TextInfo.IsRightToLeft ? AdaptiveHorizontalAlignment.Right : AdaptiveHorizontalAlignment.Left;
+
             AdaptiveCard card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0));
             if (qnaPairEntity != null)
             {
@@ -317,18 +334,21 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                             Size = AdaptiveTextSize.Default,
                             Wrap = true,
                             Text = string.Format(CultureInfo.InvariantCulture, Strings.QuestionTitle, qnaPairEntity.UpdatedQuestion?.Trim()),
+                            HorizontalAlignment = textAlignment,
                         },
                         new AdaptiveTextBlock
                         {
                             Size = AdaptiveTextSize.Default,
                             Wrap = true,
                             Text = $"{Strings.AnswerTitle} {qnaPairEntity.Description?.Trim()}",
+                            HorizontalAlignment = textAlignment,
                         },
                         new AdaptiveTextBlock
                         {
                             Size = AdaptiveTextSize.Small,
                             Wrap = true,
                             Text = actionPerformed + " " + editedBy,
+                            HorizontalAlignment = textAlignment,
                         },
                     },
                 };
@@ -340,6 +360,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         Size = AdaptiveTextSize.Small,
                         Wrap = true,
                         Text = $"**{Strings.WaitMessageAnswer}**",
+                        HorizontalAlignment = textAlignment,
                     });
                 }
 
@@ -418,6 +439,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <returns>Delete confirmation adaptive card.</returns>
         public static AdaptiveCard DeleteEntry(string question, string updateHistoryData)
         {
+            var textAlignment = CultureInfo.CurrentCulture.TextInfo.IsRightToLeft ? AdaptiveHorizontalAlignment.Right : AdaptiveHorizontalAlignment.Left;
+
             AdaptiveCard card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0));
             var container = new AdaptiveContainer()
             {
@@ -427,6 +450,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         {
                            Text = Strings.DeleteConfirmation,
                            Wrap = true,
+                           HorizontalAlignment = textAlignment,
                         },
                     },
             };
@@ -473,6 +497,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <returns>Returns the list of all questions to show in messaging extension.</returns>
         public static IList<MessagingExtensionAttachment> GetAllKbQuestionsCard(IList<AzureSearchEntity> qnaDocuments, IEnumerable<ActivityEntity> activitiesData)
         {
+            var textAlignment = CultureInfo.CurrentCulture.TextInfo.IsRightToLeft ? AdaptiveHorizontalAlignment.Right : AdaptiveHorizontalAlignment.Left;
+
             var messagingExtensionAttachments = new List<MessagingExtensionAttachment>();
 
             if (qnaDocuments != null)
@@ -527,17 +553,20 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                 Text = string.Format(CultureInfo.InvariantCulture, Strings.QuestionTitle, qnaDocument.Questions[0]),
                                 Size = AdaptiveTextSize.Default,
                                 Wrap = true,
+                                HorizontalAlignment = textAlignment,
                             },
                             new AdaptiveTextBlock
                             {
                                 Text = $"{Strings.AnswerTitle} {answer}",
                                 Size = AdaptiveTextSize.Default,
                                 Wrap = true,
+                                HorizontalAlignment = textAlignment,
                             },
                             new AdaptiveTextBlock
                             {
                                 Text = dateString,
                                 Wrap = true,
+                                HorizontalAlignment = textAlignment,
                             },
                         },
                     };
@@ -584,6 +613,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         {
             AdaptiveCard card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0));
             AnswerModel answerModel = new AnswerModel();
+            var textAlignment = CultureInfo.CurrentCulture.TextInfo.IsRightToLeft ? AdaptiveHorizontalAlignment.Right : AdaptiveHorizontalAlignment.Left;
 
             if (Validators.IsValidJSON(answerData))
             {
@@ -604,17 +634,20 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                             Size = AdaptiveTextSize.Small,
                             Wrap = true,
                             Text = string.Format(CultureInfo.InvariantCulture, Strings.DeletedQnaPair, deletedBy),
+                            HorizontalAlignment = textAlignment,
                         },
                         new AdaptiveTextBlock
                         {
                             Text = answerModel.Title,
                             Size = AdaptiveTextSize.Large,
                             Weight = AdaptiveTextWeight.Bolder,
+                            HorizontalAlignment = textAlignment,
                         },
                         new AdaptiveTextBlock
                         {
                             Text = answerModel.Subtitle,
                             Size = AdaptiveTextSize.Medium,
+                            HorizontalAlignment = textAlignment,
                         },
                         new AdaptiveImage
                         {
@@ -627,12 +660,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         {
                             Text = answerModel.Description,
                             Size = AdaptiveTextSize.Small,
+                            HorizontalAlignment = textAlignment,
                         },
                         new AdaptiveTextBlock
                         {
                             Size = AdaptiveTextSize.Small,
                             Wrap = true,
                             Text = $"**{Strings.WaitMessageAnswer}**",
+                            HorizontalAlignment = textAlignment,
                         },
                 },
                 };
@@ -650,24 +685,28 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                             Size = AdaptiveTextSize.Small,
                             Wrap = true,
                             Text = string.Format(CultureInfo.InvariantCulture, Strings.DeletedQnaPair, deletedBy),
+                            HorizontalAlignment = textAlignment,
                         },
                         new AdaptiveTextBlock
                         {
                             Size = AdaptiveTextSize.Default,
                             Wrap = true,
                             Text = string.Format(CultureInfo.InvariantCulture, Strings.QuestionTitle, question),
+                            HorizontalAlignment = textAlignment,
                         },
                         new AdaptiveTextBlock
                         {
                             Size = AdaptiveTextSize.Default,
                             Wrap = true,
                             Text = $"{Strings.AnswerTitle} {answerData}",
+                            HorizontalAlignment = textAlignment,
                         },
                         new AdaptiveTextBlock
                         {
                             Size = AdaptiveTextSize.Small,
                             Wrap = true,
                             Text = $"**{Strings.WaitMessageAnswer}**",
+                            HorizontalAlignment = textAlignment,
                         },
                     },
                 };
@@ -703,6 +742,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <returns>Rich card as attachment.</returns>
         public static Attachment ShowRichCard(AdaptiveSubmitActionData qnaPairEntity, string editedBy = "", string actionPerformed = "")
         {
+            var textAlignment = CultureInfo.CurrentCulture.TextInfo.IsRightToLeft ? AdaptiveHorizontalAlignment.Right : AdaptiveHorizontalAlignment.Left;
+
             AdaptiveCard card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0));
             string answer = string.Empty;
 
@@ -730,12 +771,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                 Size = AdaptiveTextSize.Large,
                                 Weight = AdaptiveTextWeight.Bolder,
                                 Wrap = true,
+                                HorizontalAlignment = textAlignment,
                             },
                             new AdaptiveTextBlock
                             {
                                 Text = qnaPairEntity.Subtitle?.Trim(),
                                 Size = AdaptiveTextSize.Medium,
                                 Wrap = true,
+                                HorizontalAlignment = textAlignment,
                             },
                             new AdaptiveImage
                             {
@@ -749,6 +792,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                 Text = qnaPairEntity.Description?.Trim(),
                                 Size = AdaptiveTextSize.Small,
                                 Wrap = true,
+                                HorizontalAlignment = textAlignment,
                             },
                         },
                     };
@@ -794,6 +838,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                 Size = AdaptiveTextSize.Default,
                                 Wrap = true,
                                 Text = string.Format(CultureInfo.InvariantCulture, Strings.QuestionTitle, qnaPairEntity.UpdatedQuestion?.Trim()),
+                                HorizontalAlignment = textAlignment,
                             },
                             new AdaptiveTextBlock
                             {
@@ -802,6 +847,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                 Text = string.IsNullOrWhiteSpace(qnaPairEntity.Description)
                                 ? qnaPairEntity.Description
                                 : $"{Strings.AnswerTitle} {answer}",
+                                HorizontalAlignment = textAlignment,
                             },
                             new AdaptiveTextBlock
                             {
@@ -809,12 +855,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                 Text = qnaPairEntity.Title?.Trim(),
                                 Size = AdaptiveTextSize.Large,
                                 Weight = AdaptiveTextWeight.Bolder,
+                                HorizontalAlignment = textAlignment,
                             },
                             new AdaptiveTextBlock
                             {
                                 Wrap = true,
                                 Text = qnaPairEntity.Subtitle?.Trim(),
                                 Size = AdaptiveTextSize.Medium,
+                                HorizontalAlignment = textAlignment,
                             },
                             new AdaptiveImage
                             {
@@ -828,12 +876,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                 Text = qnaPairEntity.Description?.Trim(),
                                 Size = AdaptiveTextSize.Small,
                                 Wrap = true,
+                                HorizontalAlignment = textAlignment,
                             },
                             new AdaptiveTextBlock
                             {
                                 Size = AdaptiveTextSize.Small,
                                 Wrap = true,
                                 Text = actionPerformed + " " + editedBy,
+                                HorizontalAlignment = textAlignment,
                             },
                         },
                     };
@@ -847,6 +897,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                             Size = AdaptiveTextSize.Small,
                             Wrap = true,
                             Text = $"**{Strings.WaitMessageAnswer}**",
+                            HorizontalAlignment = textAlignment,
                         });
                     }
 
@@ -924,6 +975,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <returns>Preview normal card attachment.</returns>
         public static Attachment PreviewNormalCard(AdaptiveSubmitActionData qnaPairEntity)
         {
+            var textAlignment = CultureInfo.CurrentCulture.TextInfo.IsRightToLeft ? AdaptiveHorizontalAlignment.Right : AdaptiveHorizontalAlignment.Left;
             AdaptiveCard card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0));
 
             if (qnaPairEntity != null)
@@ -937,12 +989,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                             Size = AdaptiveTextSize.Default,
                             Wrap = true,
                             Text = qnaPairEntity.UpdatedQuestion?.Trim(),
+                            HorizontalAlignment = textAlignment,
                         },
                         new AdaptiveTextBlock
                         {
                             Size = AdaptiveTextSize.Default,
                             Wrap = true,
                             Text = qnaPairEntity.Description?.Trim(),
+                            HorizontalAlignment = textAlignment,
                         },
                     },
                 };
@@ -981,6 +1035,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <returns>Returns a adaptive card which shows the history of actions performed by users.</returns>
         public static AdaptiveCard UpdateHistory(string actionsPerformed)
         {
+            var textAlignment = CultureInfo.CurrentCulture.TextInfo.IsRightToLeft ? AdaptiveHorizontalAlignment.Right : AdaptiveHorizontalAlignment.Left;
             AdaptiveCard card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0));
             List<AdaptiveElement> updatedHistoryData = new List<AdaptiveElement>();
             IList<string> userActions = actionsPerformed?.Split("$").ToList();
@@ -1006,7 +1061,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                             Text = i == userActions.Count - 1 ? $"**{splitValue[0]}**" : splitValue[0],
                             Wrap = true,
                             Size = AdaptiveTextSize.Default,
-                            HorizontalAlignment = AdaptiveHorizontalAlignment.Left,
+                            HorizontalAlignment = textAlignment,
                         },
                     };
 
@@ -1017,7 +1072,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                             Text = i == userActions.Count - 1 ? $"**{splitValue[1]}**" : splitValue[1],
                             Wrap = true,
                             Size = AdaptiveTextSize.Default,
-                            HorizontalAlignment = AdaptiveHorizontalAlignment.Left,
+                            HorizontalAlignment = textAlignment,
                         },
                     };
 
@@ -1028,7 +1083,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                             Text = i == userActions.Count - 1 ? $"**{timeStampData}**" : timeStampData,
                             Wrap = true,
                             Size = AdaptiveTextSize.Default,
-                            HorizontalAlignment = AdaptiveHorizontalAlignment.Left,
+                            HorizontalAlignment = textAlignment,
                         },
                     };
                     userActionData.Columns.Add(userName);

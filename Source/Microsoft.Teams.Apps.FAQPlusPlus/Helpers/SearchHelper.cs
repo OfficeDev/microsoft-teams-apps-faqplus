@@ -132,7 +132,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Helpers
                 };
 
                 var selectedTicketAdaptiveCard = new MessagingExtensionTicketsCard(ticket);
-                composeExtensionResult.Attachments.Add(selectedTicketAdaptiveCard.ToAttachment(localTimestamp).ToMessagingExtensionAttachment(previewCard.ToAttachment()));
+                composeExtensionResult.Attachments.Add(selectedTicketAdaptiveCard.ToAttachment().ToMessagingExtensionAttachment(previewCard.ToAttachment()));
             }
 
             return composeExtensionResult;

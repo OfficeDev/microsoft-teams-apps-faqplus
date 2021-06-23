@@ -29,6 +29,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <returns>Sme facing feedback notification card.</returns>
         public static Attachment GetCard(ShareFeedbackCardPayload data, TeamsChannelAccount userDetails)
         {
+            var textAlignment = CultureInfo.CurrentCulture.TextInfo.IsRightToLeft ? AdaptiveHorizontalAlignment.Right : AdaptiveHorizontalAlignment.Left;
+
             // Constructing adaptive card that is sent to SME team.
             AdaptiveCard smeFeedbackCard = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
             {
@@ -39,23 +41,27 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                        Text = Strings.SMEFeedbackHeaderText,
                        Weight = AdaptiveTextWeight.Bolder,
                        Size = AdaptiveTextSize.Medium,
+                       HorizontalAlignment = textAlignment,
                    },
                    new AdaptiveTextBlock()
                    {
                        Text = string.Format(CultureInfo.InvariantCulture, Strings.FeedbackAlertText, userDetails?.Name),
                        Wrap = true,
+                       HorizontalAlignment = textAlignment,
                    },
                    new AdaptiveTextBlock()
                    {
                        Text = Strings.RatingTitle,
                        Weight = AdaptiveTextWeight.Bolder,
                        Wrap = true,
+                       HorizontalAlignment = textAlignment,
                    },
                    new AdaptiveTextBlock()
                    {
                        Text = GetRatingDisplayText(data?.Rating),
                        Spacing = AdaptiveSpacing.None,
                        Wrap = true,
+                       HorizontalAlignment = textAlignment,
                    },
                },
                 Actions = new List<AdaptiveAction>
@@ -76,6 +82,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     Text = Strings.DescriptionText,
                     Weight = AdaptiveTextWeight.Bolder,
                     Wrap = true,
+                    HorizontalAlignment = textAlignment,
                 });
 
                 smeFeedbackCard.Body.Add(new AdaptiveTextBlock()
@@ -83,6 +90,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     Text = CardHelper.TruncateStringIfLonger(data.Description, CardHelper.DescriptionMaxDisplayLength),
                     Spacing = AdaptiveSpacing.None,
                     Wrap = true,
+                    HorizontalAlignment = textAlignment,
                 });
             }
 
@@ -114,6 +122,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                {
                                    Text = CardHelper.TruncateStringIfLonger(data.KnowledgeBaseAnswer, CardHelper.KnowledgeBaseAnswerMaxDisplayLength),
                                    Wrap = true,
+                                   HorizontalAlignment = textAlignment,
                                },
                             },
                         },
@@ -136,7 +145,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 throw new ArgumentException($"{rating} is not a valid rating value", nameof(rating));
             }
 
-            return Strings.ResourceManager.GetString($"{rating}RatingText", CultureInfo.InvariantCulture);
+            return Strings.ResourceManager.GetString($"{rating}RatingText", CultureInfo.CurrentCulture);
         }
     }
 }

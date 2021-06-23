@@ -6,6 +6,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using AdaptiveCards;
     using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker.Models;
     using Microsoft.Bot.Schema;
@@ -84,6 +85,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <returns>A list of adaptive elements which makes up the body of the adaptive card.</returns>
         private static List<AdaptiveElement> BuildResponseCardBody(QnASearchResult response, string userQuestion, string answer, string appBaseUri, ResponseCardPayload payload, bool isRichCard)
         {
+            var textAlignment = CultureInfo.CurrentCulture.TextInfo.IsRightToLeft ? AdaptiveHorizontalAlignment.Right : AdaptiveHorizontalAlignment.Left;
             var answerModel = isRichCard ? JsonConvert.DeserializeObject<AnswerModel>(response?.Answer) : new AnswerModel();
 
             var cardBodyToConstruct = new List<AdaptiveElement>()
@@ -93,6 +95,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     Weight = AdaptiveTextWeight.Bolder,
                     Text = Strings.ResponseHeaderText,
                     Wrap = true,
+                    HorizontalAlignment = textAlignment,
                 },
                 new AdaptiveTextBlock
                 {
@@ -100,6 +103,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     Wrap = true,
                     Text = response?.Questions[0],
                     IsVisible = isRichCard,
+                    HorizontalAlignment = textAlignment,
                 },
                 new AdaptiveTextBlock
                 {
@@ -107,11 +111,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     Text = answerModel.Title,
                     Size = AdaptiveTextSize.Large,
                     Weight = AdaptiveTextWeight.Bolder,
+                    HorizontalAlignment = textAlignment,
                 },
                 new AdaptiveTextBlock
                 {
                     Text = answerModel.Subtitle,
                     Size = AdaptiveTextSize.Medium,
+                    HorizontalAlignment = textAlignment,
                 },
                 new AdaptiveImage
                 {
@@ -127,6 +133,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     Wrap = true,
                     Size = isRichCard ? AdaptiveTextSize.Small : AdaptiveTextSize.Default,
                     Spacing = AdaptiveSpacing.Medium,
+                    HorizontalAlignment = textAlignment,
                 },
             };
 
@@ -171,6 +178,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                             {
                                                 Wrap = true,
                                                 Text = string.Format(Strings.SelectActionItemDisplayTextFormatting, item.DisplayText),
+                                                HorizontalAlignment = textAlignment,
                                             },
                                         },
                                         Spacing = AdaptiveSpacing.Small,
@@ -267,9 +275,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             {
                 Id = id,
                 Questions = new List<string>()
-                    {
-                        userQuestion,
-                    },
+                {
+                    userQuestion,
+                },
                 Answer = answer,
             });
 

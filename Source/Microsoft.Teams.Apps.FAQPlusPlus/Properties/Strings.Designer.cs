@@ -187,6 +187,33 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ask an expert.
+        /// </summary>
+        public static string BotCommandAskExpert {
+            get {
+                return ResourceManager.GetString("BotCommandAskExpert", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Share feedback.
+        /// </summary>
+        public static string BotCommandFeedback {
+            get {
+                return ResourceManager.GetString("BotCommandFeedback", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Take a tour.
+        /// </summary>
+        public static string BotCommandTour {
+            get {
+                return ResourceManager.GetString("BotCommandTour", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Change status.
         /// </summary>
         public static string ChangeStatusButtonText {
@@ -903,6 +930,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         public static string StatusFactTitle {
             get {
                 return ResourceManager.GetString("StatusFactTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Submit.
+        /// </summary>
+        public static string SubmitButtonText {
+            get {
+                return ResourceManager.GetString("SubmitButtonText", resourceCulture);
             }
         }
         

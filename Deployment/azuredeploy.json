@@ -114,6 +114,27 @@
         "description": "The pricing tier for the QnAMaker service."
       }
     },
+    "defaultCulture": {
+      "type": "string",
+      "allowedValues": [
+        "en",
+        "ar",
+        "de",
+        "es",
+        "fr",
+        "he",
+        "ja",
+        "ko",
+        "pt-BR",
+        "ru",
+        "zh-CN",
+        "zh-TW"
+      ],
+      "defaultValue": "en-US",
+      "metadata": {
+        "description": "Default localization for app."
+      }
+    },
     "searchServiceSku": {
       "type": "string",
       "allowedValues": [
@@ -290,6 +311,14 @@
             {
               "name": "ApplicationInsightsLogLevel",
               "value": "Information"
+            },
+            {
+              "name": "i18n:DefaultCulture",
+              "value": "[parameters('defaultCulture')]"
+            },
+            {
+              "name": "i18n:SupportedCultures",
+              "value": "en,ar,de,es,fr,he,ja,ko,pt-BR,ru,zh-CN,zh-TW"
             },
             {
               "name": "IsGCCHybridDeployment",

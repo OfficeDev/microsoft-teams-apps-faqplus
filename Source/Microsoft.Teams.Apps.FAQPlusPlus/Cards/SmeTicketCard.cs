@@ -37,10 +37,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <summary>
         /// Returns an attachment based on the state and information of the ticket.
         /// </summary>
-        /// <param name="localTimestamp">Local timestamp of the user activity.</param>
         /// <returns>Returns the attachment that will be sent in a message.</returns>
-        public Attachment ToAttachment(DateTimeOffset? localTimestamp)
+        public Attachment ToAttachment()
         {
+            var textAlignment = CultureInfo.CurrentCulture.TextInfo.IsRightToLeft ? AdaptiveHorizontalAlignment.Right : AdaptiveHorizontalAlignment.Left;
+
             var card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
             {
                 Body = new List<AdaptiveElement>
@@ -51,15 +52,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         Size = AdaptiveTextSize.Large,
                         Weight = AdaptiveTextWeight.Bolder,
                         Wrap = true,
+                        HorizontalAlignment = textAlignment,
                     },
                     new AdaptiveTextBlock
                     {
                         Text = string.Format(CultureInfo.InvariantCulture, Strings.QuestionForExpertSubHeaderText, this.Ticket.RequesterName),
                         Wrap = true,
+                        HorizontalAlignment = textAlignment,
                     },
                     new AdaptiveFactSet
                     {
-                        Facts = this.BuildFactSet(localTimestamp),
+                        Facts = this.BuildFactSet(),
                     },
                 },
                 Actions = this.BuildActions(),
@@ -78,6 +81,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <returns>Adaptive card actions.</returns>
         protected virtual List<AdaptiveAction> BuildActions()
         {
+            var textAlignment = CultureInfo.CurrentCulture.TextInfo.IsRightToLeft ? AdaptiveHorizontalAlignment.Right : AdaptiveHorizontalAlignment.Left;
             List<AdaptiveAction> actionsList = new List<AdaptiveAction>();
 
             actionsList.Add(this.CreateChatWithUserAction());
@@ -95,6 +99,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     {
                         new AdaptiveSubmitAction
                         {
+                            Title = Strings.SubmitButtonText,
                             Data = new ChangeTicketStatusPayload { TicketId = this.Ticket.TicketId },
                         },
                     },
@@ -114,6 +119,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                             {
                                 Text = CardHelper.TruncateStringIfLonger(this.Ticket.KnowledgeBaseAnswer, CardHelper.KnowledgeBaseAnswerMaxDisplayLength),
                                 Wrap = true,
+                                HorizontalAlignment = textAlignment,
                             },
                         },
                     },
@@ -142,9 +148,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <summary>
         /// Return the appropriate fact set based on the state and information in the ticket.
         /// </summary>
-        /// <param name="localTimestamp">The current timestamp.</param>
         /// <returns>The fact set showing the necessary details.</returns>
-        private List<AdaptiveFact> BuildFactSet(DateTimeOffset? localTimestamp)
+        private List<AdaptiveFact> BuildFactSet()
         {
             List<AdaptiveFact> factList = new List<AdaptiveFact>();
 
@@ -177,7 +182,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 factList.Add(new AdaptiveFact
                 {
                     Title = Strings.ClosedFactTitle,
-                    Value = CardHelper.GetFormattedDateInUserTimeZone(this.Ticket.DateClosed.Value, localTimestamp),
+                    Value = CardHelper.GetFormattedDateForAdaptiveCard(this.Ticket.DateClosed.Value),
                 });
             }
 

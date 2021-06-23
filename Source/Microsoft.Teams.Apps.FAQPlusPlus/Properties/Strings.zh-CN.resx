@@ -1,0 +1,620 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AskAnExpertPlaceholderText" xml:space="preserve">
+    <value>请在此处键入详细问题和支持详情 (500 个字符) </value>
+    <comment>Ask an expert placeholder text.</comment>
+  </data>
+  <data name="AskAnExpertTitleText" xml:space="preserve">
+    <value>咨询专家</value>
+    <comment>Title of the ask an expert card.</comment>
+  </data>
+  <data name="AskAnExpertText2" xml:space="preserve">
+    <value>...如果我的答案不令人满意 ... 我会将转给专家。</value>
+    <comment>Helps the user in understanding there is an expert team to connect to.</comment>
+  </data>
+  <data name="FeedbackText1" xml:space="preserve">
+    <value>告诉我的专家团队我是如何做的，以便他们能帮助我改进。</value>
+    <comment>Text suggests that user is invited to share his feedback on his experience using bot.</comment>
+  </data>
+  <data name="FunctionCardText1" xml:space="preserve">
+    <value>提问</value>
+    <comment>Explains what bot does and possible questions.</comment>
+  </data>
+  <data name="FunctionCardText2" xml:space="preserve">
+    <value>可以简单地问我一个问题，我会尽力回答。如果还有其他后续措施，我也将予以跟进...</value>
+    <comment>Suggests the user to ask question.</comment>
+  </data>
+  <data name="ShareFeedbackButtonText" xml:space="preserve">
+    <value>分享反馈</value>
+    <comment>Button text for share feedback show card in QnA response card.</comment>
+  </data>
+  <data name="DescriptionText" xml:space="preserve">
+    <value>说明</value>
+    <comment>Label text for description.</comment>
+  </data>
+  <data name="FeedbackDescriptionPlaceholderText" xml:space="preserve">
+    <value>在此处输入你的反馈和支持详细信息(最多 500 个字符)</value>
+    <comment>Placeholder label where the user enters feedback in the text box.</comment>
+  </data>
+  <data name="StatusFactTitle" xml:space="preserve">
+    <value>状态:</value>
+    <comment>Status one of the available fact set in notification cards.</comment>
+  </data>
+  <data name="AskAnExpertButtonText" xml:space="preserve">
+    <value>咨询专家</value>
+    <comment>Action button which invokes ask an expert show card.</comment>
+  </data>
+  <data name="ThankYouTextContent" xml:space="preserve">
+    <value>感谢你的反馈! 我已与专家分享它。这可帮助我学习和改进。</value>
+    <comment>The content for the thank you adaptive card which is shown whenever user submits feedback on the app or on a response that is generated by QnA service.</comment>
+  </data>
+  <data name="ChatTextButton" xml:space="preserve">
+    <value>与 {0} 聊天</value>
+    <comment>Ability to chat directly with end user from SME channel.</comment>
+  </data>
+  <data name="NotificationCardContent" xml:space="preserve">
+    <value>我已经与团队分享了你的问题。专家很快就会在单独的聊天室中与你联系。</value>
+    <comment>Confirmation message to the user upon asking question to the expert.</comment>
+  </data>
+  <data name="TeamChatHeaderText" xml:space="preserve">
+    <value>发起与最终用户的聊天</value>
+    <comment>Team carousel chat card header-title of the chat card.</comment>
+  </data>
+  <data name="TeamChatContent" xml:space="preserve">
+    <value>单击与用户聊天按钮以发起直接聊天。</value>
+    <comment>Team carousel chat card content- SME team members can chat directly with the end users.</comment>
+  </data>
+  <data name="TeamNotificationHeaderText" xml:space="preserve">
+    <value>接收来自最终用户的通知</value>
+    <comment>Team carousel function card content- title of the chat card.</comment>
+  </data>
+  <data name="TeamNotificationContent" xml:space="preserve">
+    <value>以查看用户需要帮助的内容。</value>
+    <comment>Team carousel function card content- team can take the question from the end users through bot.</comment>
+  </data>
+  <data name="TeamTicketSystemHeaderText" xml:space="preserve">
+    <value>管理查询</value>
+    <comment>Title of the query carousel card- ticket system.</comment>
+  </data>
+  <data name="TeamTicketSystemContent" xml:space="preserve">
+    <value>将请求标记为已分配或已关闭以跟踪查询。</value>
+    <comment>Team carousel query card content- team can keep track of the user request.</comment>
+  </data>
+  <data name="TakeATeamTourButtonText" xml:space="preserve">
+    <value>团队教程</value>
+    <comment>Action button which gives tour for the team on bot Functionalities.</comment>
+  </data>
+  <data name="WelcomeTeamCardContent" xml:space="preserve">
+    <value>您好的团队，
+
+我是你的友好问答机器人，可以帮助你与我互动并需要更多帮助的人们提供支持。</value>
+    <comment>Welcome message when bot is added to a new team.</comment>
+  </data>
+  <data name="CustomMessage" xml:space="preserve">
+    <value>我找不到此问题的匹配答案。是否希望我向专家提问?</value>
+    <comment>Message when user asks random question to the bot.</comment>
+  </data>
+  <data name="QuestionAskedFactTitle" xml:space="preserve">
+    <value>提出的问题:</value>
+    <comment>The fact set title for the question asked in the SME Ticket card.</comment>
+  </data>
+  <data name="QuestionForExpertSubHeaderText" xml:space="preserve">
+    <value>**{0}** 正在请求支持。</value>
+    <comment>Text says that user is asking a question to the expert, {0} placeholder holds the name of the person.</comment>
+  </data>
+  <data name="TeamCustomMessage" xml:space="preserve">
+    <value>我无法响应频道中的命令。快速浏览以了解我可以做什么。</value>
+    <comment>When SME team member asks bot a questions- a message appears saying that team member is supposed to install the bot in personal scope.</comment>
+  </data>
+  <data name="ChangeStatusButtonText" xml:space="preserve">
+    <value>更改状态</value>
+    <comment>Text on change status button.</comment>
+  </data>
+  <data name="ResponseHeaderText" xml:space="preserve">
+    <value>下面是我找到的内容:</value>
+    <comment>Response header-letting the user know that a response is generated to their request from QnA Maker.</comment>
+  </data>
+  <data name="ClosedFactTitle" xml:space="preserve">
+    <value>已关闭: </value>
+    <comment>Closed fact title is one of the available fact set.</comment>
+  </data>
+  <data name="DateCreatedDisplayFactTitle" xml:space="preserve">
+    <value>创建时间: </value>
+    <comment>Created: one of the available fact set in notification cards- created is the title for created date value.</comment>
+  </data>
+  <data name="ShowCardTitleText" xml:space="preserve">
+    <value>键入简短标题(最多 50 个字符)</value>
+    <comment>Label text where users enters title for his question or feedback. </comment>
+  </data>
+  <data name="MandatoryTitleFieldText" xml:space="preserve">
+    <value>标题字段为必填项。</value>
+    <comment>Text that suggest users to fill mandatory fields.</comment>
+  </data>
+  <data name="ResultsFeedbackText" xml:space="preserve">
+    <value>反馈</value>
+    <comment>This text is used as title for results feedback card.</comment>
+  </data>
+  <data name="FeedbackAlertText" xml:space="preserve">
+    <value>**{0}** 已分享反馈</value>
+    <comment>Text in the SME feedback card, The placeholder {0} represents the name of the person sharing the feedback. The placeholder {1} represents the feedback type.</comment>
+  </data>
+  <data name="ShareFeedbackTitleText" xml:space="preserve">
+    <value>分享应用反馈</value>
+    <comment>Title text of share feedback user carousel card.</comment>
+  </data>
+  <data name="SubmitButtonText" xml:space="preserve">
+    <value>提交</value>
+    <comment>Button to submit user activity.</comment>
+  </data>
+  <data name="AskAnExpertDisplayText" xml:space="preserve">
+    <value>咨询专家</value>
+    <comment>Ask an expert display text: text sent to the bot when ask an expert button is clicked.</comment>
+  </data>
+  <data name="ShareFeedbackDisplayText" xml:space="preserve">
+    <value>分享反馈</value>
+    <comment>Share feedback display text: text sent to the bot when share feedback button is clicked.</comment>
+  </data>
+  <data name="SMEAssignedStatus" xml:space="preserve">
+    <value>现在已分配此请求。已分配给 {0}。</value>
+    <comment>Message posted to the thread when the ticket is assigned. {0} = name of SME who assigned the request.</comment>
+  </data>
+  <data name="SMEClosedStatus" xml:space="preserve">
+    <value>此请求现已关闭。已由 {0} 关闭。</value>
+    <comment>Message posted to the thread when the ticket is closed. {0} = name of SME who closed the request.</comment>
+  </data>
+  <data name="SMEOpenedStatus" xml:space="preserve">
+    <value>此请求现已取消分配。上次更新者 {0}。</value>
+    <comment>Message posted to the thread when the ticket is reopened. {0} = name of SME who reopened the request.</comment>
+  </data>
+  <data name="AssignedTicketUserNotification" xml:space="preserve">
+    <value>问题已分配给专家。他们会通过聊天消息直接回复你。</value>
+    <comment>Notification text sent to the user who opened a ticket, when the ticket is assigned to an expert.</comment>
+  </data>
+  <data name="ClosedTicketUserNotification" xml:space="preserve">
+    <value>此请求已关闭。如果仍然需要更多帮助，请再次询问专家。</value>
+    <comment>Notification text sent to the user who opened a ticket, when the ticket is closed.</comment>
+  </data>
+  <data name="ReopenedTicketUserNotification" xml:space="preserve">
+    <value>请求再次打开。专家将直接向你发送聊天消息。</value>
+    <comment>Notification text sent to the user who opened a ticket, when the ticket is reopened.</comment>
+  </data>
+  <data name="GoToOriginalThreadButtonText" xml:space="preserve">
+    <value>转到原始线程</value>
+    <comment>Go to original thread button available on messaging extension card.</comment>
+  </data>
+  <data name="NonSMEErrorText" xml:space="preserve">
+    <value>只能从安装应用程序的频道调用消息传递扩展</value>
+    <comment>Error message when a user of non-SME team tries to access messaging extension application</comment>
+  </data>
+  <data name="AssignedUserNotificationStatus" xml:space="preserve">
+    <value>已分配</value>
+    <comment>The status value for the user notification when a ticket is assigned to an expert</comment>
+  </data>
+  <data name="ClosedUserNotificationStatus" xml:space="preserve">
+    <value>已关闭</value>
+    <comment>The status value for the user notification when a ticket is closed by an expert.</comment>
+  </data>
+  <data name="UnassignedUserNotificationStatus" xml:space="preserve">
+    <value>未分配</value>
+    <comment>The status value for the user notification when a ticket is unassigned</comment>
+  </data>
+  <data name="SMEUserChatMessage" xml:space="preserve">
+    <value>答复:{0}</value>
+    <comment>The {0} is the placeholder for the title that the user had provided when asking an expert.</comment>
+  </data>
+  <data name="AssignToMeActionChoiceTitle" xml:space="preserve">
+    <value>分配给我</value>
+    <comment>The dropdown choice for "Assign to me" for the SME ticket status is being updated</comment>
+  </data>
+  <data name="CloseActionChoiceTitle" xml:space="preserve">
+    <value>关闭</value>
+    <comment>The dropdown choice for "Close" for when the SME ticket status is being updated</comment>
+  </data>
+  <data name="ReopenActionChoiceTitle" xml:space="preserve">
+    <value>重新打开</value>
+    <comment>The dropdown choice for "Reopen" for when the SME ticket status is being updated from the closed status.</comment>
+  </data>
+  <data name="ReopenAssignToMeActionChoiceTitle" xml:space="preserve">
+    <value>重新打开并分配给我。</value>
+    <comment>The dropdown choice for "Reopen and assign to me" for when the SME ticket status is being updated from the closed state.</comment>
+  </data>
+  <data name="UnassignActionChoiceTitle" xml:space="preserve">
+    <value>取消分配</value>
+    <comment>The dropdown choice for "Unassign" for when the SME ticket status is being updated</comment>
+  </data>
+  <data name="SMETicketAssignedStatus" xml:space="preserve">
+    <value>已分配给 {0}</value>
+    <comment>This value represents the SME Ticket in the Assigned status - {0} represents the SME User to whom a ticket has been assigned</comment>
+  </data>
+  <data name="SMETicketClosedStatus" xml:space="preserve">
+    <value>已关闭</value>
+    <comment>This value represents the SME Ticket in the Closed status</comment>
+  </data>
+  <data name="SMETicketUnassignedStatus" xml:space="preserve">
+    <value>未分配</value>
+    <comment>This value represents the SME Ticket in the Unassigned status</comment>
+  </data>
+  <data name="AskAnExpertSubheaderText" xml:space="preserve">
+    <value>我们的一位专家将尽快与您联系。</value>
+    <comment>Ask en expert card subtitle text:lets the user know that SME team member can directly chat with the requester.</comment>
+  </data>
+  <data name="DescriptionFact" xml:space="preserve">
+    <value>说明:</value>
+    <comment>Available factset in user notification and SME facing cards.</comment>
+  </data>
+  <data name="FeedbackRatingRequired" xml:space="preserve">
+    <value>此答案是否有用? (必填)</value>
+    <comment>Feedback(Required): label for the feedback rating dropdown.</comment>
+  </data>
+  <data name="HelpfulRatingText" xml:space="preserve">
+    <value>有帮助</value>
+    <comment>Helpful: available feedback rating scale.</comment>
+  </data>
+  <data name="NeedsImprovementRatingText" xml:space="preserve">
+    <value>需要改进</value>
+    <comment>Needs improvement: available feedback rating scale.</comment>
+  </data>
+  <data name="RatingTitle" xml:space="preserve">
+    <value>评级</value>
+    <comment>Rating fact is used in SME facing feedback card to show the rating submitted by the user from the rating dropdown in share feedback card.</comment>
+  </data>
+  <data name="RatingMandatoryText" xml:space="preserve">
+    <value>“评级”为必填项</value>
+    <comment>Rating is mandatory , a warning message to the user when rating is not submitted in share feedback activity.</comment>
+  </data>
+  <data name="TakeATourButtonText" xml:space="preserve">
+    <value>浏览</value>
+    <comment>Take a tour button available for the users on welcome card, through which user can take a tour on bot functionalities in personal scope. </comment>
+  </data>
+  <data name="TitleFact" xml:space="preserve">
+    <value>标题:</value>
+    <comment>Title fact is used to show the title entered by the user for his inquiry.</comment>
+  </data>
+  <data name="TitleRequiredText" xml:space="preserve">
+    <value>标题(必填)</value>
+    <comment>Title(Required): label of the title text box.</comment>
+  </data>
+  <data name="NotHelpfulRatingText" xml:space="preserve">
+    <value>没有帮助</value>
+    <comment>Unhelpful: available feedback rating scale.</comment>
+  </data>
+  <data name="ViewArticleButtonText" xml:space="preserve">
+    <value>查看文章</value>
+    <comment>The necessary string for the view article button</comment>
+  </data>
+  <data name="SMEFeedbackHeaderText" xml:space="preserve">
+    <value>反馈</value>
+    <comment>Title text for SME facing feedback card.</comment>
+  </data>
+  <data name="EmptyQuestionErrorText" xml:space="preserve">
+    <value>问题文本不能为空。</value>
+    <comment>Error message to show if question text box is empty while adding or editing the QnA pair.</comment>
+  </data>
+  <data name="AnswerTitle" xml:space="preserve">
+    <value>**回答:**</value>
+    <comment>Label text for answer on the card.</comment>
+  </data>
+  <data name="DeleteConfirmation" xml:space="preserve">
+    <value>确定要删除这个项目吗?问题和答案都将被删除。</value>
+    <comment>Delete confirmation message.</comment>
+  </data>
+  <data name="DeleteButtonText" xml:space="preserve">
+    <value>删除</value>
+    <comment>Delete button text.</comment>
+  </data>
+  <data name="LastEditedText" xml:space="preserve">
+    <value>上次编辑者</value>
+    <comment>Show message on adaptive card after editing the QnA pair.</comment>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>否</value>
+    <comment>No button text on delete QnA pair confirmation card.</comment>
+  </data>
+  <data name="QuestionTitle" xml:space="preserve">
+    <value>**问题:** {0}</value>
+    <comment>Label text for question on the card.</comment>
+  </data>
+  <data name="EditButtonText" xml:space="preserve">
+    <value>编辑</value>
+    <comment>Edit button text.</comment>
+  </data>
+  <data name="WaitMessageAnswer" xml:space="preserve">
+    <value>注意:每隔几分钟进行一次更新</value>
+    <comment>Wait message to show on adaptive card after performing any action on QnA pair.</comment>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>是</value>
+    <comment>Yes button text on delete QnA pair confirmation card.</comment>
+  </data>
+  <data name="DeletedQnaPair" xml:space="preserve">
+    <value>删除者: {0}</value>
+    <comment>Text shown on the card when a QnA pair is deleted.</comment>
+  </data>
+  <data name="UpdateHistoryButtonText" xml:space="preserve">
+    <value>更新历史记录</value>
+    <comment>Update history button text.</comment>
+  </data>
+  <data name="WaitMessage" xml:space="preserve">
+    <value>请稍候，此问题的更新: "{0}" 将在短时间内可用。</value>
+    <comment>Wait message to show below the adaptive card while trying to delete the question and is not available in production knowledgebase and waiting to be publish.</comment>
+  </data>
+  <data name="AddQuestionSubtitle" xml:space="preserve">
+    <value>添加新的问题详细信息</value>
+    <comment>The subtitle at the top of task module while adding the new QnA pair.</comment>
+  </data>
+  <data name="EditQuestionSubtitle" xml:space="preserve">
+    <value>编辑问题详细信息</value>
+    <comment>The subtitle at the top of task module while editing the QnA pair.</comment>
+  </data>
+  <data name="HTMLErrorText" xml:space="preserve">
+    <value>不支持 HTML 标记。</value>
+    <comment>Error message to show if HTML tags are entered on any field while adding or editing the QnA pair.</comment>
+  </data>
+  <data name="QuestionAlreadyExistsErrorText" xml:space="preserve">
+    <value>问题已存在。请添加其他问题。</value>
+    <comment>Error message to show if question is already existing in the knowledgebase while adding or editing the QnA pair.</comment>
+  </data>
+  <data name="OpenArticle" xml:space="preserve">
+    <value>打开文章</value>
+    <comment>Open article button text, which will show on adaptiver rich card if redirection url field is filled while adding/editing the QnA pair.</comment>
+  </data>
+  <data name="BackButtonCommandText" xml:space="preserve">
+    <value>返回按钮</value>
+    <comment>Back button command text to identify the performed action.</comment>
+  </data>
+  <data name="InvalidImageUrlErrorText" xml:space="preserve">
+    <value>图像 URL 无效。</value>
+    <comment>Error message to show if image url is not valid while adding or editing the QnA pair.</comment>
+  </data>
+  <data name="EmptyImageUrlErrorText" xml:space="preserve">
+    <value>图像 URL 不能为空。</value>
+    <comment>Error message to show if image url text box is empty while adding or editing the QnA pair.</comment>
+  </data>
+  <data name="EntryCreatedByText" xml:space="preserve">
+    <value>创建者</value>
+    <comment>Show message on adaptive card, after adding the QnA pair.</comment>
+  </data>
+  <data name="DescriptionPlaceholderText" xml:space="preserve">
+    <value>输入信息(最多 500 字符)</value>
+    <comment>Placeholder text for description text box.</comment>
+  </data>
+  <data name="ImageUrlPlaceholderText" xml:space="preserve">
+    <value>输入图像 URL (最多 200 字符)</value>
+    <comment>Placeholder text for image url text box.</comment>
+  </data>
+  <data name="QuestionPlaceholderText" xml:space="preserve">
+    <value>输入信息 (最多 100 个字符)</value>
+    <comment>Placeholder text for question text box.</comment>
+  </data>
+  <data name="RedirectionUrlPlaceholderText" xml:space="preserve">
+    <value>输入信息 (最多 200 个字符)</value>
+    <comment>Placeholder text for redirection url text box.</comment>
+  </data>
+  <data name="SubtitlePlaceholderText" xml:space="preserve">
+    <value>输入信息 (最多 20 字符)</value>
+    <comment>Placeholder text for subtitle text box.</comment>
+  </data>
+  <data name="TitlePlaceholderText" xml:space="preserve">
+    <value>输入信息 (最多 50 字符)</value>
+    <comment>Placeholder text for title text box.</comment>
+  </data>
+  <data name="BackButtonText" xml:space="preserve">
+    <value>返回</value>
+    <comment>The back button text on the add/edit QnA pair task module, while previewing the card.</comment>
+  </data>
+  <data name="InvalidRedirectUrlText" xml:space="preserve">
+    <value>重定向 URL 无效。</value>
+    <comment>Error message to show if redirection url is not valid while adding or editing the QnA pair.</comment>
+  </data>
+  <data name="DescriptionLabelText" xml:space="preserve">
+    <value>* 说明 (支持 Markdown)</value>
+    <comment>Label text for description text box.</comment>
+  </data>
+  <data name="QuestionLabelText" xml:space="preserve">
+    <value>*问题</value>
+    <comment>Label text for question text box.</comment>
+  </data>
+  <data name="TitleLabelText" xml:space="preserve">
+    <value>标题 (支持 Markdown)</value>
+    <comment>Label text for title text box.</comment>
+  </data>
+  <data name="ImageLabelText" xml:space="preserve">
+    <value>图像 URL</value>
+    <comment>Label text for image url text box.</comment>
+  </data>
+  <data name="RedirectionLabelText" xml:space="preserve">
+    <value>重定向 URL</value>
+    <comment>Label text for redirection url text box.</comment>
+  </data>
+  <data name="SubtitleLabelText" xml:space="preserve">
+    <value>副标题 (支持 Markdown)</value>
+    <comment>Label text for subtitle text box.</comment>
+  </data>
+  <data name="UpdateHistoryHeadersText" xml:space="preserve">
+    <value>名称|操作|日期</value>
+    <comment>Header text for update history adaptiver card. which shows the history of actions performed by users on a QnA pair.</comment>
+  </data>
+  <data name="EmptyTitleErrorText" xml:space="preserve">
+    <value>标题不能为空。</value>
+    <comment>Error message to show if title text box is empty while adding or editing the QnA pair.</comment>
+  </data>
+  <data name="GoToThread" xml:space="preserve">
+    <value>查看详细信息</value>
+    <comment>Button title for the card created through Messaging Extension</comment>
+  </data>
+  <data name="PreviewButtonText" xml:space="preserve">
+    <value>预览</value>
+    <comment>Preview button text.</comment>
+  </data>
+  <data name="SaveButtonText" xml:space="preserve">
+    <value>保存</value>
+    <comment>Save button text for QnA pair.</comment>
+  </data>
+  <data name="DateFormat" xml:space="preserve">
+    <value>{0} 于{1} 处</value>
+    <comment>Used in date string format for adaptive card. {0} is for date and {1} is for time.</comment>
+  </data>
+  <data name="ErrorMessage" xml:space="preserve">
+    <value>出错了。请稍后再试。</value>
+    <comment>Error message to show if there is any exception.</comment>
+  </data>
+  <data name="EmptyDescriptionErrorText" xml:space="preserve">
+    <value>说明不能为空。</value>
+    <comment>Error message to show if description text box is empty while adding or editing the QnA pair.</comment>
+  </data>
+  <data name="OptionalFieldDisplayText" xml:space="preserve">
+    <value>可选字段</value>
+  </data>
+  <data name="SuggestedText" xml:space="preserve">
+    <value>下面的可选字段可用于向答案添加更多详细信息。</value>
+  </data>
+  <data name="ManuallyAddedQuestionMessage" xml:space="preserve">
+    <value>已手动添加问题</value>
+    <comment>Question answer pair added manually in QnA Maker</comment>
+  </data>
+  <data name="UpdateHistoryDateHeaderText" xml:space="preserve">
+    <value>日期</value>
+    <comment>Date header text in update history adaptive card text.</comment>
+  </data>
+  <data name="SelectActionItemDisplayTextFormatting" xml:space="preserve">
+    <value>**{0}**</value>
+    <comment>The formatting of the select action item display text, with {0} being the placeholder for the DisplayText from the Follow Up prompt.</comment>
+  </data>
+  <data name="AppFeedbackDescriptionPlaceholderText" xml:space="preserve">
+    <value>键入你的反馈(最多 500 个字符)</value>
+    <comment>Placeholder for app feedback description</comment>
+  </data>
+  <data name="ShareAppFeedbackRating" xml:space="preserve">
+    <value>此应用有帮助吗? (必填)</value>
+    <comment>Feedback for App</comment>
+  </data>
+  <data name="BotCommandAskExpert" xml:space="preserve">
+    <value>咨询专家</value>
+    <comment>Bot command Ask an expert. This needs to be match with manifest's command "Ask an expert" in translated json file.</comment>
+  </data>
+  <data name="BotCommandFeedback" xml:space="preserve">
+    <value>共享反馈</value>
+    <comment>Bot command Share feedback. This needs to be match with manifest's command "Share feedback" in translated json file.</comment>
+  </data>
+  <data name="BotCommandTour" xml:space="preserve">
+    <value>浏览</value>
+    <comment>Bot command Take a tour. This needs to be match with manifest's command "Take a tour" in translated json file.</comment>
+  </data>
+</root>

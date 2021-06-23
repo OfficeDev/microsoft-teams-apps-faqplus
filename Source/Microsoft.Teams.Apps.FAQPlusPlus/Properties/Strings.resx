@@ -259,6 +259,10 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <value>Share app feedback</value>
     <comment>Title text of share feedback user carousel card.</comment>
   </data>
+  <data name="SubmitButtonText" xml:space="preserve">
+    <value>Submit</value>
+    <comment>Button to submit user activity.</comment>
+  </data>
   <data name="AskAnExpertDisplayText" xml:space="preserve">
     <value>Ask an expert</value>
     <comment>Ask an expert display text: text sent to the bot when ask an expert button is clicked.</comment>
@@ -600,5 +604,17 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
   <data name="ShareAppFeedbackRating" xml:space="preserve">
     <value>How helpful is this app? (Required)</value>
     <comment>Feedback for App</comment>
+  </data>
+  <data name="BotCommandAskExpert" xml:space="preserve">
+    <value>Ask an expert</value>
+    <comment>Bot command Ask an expert. This needs to be match with manifest's command "Ask an expert" in translated json file.</comment>
+  </data>
+  <data name="BotCommandFeedback" xml:space="preserve">
+    <value>Share feedback</value>
+    <comment>Bot command Share feedback. This needs to be match with manifest's command "Share feedback" in translated json file.</comment>
+  </data>
+  <data name="BotCommandTour" xml:space="preserve">
+    <value>Take a tour</value>
+    <comment>Bot command Take a tour. This needs to be match with manifest's command "Take a tour" in translated json file.</comment>
   </data>
 </root>

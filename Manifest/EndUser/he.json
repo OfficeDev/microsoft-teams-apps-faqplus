@@ -1,0 +1,13 @@
+{
+  "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.5/MicrosoftTeams.schema.json",
+  "name.short": "שאלות נפוצות פלוס",
+  "description.short": "FAQ bot ידידותי שעונה על שאלות נפוצות ומקשר אותך למומחים.",
+  "description.full": "bot ידידותי לניהול דיאלוג שאלות ותשובות עונה על שאלות נפוצות. אם הוא לא יודע לענות, הוא מקשר אותך למומחה ברגע שהוא זמין.",
+  "bots[0].commandLists[0].commands[0].title": "צא לסיור",
+  "bots[0].commandLists[0].commands[0].description": "סיבוב היכרות של תכונות מפתח",
+  "bots[0].commandLists[0].commands[1].title": "שאל מומחה",
+  "bots[0].commandLists[0].commands[1].description": "קשר למומחה",
+  "bots[0].commandLists[0].commands[2].title": "שתף משוב",
+  "bots[0].commandLists[0].commands[2].description": "שלח משוב",
+  "staticTabs[0].name": "עזרה"
+}

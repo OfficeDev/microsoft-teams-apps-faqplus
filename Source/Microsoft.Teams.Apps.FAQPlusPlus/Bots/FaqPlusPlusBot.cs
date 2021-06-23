@@ -162,14 +162,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     return Task.CompletedTask;
                 }
 
-                // Get the current culture info to use in resource files
-                string locale = turnContext?.Activity.Entities?.FirstOrDefault(entity => entity.Type == "clientInfo")?.Properties["locale"]?.ToString();
-
-                if (!string.IsNullOrEmpty(locale))
-                {
-                    CultureInfo.CurrentCulture = CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo(locale);
-                }
-
                 return base.OnTurnAsync(turnContext, cancellationToken);
             }
             catch (Exception ex)
@@ -768,30 +760,31 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 return;
             }
 
-            string text = message.Text?.ToLower()?.Trim() ?? string.Empty;
+            string text = (message.Text ?? string.Empty).Trim();
 
-            switch (text)
+            if (text.Equals(Strings.BotCommandAskExpert, StringComparison.CurrentCultureIgnoreCase) ||
+                text.Equals(Constants.AskAnExpert, StringComparison.InvariantCultureIgnoreCase))
             {
-                case Constants.AskAnExpert:
-                    this.logger.LogInformation("Sending user ask an expert card");
-                    await turnContext.SendActivityAsync(MessageFactory.Attachment(AskAnExpertCard.GetCard())).ConfigureAwait(false);
-                    break;
-
-                case Constants.ShareFeedback:
-                    this.logger.LogInformation("Sending user feedback card");
-                    await turnContext.SendActivityAsync(MessageFactory.Attachment(ShareFeedbackCard.GetCard())).ConfigureAwait(false);
-                    break;
-
-                case Constants.TakeATour:
-                    this.logger.LogInformation("Sending user tour card");
-                    var userTourCards = TourCarousel.GetUserTourCards(this.appBaseUri);
-                    await turnContext.SendActivityAsync(MessageFactory.Carousel(userTourCards)).ConfigureAwait(false);
-                    break;
-
-                default:
-                    this.logger.LogInformation("Sending input to QnAMaker");
-                    await this.GetQuestionAnswerReplyAsync(turnContext, message).ConfigureAwait(false);
-                    break;
+                this.logger.LogInformation("Sending user ask an expert card");
+                await turnContext.SendActivityAsync(MessageFactory.Attachment(AskAnExpertCard.GetCard())).ConfigureAwait(false);
+            }
+            else if (text.Equals(Strings.BotCommandFeedback, StringComparison.CurrentCultureIgnoreCase) ||
+                text.Equals(Constants.ShareFeedback, StringComparison.InvariantCultureIgnoreCase))
+            {
+                this.logger.LogInformation("Sending user feedback card");
+                await turnContext.SendActivityAsync(MessageFactory.Attachment(ShareFeedbackCard.GetCard())).ConfigureAwait(false);
+            }
+            else if (text.Equals(Strings.BotCommandTour, StringComparison.CurrentCultureIgnoreCase) ||
+                text.Equals(Constants.TakeATour, StringComparison.InvariantCultureIgnoreCase))
+            {
+                this.logger.LogInformation("Sending user tour card");
+                var userTourCards = TourCarousel.GetUserTourCards(this.appBaseUri);
+                await turnContext.SendActivityAsync(MessageFactory.Carousel(userTourCards)).ConfigureAwait(false);
+            }
+            else
+            {
+                this.logger.LogInformation("Sending input to QnAMaker");
+                await this.GetQuestionAnswerReplyAsync(turnContext, message).ConfigureAwait(false);
             }
         }
 
@@ -889,7 +882,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             Attachment userCard = null;         // Acknowledgement to the user
             TicketEntity newTicket = null;      // New ticket
 
-            switch (message?.Text)
+            string text = (message.Text ?? string.Empty).Trim();
+
+            switch (text)
             {
                 case Constants.AskAnExpert:
                     this.logger.LogInformation("Sending user ask an expert card (from answer)");
@@ -903,18 +898,18 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     await turnContext.SendActivityAsync(MessageFactory.Attachment(ShareFeedbackCard.GetCard(shareFeedbackPayload))).ConfigureAwait(false);
                     break;
 
-                case AskAnExpertCard.AskAnExpertSubmitText:
+                case Constants.AskAnExpertSubmitText:
                     this.logger.LogInformation("Received question for expert");
                     newTicket = await AdaptiveCardHelper.AskAnExpertSubmitText(message, turnContext, cancellationToken, this.ticketsProvider).ConfigureAwait(false);
                     if (newTicket != null)
                     {
-                        smeTeamCard = new SmeTicketCard(newTicket).ToAttachment(message?.LocalTimestamp);
-                        userCard = new UserNotificationCard(newTicket).ToAttachment(Strings.NotificationCardContent, message?.LocalTimestamp);
+                        smeTeamCard = new SmeTicketCard(newTicket).ToAttachment();
+                        userCard = new UserNotificationCard(newTicket).ToAttachment(Strings.NotificationCardContent);
                     }
 
                     break;
 
-                case ShareFeedbackCard.ShareFeedbackSubmitText:
+                case Constants.ShareFeedbackSubmitText:
                     this.logger.LogInformation("Received app feedback");
                     smeTeamCard = await AdaptiveCardHelper.ShareFeedbackSubmitText(message, turnContext, cancellationToken).ConfigureAwait(false);
                     if (smeTeamCard != null)
@@ -1027,7 +1022,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             {
                 Id = ticket.SmeCardActivityId,
                 Conversation = new ConversationAccount { Id = ticket.SmeThreadConversationId },
-                Attachments = new List<Attachment> { new SmeTicketCard(ticket).ToAttachment(message.LocalTimestamp) },
+                Attachments = new List<Attachment> { new SmeTicketCard(ticket).ToAttachment() },
             };
             var updateResponse = await turnContext.UpdateActivityAsync(updateCardActivity, cancellationToken).ConfigureAwait(false);
             this.logger.LogInformation($"Card for ticket {ticket.TicketId} updated to status ({ticket.Status}, {ticket.AssignedToObjectId}), activityId = {updateResponse.Id}");
@@ -1040,21 +1035,21 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 case ChangeTicketStatusPayload.ReopenAction:
                     smeNotification = string.Format(CultureInfo.InvariantCulture, Strings.SMEOpenedStatus, message.From.Name);
 
-                    userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket).ToAttachment(Strings.ReopenedTicketUserNotification, message.LocalTimestamp));
+                    userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket).ToAttachment(Strings.ReopenedTicketUserNotification));
                     userNotification.Summary = Strings.ReopenedTicketUserNotification;
                     break;
 
                 case ChangeTicketStatusPayload.CloseAction:
                     smeNotification = string.Format(CultureInfo.InvariantCulture, Strings.SMEClosedStatus, ticket.LastModifiedByName);
 
-                    userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket).ToAttachment(Strings.ClosedTicketUserNotification, message.LocalTimestamp));
+                    userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket).ToAttachment(Strings.ClosedTicketUserNotification));
                     userNotification.Summary = Strings.ClosedTicketUserNotification;
                     break;
 
                 case ChangeTicketStatusPayload.AssignToSelfAction:
                     smeNotification = string.Format(CultureInfo.InvariantCulture, Strings.SMEAssignedStatus, ticket.AssignedToName);
 
-                    userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket).ToAttachment(Strings.AssignedTicketUserNotification, message.LocalTimestamp));
+                    userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket).ToAttachment(Strings.AssignedTicketUserNotification));
                     userNotification.Summary = Strings.AssignedTicketUserNotification;
                     break;
             }

@@ -1,0 +1,13 @@
+{
+  "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.5/MicrosoftTeams.schema.json",
+  "name.short": "Forum aux questions Plus",
+  "description.short": "Réponses et rencontre d’experts à l’aide d’un bot de FAQ amical.",
+  "description.full": "Un robot de question/réponses amical qui répond aux questions fréquemment posées. S’il ne peut pas y répondre, il vous mettra en contact avec un expert dès que celui ou celle-ci sera disponible.",
+  "bots[0].commandLists[0].commands[0].title": "Suivre la visite guidée",
+  "bots[0].commandLists[0].commands[0].description": "Visite guidée des principales fonctionnalités",
+  "bots[0].commandLists[0].commands[1].title": "Demander à un expert",
+  "bots[0].commandLists[0].commands[1].description": "Contacter un expert",
+  "bots[0].commandLists[0].commands[2].title": "Partager des commentaires",
+  "bots[0].commandLists[0].commands[2].description": "Envoyer des commentaires",
+  "staticTabs[0].name": "Aide"
+}

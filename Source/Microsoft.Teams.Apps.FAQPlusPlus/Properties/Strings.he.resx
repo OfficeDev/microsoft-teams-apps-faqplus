@@ -1,0 +1,623 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AskAnExpertPlaceholderText" xml:space="preserve">
+    <value>הקלד את השאלה המפורטת שלך ואת הפרטים התומכים כאן (500 תווים לכל היותר)</value>
+    <comment>Ask an expert placeholder text.</comment>
+  </data>
+  <data name="AskAnExpertTitleText" xml:space="preserve">
+    <value>שאל מומחה</value>
+    <comment>Title of the ask an expert card.</comment>
+  </data>
+  <data name="AskAnExpertText2" xml:space="preserve">
+    <value>...אם התשובה שלי אינה לשביעות רצונך... אחבר אותך למומחה.</value>
+    <comment>Helps the user in understanding there is an expert team to connect to.</comment>
+  </data>
+  <data name="FeedbackText1" xml:space="preserve">
+    <value>ספר לצוות המומחים שלי איך אני מתפקד כדי שיוכלו לעזור לי להשתפר.</value>
+    <comment>Text suggests that user is invited to share his feedback on his experience using bot.</comment>
+  </data>
+  <data name="FunctionCardText1" xml:space="preserve">
+    <value>שאל שאלה</value>
+    <comment>Explains what bot does and possible questions.</comment>
+  </data>
+  <data name="FunctionCardText2" xml:space="preserve">
+    <value>אתה יכול פשוט לשאול אותי שאלה ואני אעשה כמיטב יכולתי לענות. אם יהיו טיפולי המשך נוספים, אביא גם אותם...</value>
+    <comment>Suggests the user to ask question.</comment>
+  </data>
+  <data name="ShareFeedbackButtonText" xml:space="preserve">
+    <value>שתף משוב</value>
+    <comment>Button text for share feedback show card in QnA response card.</comment>
+  </data>
+  <data name="DescriptionText" xml:space="preserve">
+    <value>תיאור</value>
+    <comment>Label text for description.</comment>
+  </data>
+  <data name="FeedbackDescriptionPlaceholderText" xml:space="preserve">
+    <value>הזן את המשוב שלך ומידע תומך כאן (500 תווים לכל היותר)</value>
+    <comment>Placeholder label where the user enters feedback in the text box.</comment>
+  </data>
+  <data name="StatusFactTitle" xml:space="preserve">
+    <value>מצב: </value>
+    <comment>Status one of the available fact set in notification cards.</comment>
+  </data>
+  <data name="AskAnExpertButtonText" xml:space="preserve">
+    <value>שאל מומחה</value>
+    <comment>Action button which invokes ask an expert show card.</comment>
+  </data>
+  <data name="ThankYouTextContent" xml:space="preserve">
+    <value>תודה על המשוב! שיתפתי אותו עם המומחים. הוא עוזר לי ללמוד ולהשתפר.</value>
+    <comment>The content for the thank you adaptive card which is shown whenever user submits feedback on the app or on a response that is generated by QnA service.</comment>
+  </data>
+  <data name="ChatTextButton" xml:space="preserve">
+    <value>צ\'אט עם {0}</value>
+    <comment>Ability to chat directly with end user from SME channel.</comment>
+  </data>
+  <data name="NotificationCardContent" xml:space="preserve">
+    <value>שיתפתי את השאלה שלך עם הצוות. מומחה ייצור איתך קשר בקרוב בצ\'אט נפרד.</value>
+    <comment>Confirmation message to the user upon asking question to the expert.</comment>
+  </data>
+  <data name="TeamChatHeaderText" xml:space="preserve">
+    <value>התחל צ\'אט עם משתמשי קצה</value>
+    <comment>Team carousel chat card header-title of the chat card.</comment>
+  </data>
+  <data name="TeamChatContent" xml:space="preserve">
+    <value>לחץ על ' שוחח בצ עם משתמש ' כדי להתחיל צ'אט ישיר.</value>
+    <comment>Team carousel chat card content- SME team members can chat directly with the end users.</comment>
+  </data>
+  <data name="TeamNotificationHeaderText" xml:space="preserve">
+    <value>קבל הודעות ממשתמשי קצה</value>
+    <comment>Team carousel function card content- title of the chat card.</comment>
+  </data>
+  <data name="TeamNotificationContent" xml:space="preserve">
+    <value>באפשרותך לראות אילו משתמשים זקוקים לעזרה.</value>
+    <comment>Team carousel function card content- team can take the question from the end users through bot.</comment>
+  </data>
+  <data name="TeamTicketSystemHeaderText" xml:space="preserve">
+    <value>ניהול שאילתות</value>
+    <comment>Title of the query carousel card- ticket system.</comment>
+  </data>
+  <data name="TeamTicketSystemContent" xml:space="preserve">
+    <value>סמן בקשות כבקשות שהוקצו או נסגרו כדי לעקוב אחר שאילתות.</value>
+    <comment>Team carousel query card content- team can keep track of the user request.</comment>
+  </data>
+  <data name="TakeATeamTourButtonText" xml:space="preserve">
+    <value>סיור צוות</value>
+    <comment>Action button which gives tour for the team on bot Functionalities.</comment>
+  </data>
+  <data name="WelcomeTeamCardContent" xml:space="preserve">
+    <value>שלום צוות,   
+
+אני בוט התשובות והתשובות הידידותי שלך שעוזר לך לספק תמיכה לאנשים שנמצאים באינטראקציה איתי וזקוקים לסיוע נוסף.</value>
+    <comment>Welcome message when bot is added to a new team.</comment>
+  </data>
+  <data name="CustomMessage" xml:space="preserve">
+    <value>לא מצאתי תשובה תואמת עבור שאלה זו. האם ברצונך לשאול מומחה?</value>
+    <comment>Message when user asks random question to the bot.</comment>
+  </data>
+  <data name="QuestionAskedFactTitle" xml:space="preserve">
+    <value>שאלה שנשאלה:</value>
+    <comment>The fact set title for the question asked in the SME Ticket card.</comment>
+  </data>
+  <data name="QuestionForExpertSubHeaderText" xml:space="preserve">
+    <value>**{0}** מבקש תמיכה.</value>
+    <comment>Text says that user is asking a question to the expert, {0} placeholder holds the name of the person.</comment>
+  </data>
+  <data name="TeamCustomMessage" xml:space="preserve">
+    <value>איני מצליח להגיב לפקודות בערוצים. צא לסיור מהיר כדי ללמוד מה ניתן לעשות.</value>
+    <comment>When SME team member asks bot a questions- a message appears saying that team member is supposed to install the bot in personal scope.</comment>
+  </data>
+  <data name="ChangeStatusButtonText" xml:space="preserve">
+    <value>שנה מצב</value>
+    <comment>Text on change status button.</comment>
+  </data>
+  <data name="ResponseHeaderText" xml:space="preserve">
+    <value>הנה מה שמצאתי:</value>
+    <comment>Response header-letting the user know that a response is generated to their request from QnA Maker.</comment>
+  </data>
+  <data name="ClosedFactTitle" xml:space="preserve">
+    <value>נסגר: </value>
+    <comment>Closed fact title is one of the available fact set.</comment>
+  </data>
+  <data name="DateCreatedDisplayFactTitle" xml:space="preserve">
+    <value>נוצר: </value>
+    <comment>Created: one of the available fact set in notification cards- created is the title for created date value.</comment>
+  </data>
+  <data name="ShowCardTitleText" xml:space="preserve">
+    <value>הקלד כותרת קצרה (50 תווים לכל היותר)</value>
+    <comment>Label text where users enters title for his question or feedback. </comment>
+  </data>
+  <data name="MandatoryTitleFieldText" xml:space="preserve">
+    <value>שדה הכותרת הוא הכרחי.</value>
+    <comment>Text that suggest users to fill mandatory fields.</comment>
+  </data>
+  <data name="ResultsFeedbackText" xml:space="preserve">
+    <value>משוב</value>
+    <comment>This text is used as title for results feedback card.</comment>
+  </data>
+  <data name="FeedbackAlertText" xml:space="preserve">
+    <value>**{0}** שיתף/ה את המשוב</value>
+    <comment>Text in the SME feedback card, The placeholder {0} represents the name of the person sharing the feedback. The placeholder {1} represents the feedback type.</comment>
+  </data>
+  <data name="ShareFeedbackTitleText" xml:space="preserve">
+    <value>שתף משוב לגבי האפליקציה</value>
+    <comment>Title text of share feedback user carousel card.</comment>
+  </data>
+  <data name="SubmitButtonText" xml:space="preserve">
+    <value>שלח</value>
+    <comment>Button to submit user activity.</comment>
+  </data>
+  <data name="AskAnExpertDisplayText" xml:space="preserve">
+    <value>שאל מומחה</value>
+    <comment>Ask an expert display text: text sent to the bot when ask an expert button is clicked.</comment>
+  </data>
+  <data name="ShareFeedbackDisplayText" xml:space="preserve">
+    <value>שתף משוב</value>
+    <comment>Share feedback display text: text sent to the bot when share feedback button is clicked.</comment>
+  </data>
+  <data name="SMEAssignedStatus" xml:space="preserve">
+    <value>בקשה זו מוקצית כעת. הוקצה ל-{0}.</value>
+    <comment>Message posted to the thread when the ticket is assigned. {0} = name of SME who assigned the request.</comment>
+  </data>
+  <data name="SMEClosedStatus" xml:space="preserve">
+    <value>בקשה זו סגורה כעת. נסגר על-ידי {0}.</value>
+    <comment>Message posted to the thread when the ticket is closed. {0} = name of SME who closed the request.</comment>
+  </data>
+  <data name="SMEOpenedStatus" xml:space="preserve">
+    <value>בקשה זו אינה מקצה כעת. עודכן לאחרונה על-ידי {0}. </value>
+    <comment>Message posted to the thread when the ticket is reopened. {0} = name of SME who reopened the request.</comment>
+  </data>
+  <data name="AssignedTicketUserNotification" xml:space="preserve">
+    <value>השאלה שלך הוקצתה למומחה. הוא יגיב לך ישירות בהודעת צ\'אט.</value>
+    <comment>Notification text sent to the user who opened a ticket, when the ticket is assigned to an expert.</comment>
+  </data>
+  <data name="ClosedTicketUserNotification" xml:space="preserve">
+    <value>בקשה זו נסגרה. בקש מומחה שוב אם אתה עדיין זקוק לסיוע נוסף.</value>
+    <comment>Notification text sent to the user who opened a ticket, when the ticket is closed.</comment>
+  </data>
+  <data name="ReopenedTicketUserNotification" xml:space="preserve">
+    <value>הבקשה שלך פתוחה שוב. מומחה ישלח לך הודעת צ'אט ישירות.</value>
+    <comment>Notification text sent to the user who opened a ticket, when the ticket is reopened.</comment>
+  </data>
+  <data name="GoToOriginalThreadButtonText" xml:space="preserve">
+    <value>עבור אל השרשור המקורי</value>
+    <comment>Go to original thread button available on messaging extension card.</comment>
+  </data>
+  <data name="NonSMEErrorText" xml:space="preserve">
+    <value>ניתן להפעיל את הרחבת העברת ההודעות רק מערוץ שבו האפליקציה מותקנת</value>
+    <comment>Error message when a user of non-SME team tries to access messaging extension application</comment>
+  </data>
+  <data name="AssignedUserNotificationStatus" xml:space="preserve">
+    <value>הוקצה</value>
+    <comment>The status value for the user notification when a ticket is assigned to an expert</comment>
+  </data>
+  <data name="ClosedUserNotificationStatus" xml:space="preserve">
+    <value>סגור</value>
+    <comment>The status value for the user notification when a ticket is closed by an expert.</comment>
+  </data>
+  <data name="UnassignedUserNotificationStatus" xml:space="preserve">
+    <value>לא הוקצה</value>
+    <comment>The status value for the user notification when a ticket is unassigned</comment>
+  </data>
+  <data name="SMEUserChatMessage" xml:space="preserve">
+    <value>Re:‏ {0}</value>
+    <comment>The {0} is the placeholder for the title that the user had provided when asking an expert.</comment>
+  </data>
+  <data name="AssignToMeActionChoiceTitle" xml:space="preserve">
+    <value>הקצה לי</value>
+    <comment>The dropdown choice for "Assign to me" for the SME ticket status is being updated</comment>
+  </data>
+  <data name="CloseActionChoiceTitle" xml:space="preserve">
+    <value>סגור</value>
+    <comment>The dropdown choice for "Close" for when the SME ticket status is being updated</comment>
+  </data>
+  <data name="ReopenActionChoiceTitle" xml:space="preserve">
+    <value>פתיחה מחדש</value>
+    <comment>The dropdown choice for "Reopen" for when the SME ticket status is being updated from the closed status.</comment>
+  </data>
+  <data name="ReopenAssignToMeActionChoiceTitle" xml:space="preserve">
+    <value>פתח מחדש והקצה לי</value>
+    <comment>The dropdown choice for "Reopen and assign to me" for when the SME ticket status is being updated from the closed state.</comment>
+  </data>
+  <data name="UnassignActionChoiceTitle" xml:space="preserve">
+    <value>בטל הקצאה</value>
+    <comment>The dropdown choice for "Unassign" for when the SME ticket status is being updated</comment>
+  </data>
+  <data name="SMETicketAssignedStatus" xml:space="preserve">
+    <value>הוקצה ל- {0}</value>
+    <comment>This value represents the SME Ticket in the Assigned status - {0} represents the SME User to whom a ticket has been assigned</comment>
+  </data>
+  <data name="SMETicketClosedStatus" xml:space="preserve">
+    <value>סגור</value>
+    <comment>This value represents the SME Ticket in the Closed status</comment>
+  </data>
+  <data name="SMETicketUnassignedStatus" xml:space="preserve">
+    <value>לא הוקצה</value>
+    <comment>This value represents the SME Ticket in the Unassigned status</comment>
+  </data>
+  <data name="AskAnExpertSubheaderText" xml:space="preserve">
+    <value>אחד המומחים שלנו ייצור איתך קשר בקרוב.</value>
+    <comment>Ask en expert card subtitle text:lets the user know that SME team member can directly chat with the requester.</comment>
+  </data>
+  <data name="DescriptionFact" xml:space="preserve">
+    <value>תיאור:</value>
+    <comment>Available factset in user notification and SME facing cards.</comment>
+  </data>
+  <data name="FeedbackRatingRequired" xml:space="preserve">
+    <value>האם התשובה שקיבלת עזרה לך? (חובה)</value>
+    <comment>Feedback(Required): label for the feedback rating dropdown.</comment>
+  </data>
+  <data name="HelpfulRatingText" xml:space="preserve">
+    <value>עזרה</value>
+    <comment>Helpful: available feedback rating scale.</comment>
+  </data>
+  <data name="NeedsImprovementRatingText" xml:space="preserve">
+    <value>טעונה שיפור</value>
+    <comment>Needs improvement: available feedback rating scale.</comment>
+  </data>
+  <data name="RatingTitle" xml:space="preserve">
+    <value>דירוג</value>
+    <comment>Rating fact is used in SME facing feedback card to show the rating submitted by the user from the rating dropdown in share feedback card.</comment>
+  </data>
+  <data name="RatingMandatoryText" xml:space="preserve">
+    <value>חובה לדרג</value>
+    <comment>Rating is mandatory , a warning message to the user when rating is not submitted in share feedback activity.</comment>
+  </data>
+  <data name="TakeATourButtonText" xml:space="preserve">
+    <value>צא לסיור</value>
+    <comment>Take a tour button available for the users on welcome card, through which user can take a tour on bot functionalities in personal scope. </comment>
+  </data>
+  <data name="TitleFact" xml:space="preserve">
+    <value>כותרת:</value>
+    <comment>Title fact is used to show the title entered by the user for his inquiry.</comment>
+  </data>
+  <data name="TitleRequiredText" xml:space="preserve">
+    <value>כותרת (נדרש)</value>
+    <comment>Title(Required): label of the title text box.</comment>
+  </data>
+  <data name="NotHelpfulRatingText" xml:space="preserve">
+    <value>לא עזרה</value>
+    <comment>Unhelpful: available feedback rating scale.</comment>
+  </data>
+  <data name="ViewArticleButtonText" xml:space="preserve">
+    <value>הצג מאמר</value>
+    <comment>The necessary string for the view article button</comment>
+  </data>
+  <data name="SMEFeedbackHeaderText" xml:space="preserve">
+    <value>משוב</value>
+    <comment>Title text for SME facing feedback card.</comment>
+  </data>
+  <data name="EmptyQuestionErrorText" xml:space="preserve">
+    <value>טקסט השאלה אינו יכול להיות ריק.</value>
+    <comment>Error message to show if question text box is empty while adding or editing the QnA pair.</comment>
+  </data>
+  <data name="AnswerTitle" xml:space="preserve">
+    <value>**ענה:**</value>
+    <comment>Label text for answer on the card.</comment>
+  </data>
+  <data name="DeleteConfirmation" xml:space="preserve">
+    <value>האם אתה בטוח שברצונך למחוק פריט זה? השאלה והתשובה יימחקו.</value>
+    <comment>Delete confirmation message.</comment>
+  </data>
+  <data name="DeleteButtonText" xml:space="preserve">
+    <value>מחק</value>
+    <comment>Delete button text.</comment>
+  </data>
+  <data name="LastEditedText" xml:space="preserve">
+    <value>נערך לאחרונה על-ידי</value>
+    <comment>Show message on adaptive card after editing the QnA pair.</comment>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>לא</value>
+    <comment>No button text on delete QnA pair confirmation card.</comment>
+  </data>
+  <data name="QuestionTitle" xml:space="preserve">
+    <value>**שאלה:** {0}</value>
+    <comment>Label text for question on the card.</comment>
+  </data>
+  <data name="EditButtonText" xml:space="preserve">
+    <value>ערוך</value>
+    <comment>Edit button text.</comment>
+  </data>
+  <data name="WaitMessageAnswer" xml:space="preserve">
+    <value>הערה: עדכונים מבוצעים כל מספר דקות</value>
+    <comment>Wait message to show on adaptive card after performing any action on QnA pair.</comment>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>כן</value>
+    <comment>Yes button text on delete QnA pair confirmation card.</comment>
+  </data>
+  <data name="DeletedQnaPair" xml:space="preserve">
+    <value>נמחק על ידי {0}</value>
+    <comment>Text shown on the card when a QnA pair is deleted.</comment>
+  </data>
+  <data name="UpdateHistoryButtonText" xml:space="preserve">
+    <value>‏‏היסטוריית עדכונים</value>
+    <comment>Update history button text.</comment>
+  </data>
+  <data name="WaitMessage" xml:space="preserve">
+    <value>נא המתן לזמן מה, עדכונים לשאלה זו: "{0}" יהיו זמינים בזמן קצר.</value>
+    <comment>Wait message to show below the adaptive card while trying to delete the question and is not available in production knowledgebase and waiting to be publish.</comment>
+  </data>
+  <data name="AddQuestionSubtitle" xml:space="preserve">
+    <value>הוסף פרטי שאלה חדשה</value>
+    <comment>The subtitle at the top of task module while adding the new QnA pair.</comment>
+  </data>
+  <data name="EditQuestionSubtitle" xml:space="preserve">
+    <value>ערוך פרטי שאלה</value>
+    <comment>The subtitle at the top of task module while editing the QnA pair.</comment>
+  </data>
+  <data name="HTMLErrorText" xml:space="preserve">
+    <value>תגי HTML אינם נתמכים.</value>
+    <comment>Error message to show if HTML tags are entered on any field while adding or editing the QnA pair.</comment>
+  </data>
+  <data name="QuestionAlreadyExistsErrorText" xml:space="preserve">
+    <value>שאלה קיימת כבר. הוסף שאלה אחרת.</value>
+    <comment>Error message to show if question is already existing in the knowledgebase while adding or editing the QnA pair.</comment>
+  </data>
+  <data name="OpenArticle" xml:space="preserve">
+    <value>פתח מאמר</value>
+    <comment>Open article button text, which will show on adaptiver rich card if redirection url field is filled while adding/editing the QnA pair.</comment>
+  </data>
+  <data name="BackButtonCommandText" xml:space="preserve">
+    <value>BackButton</value>
+    <comment>Back button command text to identify the performed action.</comment>
+  </data>
+  <data name="InvalidImageUrlErrorText" xml:space="preserve">
+    <value>כתובת ה- URL של התמונה אינה חוקית.</value>
+    <comment>Error message to show if image url is not valid while adding or editing the QnA pair.</comment>
+  </data>
+  <data name="EmptyImageUrlErrorText" xml:space="preserve">
+    <value>כתובת ה- URL של התמונה אינה יכולה להיות ריקה.</value>
+    <comment>Error message to show if image url text box is empty while adding or editing the QnA pair.</comment>
+  </data>
+  <data name="EntryCreatedByText" xml:space="preserve">
+    <value>נוצר על-ידי</value>
+    <comment>Show message on adaptive card, after adding the QnA pair.</comment>
+  </data>
+  <data name="DescriptionPlaceholderText" xml:space="preserve">
+    <value>הזן מידע (500 תווים לכל היותר)</value>
+    <comment>Placeholder text for description text box.</comment>
+  </data>
+  <data name="ImageUrlPlaceholderText" xml:space="preserve">
+    <value>הזן כתובת URL של תמונה (200 תווים לכל היותר)</value>
+    <comment>Placeholder text for image url text box.</comment>
+  </data>
+  <data name="QuestionPlaceholderText" xml:space="preserve">
+    <value>הזן מידע (100 תווים לכל היותר)</value>
+    <comment>Placeholder text for question text box.</comment>
+  </data>
+  <data name="RedirectionUrlPlaceholderText" xml:space="preserve">
+    <value>הזן מידע (200 תווים לכל היותר)</value>
+    <comment>Placeholder text for redirection url text box.</comment>
+  </data>
+  <data name="SubtitlePlaceholderText" xml:space="preserve">
+    <value>הזן מידע (20 תווים לכל היותר)</value>
+    <comment>Placeholder text for subtitle text box.</comment>
+  </data>
+  <data name="TitlePlaceholderText" xml:space="preserve">
+    <value>הזן מידע (50 תווים לכל היותר)</value>
+    <comment>Placeholder text for title text box.</comment>
+  </data>
+  <data name="BackButtonText" xml:space="preserve">
+    <value>הקודם</value>
+    <comment>The back button text on the add/edit QnA pair task module, while previewing the card.</comment>
+  </data>
+  <data name="InvalidRedirectUrlText" xml:space="preserve">
+    <value>כתובת ה- URL של ניתוב מחדש אינה חוקית.</value>
+    <comment>Error message to show if redirection url is not valid while adding or editing the QnA pair.</comment>
+  </data>
+  <data name="DescriptionLabelText" xml:space="preserve">
+    <value>*תיאור (Markdown נתמך)</value>
+    <comment>Label text for description text box.</comment>
+  </data>
+  <data name="QuestionLabelText" xml:space="preserve">
+    <value>*שאלה</value>
+    <comment>Label text for question text box.</comment>
+  </data>
+  <data name="TitleLabelText" xml:space="preserve">
+    <value>כותרת (Markdown נתמך)</value>
+    <comment>Label text for title text box.</comment>
+  </data>
+  <data name="ImageLabelText" xml:space="preserve">
+    <value>URL תמונה</value>
+    <comment>Label text for image url text box.</comment>
+  </data>
+  <data name="RedirectionLabelText" xml:space="preserve">
+    <value>כתובת URL של ניתוב מחדש</value>
+    <comment>Label text for redirection url text box.</comment>
+  </data>
+  <data name="SubtitleLabelText" xml:space="preserve">
+    <value>כותרת משנה (Markdown נתמך)</value>
+    <comment>Label text for subtitle text box.</comment>
+  </data>
+  <data name="UpdateHistoryHeadersText" xml:space="preserve">
+    <value>שם|פעולה|תאריך</value>
+    <comment>Header text for update history adaptiver card. which shows the history of actions performed by users on a QnA pair.</comment>
+  </data>
+  <data name="EmptyTitleErrorText" xml:space="preserve">
+    <value>הכותרת אינה יכולה להיות ריקה.</value>
+    <comment>Error message to show if title text box is empty while adding or editing the QnA pair.</comment>
+  </data>
+  <data name="GoToThread" xml:space="preserve">
+    <value>הצג פרטים</value>
+    <comment>Button title for the card created through Messaging Extension</comment>
+  </data>
+  <data name="PreviewButtonText" xml:space="preserve">
+    <value>תצוגה מקדימה</value>
+    <comment>Preview button text.</comment>
+  </data>
+  <data name="SaveButtonText" xml:space="preserve">
+    <value>שמור</value>
+    <comment>Save button text for QnA pair.</comment>
+  </data>
+  <data name="DateFormat" xml:space="preserve">
+    <value>{0} בשעה {1}</value>
+    <comment>Used in date string format for adaptive card. {0} is for date and {1} is for time.</comment>
+  </data>
+  <data name="ErrorMessage" xml:space="preserve">
+    <value>משהו השתבש. נסה שוב מאוחר יותר.</value>
+    <comment>Error message to show if there is any exception.</comment>
+  </data>
+  <data name="EmptyDescriptionErrorText" xml:space="preserve">
+    <value>תיאור אינו יכול להיות ריק.</value>
+    <comment>Error message to show if description text box is empty while adding or editing the QnA pair.</comment>
+  </data>
+  <data name="OptionalFieldDisplayText" xml:space="preserve">
+    <value>שדות אופציונליים</value>
+  </data>
+  <data name="SuggestedText" xml:space="preserve">
+    <value>השדות האופציונליים להלן יכולים לשמש להוספת פרטים נוספים לתשובה.</value>
+  </data>
+  <data name="ManuallyAddedQuestionMessage" xml:space="preserve">
+    <value>שאלה שנוספה ידנית</value>
+    <comment>Question answer pair added manually in QnA Maker</comment>
+  </data>
+  <data name="UpdateHistoryDateHeaderText" xml:space="preserve">
+    <value>תאריך</value>
+    <comment>Date header text in update history adaptive card text.</comment>
+  </data>
+  <data name="SelectActionItemDisplayTextFormatting" xml:space="preserve">
+    <value>**{0}**</value>
+    <comment>The formatting of the select action item display text, with {0} being the placeholder for the DisplayText from the Follow Up prompt.</comment>
+  </data>
+  <data name="AppFeedbackDescriptionPlaceholderText" xml:space="preserve">
+    <value>הקלד את המשוב שלך (500 תווים לכל היותר)</value>
+    <comment>Placeholder for app feedback description</comment>
+  </data>
+  <data name="ShareAppFeedbackRating" xml:space="preserve">
+    <value>עד כמה אפליקציה זו מועילה? (נדרש)</value>
+    <comment>Feedback for App</comment>
+  </data>
+  <data name="BotCommandAskExpert" xml:space="preserve">
+    <value>שאל מומחה</value>
+    <comment>Bot command Ask an expert. This needs to be match with manifest's command "Ask an expert" in translated json file.</comment>
+  </data>
+  <data name="BotCommandFeedback" xml:space="preserve">
+    <value>שתף משוב</value>
+    <comment>Bot command Share feedback. This needs to be match with manifest's command "Share feedback" in translated json file.</comment>
+  </data>
+  <data name="BotCommandTour" xml:space="preserve">
+    <value>צא לסיור</value>
+    <comment>Bot command Take a tour. This needs to be match with manifest's command "Take a tour" in translated json file.</comment>
+  </data>
+  <data name="ExpertManifestLongDescription" xml:space="preserve">
+    <value>bot ידידותי לניהול דיאלוג שאלות ותשובות עונה על שאלות נפוצות. אם הוא לא יודע לענות, הוא מקשר אותך למומחה ברגע שהוא זמין.</value>
+  </data>
+</root>

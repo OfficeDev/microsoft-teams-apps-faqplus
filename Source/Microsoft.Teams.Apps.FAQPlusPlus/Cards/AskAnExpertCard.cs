@@ -5,8 +5,10 @@
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
 {
     using System.Collections.Generic;
+    using System.Globalization;
     using AdaptiveCards;
     using Microsoft.Bot.Schema;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Common;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
 
@@ -15,11 +17,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
     /// </summary>
     public static class AskAnExpertCard
     {
-        /// <summary>
-        /// Text associated with ask an expert command.
-        /// </summary>
-        public const string AskAnExpertSubmitText = "QuestionForExpert";
-
         /// <summary>
         /// This method will construct the card for ask an expert, when invoked from the bot menu.
         /// </summary>
@@ -64,6 +61,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <returns>Ask an expert card.</returns>
         private static Attachment GetCard(AskAnExpertCardPayload cardPayload, bool showValidationErrors)
         {
+            var textAlignment = CultureInfo.CurrentCulture.TextInfo.IsRightToLeft ? AdaptiveHorizontalAlignment.Right : AdaptiveHorizontalAlignment.Left;
+            var errorAlignment = CultureInfo.CurrentCulture.TextInfo.IsRightToLeft ? AdaptiveHorizontalAlignment.Left : AdaptiveHorizontalAlignment.Right;
+
             AdaptiveCard askAnExpertCard = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
             {
                 Body = new List<AdaptiveElement>
@@ -72,12 +72,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     {
                         Weight = AdaptiveTextWeight.Bolder,
                         Text = Strings.AskAnExpertTitleText,
+                        HorizontalAlignment = textAlignment,
                         Size = AdaptiveTextSize.Large,
                         Wrap = true,
                     },
                     new AdaptiveTextBlock
                     {
                         Text = Strings.AskAnExpertSubheaderText,
+                        HorizontalAlignment = textAlignment,
                         Wrap = true,
                     },
                     new AdaptiveColumnSet
@@ -93,6 +95,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                     {
                                         Text = Strings.TitleRequiredText,
                                         Wrap = true,
+                                        HorizontalAlignment = textAlignment,
                                     },
                                 },
                             },
@@ -104,7 +107,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                     {
                                         Text = (showValidationErrors && string.IsNullOrWhiteSpace(cardPayload?.Title)) ? Strings.MandatoryTitleFieldText : string.Empty,
                                         Color = AdaptiveTextColor.Attention,
-                                        HorizontalAlignment = AdaptiveHorizontalAlignment.Right,
+                                        HorizontalAlignment = errorAlignment,
                                         Wrap = true,
                                     },
                                 },
@@ -122,6 +125,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     new AdaptiveTextBlock
                     {
                         Text = Strings.DescriptionText,
+                        HorizontalAlignment = textAlignment,
                         Wrap = true,
                     },
                     new AdaptiveTextInput
@@ -144,7 +148,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                             {
                                 Type = ActionTypes.MessageBack,
                                 DisplayText = Strings.AskAnExpertDisplayText,
-                                Text = AskAnExpertSubmitText,
+                                Text = Constants.AskAnExpertSubmitText,
                             },
                             UserQuestion = cardPayload?.UserQuestion,
                             KnowledgeBaseAnswer = cardPayload?.KnowledgeBaseAnswer,

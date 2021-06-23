@@ -1,0 +1,620 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AskAnExpertPlaceholderText" xml:space="preserve">
+    <value>Введите здесь подробности своего вопроса (не более 500 символов)</value>
+    <comment>Ask an expert placeholder text.</comment>
+  </data>
+  <data name="AskAnExpertTitleText" xml:space="preserve">
+    <value>Вопрос специалисту</value>
+    <comment>Title of the ask an expert card.</comment>
+  </data>
+  <data name="AskAnExpertText2" xml:space="preserve">
+    <value>... Если мой ответ вас не устроил, я свяжу вас со специалистом.</value>
+    <comment>Helps the user in understanding there is an expert team to connect to.</comment>
+  </data>
+  <data name="FeedbackText1" xml:space="preserve">
+    <value>Расскажите моей команде экспертов, как я справляюсь, чтобы они помогли мне стать лучше.</value>
+    <comment>Text suggests that user is invited to share his feedback on his experience using bot.</comment>
+  </data>
+  <data name="FunctionCardText1" xml:space="preserve">
+    <value>Задать вопрос</value>
+    <comment>Explains what bot does and possible questions.</comment>
+  </data>
+  <data name="FunctionCardText2" xml:space="preserve">
+    <value>Вы можете задавать вопросы, а я постараюсь на них ответить. Если нужны дополнительные действия, я могу их выполнить...</value>
+    <comment>Suggests the user to ask question.</comment>
+  </data>
+  <data name="ShareFeedbackButtonText" xml:space="preserve">
+    <value>Оставить отзыв</value>
+    <comment>Button text for share feedback show card in QnA response card.</comment>
+  </data>
+  <data name="DescriptionText" xml:space="preserve">
+    <value>Описание</value>
+    <comment>Label text for description.</comment>
+  </data>
+  <data name="FeedbackDescriptionPlaceholderText" xml:space="preserve">
+    <value>Оставьте здесь свой отзыв и дополнительную информацию (не более 500 символов)</value>
+    <comment>Placeholder label where the user enters feedback in the text box.</comment>
+  </data>
+  <data name="StatusFactTitle" xml:space="preserve">
+    <value>Состояние: </value>
+    <comment>Status one of the available fact set in notification cards.</comment>
+  </data>
+  <data name="AskAnExpertButtonText" xml:space="preserve">
+    <value>Вопрос специалисту</value>
+    <comment>Action button which invokes ask an expert show card.</comment>
+  </data>
+  <data name="ThankYouTextContent" xml:space="preserve">
+    <value>Спасибо за отзыв! Я отправил его экспертам. Это помогает мне учиться и совершенствоваться.</value>
+    <comment>The content for the thank you adaptive card which is shown whenever user submits feedback on the app or on a response that is generated by QnA service.</comment>
+  </data>
+  <data name="ChatTextButton" xml:space="preserve">
+    <value>Чат с пользователем {0}</value>
+    <comment>Ability to chat directly with end user from SME channel.</comment>
+  </data>
+  <data name="NotificationCardContent" xml:space="preserve">
+    <value>Я поделился вашим вопросом с группой. Специалист скоро свяжется с вами в отдельном чате.</value>
+    <comment>Confirmation message to the user upon asking question to the expert.</comment>
+  </data>
+  <data name="TeamChatHeaderText" xml:space="preserve">
+    <value>Начать чат с конечными пользователями</value>
+    <comment>Team carousel chat card header-title of the chat card.</comment>
+  </data>
+  <data name="TeamChatContent" xml:space="preserve">
+    <value>Чтобы начать прямую беседу, нажмите кнопку "чат с пользователем".</value>
+    <comment>Team carousel chat card content- SME team members can chat directly with the end users.</comment>
+  </data>
+  <data name="TeamNotificationHeaderText" xml:space="preserve">
+    <value>Получать уведомления от конечных пользователей</value>
+    <comment>Team carousel function card content- title of the chat card.</comment>
+  </data>
+  <data name="TeamNotificationContent" xml:space="preserve">
+    <value>Вы можете просмотреть пользователей, которым нужна помощь.</value>
+    <comment>Team carousel function card content- team can take the question from the end users through bot.</comment>
+  </data>
+  <data name="TeamTicketSystemHeaderText" xml:space="preserve">
+    <value>Управление запросами</value>
+    <comment>Title of the query carousel card- ticket system.</comment>
+  </data>
+  <data name="TeamTicketSystemContent" xml:space="preserve">
+    <value>Чтобы отслеживать запросы, пометьте их как назначенные или закрытые.</value>
+    <comment>Team carousel query card content- team can keep track of the user request.</comment>
+  </data>
+  <data name="TakeATeamTourButtonText" xml:space="preserve">
+    <value>Обзор группы</value>
+    <comment>Action button which gives tour for the team on bot Functionalities.</comment>
+  </data>
+  <data name="WelcomeTeamCardContent" xml:space="preserve">
+    <value>Здравствуйте!   
+
+Я ваш дружелюбный бот для вопросов и ответов. Я помогаю вам предоставлять поддержку пользователям, которые взаимодействуют со мной и нуждаются в дополнительной помощи.</value>
+    <comment>Welcome message when bot is added to a new team.</comment>
+  </data>
+  <data name="CustomMessage" xml:space="preserve">
+    <value>У меня нет ответа на этот вопрос. Хотите, я запрошу специалиста?</value>
+    <comment>Message when user asks random question to the bot.</comment>
+  </data>
+  <data name="QuestionAskedFactTitle" xml:space="preserve">
+    <value>Заданный вопрос:</value>
+    <comment>The fact set title for the question asked in the SME Ticket card.</comment>
+  </data>
+  <data name="QuestionForExpertSubHeaderText" xml:space="preserve">
+    <value>**{0}** запрашивает поддержку.</value>
+    <comment>Text says that user is asking a question to the expert, {0} placeholder holds the name of the person.</comment>
+  </data>
+  <data name="TeamCustomMessage" xml:space="preserve">
+    <value>Я не могу отвечать на команды в каналах. Просмотрите краткий обзор, чтобы узнать, что я умею делать.</value>
+    <comment>When SME team member asks bot a questions- a message appears saying that team member is supposed to install the bot in personal scope.</comment>
+  </data>
+  <data name="ChangeStatusButtonText" xml:space="preserve">
+    <value>Изменить статус</value>
+    <comment>Text on change status button.</comment>
+  </data>
+  <data name="ResponseHeaderText" xml:space="preserve">
+    <value>Вот что мне удалось найти:</value>
+    <comment>Response header-letting the user know that a response is generated to their request from QnA Maker.</comment>
+  </data>
+  <data name="ClosedFactTitle" xml:space="preserve">
+    <value>Закрыт: </value>
+    <comment>Closed fact title is one of the available fact set.</comment>
+  </data>
+  <data name="DateCreatedDisplayFactTitle" xml:space="preserve">
+    <value>Создано: </value>
+    <comment>Created: one of the available fact set in notification cards- created is the title for created date value.</comment>
+  </data>
+  <data name="ShowCardTitleText" xml:space="preserve">
+    <value>Введите краткое название (максимум 50 символов)</value>
+    <comment>Label text where users enters title for his question or feedback. </comment>
+  </data>
+  <data name="MandatoryTitleFieldText" xml:space="preserve">
+    <value>Поле названия является обязательным.</value>
+    <comment>Text that suggest users to fill mandatory fields.</comment>
+  </data>
+  <data name="ResultsFeedbackText" xml:space="preserve">
+    <value>Отзыв</value>
+    <comment>This text is used as title for results feedback card.</comment>
+  </data>
+  <data name="FeedbackAlertText" xml:space="preserve">
+    <value>Пользователь **{0}** оставил отзыв</value>
+    <comment>Text in the SME feedback card, The placeholder {0} represents the name of the person sharing the feedback. The placeholder {1} represents the feedback type.</comment>
+  </data>
+  <data name="ShareFeedbackTitleText" xml:space="preserve">
+    <value>Оставить отзыв о приложении</value>
+    <comment>Title text of share feedback user carousel card.</comment>
+  </data>
+  <data name="SubmitButtonText" xml:space="preserve">
+    <value>Отправить</value>
+    <comment>Button to submit user activity.</comment>
+  </data>
+  <data name="AskAnExpertDisplayText" xml:space="preserve">
+    <value>Вопрос эксперту</value>
+    <comment>Ask an expert display text: text sent to the bot when ask an expert button is clicked.</comment>
+  </data>
+  <data name="ShareFeedbackDisplayText" xml:space="preserve">
+    <value>Отправить отзыв</value>
+    <comment>Share feedback display text: text sent to the bot when share feedback button is clicked.</comment>
+  </data>
+  <data name="SMEAssignedStatus" xml:space="preserve">
+    <value>Этот запрос назначен. Назначено {0}.</value>
+    <comment>Message posted to the thread when the ticket is assigned. {0} = name of SME who assigned the request.</comment>
+  </data>
+  <data name="SMEClosedStatus" xml:space="preserve">
+    <value>Этот запрос закрыт. Закрыто {0}.</value>
+    <comment>Message posted to the thread when the ticket is closed. {0} = name of SME who closed the request.</comment>
+  </data>
+  <data name="SMEOpenedStatus" xml:space="preserve">
+    <value>Этот запрос теперь не назначен. Автор последнего обновления {0}. </value>
+    <comment>Message posted to the thread when the ticket is reopened. {0} = name of SME who reopened the request.</comment>
+  </data>
+  <data name="AssignedTicketUserNotification" xml:space="preserve">
+    <value>Ваш вопрос передан специалисту. Он свяжется с вами напрямую в чате.</value>
+    <comment>Notification text sent to the user who opened a ticket, when the ticket is assigned to an expert.</comment>
+  </data>
+  <data name="ClosedTicketUserNotification" xml:space="preserve">
+    <value>Этот запрос закрыт. Попросите специалиста еще раз, если вам по-прежнему требуется помощь.</value>
+    <comment>Notification text sent to the user who opened a ticket, when the ticket is closed.</comment>
+  </data>
+  <data name="ReopenedTicketUserNotification" xml:space="preserve">
+    <value>Ваш запрос открыт повторно. Специалист свяжется с вами напрямую в чате.</value>
+    <comment>Notification text sent to the user who opened a ticket, when the ticket is reopened.</comment>
+  </data>
+  <data name="GoToOriginalThreadButtonText" xml:space="preserve">
+    <value>Перейти к исходной беседе</value>
+    <comment>Go to original thread button available on messaging extension card.</comment>
+  </data>
+  <data name="NonSMEErrorText" xml:space="preserve">
+    <value>Расширение обмена сообщениями можно вызвать только из канала, в котором установлено приложение.</value>
+    <comment>Error message when a user of non-SME team tries to access messaging extension application</comment>
+  </data>
+  <data name="AssignedUserNotificationStatus" xml:space="preserve">
+    <value>Назначено</value>
+    <comment>The status value for the user notification when a ticket is assigned to an expert</comment>
+  </data>
+  <data name="ClosedUserNotificationStatus" xml:space="preserve">
+    <value>Закрыто</value>
+    <comment>The status value for the user notification when a ticket is closed by an expert.</comment>
+  </data>
+  <data name="UnassignedUserNotificationStatus" xml:space="preserve">
+    <value>Не назначено</value>
+    <comment>The status value for the user notification when a ticket is unassigned</comment>
+  </data>
+  <data name="SMEUserChatMessage" xml:space="preserve">
+    <value>RE: {0}</value>
+    <comment>The {0} is the placeholder for the title that the user had provided when asking an expert.</comment>
+  </data>
+  <data name="AssignToMeActionChoiceTitle" xml:space="preserve">
+    <value>Назначить мне</value>
+    <comment>The dropdown choice for "Assign to me" for the SME ticket status is being updated</comment>
+  </data>
+  <data name="CloseActionChoiceTitle" xml:space="preserve">
+    <value>Закрыть</value>
+    <comment>The dropdown choice for "Close" for when the SME ticket status is being updated</comment>
+  </data>
+  <data name="ReopenActionChoiceTitle" xml:space="preserve">
+    <value>Открыть заново</value>
+    <comment>The dropdown choice for "Reopen" for when the SME ticket status is being updated from the closed status.</comment>
+  </data>
+  <data name="ReopenAssignToMeActionChoiceTitle" xml:space="preserve">
+    <value>Повторно открыть и назначить мне</value>
+    <comment>The dropdown choice for "Reopen and assign to me" for when the SME ticket status is being updated from the closed state.</comment>
+  </data>
+  <data name="UnassignActionChoiceTitle" xml:space="preserve">
+    <value>Отменить назначение</value>
+    <comment>The dropdown choice for "Unassign" for when the SME ticket status is being updated</comment>
+  </data>
+  <data name="SMETicketAssignedStatus" xml:space="preserve">
+    <value>Назначено пользователю {0}</value>
+    <comment>This value represents the SME Ticket in the Assigned status - {0} represents the SME User to whom a ticket has been assigned</comment>
+  </data>
+  <data name="SMETicketClosedStatus" xml:space="preserve">
+    <value>Закрыто</value>
+    <comment>This value represents the SME Ticket in the Closed status</comment>
+  </data>
+  <data name="SMETicketUnassignedStatus" xml:space="preserve">
+    <value>Не назначено</value>
+    <comment>This value represents the SME Ticket in the Unassigned status</comment>
+  </data>
+  <data name="AskAnExpertSubheaderText" xml:space="preserve">
+    <value>Скоро с вами свяжется один из наших специалистов.</value>
+    <comment>Ask en expert card subtitle text:lets the user know that SME team member can directly chat with the requester.</comment>
+  </data>
+  <data name="DescriptionFact" xml:space="preserve">
+    <value>Описание:</value>
+    <comment>Available factset in user notification and SME facing cards.</comment>
+  </data>
+  <data name="FeedbackRatingRequired" xml:space="preserve">
+    <value>Помог ли вам этот ответ? (обязательно)</value>
+    <comment>Feedback(Required): label for the feedback rating dropdown.</comment>
+  </data>
+  <data name="HelpfulRatingText" xml:space="preserve">
+    <value>Помог</value>
+    <comment>Helpful: available feedback rating scale.</comment>
+  </data>
+  <data name="NeedsImprovementRatingText" xml:space="preserve">
+    <value>Требует улучшения</value>
+    <comment>Needs improvement: available feedback rating scale.</comment>
+  </data>
+  <data name="RatingTitle" xml:space="preserve">
+    <value>Оценка</value>
+    <comment>Rating fact is used in SME facing feedback card to show the rating submitted by the user from the rating dropdown in share feedback card.</comment>
+  </data>
+  <data name="RatingMandatoryText" xml:space="preserve">
+    <value>Оценка является обязательной</value>
+    <comment>Rating is mandatory , a warning message to the user when rating is not submitted in share feedback activity.</comment>
+  </data>
+  <data name="TakeATourButtonText" xml:space="preserve">
+    <value>Посмотреть обзор</value>
+    <comment>Take a tour button available for the users on welcome card, through which user can take a tour on bot functionalities in personal scope. </comment>
+  </data>
+  <data name="TitleFact" xml:space="preserve">
+    <value>Заголовок:</value>
+    <comment>Title fact is used to show the title entered by the user for his inquiry.</comment>
+  </data>
+  <data name="TitleRequiredText" xml:space="preserve">
+    <value>Название (обязательно)</value>
+    <comment>Title(Required): label of the title text box.</comment>
+  </data>
+  <data name="NotHelpfulRatingText" xml:space="preserve">
+    <value>Не помог</value>
+    <comment>Unhelpful: available feedback rating scale.</comment>
+  </data>
+  <data name="ViewArticleButtonText" xml:space="preserve">
+    <value>Просмотр статьи</value>
+    <comment>The necessary string for the view article button</comment>
+  </data>
+  <data name="SMEFeedbackHeaderText" xml:space="preserve">
+    <value>Отзыв</value>
+    <comment>Title text for SME facing feedback card.</comment>
+  </data>
+  <data name="EmptyQuestionErrorText" xml:space="preserve">
+    <value>Текст вопроса не может быть пустым.</value>
+    <comment>Error message to show if question text box is empty while adding or editing the QnA pair.</comment>
+  </data>
+  <data name="AnswerTitle" xml:space="preserve">
+    <value>**Ответ:**</value>
+    <comment>Label text for answer on the card.</comment>
+  </data>
+  <data name="DeleteConfirmation" xml:space="preserve">
+    <value>Вы действительно хотите удалить этот элемент? Вопрос и ответ будут удалены.</value>
+    <comment>Delete confirmation message.</comment>
+  </data>
+  <data name="DeleteButtonText" xml:space="preserve">
+    <value>Удалить</value>
+    <comment>Delete button text.</comment>
+  </data>
+  <data name="LastEditedText" xml:space="preserve">
+    <value>Автор последних изменений</value>
+    <comment>Show message on adaptive card after editing the QnA pair.</comment>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>Нет</value>
+    <comment>No button text on delete QnA pair confirmation card.</comment>
+  </data>
+  <data name="QuestionTitle" xml:space="preserve">
+    <value>**Вопрос:** {0}</value>
+    <comment>Label text for question on the card.</comment>
+  </data>
+  <data name="EditButtonText" xml:space="preserve">
+    <value>Изменить</value>
+    <comment>Edit button text.</comment>
+  </data>
+  <data name="WaitMessageAnswer" xml:space="preserve">
+    <value>Примечание. Обновления вносятся каждые несколько минут</value>
+    <comment>Wait message to show on adaptive card after performing any action on QnA pair.</comment>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Да</value>
+    <comment>Yes button text on delete QnA pair confirmation card.</comment>
+  </data>
+  <data name="DeletedQnaPair" xml:space="preserve">
+    <value>Удалено пользователем {0}</value>
+    <comment>Text shown on the card when a QnA pair is deleted.</comment>
+  </data>
+  <data name="UpdateHistoryButtonText" xml:space="preserve">
+    <value>Журнал обновлений</value>
+    <comment>Update history button text.</comment>
+  </data>
+  <data name="WaitMessage" xml:space="preserve">
+    <value>Подождите некоторое время, обновления для этого вопроса: "{0}" будут доступны в течение короткого времени.</value>
+    <comment>Wait message to show below the adaptive card while trying to delete the question and is not available in production knowledgebase and waiting to be publish.</comment>
+  </data>
+  <data name="AddQuestionSubtitle" xml:space="preserve">
+    <value>Добавить подробности нового вопроса</value>
+    <comment>The subtitle at the top of task module while adding the new QnA pair.</comment>
+  </data>
+  <data name="EditQuestionSubtitle" xml:space="preserve">
+    <value>Изменить подробности вопроса</value>
+    <comment>The subtitle at the top of task module while editing the QnA pair.</comment>
+  </data>
+  <data name="HTMLErrorText" xml:space="preserve">
+    <value>Теги HTML не поддерживаются.</value>
+    <comment>Error message to show if HTML tags are entered on any field while adding or editing the QnA pair.</comment>
+  </data>
+  <data name="QuestionAlreadyExistsErrorText" xml:space="preserve">
+    <value>Вопрос уже существует. Добавьте другой вопрос.</value>
+    <comment>Error message to show if question is already existing in the knowledgebase while adding or editing the QnA pair.</comment>
+  </data>
+  <data name="OpenArticle" xml:space="preserve">
+    <value>Открыть статью</value>
+    <comment>Open article button text, which will show on adaptiver rich card if redirection url field is filled while adding/editing the QnA pair.</comment>
+  </data>
+  <data name="BackButtonCommandText" xml:space="preserve">
+    <value>Кнопка "Назад"</value>
+    <comment>Back button command text to identify the performed action.</comment>
+  </data>
+  <data name="InvalidImageUrlErrorText" xml:space="preserve">
+    <value>Недопустимый URL-адрес изображения.</value>
+    <comment>Error message to show if image url is not valid while adding or editing the QnA pair.</comment>
+  </data>
+  <data name="EmptyImageUrlErrorText" xml:space="preserve">
+    <value>URL-адрес изображения не может быть пустым.</value>
+    <comment>Error message to show if image url text box is empty while adding or editing the QnA pair.</comment>
+  </data>
+  <data name="EntryCreatedByText" xml:space="preserve">
+    <value>Автор</value>
+    <comment>Show message on adaptive card, after adding the QnA pair.</comment>
+  </data>
+  <data name="DescriptionPlaceholderText" xml:space="preserve">
+    <value>Введите информацию (не более 500 символов)</value>
+    <comment>Placeholder text for description text box.</comment>
+  </data>
+  <data name="ImageUrlPlaceholderText" xml:space="preserve">
+    <value>Введите URL-адрес изображения (не более 200 символов)</value>
+    <comment>Placeholder text for image url text box.</comment>
+  </data>
+  <data name="QuestionPlaceholderText" xml:space="preserve">
+    <value>Введите информацию (не более 100 символов)</value>
+    <comment>Placeholder text for question text box.</comment>
+  </data>
+  <data name="RedirectionUrlPlaceholderText" xml:space="preserve">
+    <value>Введите сведения (не более 200 символов)</value>
+    <comment>Placeholder text for redirection url text box.</comment>
+  </data>
+  <data name="SubtitlePlaceholderText" xml:space="preserve">
+    <value>Введите информацию (не более 20 символов)</value>
+    <comment>Placeholder text for subtitle text box.</comment>
+  </data>
+  <data name="TitlePlaceholderText" xml:space="preserve">
+    <value>Введите информацию (не более 50 символов)</value>
+    <comment>Placeholder text for title text box.</comment>
+  </data>
+  <data name="BackButtonText" xml:space="preserve">
+    <value>Назад</value>
+    <comment>The back button text on the add/edit QnA pair task module, while previewing the card.</comment>
+  </data>
+  <data name="InvalidRedirectUrlText" xml:space="preserve">
+    <value>Недопустимый URL-адрес перенаправления.</value>
+    <comment>Error message to show if redirection url is not valid while adding or editing the QnA pair.</comment>
+  </data>
+  <data name="DescriptionLabelText" xml:space="preserve">
+    <value>* Описание (поддерживается Markdown)</value>
+    <comment>Label text for description text box.</comment>
+  </data>
+  <data name="QuestionLabelText" xml:space="preserve">
+    <value>*Вопрос</value>
+    <comment>Label text for question text box.</comment>
+  </data>
+  <data name="TitleLabelText" xml:space="preserve">
+    <value>Заголовок (поддерживается Markdown)</value>
+    <comment>Label text for title text box.</comment>
+  </data>
+  <data name="ImageLabelText" xml:space="preserve">
+    <value>URL-адрес изображения</value>
+    <comment>Label text for image url text box.</comment>
+  </data>
+  <data name="RedirectionLabelText" xml:space="preserve">
+    <value>URL-адрес перенаправления</value>
+    <comment>Label text for redirection url text box.</comment>
+  </data>
+  <data name="SubtitleLabelText" xml:space="preserve">
+    <value>Подзаголовок (поддерживается Markdown)</value>
+    <comment>Label text for subtitle text box.</comment>
+  </data>
+  <data name="UpdateHistoryHeadersText" xml:space="preserve">
+    <value>Имя|Действие|Дата</value>
+    <comment>Header text for update history adaptiver card. which shows the history of actions performed by users on a QnA pair.</comment>
+  </data>
+  <data name="EmptyTitleErrorText" xml:space="preserve">
+    <value>Заголовок не может быть пустым.</value>
+    <comment>Error message to show if title text box is empty while adding or editing the QnA pair.</comment>
+  </data>
+  <data name="GoToThread" xml:space="preserve">
+    <value>Просмотреть сведения</value>
+    <comment>Button title for the card created through Messaging Extension</comment>
+  </data>
+  <data name="PreviewButtonText" xml:space="preserve">
+    <value>Предварительный просмотр</value>
+    <comment>Preview button text.</comment>
+  </data>
+  <data name="SaveButtonText" xml:space="preserve">
+    <value>Сохранить</value>
+    <comment>Save button text for QnA pair.</comment>
+  </data>
+  <data name="DateFormat" xml:space="preserve">
+    <value>{0} в {1}</value>
+    <comment>Used in date string format for adaptive card. {0} is for date and {1} is for time.</comment>
+  </data>
+  <data name="ErrorMessage" xml:space="preserve">
+    <value>Что-то пошло не так. Повторите попытку позже.</value>
+    <comment>Error message to show if there is any exception.</comment>
+  </data>
+  <data name="EmptyDescriptionErrorText" xml:space="preserve">
+    <value>Описание не может быть пустым.</value>
+    <comment>Error message to show if description text box is empty while adding or editing the QnA pair.</comment>
+  </data>
+  <data name="OptionalFieldDisplayText" xml:space="preserve">
+    <value>Необязательные поля</value>
+  </data>
+  <data name="SuggestedText" xml:space="preserve">
+    <value>Для добавления дополнительных сведений в ответ можно использовать дополнительные поля ниже.</value>
+  </data>
+  <data name="ManuallyAddedQuestionMessage" xml:space="preserve">
+    <value>Вопрос, добавленный вручную</value>
+    <comment>Question answer pair added manually in QnA Maker</comment>
+  </data>
+  <data name="UpdateHistoryDateHeaderText" xml:space="preserve">
+    <value>Дата</value>
+    <comment>Date header text in update history adaptive card text.</comment>
+  </data>
+  <data name="SelectActionItemDisplayTextFormatting" xml:space="preserve">
+    <value>**{0}**</value>
+    <comment>The formatting of the select action item display text, with {0} being the placeholder for the DisplayText from the Follow Up prompt.</comment>
+  </data>
+  <data name="AppFeedbackDescriptionPlaceholderText" xml:space="preserve">
+    <value>Оставьте отзыв (не более 500 символов)</value>
+    <comment>Placeholder for app feedback description</comment>
+  </data>
+  <data name="ShareAppFeedbackRating" xml:space="preserve">
+    <value>Насколько полезно это приложение? (Обязательно)</value>
+    <comment>Feedback for App</comment>
+  </data>
+  <data name="BotCommandAskExpert" xml:space="preserve">
+    <value>Вопрос специалисту</value>
+    <comment>Bot command Ask an expert. This needs to be match with manifest's command "Ask an expert" in translated json file.</comment>
+  </data>
+  <data name="BotCommandFeedback" xml:space="preserve">
+    <value>Отправить отзыв</value>
+    <comment>Bot command Share feedback. This needs to be match with manifest's command "Share feedback" in translated json file.</comment>
+  </data>
+  <data name="BotCommandTour" xml:space="preserve">
+    <value>Обзор</value>
+    <comment>Bot command Take a tour. This needs to be match with manifest's command "Take a tour" in translated json file.</comment>
+  </data>
+</root>

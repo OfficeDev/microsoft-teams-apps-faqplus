@@ -1,0 +1,13 @@
+{
+  "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.5/MicrosoftTeams.schema.json",
+  "name.short": "常见问题解答增强版",
+  "description.short": "友好的常见问题解答机器人，可解答问题并帮你联系专家。",
+  "description.full": "友好的问与答机器人，可解答常见问题。如果无法解答，它会在专家有空时尽快为你联系专家。",
+  "bots[0].commandLists[0].commands[0].title": "浏览",
+  "bots[0].commandLists[0].commands[0].description": "主要功能导览",
+  "bots[0].commandLists[0].commands[1].title": "咨询专家",
+  "bots[0].commandLists[0].commands[1].description": "与专家联系",
+  "bots[0].commandLists[0].commands[2].title": "共享反馈",
+  "bots[0].commandLists[0].commands[2].description": "发送反馈",
+  "staticTabs[0].name": "帮助"
+}
