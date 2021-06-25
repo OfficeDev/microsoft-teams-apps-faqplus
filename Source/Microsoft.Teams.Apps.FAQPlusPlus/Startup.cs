@@ -167,6 +167,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
 
             // Add miscellaneous dependencies
             services.AddSingleton<IAppSettingsService, AppSettingsService>();
+
+            // Add retrymessage service
+            services.AddSingleton<IRetryMessageService, RetryMessageService>();
         }
     }
 }

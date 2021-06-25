@@ -104,6 +104,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         private readonly RecommendConfiguration recommendConfiguration;
         private readonly TeamsDataCapture teamsDataCapture;
         private readonly ISOSClient sosClient;
+        private readonly IRetryMessageService retryMessageService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FaqPlusPlusBot"/> class.
@@ -128,6 +129,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <param name="recommendConfiguration">configuration to decide recommend.</param>
         /// <param name="teamsDataCapture">Teams data capture service.</param>
         /// <param name="sosClient">Service now Client.</param>
+        /// <param name="retryMessageService">This service is to check retry message.</param>
         public FaqPlusPlusBot(
             Common.Providers.IConfigurationDataProvider configurationProvider,
             MicrosoftAppCredentials microsoftAppCredentials,
@@ -148,7 +150,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             UserState userState,
             RecommendConfiguration recommendConfiguration,
             TeamsDataCapture teamsDataCapture,
-            ISOSClient sosClient)
+            ISOSClient sosClient,
+            IRetryMessageService retryMessageService)
         {
             this.configurationProvider = configurationProvider;
             this.microsoftAppCredentials = microsoftAppCredentials;
@@ -180,6 +183,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             this.recommendConfiguration = recommendConfiguration;
             this.teamsDataCapture = teamsDataCapture ?? throw new ArgumentNullException(nameof(teamsDataCapture));
             this.sosClient = sosClient;
+            this.retryMessageService = retryMessageService;
         }
 
         /// <summary>
@@ -698,6 +702,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             CancellationToken cancellationToken)
         {
             //await SaveChannelMembers(turnContext, cancellationToken);
+
+            if (this.retryMessageService.IsRetryMessage(message.Id))
+            {
+                return;
+            }
+
             var payload = ((JObject)message.Value).ToObject<ChangeTicketStatusPayload>();
             this.logger.LogInformation($"Received submit: ticketId={payload.TicketId} action={payload.Action}");
 
@@ -753,6 +763,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             switch (payload.Action)
             {
                 case ChangeTicketStatusPayload.PendingAction:
+                    if (ticket.Status == (int)TicketState.Pending)
+                    {
+                        return;
+                    }
+
                     ticket.Status = (int)TicketState.Pending;
                     ticket.DatePending = DateTime.UtcNow;
                     ticket.PendingComment = payload.PendingComment;
@@ -766,6 +781,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     break;
 
                 case ChangeTicketStatusPayload.ResolveAction:
+                    if (ticket.Status == (int)TicketState.Resolved)
+                    {
+                        return;
+                    }
+
                     ticket.Status = (int)TicketState.Resolved;
                     ticket.DateClosed = DateTime.UtcNow;
                     ticket.DatePending = null;
@@ -862,6 +882,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     break;
 
                 case ChangeTicketStatusPayload.CreateSoSTicketAction:
+                    if (ticket.Status == (int)TicketState.SOSInProgress)
+                    {
+                        return;
+                    }
+
                     var accounts = await this.GetTeamsChannelMembers(turnContext, cancellationToken).ConfigureAwait(false);
                     var trigger = accounts.Where(r => r.Name.Equals(message.From.Name)).First();
                     SOSRequest request = new SOSRequest()
@@ -872,8 +897,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                         Description = payload.SOSDescription,
                         WatchList = trigger?.Email,
                     };
-
+                    DateTime start = DateTime.Now;
                     SOSRequestResult sosResult = await this.sosClient.CreateRequestAsync(request);
+                    DateTime end = DateTime.Now;
+                    double seconds = (end - start).TotalSeconds;
                     if (sosResult != null)
                     {
                         ticket.Status = (int)TicketState.SOSInProgress;
@@ -884,6 +911,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                         ticket.DateSOSCreated = DateTime.UtcNow;
                         ticket.SOSTicketRequester = message.From.Name;
 
+                        userAction.Remark += $" to SOS Inprogress";
                         this.logger.LogWarning($"SOS ticket created succeed {sosResult.Result.Reference}");
                     }
                     else
