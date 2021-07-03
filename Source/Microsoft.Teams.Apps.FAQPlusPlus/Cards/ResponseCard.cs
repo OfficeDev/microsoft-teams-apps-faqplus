@@ -177,7 +177,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                             new AdaptiveTextBlock
                                             {
                                                 Wrap = true,
-                                                Text = string.Format(Strings.SelectActionItemDisplayTextFormatting, item.DisplayText),
+                                                Text = string.Format(Strings.SelectActionItemDisplayTextFormatting, item.DisplayText?.Trim()),
                                                 HorizontalAlignment = textAlignment,
                                             },
                                         },
