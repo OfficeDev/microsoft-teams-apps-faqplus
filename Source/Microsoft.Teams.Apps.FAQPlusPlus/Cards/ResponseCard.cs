@@ -108,34 +108,39 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 new AdaptiveTextBlock
                 {
                     Wrap = true,
-                    Text = answerModel.Title,
+                    Text = answerModel.Title ?? string.Empty,
                     Size = AdaptiveTextSize.Large,
                     Weight = AdaptiveTextWeight.Bolder,
                     HorizontalAlignment = textAlignment,
                 },
                 new AdaptiveTextBlock
                 {
-                    Text = answerModel.Subtitle,
+                    Text = answerModel.Subtitle ?? string.Empty,
                     Size = AdaptiveTextSize.Medium,
                     HorizontalAlignment = textAlignment,
                 },
-                new AdaptiveImage
+            };
+
+            if (!string.IsNullOrWhiteSpace(answerModel?.ImageUrl))
+            {
+                cardBodyToConstruct.Add(new AdaptiveImage
                 {
-                    Url = !string.IsNullOrEmpty(answerModel?.ImageUrl?.Trim()) ? new Uri(answerModel?.ImageUrl?.Trim()) : default,
+                    Url = new Uri(answerModel.ImageUrl.Trim()),
                     Size = AdaptiveImageSize.Auto,
                     Style = AdaptiveImageStyle.Default,
                     AltText = answerModel.Title,
                     IsVisible = isRichCard,
-                },
-                new AdaptiveTextBlock
-                {
-                    Text = answer,
-                    Wrap = true,
-                    Size = isRichCard ? AdaptiveTextSize.Small : AdaptiveTextSize.Default,
-                    Spacing = AdaptiveSpacing.Medium,
-                    HorizontalAlignment = textAlignment,
-                },
-            };
+                });
+            }
+
+            cardBodyToConstruct.Add(new AdaptiveTextBlock
+            {
+                Text = answer,
+                Wrap = true,
+                Size = isRichCard ? AdaptiveTextSize.Small : AdaptiveTextSize.Default,
+                Spacing = AdaptiveSpacing.Medium,
+                HorizontalAlignment = textAlignment,
+            });
 
             // If there follow up prompts, then the follow up prompts will render accordingly.
             if (response?.Context.Prompts.Count > 0)
@@ -177,7 +182,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                             new AdaptiveTextBlock
                                             {
                                                 Wrap = true,
-                                                Text = string.Format(Strings.SelectActionItemDisplayTextFormatting, item.DisplayText),
+                                                Text = string.Format(Strings.SelectActionItemDisplayTextFormatting, item.DisplayText?.Trim()),
                                                 HorizontalAlignment = textAlignment,
                                             },
                                         },
