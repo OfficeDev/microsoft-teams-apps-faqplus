@@ -1429,13 +1429,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
                 queryResult = await this.qnaServiceProvider.GenerateAnswerAsync(question: text, isTestKnowledgeBase: false, payload.PreviousQuestions?.Last().Id.ToString(), payload.PreviousQuestions?.Last().Questions.First()).ConfigureAwait(false);
 
-                if (queryResult.Answers.First().Id != -1)
+                var answer = queryResult.Answers.First();
+                bool isContextOnly = answer.Context?.IsContextOnly ?? false;
+
+                // Check if context is present
+                if (answer.Id == -1 || (isContextOnly && payload.PreviousQuestions == null))
                 {
-                    await turnContext.SendActivityAsync(MessageFactory.Attachment(ResponseCard.GetCard(queryResult.Answers.First(), text, this.appBaseUri, payload))).ConfigureAwait(false);
+                    await turnContext.SendActivityAsync(MessageFactory.Attachment(UnrecognizedInputCard.GetCard(text))).ConfigureAwait(false);
                 }
                 else
                 {
-                    await turnContext.SendActivityAsync(MessageFactory.Attachment(UnrecognizedInputCard.GetCard(text))).ConfigureAwait(false);
+                    await turnContext.SendActivityAsync(MessageFactory.Attachment(ResponseCard.GetCard(queryResult.Answers.First(), text, this.appBaseUri, payload))).ConfigureAwait(false);
                 }
             }
             catch (Exception ex)
