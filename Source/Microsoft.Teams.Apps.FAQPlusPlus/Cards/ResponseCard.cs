@@ -202,7 +202,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                     DisplayText = item.DisplayText,
                                     Text = item.DisplayText,
                                 },
-                                PreviousQuestions = previousQuestions,
+                                PreviousQuestions = new List<QnADTO> { previousQuestions.Last() },
                                 IsPrompt = true,
                             },
                         },
