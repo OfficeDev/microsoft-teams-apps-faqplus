@@ -82,5 +82,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         /// </summary>
         [JsonProperty("SOSDescription")]
         public string SOSDescription { get; set; }
+
+        /// <summary>
+        /// Gets or sets the SOS Title.
+        /// </summary>
+        [JsonProperty("SOSTitle")]
+        public string SOSTitle { get; set; }
     }
 }

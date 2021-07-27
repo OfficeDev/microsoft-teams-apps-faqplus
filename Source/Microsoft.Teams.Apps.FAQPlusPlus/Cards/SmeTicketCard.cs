@@ -255,6 +255,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                             {
                                 Action = ChangeTicketStatusPayload.CreateSoSTicketAction,
                                 TicketId = this.Ticket.TicketId,
+                                SOSTitle = this.ticket.Title,
                             },
                         },
                     },
@@ -620,18 +621,53 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             });
             choices.Add(new AdaptiveChoice()
             {
-                Title = "Workstation",
+                Title = "Workstation > Ask for information",
                 Value = "Workstation > Ask for information",
             });
             choices.Add(new AdaptiveChoice()
             {
-                Title = "Software",
+                Title = "Workstation > Retrieve computer",
+                Value = "Workstation > Retrieve computer",
+            });
+            choices.Add(new AdaptiveChoice()
+            {
+                Title = "Workstation > Report abnormal behavior",
+                Value = "Workstation > Report abnormal behavior",
+            });
+            choices.Add(new AdaptiveChoice()
+            {
+                Title = "Workstation > Request new components",
+                Value = "Workstation > Request new components",
+            });
+            choices.Add(new AdaptiveChoice()
+            {
+                Title = "Software > Ask for information",
                 Value = "Software > Ask for information",
             });
             choices.Add(new AdaptiveChoice()
             {
-                Title = "Peripherals",
+                Title = "Software > Request a software installation",
+                Value = "Software > Request a software installation",
+            });
+            choices.Add(new AdaptiveChoice()
+            {
+                Title = "Peripherals > Ask for information",
                 Value = "Peripherals > Ask for information",
+            });
+            choices.Add(new AdaptiveChoice()
+            {
+                Title = "Peripherals > Request other peripheral",
+                Value = "Peripherals > Request other peripheral",
+            });
+            choices.Add(new AdaptiveChoice()
+            {
+                Title = "Local Events > Setup streaming / recording",
+                Value = "Local Events > Setup streaming / recording",
+            });
+            choices.Add(new AdaptiveChoice()
+            {
+                Title = "Consoles > Ask for information",
+                Value = "Consoles > Ask for information",
             });
 
             choiceSet.Choices = choices;

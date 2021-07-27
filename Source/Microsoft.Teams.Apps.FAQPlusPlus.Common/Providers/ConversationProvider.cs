@@ -177,5 +177,27 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
             TableOperation addOrUpdateOperation = TableOperation.InsertOrReplace(entity);
             return await this.conversationCloudTable.ExecuteAsync(addOrUpdateOperation).ConfigureAwait(false);
         }
+
+        public async Task<List<ConversationEntity>> GetAllQnAListAsync()
+        {
+            if (this.conversationCloudTable == null)
+            {
+                await this.EnsureInitializedAsync();
+                return null;
+            }
+            var conversationEntities = new List<ConversationEntity>();
+            var query = new TableQuery<ConversationEntity>().Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, PartitionKey));
+            TableContinuationToken tableContinuationToken = null;
+
+            do
+            {
+                var queryResponse = await this.conversationCloudTable.ExecuteQuerySegmentedAsync(query, tableContinuationToken).ConfigureAwait(false);
+                tableContinuationToken = queryResponse.ContinuationToken;
+                conversationEntities.AddRange(queryResponse.Results);
+            }
+            while (tableContinuationToken != null);
+
+            return conversationEntities.OrderBy(r => r.Timestamp).ToList();
+        }
     }
 }

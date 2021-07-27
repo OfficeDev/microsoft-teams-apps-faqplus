@@ -30,5 +30,8 @@
         /// <param name="expiryMinute">session expriy in minutes.</param>
         /// <returns>sessionId of current conversation.</returns>
         Task<string> GetSessionIdAsync(string userPrincipalName, int expiryMinute);
+
+
+        Task<List<ConversationEntity>> GetAllQnAListAsync();
     }
 }

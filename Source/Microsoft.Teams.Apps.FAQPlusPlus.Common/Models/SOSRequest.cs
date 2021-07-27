@@ -39,7 +39,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         ///  Gets or sets the default assignment group.
         /// </summary>
         [JsonProperty("assignment_group")]
-        public string AssignmentGroup { get; set; } = "APAC Local IT CTU";
+        public string AssignmentGroup { get; set; } = "Enterprise Infra Service Center";
 
         /// <summary>
         ///  Gets or sets the watch list.
