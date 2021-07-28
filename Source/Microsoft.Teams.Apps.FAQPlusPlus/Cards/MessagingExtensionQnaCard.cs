@@ -767,7 +767,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         {
                             new AdaptiveTextBlock
                             {
-                                Text = qnaPairEntity.Title?.Trim(),
+                                Text = qnaPairEntity.Title !=null ? qnaPairEntity.Title.Trim() : string.Empty,
                                 Size = AdaptiveTextSize.Large,
                                 Weight = AdaptiveTextWeight.Bolder,
                                 Wrap = true,
@@ -775,7 +775,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                             },
                             new AdaptiveTextBlock
                             {
-                                Text = qnaPairEntity.Subtitle?.Trim(),
+                                Text = qnaPairEntity.Subtitle != null ? qnaPairEntity.Subtitle.Trim() : string.Empty,
                                 Size = AdaptiveTextSize.Medium,
                                 Wrap = true,
                                 HorizontalAlignment = textAlignment,
@@ -789,7 +789,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                             },
                             new AdaptiveTextBlock
                             {
-                                Text = qnaPairEntity.Description?.Trim(),
+                                Text = qnaPairEntity.Description != null ? qnaPairEntity.Description.Trim() : string.Empty,
                                 Size = AdaptiveTextSize.Small,
                                 Wrap = true,
                                 HorizontalAlignment = textAlignment,
