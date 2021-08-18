@@ -15,49 +15,49 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         /// Gets or sets Updated question.
         /// </summary>
         [JsonProperty("updatedquestion")]
-        public string UpdatedQuestion { get; set; }
+        public string UpdatedQuestion { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets Title.
         /// </summary>
         [JsonProperty("title")]
-        public string Title { get; set; }
+        public string Title { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets Subtitle.
         /// </summary>
         [JsonProperty("subtitle")]
-        public string Subtitle { get; set; }
+        public string Subtitle { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets Description.
         /// </summary>
         [JsonProperty("description")]
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets ImageUrl.
         /// </summary>
         [JsonProperty("imageurl")]
-        public string ImageUrl { get; set; }
+        public string ImageUrl { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets RedirectionUrl.
         /// </summary>
         [JsonProperty("redirectionurl")]
-        public string RedirectionUrl { get; set; }
+        public string RedirectionUrl { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets Answer.
         /// </summary>
         [JsonProperty("answer")]
-        public string Answer { get; set; }
+        public string Answer { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets activity id.
         /// </summary>
         [JsonProperty("activityid")]
-        public string ActivityId { get; set; }
+        public string ActivityId { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets preview button command text to identify the performed action while adding/editing the QnA pair.

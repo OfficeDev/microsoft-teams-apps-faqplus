@@ -398,11 +398,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                           },
                           OriginalQuestion = qnaPairEntity.UpdatedQuestion?.Trim(),
                           UpdatedQuestion = qnaPairEntity.UpdatedQuestion?.Trim(),
-                          Description = qnaPairEntity.Description?.Trim(),
-                          Title = qnaPairEntity.Title?.Trim(),
-                          Subtitle = qnaPairEntity.Subtitle?.Trim(),
-                          ImageUrl = qnaPairEntity.ImageUrl,
-                          RedirectionUrl = qnaPairEntity.RedirectionUrl,
+                          Description = qnaPairEntity.Description != null ? qnaPairEntity.Description.Trim() : string.Empty,
+                          Title = qnaPairEntity.Title != null ? qnaPairEntity.Title.Trim() : string.Empty,
+                          Subtitle = qnaPairEntity.Subtitle != null ? qnaPairEntity.Subtitle.Trim() : string.Empty,
+                          ImageUrl = qnaPairEntity.ImageUrl ?? string.Empty,
+                          RedirectionUrl = qnaPairEntity.RedirectionUrl ?? string.Empty,
                           UpdateHistoryData = actionData,
                       },
                   });
@@ -767,7 +767,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         {
                             new AdaptiveTextBlock
                             {
-                                Text = qnaPairEntity.Title?.Trim(),
+                                Text = qnaPairEntity.Title !=null ? qnaPairEntity.Title.Trim() : string.Empty,
                                 Size = AdaptiveTextSize.Large,
                                 Weight = AdaptiveTextWeight.Bolder,
                                 Wrap = true,
@@ -775,7 +775,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                             },
                             new AdaptiveTextBlock
                             {
-                                Text = qnaPairEntity.Subtitle?.Trim(),
+                                Text = qnaPairEntity.Subtitle != null ? qnaPairEntity.Subtitle.Trim() : string.Empty,
                                 Size = AdaptiveTextSize.Medium,
                                 Wrap = true,
                                 HorizontalAlignment = textAlignment,
@@ -789,7 +789,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                             },
                             new AdaptiveTextBlock
                             {
-                                Text = qnaPairEntity.Description?.Trim(),
+                                Text = qnaPairEntity.Description != null ? qnaPairEntity.Description.Trim() : string.Empty,
                                 Size = AdaptiveTextSize.Small,
                                 Wrap = true,
                                 HorizontalAlignment = textAlignment,
@@ -818,11 +818,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                 BackButtonCommandText = Strings.BackButtonCommandText,
                                 UpdatedQuestion = qnaPairEntity.UpdatedQuestion?.Trim(),
                                 OriginalQuestion = qnaPairEntity.OriginalQuestion?.Trim(),
-                                Description = qnaPairEntity.Description?.Trim(),
-                                Title = qnaPairEntity.Title?.Trim(),
-                                Subtitle = qnaPairEntity.Subtitle?.Trim(),
-                                ImageUrl = qnaPairEntity.ImageUrl,
-                                RedirectionUrl = qnaPairEntity.RedirectionUrl,
+                                Description = qnaPairEntity.Description != null ? qnaPairEntity.Description.Trim() : string.Empty,
+                                Title = qnaPairEntity.Title != null ? qnaPairEntity.Title.Trim() : string.Empty,
+                                Subtitle = qnaPairEntity.Subtitle != null ? qnaPairEntity.Subtitle.Trim() : string.Empty,
+                                ImageUrl = qnaPairEntity.ImageUrl ?? string.Empty,
+                                RedirectionUrl = qnaPairEntity.RedirectionUrl ?? string.Empty,
                                 UpdateHistoryData = qnaPairEntity.UpdateHistoryData,
                             },
                         });
@@ -934,11 +934,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                               },
                               OriginalQuestion = qnaPairEntity.UpdatedQuestion?.Trim(),
                               UpdatedQuestion = qnaPairEntity.UpdatedQuestion?.Trim(),
-                              Description = qnaPairEntity.Description?.Trim(),
-                              Title = qnaPairEntity.Title?.Trim(),
-                              Subtitle = qnaPairEntity.Subtitle?.Trim(),
-                              ImageUrl = qnaPairEntity.ImageUrl,
-                              RedirectionUrl = qnaPairEntity.RedirectionUrl,
+                              Description = qnaPairEntity.Description != null ? qnaPairEntity.Description.Trim() : string.Empty,
+                              Title = qnaPairEntity.Title != null ? qnaPairEntity.Title.Trim() : string.Empty,
+                              Subtitle = qnaPairEntity.Subtitle != null ? qnaPairEntity.Subtitle.Trim() : string.Empty,
+                              ImageUrl = qnaPairEntity.ImageUrl ?? string.Empty,
+                              RedirectionUrl = qnaPairEntity.RedirectionUrl ?? string.Empty,
                               UpdateHistoryData = actionData,
                           },
                       });
@@ -1011,9 +1011,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                 BackButtonCommandText = Strings.BackButtonCommandText,
                                 UpdatedQuestion = qnaPairEntity.UpdatedQuestion?.Trim(),
                                 OriginalQuestion = qnaPairEntity.OriginalQuestion?.Trim(),
-                                Description = qnaPairEntity.Description?.Trim(),
-                                Subtitle = qnaPairEntity.Subtitle?.Trim(),
-                                RedirectionUrl = qnaPairEntity.RedirectionUrl,
+                                Description = qnaPairEntity.Description != null ? qnaPairEntity.Description.Trim() : string.Empty,
+                                Subtitle = qnaPairEntity.Subtitle != null ? qnaPairEntity.Subtitle.Trim() : string.Empty,
+                                RedirectionUrl = qnaPairEntity.RedirectionUrl ?? string.Empty,
                                 UpdateHistoryData = qnaPairEntity.UpdateHistoryData?.Trim(),
                             },
                         });
