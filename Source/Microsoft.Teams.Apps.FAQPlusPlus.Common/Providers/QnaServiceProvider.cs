@@ -26,6 +26,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         /// </summary>
         private const string EnvironmentType = "Prod";
 
+        /// <summary>
+        /// Maximum number of answers to be returned by the QnA maker for a given question.
+        /// </summary>
+        private const int MaxNumberOfAnswersToFetch = 3;
+
         private readonly IConfigurationDataProvider configurationProvider;
         private readonly IQnAMakerClient qnaMakerClient;
         private readonly IQnAMakerRuntimeClient qnaMakerRuntimeClient;
@@ -195,6 +200,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
                 IsTest = isTestKnowledgeBase,
                 Question = question?.Trim(),
                 ScoreThreshold = Convert.ToDouble(this.options.ScoreThreshold, CultureInfo.InvariantCulture) * 100,
+                Top = MaxNumberOfAnswersToFetch,
             };
 
             if (previousQnAId != null && previousUserQuery != null)
