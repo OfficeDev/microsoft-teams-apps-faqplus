@@ -1427,13 +1427,39 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     payload = ((JObject)message.Value).ToObject<ResponseCardPayload>();
                 }
 
-                queryResult = await this.qnaServiceProvider.GenerateAnswerAsync(question: text, isTestKnowledgeBase: false, payload.PreviousQuestions?.Last().Id.ToString(), payload.PreviousQuestions?.Last().Questions.First()).ConfigureAwait(false);
+                queryResult = await this.qnaServiceProvider.GenerateAnswerAsync(question: text, isTestKnowledgeBase: false, payload.PreviousQuestions?.First().Id.ToString(), payload.PreviousQuestions?.First().Questions.First()).ConfigureAwait(false);
+                bool answerFound = false;
 
-                if (queryResult.Answers.First().Id != -1)
+                foreach (QnASearchResult answerData in queryResult.Answers)
                 {
-                    await turnContext.SendActivityAsync(MessageFactory.Attachment(ResponseCard.GetCard(queryResult.Answers.First(), text, this.appBaseUri, payload))).ConfigureAwait(false);
+                    bool isContextOnly = answerData.Context?.IsContextOnly ?? false;
+                    if (answerData.Id != -1 &&
+                        ((!isContextOnly && payload.PreviousQuestions == null) ||
+                            (isContextOnly && payload.PreviousQuestions != null)))
+                    {
+                        // This is the expected answer
+                        AnswerModel answerModel = new AnswerModel();
+
+                        if (Validators.IsValidJSON(answerData.Answer))
+                        {
+                            answerModel = JsonConvert.DeserializeObject<AnswerModel>(answerData.Answer);
+                        }
+
+                        if (!string.IsNullOrEmpty(answerModel?.Title) || !string.IsNullOrEmpty(answerModel?.Subtitle) || !string.IsNullOrEmpty(answerModel?.ImageUrl) || !string.IsNullOrEmpty(answerModel?.RedirectionUrl))
+                        {
+                            await turnContext.SendActivityAsync(MessageFactory.Attachment(MessagingExtensionQnaCard.GetEndUserRichCard(text, answerData))).ConfigureAwait(false);
+                        }
+                        else
+                        {
+                            await turnContext.SendActivityAsync(MessageFactory.Attachment(ResponseCard.GetCard(answerData, text, this.appBaseUri, payload))).ConfigureAwait(false);
+                        }
+
+                        answerFound = true;
+                        break;
+                    }
                 }
-                else
+
+                if (!answerFound)
                 {
                     await turnContext.SendActivityAsync(MessageFactory.Attachment(UnrecognizedInputCard.GetCard(text))).ConfigureAwait(false);
                 }
