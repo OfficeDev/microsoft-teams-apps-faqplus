@@ -7,6 +7,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
     using System;
     using System.Collections.Generic;
     using System.Globalization;
+    using System.Linq;
     using AdaptiveCards;
     using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker.Models;
     using Microsoft.Bot.Schema;
@@ -202,7 +203,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                     DisplayText = item.DisplayText,
                                     Text = item.DisplayText,
                                 },
-                                PreviousQuestions = previousQuestions,
+                                PreviousQuestions = new List<QnADTO> { previousQuestions.Last() },
                                 IsPrompt = true,
                             },
                         },
