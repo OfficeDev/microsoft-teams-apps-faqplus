@@ -4,8 +4,7 @@
 
 using System;
 using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Hosting;
+using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction;
@@ -13,20 +12,20 @@ using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models.Configuration;
 using Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers;
 using IConfigurationDataProvider = Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers.IConfigurationDataProvider;
 
-[assembly: WebJobsStartup(typeof(Startup))]
+[assembly: FunctionsStartup(typeof(Startup))]
 
 namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction
 {
     /// <summary>
     /// Azure function Startup Class.
     /// </summary>
-    public class Startup : IWebJobsStartup
+    public class Startup : FunctionsStartup
     {
         /// <summary>
         /// Application startup configuration.
         /// </summary>
         /// <param name="builder">Webjobs builder.</param>
-        public void Configure(IWebJobsBuilder builder)
+        public override void Configure(IFunctionsHostBuilder builder)
         {
             IQnAMakerClient qnaMakerClient = new QnAMakerClient(new ApiKeyServiceClientCredentials(Environment.GetEnvironmentVariable("QnAMakerSubscriptionKey"))) { Endpoint = Environment.GetEnvironmentVariable("QnAMakerApiUrl") };
             builder.Services.AddSingleton<IQnaServiceProvider>((provider) => new QnaServiceProvider(

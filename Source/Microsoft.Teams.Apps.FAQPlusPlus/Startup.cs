@@ -12,7 +12,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Localization;
-    using Microsoft.AspNetCore.Mvc;
     using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker;
     using Microsoft.Bot.Builder;
     using Microsoft.Bot.Builder.Integration.AspNet.Core;
@@ -20,6 +19,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
     using Microsoft.Extensions.Caching.Memory;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Options;
     using Microsoft.Teams.Apps.FAQPlusPlus.Bots;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models.Configuration;
@@ -49,7 +49,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
         /// </summary>
         /// <param name="app">Application Builder.</param>
         /// <param name="env">Hosting Environment.</param>
-        public static void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseRequestLocalization();
             if (env.IsDevelopment())
@@ -63,7 +63,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
 
             app.UseDefaultFiles();
             app.UseStaticFiles();
-            app.UseMvc();
+            app.UseRouting();
+            app.UseAuthorization();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllerRoute(
+                   name: "default",
+                   pattern: "{controller}/{action=Index}/{id?}");
+            });
         }
 
         /// <summary>
@@ -72,6 +79,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
         /// <param name="services"> Service Collection Interface.</param>
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddRazorPages();
             services.AddApplicationInsightsTelemetry();
             services.Configure<KnowledgeBaseSettings>(knowledgeBaseSettings =>
             {
@@ -95,8 +103,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
                 botSettings.MicrosoftAppId = this.Configuration["MicrosoftAppId"];
                 botSettings.TenantId = this.Configuration["TenantId"];
             });
-
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddSingleton<Common.Providers.IConfigurationDataProvider>(new Common.Providers.ConfigurationDataProvider(this.Configuration["StorageConnectionString"]));
             services.AddHttpClient();
             services.AddSingleton<ICredentialProvider, ConfigurationCredentialProvider>();
