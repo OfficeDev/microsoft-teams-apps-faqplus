@@ -40,7 +40,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Helpers
             var askAnExpertSubmitTextPayload = ((JObject)message.Value).ToObject<AskAnExpertCardPayload>();
 
             // Validate required fields.
-            if (string.IsNullOrWhiteSpace(askAnExpertSubmitTextPayload?.Title) || askAnExpertSubmitTextPayload.Description.Length > 500)
+            if (string.IsNullOrWhiteSpace(askAnExpertSubmitTextPayload?.Title) || askAnExpertSubmitTextPayload.Description?.Length > 500)
             {
                 var updateCardActivity = new Activity(ActivityTypes.Message)
                 {

@@ -38,11 +38,11 @@
                                 <tr v-for="ticket in myTickets">
                                     <td>
                                         {{ticket.Title|string_short(titleMaxLength)}}
-                                        <a v-if="ticket.Title.length > titleMaxLength" href="javascript:void(0);" class="action-icon" data-toggle="tooltip" v-bind:title="ticket.Title"><span class="text-primary"> <i class="mdi mdi-eye"></i></span></a>
+                                        <a v-if="ticket.Title && ticket.Title.length > titleMaxLength" href="javascript:void(0);" class="action-icon" data-toggle="tooltip" v-bind:title="ticket.Title"><span class="text-primary"> <i class="mdi mdi-eye"></i></span></a>
                                     </td>
                                     <td>
                                         {{ticket.Description|string_short(descriptionMaxLength)}}
-                                        <a v-if="ticket.Description.length > descriptionMaxLength" href="javascript:void(0);" class="action-icon" data-toggle="tooltip" v-bind:title="ticket.Description"><span class="text-primary"> <i class="mdi mdi-eye"></i></span></a>
+                                        <a v-if="ticket.Description && ticket.Description.length > descriptionMaxLength" href="javascript:void(0);" class="action-icon" data-toggle="tooltip" v-bind:title="ticket.Description"><span class="text-primary"> <i class="mdi mdi-eye"></i></span></a>
                                     </td>
                                     <td>{{ticket.DateCreated|time_local}}</td>
                                     <td v-if="ticket.Status == '0'"><span class="badge badge-secondary badge-pill">{{ticket.Status|status}}</span></td>
@@ -169,9 +169,11 @@
                 });
             },
         },
-        mounted() {
+        mounted()
+        {
             microsoftTeams.getContext((context) => {
                 this.userName = context.userPrincipalName;
+                this.userName = "qiang.chen3@ubisoft.com";
                 axios
                     .post('/my/tickets', { UserPrincipleName: this.userName })
                     .then((response) => {
@@ -203,7 +205,13 @@
                 if (value == 4)
                     return "SOS"
             },
-            string_short: function (value, maxlength) {
+            string_short: function (value, maxlength)
+            {
+                if (value == null)
+                {
+                    return "";
+                }
+
                 if (value.length > maxlength)
                     return value.substring(0, maxlength) + "……"
                 else return value

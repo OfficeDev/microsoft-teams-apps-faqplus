@@ -6,13 +6,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 {
     using System;
     using System.Collections.Generic;
+    using System.Data;
     using System.Globalization;
+    using System.IO;
     using System.Linq;
     using System.Net;
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
     using System.Xml;
+    using ExcelDataReader;
     using Microsoft.ApplicationInsights.DataContracts;
     using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker.Models;
     using Microsoft.Bot.Builder;
@@ -225,6 +228,109 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             {
                 this.logger.LogError(ex, "Error at OnTurnAsync()");
             }
+        }
+
+        private async Task<int> UpdateQnADateTimeAsync()
+        {
+            string path = @"F:\QnAConversation0514.xlsx";
+            DataTable dt = new DataTable();
+            dt = ExcelToDataTableUsingExcelDataReader(path);
+            var histories = await this.conversationProvider.GetAllQnAListAsync();
+            Dictionary<string, DateTimeOffset> keyTimeDic = new Dictionary<string, DateTimeOffset>();
+            foreach (DataRow row in dt.Rows)
+            {
+                string key = row[1].ToString();
+                DateTimeOffset dto;
+                DateTimeOffset.TryParse(row[2].ToString(), out dto);
+                if (!keyTimeDic.ContainsKey(key))
+                {
+                    keyTimeDic.Add(key, dto);
+                }
+            }
+
+            int count = histories.Count();
+            foreach (ConversationEntity his in histories)
+            {
+                if (keyTimeDic.ContainsKey(his.RowKey))
+                {
+                    his.ConversationTime = keyTimeDic[his.RowKey];
+                }
+                else
+                {
+                    his.ConversationTime = his.Timestamp;
+                }
+
+                await this.conversationProvider.UpsertConversationAsync(his);
+            }
+
+            return count;
+        }
+
+        public static DataTable ExcelToDataTableUsingExcelDataReader(string storePath)
+        {
+            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+            using (var stream = File.Open(storePath, FileMode.Open, FileAccess.Read))
+            {
+                string fileExtension = Path.GetExtension(storePath);
+                IExcelDataReader excelReader = null;
+                excelReader = ExcelDataReader.ExcelReaderFactory.CreateReader(stream);
+
+                //// reader.IsFirstRowAsColumnNames
+                var conf = new ExcelDataSetConfiguration
+                {
+                    ConfigureDataTable = _ => new ExcelDataTableConfiguration
+                    {
+                        UseHeaderRow = true,
+                    },
+                };
+
+                var dataSet = excelReader.AsDataSet(conf);
+
+                // Now you can get data from each sheet by its index or its "name"
+                var dataTable = dataSet.Tables[0];
+                return dataTable;
+            }
+        }
+
+        private async Task<int> AddSessionIdAsync()
+        {
+            var histories = await this.conversationProvider.GetAllQnAListAsync();
+
+            foreach (var group in histories.GroupBy(h => h.UserName))
+            {
+                int count = 0;
+                string LastSessionId = null;
+                DateTimeOffset lastTimeStamp = DateTime.Now;
+                foreach (var history in group)
+                {
+                    if (count == 0)
+                    {
+                        if (string.IsNullOrEmpty(history.SessionId))
+                        {
+                            history.SessionId = Guid.NewGuid().ToString();
+                        }
+                    }
+                    else
+                    {
+                        if ((history.Timestamp - lastTimeStamp).TotalMinutes > 10)
+                        {
+                            history.SessionId = Guid.NewGuid().ToString();
+                        }
+                        else
+                        {
+                            history.SessionId = LastSessionId;
+                        }
+                    }
+
+                    await this.conversationProvider.UpsertConversationAsync(history);
+
+                    count++;
+                    LastSessionId = history.SessionId;
+                    lastTimeStamp = history.Timestamp;
+                }
+            }
+
+            return histories.Count();
         }
 
         /// <summary>
@@ -893,7 +999,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     {
                         RequestFor = ticket.RequesterUserPrincipalName,
                         Topic = payload.SOSTopic,
-                        ShortDescription = payload.SOSDescription,
+                        ShortDescription = payload.SOSTitle,
                         Description = payload.SOSDescription,
                         WatchList = trigger?.Email,
                     };
@@ -1307,6 +1413,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 conInfo.UserPrincipalName = userDetails.UserPrincipalName;
                 conInfo.UserObjectId = userDetails.AadObjectId;
                 conInfo.SessionId = await this.conversationProvider.GetSessionIdAsync(userDetails.UserPrincipalName, this.options.SessionExpiryInMinutes);
+                conInfo.ConversationTime = DateTime.UtcNow;
 
                 await this.conversationProvider.UpsertConversationAsync(conInfo).ConfigureAwait(false);
             }
@@ -1384,7 +1491,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             List<ExpertEntity> experts = new List<ExpertEntity>();
             foreach (TeamsChannelAccount account in accounts)
             {
-                if (account.UserPrincipalName == "qian.wang@ubisoft.com")
+                if (account.UserPrincipalName == "yuan-hao.cai@ubisoft.com")
                 {
                     experts.Add(new ExpertEntity()
                     {

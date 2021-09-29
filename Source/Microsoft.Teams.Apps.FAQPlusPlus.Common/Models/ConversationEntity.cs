@@ -71,5 +71,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         ///  Gets or sets the prompts.
         /// </summary>
         public string Prompts { get; set; }
+
+        /// <summary>
+        ///  Gets or sets the prompts.
+        /// </summary>
+        public DateTimeOffset ConversationTime { get; set; }
     }
 }
