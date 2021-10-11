@@ -9,19 +9,34 @@
         "description": "The base name to use for the resources that will be provisioned."
       }
     },
-    "botClientId": {
+    "expertBotClientId": {
       "type": "string",
       "minLength": 36,
       "maxLength": 36,
       "metadata": {
-        "description": "The client ID of the bot Azure AD app, e.g., 123e4567-e89b-12d3-a456-426655440000."
+        "description": "The client ID of the expert bot Azure AD app, e.g., 123e4567-e89b-12d3-a456-426655440000."
       }
     },
-    "botClientSecret": {
+    "expertBotClientSecret": {
       "type": "securestring",
       "minLength": 1,
       "metadata": {
-        "description": "The client secret of the bot Azure AD app."
+        "description": "The client secret of the expert bot Azure AD app."
+      }
+    },
+    "userBotClientId": {
+      "type": "string",
+      "minLength": 36,
+      "maxLength": 36,
+      "metadata": {
+        "description": "The client ID of the user bot Azure AD app, e.g., 123e4567-e89b-12d3-a456-426655440000."
+      }
+    },
+    "userBotClientSecret": {
+      "type": "securestring",
+      "minLength": 1,
+      "metadata": {
+        "description": "The client secret of the user bot Azure AD app."
       }
     },
     "configAppClientId": {
@@ -164,7 +179,10 @@
     }
   },
   "variables": {
-    "botName": "[parameters('baseResourceName')]",
+    "expertBotName": "[concat(parameters('baseResourceName'), '-expert')]",
+    "expertBotDisplayName": "[concat(parameters('appDisplayName'), ' Expert')]",
+    "userBotName": "[concat(parameters('baseResourceName'), '-user')]",
+    "userBotDisplayName": "[concat(parameters('appDisplayName'), ' User')]",
     "botAppName": "[parameters('baseResourceName')]",
     "botAppDomain": "[concat(variables('botAppName'), '.azurewebsites.net')]",
     "botAppUrl": "[concat('https://', variables('botAppDomain'))]",
@@ -249,12 +267,20 @@
               "value": "bot"
             },
             {
-              "name": "MicrosoftAppId",
-              "value": "[parameters('botClientId')]"
+              "name": "ExpertAppId",
+              "value": "[parameters('expertBotClientId')]"
             },
             {
-              "name": "MicrosoftAppPassword",
-              "value": "[parameters('botClientSecret')]"
+              "name": "ExpertAppPassword",
+              "value": "[parameters('expertBotClientSecret')]"
+            },
+            {
+              "name": "UserAppId",
+              "value": "[parameters('userBotClientId')]"
+            },
+            {
+              "name": "UserAppPassword",
+              "value": "[parameters('userBotClientSecret')]"
             },
             {
               "name": "StorageConnectionString",
@@ -367,28 +393,24 @@
     },
     {
       "apiVersion": "2018-07-12",
-      "name": "[variables('botName')]",
-      "type": "Microsoft.BotService/botServices",
-      "location": "global",
-      "sku": {
-        "name": "F0"
-      },
       "dependsOn": [
-        "[resourceId('Microsoft.Web/sites', variables('botName'))]",
+        "[resourceId('Microsoft.Web/sites', variables('botAppName'))]",
         "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]"
       ],
       "kind": "sdk",
+      "location": "global",
+      "name": "[variables('expertBotName')]",
       "properties": {
-        "displayName": "[parameters('appDisplayName')]",
         "description": "[parameters('appDescription')]",
+        "developerAppInsightKey": "[reference(resourceId('Microsoft.Insights/components', variables('botAppInsightsName')), '2015-05-01').InstrumentationKey]",
+        "displayName": "[variables('expertBotDisplayName')]",
+        "endpoint": "[concat(variables('botAppUrl'), '/api/messages/expert')]",
         "iconUrl": "[parameters('appIconUrl')]",
-        "msaAppId": "[parameters('botClientId')]",
-        "endpoint": "[concat(variables('botAppUrl'), '/api/messages')]",
-        "developerAppInsightKey": "[reference(resourceId('Microsoft.Insights/components', variables('botAppInsightsName')), '2015-05-01').InstrumentationKey]"
+        "msaAppId": "[parameters('expertBotClientId')]"
       },
       "resources": [
         {
-          "name": "[concat(variables('botName'), '/MsTeamsChannel')]",
+          "name": "[concat(variables('expertBotName'), '/MsTeamsChannel')]",
           "type": "Microsoft.BotService/botServices/channels",
           "apiVersion": "2018-07-12",
           "location": "global",
@@ -403,10 +425,57 @@
             }
           },
           "dependsOn": [
-            "[concat('Microsoft.BotService/botServices/', variables('botName'))]"
+            "[concat('Microsoft.BotService/botServices/', variables('expertBotName'))]"
           ]
         }
-      ]
+      ],
+      "sku": {
+        "name": "F0"
+      },
+      "type": "Microsoft.BotService/botServices"
+    },
+    {
+      "apiVersion": "2018-07-12",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', variables('botAppName'))]",
+        "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]"
+      ],
+      "kind": "sdk",
+      "location": "global",
+      "name": "[variables('userBotName')]",
+      "properties": {
+        "description": "[parameters('appDescription')]",
+        "developerAppInsightKey": "[reference(resourceId('Microsoft.Insights/components', variables('botAppInsightsName')), '2015-05-01').InstrumentationKey]",
+        "displayName": "[variables('userBotDisplayName')]",
+        "endpoint": "[concat(variables('botAppUrl'), '/api/messages/user')]",
+        "iconUrl": "[parameters('appIconUrl')]",
+        "msaAppId": "[parameters('userBotClientId')]"
+      },
+      "resources": [
+        {
+          "name": "[concat(variables('userBotName'), '/MsTeamsChannel')]",
+          "type": "Microsoft.BotService/botServices/channels",
+          "apiVersion": "2018-07-12",
+          "location": "global",
+          "sku": {
+            "name": "F0"
+          },
+          "properties": {
+            "channelName": "MsTeamsChannel",
+            "location": "global",
+            "properties": {
+              "isEnabled": true
+            }
+          },
+          "dependsOn": [
+            "[concat('Microsoft.BotService/botServices/', variables('userBotName'))]"
+          ]
+        }
+      ],
+      "sku": {
+        "name": "F0"
+      },
+      "type": "Microsoft.BotService/botServices"
     },
     {
       "type": "Microsoft.Web/sites",
@@ -717,9 +786,13 @@
     }
   ],
   "outputs": {
-    "botId": {
+    "userBotId": {
       "type": "string",
-      "value": "[parameters('botClientId')]"
+      "value": "[parameters('userBotClientId')]"
+    },
+    "expertBotId": {
+      "type": "string",
+      "value": "[parameters('expertBotClientId')]"
     },
     "appDomain": {
       "type": "string",
