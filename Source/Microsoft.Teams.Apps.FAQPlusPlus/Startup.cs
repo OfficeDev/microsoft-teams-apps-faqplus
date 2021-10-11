@@ -23,7 +23,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
     using Microsoft.Extensions.Options;
     using Microsoft.Teams.Apps.FAQPlusPlus.Bots;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models.Configuration;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models.Credentials;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Components;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Extensions;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Common.TeamsActivity;
 
     /// <summary>
     /// This a Startup class for this Bot.
@@ -100,7 +104,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
             {
                 botSettings.AccessCacheExpiryInDays = Convert.ToInt32(this.Configuration["AccessCacheExpiryInDays"]);
                 botSettings.AppBaseUri = this.Configuration["AppBaseUri"];
-                botSettings.MicrosoftAppId = this.Configuration["MicrosoftAppId"];
+                botSettings.ExpertAppId = this.Configuration["ExpertAppId"];
+                botSettings.ExpertAppPassword = this.Configuration["ExpertAppPassword"];
+                botSettings.UserAppId = this.Configuration["UserAppId"];
+                botSettings.UserAppPassword = this.Configuration["UserAppPassword"];
                 botSettings.TenantId = this.Configuration["TenantId"];
             });
             services.AddSingleton<Common.Providers.IConfigurationDataProvider>(new Common.Providers.ConfigurationDataProvider(this.Configuration["StorageConnectionString"]));
@@ -108,7 +115,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
             services.AddSingleton<ICredentialProvider, ConfigurationCredentialProvider>();
             services.AddSingleton<ITicketsProvider>(new TicketsProvider(this.Configuration["StorageConnectionString"]));
             services.AddSingleton<IBotFrameworkHttpAdapter, BotFrameworkHttpAdapter>();
-            services.AddSingleton(new MicrosoftAppCredentials(this.Configuration["MicrosoftAppId"], this.Configuration["MicrosoftAppPassword"]));
+            services.AddSingleton<UserAppCredentials>();
+            services.AddSingleton<ExpertAppCredentials>();
 
             IQnAMakerClient qnaMakerClient = new QnAMakerClient(new ApiKeyServiceClientCredentials(this.Configuration["QnAMakerSubscriptionKey"])) { Endpoint = this.Configuration["QnAMakerApiEndpointUrl"] };
             string endpointKey = Task.Run(() => qnaMakerClient.EndpointKeys.GetKeysAsync()).Result.PrimaryEndpointKey;
@@ -124,7 +132,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
             services.AddSingleton<ISearchService, SearchService>();
             services.AddSingleton<IMemoryCache, MemoryCache>();
             services.AddTransient(sp => (BotFrameworkAdapter)sp.GetRequiredService<IBotFrameworkHttpAdapter>());
-            services.AddTransient<IBot, FaqPlusPlusBot>();
+            services.AddTransient<FaqPlusExpertBot>();
+            services.AddTransient<FaqPlusUserBot>();
+            services.AddTransient<TurnContextExtension>();
+            services.AddTransient<ITaskModuleActivity, TaskModuleActivity>();
+            services.AddTransient<IMessagingExtensionActivity, MessagingExtensionActivity>();
+            ComponentsRegistery.AddComponentServices(services);
 
             // Create the telemetry middleware(used by the telemetry initializer) to track conversation events
             services.AddSingleton<TelemetryLoggerMiddleware>();

@@ -13,7 +13,6 @@
     <PackageReference Include="Microsoft.Azure.Search" Version="10.1.0" />
     <PackageReference Include="Microsoft.Bot.Builder.Ai.QnA" Version="4.14.1" />
     <PackageReference Include="Microsoft.Bot.Builder.Integration.AspNet.Core" Version="4.14.1" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="3.1.18" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="3.1.18" />
     <PackageReference Include="Microsoft.Extensions.Logging.ApplicationInsights" Version="2.18.0" />
     <PackageReference Include="Microsoft.MarkedNet" Version="1.0.13" />
@@ -40,22 +39,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Properties\Strings.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Strings.resx</DependentUpon>
-    </Compile>
     <Compile Update="Resource.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Resource.resx</DependentUpon>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Update="Properties\Strings.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services" />

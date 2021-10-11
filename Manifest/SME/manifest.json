@@ -1,9 +1,9 @@
 {
-  "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.5/MicrosoftTeams.schema.json",
-  "manifestVersion": "1.5",
-  "version": "1.0.0",
-  "id": "165dc594-e36a-488f-a8ba-20fcebacad86",
-  "packageName": "com.microsoft.teams.faqplus.experts",
+  "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.8/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.8",
+  "version": "3.0.0",
+  "id": "97ee4132-77a2-4101-9aa8-aaa17a44f87c",
+  "packageName": "com.microsoft.teams.faqplus",
   "developer": {
     "name": "<<companyName>>",
     "websiteUrl": "<<websiteUrl>>",
@@ -77,31 +77,9 @@
   "accentColor": "#64A2CC",
   "bots": [
     {
-      "botId": "<<botId>>",
+      "botId": "<<expertBotId>>",
       "scopes": [
-        "personal",
         "team"
-      ],
-      "commandLists": [
-        {
-          "scopes": [
-            "personal"
-          ],
-          "commands": [
-            {
-              "title": "Take a tour",
-              "description": "Tour of key features"
-            },
-            {
-              "title": "Ask an expert",
-              "description": "Connect with an expert"
-            },
-            {
-              "title": "Share feedback",
-              "description": "Send feedback"
-            }
-          ]
-        }
       ],
       "supportsFiles": false,
       "isNotificationOnly": false
@@ -119,7 +97,7 @@
   ],
   "composeExtensions": [
     {
-      "botId": "<<botId>>",
+      "botId": "<<expertBotId>>",
       "canUpdateConfiguration": false,
       "commands": [
         {

@@ -2,7 +2,7 @@
   "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.8/MicrosoftTeams.schema.json",
   "manifestVersion": "1.8",
   "version": "3.0.0",
-  "id": "aba30cfc-05df-4002-b956-a70996b12a54",
+  "id": "165dc594-e36a-488f-a8ba-20fcebacad86",
   "packageName": "com.microsoft.teams.faqplus",
   "developer": {
     "name": "<<companyName>>",
@@ -68,7 +68,7 @@
     "outline": "outline.png"
   },
   "name": {
-    "short": "FAQ Plus"
+    "short": "FAQ Plus (Legacy Experts Team)"
   },
   "description": {
     "short": "A friendly FAQ bot that answers questions and connects you to experts.",
@@ -79,28 +79,7 @@
     {
       "botId": "<<userBotId>>",
       "scopes": [
-        "personal"
-      ],
-      "commandLists": [
-        {
-          "scopes": [
-            "personal"
-          ],
-          "commands": [
-            {
-              "title": "Take a tour",
-              "description": "Tour of key features"
-            },
-            {
-              "title": "Ask an expert",
-              "description": "Connect with an expert"
-            },
-            {
-              "title": "Share feedback",
-              "description": "Send feedback"
-            }
-          ]
-        }
+        "team"
       ],
       "supportsFiles": false,
       "isNotificationOnly": false

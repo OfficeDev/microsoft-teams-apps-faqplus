@@ -9,10 +9,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AdaptiveCards" Version="2.5.0" />
     <PackageReference Include="Microsoft.ApplicationInsights" Version="2.18.0" />
     <PackageReference Include="Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker" Version="2.0.1" />
-	  <PackageReference Include="Microsoft.Azure.Search" Version="10.1.0" />
+	<PackageReference Include="Microsoft.Azure.Search" Version="10.1.0" />
+	<PackageReference Include="Microsoft.Bot.Builder" Version="4.14.1" />
+	<PackageReference Include="Microsoft.Bot.Connector" Version="4.14.1" />
     <PackageReference Include="Microsoft.Bot.Schema" Version="4.14.1" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="3.1.18" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.18" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.18" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="3.1.18" />
@@ -27,6 +31,21 @@
 
   <ItemGroup>
     <AdditionalFiles Include="..\stylecop.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Strings.Designer.cs">
+      <DependentUpon>Strings.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Strings.resx">
+      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>
