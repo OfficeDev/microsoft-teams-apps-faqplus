@@ -38,13 +38,14 @@
                             <thead class="thead-light">
                                 <tr>
                                     <th class="all">Title</th>
+                                    <th style="width: 85px;">Action</th>
                                     <th>Description</th>
                                     <th>Request By</th>
                                     <th>CreateTime</th>
                                     <th>Last Time</th>
                                     <th>Status</th>
                                     <th>Assignee</th>
-                                    <th style="width: 85px;">Action</th>
+
                                 </tr>
                             </thead>
                             <tbody>
@@ -52,6 +53,9 @@
                                     <td>
                                         {{ticket.Title|string_short(titleMaxLength)}}
                                         <a v-if="ticket.Title && ticket.Title.length > titleMaxLength" href="javascript:void(0);" class="action-icon" data-toggle="tooltip" v-bind:title="ticket.Title"><span class="text-primary"> <i class="mdi mdi-eye"></i></span></a>
+                                    </td>
+                                    <td class="table-action">
+                                        <a href="javascript:void(0);" class="action-icon" data-toggle="tooltip" title="go to ticket card" v-on:click="deepLinkToTicket(ticket.SmeThreadConversationId)"><span class="text-primary"><i class="dripicons-enter"></i></span></a>
                                     </td>
                                     <td>
                                         {{ticket.Description|string_short(descriptionMaxLength)}}
@@ -65,9 +69,6 @@
                                     <td v-else-if="ticket.Status == '2'"><span class="badge badge-warning badge-pill">{{ticket.Status|status}}</span></td>
                                     <td v-else-if="ticket.Status == '4'"><span class="badge badge-warning badge-pill">{{ticket.Status|status}}</span></td>
                                     <td>{{ticket.AssignedToName}}</td>
-                                    <td class="table-action">
-                                        <a href="javascript:void(0);" class="action-icon" data-toggle="tooltip" title="go to ticket card" v-on:click="deepLinkToTicket(ticket.SmeThreadConversationId)"><span class="text-primary"><i class="dripicons-enter"></i></span></a>
-                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -224,22 +225,22 @@
                                 orderable: !0
                             },
                             {
-                                orderable: !0
-                            },
-                            {
-                                orderable: !0
-                            },
-                            {
-                                orderable: !0
-                            },
-                            {
-                                orderable: !0
-                            },
-                            {
-                                orderable: !0
-                            },
-                            {
                                 orderable: !1
+                            },
+                            {
+                                orderable: !0
+                            },
+                            {
+                                orderable: !0
+                            },
+                            {
+                                orderable: !0
+                            },
+                            {
+                                orderable: !0
+                            },
+                            {
+                                orderable: !0
                             }],
                         select: {
                             style: "multi"
