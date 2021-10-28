@@ -176,8 +176,7 @@
           "initialRun": true,
           "fetchTask": true,
           "context": [
-            "compose",
-            "message"
+            "compose"
           ],
           "parameters": [
             {
@@ -185,6 +184,17 @@
               "title": "Add a question",
               "description": "Add a new qna pair"
             }
+          ]
+        },
+        {
+          "id": "migrateticket",
+          "type": "action",
+          "title": "Migrate Ticket",
+          "description": "Migrate the ticket from old bot to new expert bot",
+          "initialRun": true,
+          "fetchTask": true,
+          "context": [
+            "message"
           ]
         }
       ]

@@ -5,8 +5,10 @@
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.TeamsActivity
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Net;
+    using System.Text.RegularExpressions;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.ApplicationInsights.DataContracts;
@@ -17,8 +19,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.TeamsActivity
     using Microsoft.Extensions.Caching.Memory;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Cards;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Cards;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Components;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models.Configuration;
@@ -39,9 +43,19 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.TeamsActivity
         private const int DefaultAccessCacheExpiryInDays = 5;
 
         /// <summary>
-        /// Represents the task module height.
+        /// Represents the task module height for Add a new question card.
         /// </summary>
-        private const int TaskModuleHeight = 450;
+        private const int TaskModuleHeightForAddQuestion = 450;
+
+        /// <summary>
+        /// Represents the task module height for Migrate ticket card.
+        /// </summary>
+        private const int TaskModuleHeightForMigrateTicket = 200;
+
+        /// <summary>
+        /// Represents the task module height for Migrate ticket error card.
+        /// </summary>
+        private const int TaskModuleHeightForMigrateTicketError = 120;
 
         /// <summary>
         /// Represents the task module width.
@@ -52,6 +66,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.TeamsActivity
         /// Search text parameter name in the manifest file.
         /// </summary>
         private const string SearchTextParameterName = "searchText";
+
+        /// <summary>
+        /// Migrate action command in the manifest file.
+        /// </summary>
+        private const string MigrateTicketAction = "migrateticket";
 
         /// <summary>
         /// Represents a set of key/value application configuration properties for FaqPlusPlus bot.
@@ -69,6 +88,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.TeamsActivity
         private readonly IMemoryCache accessCache;
         private readonly IKnowledgeBaseSearchService knowledgeBaseSearchService;
         private readonly int accessCacheExpiryInDays;
+        private readonly ITicketsProvider ticketsProvider;
+        private readonly INotificationService notificationService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MessagingExtensionActivity"/> class.
@@ -82,6 +103,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.TeamsActivity
         /// <param name="knowledgeBaseSearchService">KnowledgeBaseSearchService dependency injection.</param>
         /// <param name="optionsAccessor">A set of key/value application configuration properties for FaqPlusPlus bot.</param>
         /// <param name="logger">Instance to send logs to the Application Insights service.</param>
+        /// <param name="ticketsProvider">Instance of Ticket provider helps in fetching and storing information in storage table.</param>
+        /// <param name="notificationService">Notifies in expert's Team chat.</param>
         public MessagingExtensionActivity(
             Common.Providers.IConfigurationDataProvider configurationProvider,
             IQnaServiceProvider qnaServiceProvider,
@@ -91,7 +114,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.TeamsActivity
             IMemoryCache memoryCache,
             IKnowledgeBaseSearchService knowledgeBaseSearchService,
             IOptionsMonitor<BotSettings> optionsAccessor,
-            ILogger<MessagingExtensionActivity> logger)
+            ILogger<MessagingExtensionActivity> logger,
+            ITicketsProvider ticketsProvider,
+            INotificationService notificationService)
         {
             this.configurationProvider = configurationProvider ?? throw new ArgumentNullException(nameof(configurationProvider));
             this.qnaServiceProvider = qnaServiceProvider ?? throw new ArgumentNullException(nameof(qnaServiceProvider));
@@ -101,6 +126,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.TeamsActivity
             this.accessCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.knowledgeBaseSearchService = knowledgeBaseSearchService ?? throw new ArgumentNullException(nameof(knowledgeBaseSearchService));
+            this.ticketsProvider = ticketsProvider ?? throw new ArgumentNullException(nameof(ticketsProvider));
+            this.notificationService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
             if (optionsAccessor == null)
             {
                 throw new ArgumentNullException(nameof(optionsAccessor));
@@ -162,10 +189,23 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.TeamsActivity
         /// Handles "Add new question" button via messaging extension.
         /// </summary>
         /// <param name="turnContext">Context object containing information cached for a single turn of conversation with a user.</param>
+        /// <param name="action">Action to be performed.</param>
+        /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
         /// <returns>Response of messaging extension action.</returns>
-        public Task<MessagingExtensionActionResponse> FetchTaskAsync(
-            ITurnContext<IInvokeActivity> turnContext)
+        public async Task<MessagingExtensionActionResponse> FetchTaskAsync(
+            ITurnContext<IInvokeActivity> turnContext,
+            MessagingExtensionAction action,
+            CancellationToken cancellationToken)
         {
+            if (turnContext == null)
+            {
+                throw new ArgumentNullException(nameof(turnContext));
+            }
+            else if (action == null)
+            {
+                throw new ArgumentNullException(nameof(action));
+            }
+
             try
             {
                 turnContext.Activity.TryGetChannelData<TeamsChannelData>(out var teamsChannelData);
@@ -174,7 +214,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.TeamsActivity
                 if (teamsChannelData?.Team?.Id != expertTeamId)
                 {
                     var unauthorizedUserCard = MessagingExtensionQnaCard.UnauthorizedUserActionCard();
-                    return Task.FromResult(new MessagingExtensionActionResponse
+                    return new MessagingExtensionActionResponse
                     {
                         Task = new TaskModuleContinueResponse
                         {
@@ -186,11 +226,19 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.TeamsActivity
                                 Title = Strings.AddQuestionSubtitle,
                             },
                         },
-                    });
+                    };
                 }
 
-                var adaptiveCardEditor = MessagingExtensionQnaCard.AddQuestionForm(new AdaptiveSubmitActionData(), this.appBaseUri);
-                return GetMessagingExtensionActionResponseAsync(adaptiveCardEditor, Strings.AddQuestionSubtitle);
+                if (action.CommandId.Equals(MigrateTicketAction, StringComparison.OrdinalIgnoreCase))
+                {
+                    return await this.MigrateTicket(turnContext, action);
+                }
+                else
+                {
+                    // Add a question form.
+                    var adaptiveCardEditor = MessagingExtensionQnaCard.AddQuestionForm(new AdaptiveSubmitActionData(), this.appBaseUri);
+                    return await GetResponseForAddQuestionAsync(adaptiveCardEditor, Strings.AddQuestionSubtitle);
+                }
             }
             catch (Exception ex)
             {
@@ -203,34 +251,70 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.TeamsActivity
         /// Handles submit new question.
         /// </summary>
         /// <param name="turnContext">Context object containing information cached for a single turn of conversation with a user.</param>
+        /// <param name="action">Action to be performed.</param>
         /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
         /// <returns>Response of messaging extension action.</returns>
         public async Task<MessagingExtensionActionResponse> SubmitActionAsync(
             ITurnContext<IInvokeActivity> turnContext,
+            MessagingExtensionAction action,
             CancellationToken cancellationToken)
         {
             try
             {
-                var postedQuestionObject = ((JObject)turnContext.Activity.Value).GetValue("data", StringComparison.OrdinalIgnoreCase).ToObject<AdaptiveSubmitActionData>();
-                if (postedQuestionObject == null)
+                // Migrate ticket action.
+                if (action.CommandId.Equals(MigrateTicketAction))
                 {
-                    return default;
+                    var data = JsonConvert.DeserializeObject<MigrateTicketCardPayload>(action.Data.ToString());
+                    if (data.ToBeMigrated)
+                    {
+                        // Get the ticket from the data store.
+                        var ticket = await this.ticketsProvider.GetTicketAsync(data.TicketId).ConfigureAwait(false);
+
+                        turnContext.Activity.TryGetChannelData<TeamsChannelData>(out var teamsChannelData);
+                        string expertTeamId = this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.TeamId).GetAwaiter().GetResult();
+
+                        if (teamsChannelData?.Team?.Id == expertTeamId)
+                        {
+                            // Notify on the legacy ticket that it is being migrated.
+                            await turnContext.SendActivityAsync(MessageFactory.Text(Strings.MigrateTicketText), cancellationToken).ConfigureAwait(false);
+
+                            // Send the card in the SME team.
+                            var resourceResponse = await this.notificationService.NotifyInTeamChatAsync(turnContext, new SmeTicketCard(ticket).ToAttachment(), expertTeamId, cancellationToken);
+                            this.logger.LogInformation($"Migrated the ticket {ticket.TicketId} from legacy bot to new expert bot.");
+
+                            // Update ticket into in table storage.
+                            ticket.SmeCardActivityId = resourceResponse.ActivityId;
+                            ticket.SmeThreadConversationId = resourceResponse.Id;
+                            await this.ticketsProvider.UpsertTicketAsync(ticket).ConfigureAwait(false);
+                        }
+                    }
+                }
+                else
+                {
+                    // Add a question action.
+                    var postedQuestionObject = ((JObject)turnContext.Activity.Value).GetValue("data", StringComparison.OrdinalIgnoreCase).ToObject<AdaptiveSubmitActionData>();
+                    if (postedQuestionObject == null)
+                    {
+                        return default;
+                    }
+
+                    if (postedQuestionObject.BackButtonCommandText == Strings.BackButtonCommandText)
+                    {
+                        // Populates the prefilled data on task module for adaptive card form fields on back button click.
+                        return await GetResponseForAddQuestionAsync(MessagingExtensionQnaCard.AddQuestionForm(postedQuestionObject, this.appBaseUri), Strings.AddQuestionSubtitle).ConfigureAwait(false);
+                    }
+
+                    if (postedQuestionObject.PreviewButtonCommandText == Constants.PreviewCardCommandText)
+                    {
+                        // Preview the actual view of the card on preview button click.
+                        return await GetResponseForAddQuestionAsync(MessagingExtensionQnaCard.PreviewCardResponse(postedQuestionObject, this.appBaseUri)).ConfigureAwait(false);
+                    }
+
+                    // Response of messaging extension action.
+                    return await this.RespondToQuestionMessagingExtensionAsync(postedQuestionObject, turnContext, cancellationToken).ConfigureAwait(false);
                 }
 
-                if (postedQuestionObject.BackButtonCommandText == Strings.BackButtonCommandText)
-                {
-                    // Populates the prefilled data on task module for adaptive card form fields on back button click.
-                    return await GetMessagingExtensionActionResponseAsync(MessagingExtensionQnaCard.AddQuestionForm(postedQuestionObject, this.appBaseUri), Strings.AddQuestionSubtitle).ConfigureAwait(false);
-                }
-
-                if (postedQuestionObject.PreviewButtonCommandText == Constants.PreviewCardCommandText)
-                {
-                    // Preview the actual view of the card on preview button click.
-                    return await GetMessagingExtensionActionResponseAsync(MessagingExtensionQnaCard.PreviewCardResponse(postedQuestionObject, this.appBaseUri)).ConfigureAwait(false);
-                }
-
-                // Response of messaging extension action.
-                return await this.RespondToQuestionMessagingExtensionAsync(postedQuestionObject, turnContext, cancellationToken).ConfigureAwait(false);
+                return default;
             }
             catch (Exception ex)
             {
@@ -248,12 +332,22 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.TeamsActivity
         }
 
         /// <summary>
+        /// Sends error card when migrate fails.
+        /// </summary>
+        /// <returns>Response of messaging extension action object.</returns>
+        private static async Task<MessagingExtensionActionResponse> SendErrorCardForMigrateTicket()
+        {
+            var attachment = new MigrateAction().GetErrorCard();
+            return await GetResponseForMigrateTicketAsync(attachment, false);
+        }
+
+        /// <summary>
         /// Get messaging extension response object.
         /// </summary>
         /// <param name="questionAnswerAdaptiveCardEditor">Card as an input.</param>
         /// <param name="titleText">Gets or sets text that appears below the app name and to the right of the app icon.</param>
         /// <returns>Response of messaging extension action object.</returns>
-        private static Task<MessagingExtensionActionResponse> GetMessagingExtensionActionResponseAsync(
+        private static Task<MessagingExtensionActionResponse> GetResponseForAddQuestionAsync(
             Attachment questionAnswerAdaptiveCardEditor,
             string titleText = "")
         {
@@ -264,12 +358,84 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.TeamsActivity
                     Value = new TaskModuleTaskInfo
                     {
                         Card = questionAnswerAdaptiveCardEditor ?? throw new ArgumentNullException(nameof(questionAnswerAdaptiveCardEditor)),
-                        Height = TaskModuleHeight,
+                        Height = TaskModuleHeightForAddQuestion,
                         Width = TaskModuleWidth,
                         Title = titleText ?? throw new ArgumentNullException(nameof(titleText)),
                     },
                 },
             });
+        }
+
+        private static Task<MessagingExtensionActionResponse> GetResponseForMigrateTicketAsync(
+            Attachment questionAnswerAdaptiveCardEditor,
+            bool canMigrate)
+        {
+            return Task.FromResult(new MessagingExtensionActionResponse
+            {
+                Task = new TaskModuleContinueResponse
+                {
+                    Value = new TaskModuleTaskInfo
+                    {
+                        Card = questionAnswerAdaptiveCardEditor ?? throw new ArgumentNullException(nameof(questionAnswerAdaptiveCardEditor)),
+                        Height = canMigrate ? TaskModuleHeightForMigrateTicket : TaskModuleHeightForMigrateTicketError,
+                        Width = 500,
+                    },
+                },
+            });
+        }
+
+        /// <summary>
+        /// Migrates the ticket.
+        /// </summary>
+        /// <param name="turnContext">Context object containing information cached for a single turn of conversation with a user.</param>
+        /// <param name="action">Action to be performed.</param>
+        /// <returns>Response of messaging extension action.</returns>
+        private async Task<MessagingExtensionActionResponse> MigrateTicket(
+            ITurnContext<IInvokeActivity> turnContext,
+            MessagingExtensionAction action)
+        {
+            var expertBotId = turnContext.Activity.Recipient?.Id.Split(':')[1];
+
+            // If bot id in ticket payload is not same as the expert bot Id, then the ticket can be migrated from legacy bot to new bot.
+            if (action.MessagePayload?.From?.Application?.Id != expertBotId)
+            {
+                // Get the ticket id from message payload.
+                string cardString = action.MessagePayload.Attachments[0].Content.ToString();
+                string[] arr = Regex.Split(cardString, "ticketId");
+                if (arr.Length <= 1)
+                {
+                    this.logger.LogInformation($"Couldn't find ticketId in message payload.");
+                    return await SendErrorCardForMigrateTicket();
+                }
+
+                string ticketId = Regex.Replace(Regex.Split(arr[1], "title")[0], @"[^0-9a-zA-Z-]+", string.Empty);
+
+                // Get ticket details from table storage for above ticket id and create an attachment.
+                if (ticketId != null)
+                {
+                    var ticket = await this.ticketsProvider.GetTicketAsync(ticketId).ConfigureAwait(false);
+                    if (ticket != null)
+                    {
+                        var attachment = new MigrateAction(ticket).GetCard();
+                        return await GetResponseForMigrateTicketAsync(attachment, true);
+                    }
+                    else
+                    {
+                        this.logger.LogError($"Couldn't find ticket for ticketId {ticketId} in table storage.");
+                        return await SendErrorCardForMigrateTicket();
+                    }
+                }
+                else
+                {
+                    this.logger.LogInformation($"Couldn't find ticketId in message payload.");
+                    return await SendErrorCardForMigrateTicket();
+                }
+            }
+            else
+            {
+                this.logger.LogInformation($"Couldn't migrate the ticket. Expert bot Id is same in message payload.");
+                return await SendErrorCardForMigrateTicket();
+            }
         }
 
         /// <summary>
@@ -362,7 +528,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.TeamsActivity
             if (Validators.IsContainsHtml(postedQnaPairEntity) || Validators.IsQnaFieldsNullOrEmpty(postedQnaPairEntity))
             {
                 // Returns the card with validation errors on add QnA task module.
-                return await GetMessagingExtensionActionResponseAsync(MessagingExtensionQnaCard.AddQuestionForm(Validators.HtmlAndQnaEmptyValidation(postedQnaPairEntity), this.appBaseUri)).ConfigureAwait(false);
+                return await GetResponseForAddQuestionAsync(MessagingExtensionQnaCard.AddQuestionForm(Validators.HtmlAndQnaEmptyValidation(postedQnaPairEntity), this.appBaseUri)).ConfigureAwait(false);
             }
 
             if (Validators.IsRichCard(postedQnaPairEntity))
@@ -370,7 +536,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.TeamsActivity
                 // While adding the new entry in knowledgebase,if user has entered invalid Image URL or Redirect URL then show the error message to user.
                 if (Validators.IsImageUrlInvalid(postedQnaPairEntity) || Validators.IsRedirectionUrlInvalid(postedQnaPairEntity))
                 {
-                    return await GetMessagingExtensionActionResponseAsync(MessagingExtensionQnaCard.AddQuestionForm(Validators.ValidateImageAndRedirectionUrls(postedQnaPairEntity), this.appBaseUri)).ConfigureAwait(false);
+                    return await GetResponseForAddQuestionAsync(MessagingExtensionQnaCard.AddQuestionForm(Validators.ValidateImageAndRedirectionUrls(postedQnaPairEntity), this.appBaseUri)).ConfigureAwait(false);
                 }
 
                 // Return the rich card as response to user if he has filled title & image URL while adding the new entry in knowledgebase.
@@ -411,7 +577,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.TeamsActivity
                     qnaPairEntity.IsQuestionAlreadyExists = true;
 
                     // Messaging extension response object.
-                    return await GetMessagingExtensionActionResponseAsync(MessagingExtensionQnaCard.AddQuestionForm(qnaPairEntity, this.appBaseUri)).ConfigureAwait(false);
+                    return await GetResponseForAddQuestionAsync(MessagingExtensionQnaCard.AddQuestionForm(qnaPairEntity, this.appBaseUri)).ConfigureAwait(false);
                 }
             }
             catch (Exception ex)

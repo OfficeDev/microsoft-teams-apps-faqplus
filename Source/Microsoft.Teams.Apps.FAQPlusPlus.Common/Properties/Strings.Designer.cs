@@ -583,6 +583,25 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This ticket could not be migrated!
+        ///Only tickets from the legacy bot, that are not previously migrated, can be migrated..
+        /// </summary>
+        public static string MigrateActionErrorText {
+            get {
+                return ResourceManager.GetString("MigrateActionErrorText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Migrated this ticket from legacy bot to new expert bot..
+        /// </summary>
+        public static string MigrateTicketText {
+            get {
+                return ResourceManager.GetString("MigrateTicketText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Needs Improvement.
         /// </summary>
         public static string NeedsImprovementRatingText {

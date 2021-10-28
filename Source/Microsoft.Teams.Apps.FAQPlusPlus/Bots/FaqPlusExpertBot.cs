@@ -271,7 +271,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         {
             try
             {
-                return this.messagingExtensionActivity.FetchTaskAsync(turnContext);
+                return this.messagingExtensionActivity.FetchTaskAsync(turnContext, action, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -297,7 +297,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         {
             try
             {
-                return await this.messagingExtensionActivity.SubmitActionAsync(turnContext, cancellationToken);
+                return await this.messagingExtensionActivity.SubmitActionAsync(turnContext, action, cancellationToken);
             }
             catch (Exception ex)
             {

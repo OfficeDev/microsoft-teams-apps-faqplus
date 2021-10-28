@@ -617,4 +617,13 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <value>Take a tour</value>
     <comment>Bot command Take a tour. This needs to be match with manifest's command "Take a tour" in translated json file.</comment>
   </data>
+  <data name="MigrateActionErrorText" xml:space="preserve">
+    <value>This ticket could not be migrated!
+Only tickets from the legacy bot, that are not previously migrated, can be migrated.</value>
+    <comment>When SME team member tries to invoke a migrate action from the same bot, this error card is displayed.</comment>
+  </data>
+  <data name="MigrateTicketText" xml:space="preserve">
+    <value>Migrated this ticket from legacy bot to new expert bot.</value>
+    <comment>Message sent during the migration of ticket from legacy bot to new expert bot</comment>
+  </data>
 </root>

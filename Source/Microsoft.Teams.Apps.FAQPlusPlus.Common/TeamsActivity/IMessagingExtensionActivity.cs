@@ -26,15 +26,18 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.TeamsActivity
         /// Handles "Add new question" button via messaging extension.
         /// </summary>
         /// <param name="turnContext">Context object containing information cached for a single turn of conversation with a user.</param>
+        /// <param name="action">Action to be performed.</param>
+        /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
         /// <returns>Response of messaging extension action.</returns>
-        Task<MessagingExtensionActionResponse> FetchTaskAsync(ITurnContext<IInvokeActivity> turnContext);
+        Task<MessagingExtensionActionResponse> FetchTaskAsync(ITurnContext<IInvokeActivity> turnContext, MessagingExtensionAction action, CancellationToken cancellationToken);
 
         /// <summary>
         /// Handles submit new question.
         /// </summary>
         /// <param name="turnContext">Context object containing information cached for a single turn of conversation with a user.</param>
+        /// <param name="action">Action to be performed.</param>
         /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
         /// <returns>Response of messaging extension action.</returns>
-        Task<MessagingExtensionActionResponse> SubmitActionAsync(ITurnContext<IInvokeActivity> turnContext, CancellationToken cancellationToken);
+        Task<MessagingExtensionActionResponse> SubmitActionAsync(ITurnContext<IInvokeActivity> turnContext, MessagingExtensionAction action, CancellationToken cancellationToken);
     }
 }
