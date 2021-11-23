@@ -17,7 +17,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         /// <summary>
         /// Image url pattern validation expression.
         /// </summary>
-        private static readonly string ValidImgUrlPattern = @"^(http|https|)\:\/\/[0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*(:(0-9)*)*(\/?)([a-zA-Z0-9\-\.\?\,\'\/\\\+&~%\$#_]*)?([a-zA-Z0-9\-\?\,\'\/\+&~%\$#_]+)(.jpeg|.JPEG|.jpg|.JPG|.png|.PNG)$";
+        private static readonly string ValidImgUrlPattern = @"^(https?:\/\/.*\.(?i:png|jpg|jpeg))$";
 
         /// <summary>
         /// Html pattern validation expression.
