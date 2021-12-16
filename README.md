@@ -63,7 +63,15 @@ This app template is provided under the [MIT License](https://github.com/OfficeD
 
 Begin with the [Solution overview](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Solution-Overview) to read about what the app does and how it works.
 
-When you're ready to try out FAQ Plus, or to use it in your own organization, follow the steps in the [Deployment guide](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Deployment-Guide).
+When you're ready to try out FAQ Plus, or to use it in your own organization,  you can choose to follow one of the below guides.
+* [Deployment guide powershell](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Deployment-Guide-manual).
+    * **Recommended** Use this option to deploy the FAQ Plus v4.0 using powershell script. The entire set-up is done by the powershell script.
+* [Deployment guide](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Deployment-Guide).
+    * Use this option to deploy the FAQ+ v4.0 manually.
+
+## Migration
+
+If you already have older version of FAQ Plus installed, then please use this [v4 migration guide](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Migration-Guide-manual). Please note that deploying the major version update, like FAQ Plus version 4.0 involves more than syncing the App Service and Azure Functions, so plan to review the migration guide before migrating to latest.
 
 ## Feedback
 
