@@ -73,6 +73,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddApplicationInsightsTelemetry();
+
             services.Configure<KnowledgeBaseSettings>(knowledgeBaseSettings =>
             {
                 knowledgeBaseSettings.SearchServiceName = this.Configuration["SearchServiceName"];

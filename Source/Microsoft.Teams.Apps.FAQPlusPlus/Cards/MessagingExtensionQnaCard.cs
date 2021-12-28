@@ -767,7 +767,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         {
                             new AdaptiveTextBlock
                             {
-                                Text = qnaPairEntity.Title !=null ? qnaPairEntity.Title.Trim() : string.Empty,
+                                Text = qnaPairEntity.Title != null ? qnaPairEntity.Title.Trim() : string.Empty,
                                 Size = AdaptiveTextSize.Large,
                                 Weight = AdaptiveTextWeight.Bolder,
                                 Wrap = true,
