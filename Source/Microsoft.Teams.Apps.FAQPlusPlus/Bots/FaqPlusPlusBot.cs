@@ -190,6 +190,19 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 this.logger.LogInformation($"from: {message.From?.Id}, conversation: {message.Conversation.Id}, replyToId: {message.ReplyToId}");
                 await this.SendTypingIndicatorAsync(turnContext).ConfigureAwait(false);
 
+                // if (message.Conversation.ConversationType == null)
+                // {
+                    // message.Conversation.ConversationType = string.Empty;
+                    /*
+                    PreguntaStorageAdmin guardarPregunta = new PreguntaStorageAdmin();
+                    if (message.ToString() != string.Empty)
+                    {
+                        guardarPregunta.ModeloPreguntasGuardar();
+                        guardarPregunta.GuardarPreguntaTabla(message.Conversation.Name, message.From.Name, message.From.Id);
+                    }
+                    */
+
+                // }
                 switch (message.Conversation.ConversationType.ToLower())
                 {
                     case ConversationTypePersonal:
@@ -243,6 +256,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     this.logger.LogInformation("Ignoring conversationUpdate that was not a membersAdded event");
                     return;
                 }
+
+                // agregado por aml para hacer debug al bot localmente, en este punto el converasationtype llega en Null
+                /*
+                if (activity.Conversation.ConversationType == null)
+                {
+                    activity.Conversation.ConversationType = "personal";
+                }
+                */
 
                 switch (activity.Conversation.ConversationType.ToLower())
                 {
@@ -784,6 +805,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             else
             {
                 this.logger.LogInformation("Sending input to QnAMaker");
+                PreguntaStorageAdmin guardarPregunta = new PreguntaStorageAdmin();
+                if (text != string.Empty)
+                {
+                    ModelQuestions.NoSearchedWords qmodel = new ModelQuestions.NoSearchedWords();
+                    if (qmodel.ValidateWord(text) == false)
+                    {
+                        guardarPregunta.ModeloPreguntasGuardar();
+                        guardarPregunta.GuardarPreguntaTabla("PersonalActivity", text, message.From.Name, message.Value?.ToString());
+                    }
+                }
+                
                 await this.GetQuestionAnswerReplyAsync(turnContext, message).ConfigureAwait(false);
             }
         }
@@ -814,6 +846,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
             try
             {
+
                 switch (text)
                 {
                     case Constants.TeamTour:
@@ -925,6 +958,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     if (payload.IsPrompt)
                     {
                         this.logger.LogInformation("Sending input to QnAMaker for prompt");
+                        if (text != string.Empty)
+                        {
+                            ModelQuestions.NoSearchedWords qmodel = new ModelQuestions.NoSearchedWords();
+                            if (qmodel.ValidateWord(text) == false) {
+                                PreguntaStorageAdmin guardarPregunta2 = new PreguntaStorageAdmin();
+                                guardarPregunta2.ModeloPreguntasGuardar();
+                                guardarPregunta2.GuardarPreguntaTabla("advisoryActivity", text, message.From.Name, message.Value?.ToString());
+                            }    
+                        }
                         await this.GetQuestionAnswerReplyAsync(turnContext, message).ConfigureAwait(false);
                     }
                     else
@@ -1137,6 +1179,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <returns>Boolean value where true represent tenant is valid while false represent tenant in not valid.</returns>
         private bool IsActivityFromExpectedTenant(ITurnContext turnContext)
         {
+            // agregado por aml para probar el bot en debug ya que en este punto el conversation.tenantid es null
+             turnContext.Activity.Conversation.TenantId = this.options.TenantId;
             return turnContext.Activity.Conversation.TenantId == this.options.TenantId;
         }
 

@@ -8,10 +8,10 @@
 
   <ItemGroup>
     <PackageReference Include="AdaptiveCards" Version="1.2.4" />
+    <PackageReference Include="Azure.Data.Tables" Version="12.3.0" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.14.0" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker" Version="1.1.0" />
-    <PackageReference Include="Microsoft.Azure.Search" Version="10.1.0" />
     <PackageReference Include="Microsoft.Bot.Builder.Ai.QnA" Version="4.9.2" />
     <PackageReference Include="Microsoft.Bot.Builder.Integration.AspNet.Core" Version="4.9.2" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.1.2" />
@@ -19,6 +19,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging.ApplicationInsights" Version="2.14.0" />
     <PackageReference Include="Microsoft.MarkedNet" Version="1.0.13" />
     <PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="2.0.96" />
+    <PackageReference Include="Microsoft.WindowsAzure.ConfigurationManager" Version="3.2.3" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -61,4 +62,5 @@
   <ItemGroup>
     <WCFMetadata Include="Connected Services" />
   </ItemGroup>
+  <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
 </Project>
