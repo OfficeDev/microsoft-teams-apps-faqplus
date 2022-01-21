@@ -1,0 +1,126 @@
+{
+  "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.8/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.8",
+  "version": "4.0.0",
+  "id": "aba30cfc-05df-4002-b956-a70996b12a54",
+  "packageName": "com.microsoft.teams.faqplus",
+  "developer": {
+    "name": "<<companyName>>",
+    "websiteUrl": "<<websiteUrl>>",
+    "privacyUrl": "<<privacyUrl>>",
+    "termsOfUseUrl": "<<termsOfUseUrl>>"
+  },
+  "localizationInfo": {
+    "defaultLanguageTag": "en",
+    "additionalLanguages": [
+      {
+        "languageTag": "en",
+        "file": "en.json"
+      },
+      {
+        "languageTag": "de",
+        "file": "de.json"
+      },
+      {
+        "languageTag": "fr",
+        "file": "fr.json"
+      },
+      {
+        "languageTag": "ar",
+        "file": "ar.json"
+      },
+      {
+        "languageTag": "ja",
+        "file": "ja.json"
+      },
+      {
+        "languageTag": "es",
+        "file": "es.json"
+      },
+      {
+        "languageTag": "he",
+        "file": "he.json"
+      },
+      {
+        "languageTag": "ko",
+        "file": "ko.json"
+      },
+      {
+        "languageTag": "pt-BR",
+        "file": "pt-BR.json"
+      },
+      {
+        "languageTag": "ru",
+        "file": "ru.json"
+      },
+      {
+        "languageTag": "zh-CN",
+        "file": "zh-CN.json"
+      },
+      {
+        "languageTag": "zh-TW",
+        "file": "zh-TW.json"
+      }
+    ]
+  },
+  "icons": {
+    "color": "color.png",
+    "outline": "outline.png"
+  },
+  "name": {
+    "short": "FAQ Plus"
+  },
+  "description": {
+    "short": "A friendly FAQ bot that answers questions and connects you to experts.",
+    "full": "A friendly question and answer bot that answers commonly asked questions. If it can't answer, it will put you in touch with an expert as soon as they are available."
+  },
+  "accentColor": "#64A2CC",
+  "bots": [
+    {
+      "botId": "<<userBotId>>",
+      "scopes": [
+        "personal"
+      ],
+      "commandLists": [
+        {
+          "scopes": [
+            "personal"
+          ],
+          "commands": [
+            {
+              "title": "Take a tour",
+              "description": "Tour of key features"
+            },
+            {
+              "title": "Ask an expert",
+              "description": "Connect with an expert"
+            },
+            {
+              "title": "Share feedback",
+              "description": "Send feedback"
+            }
+          ]
+        }
+      ],
+      "supportsFiles": false,
+      "isNotificationOnly": false
+    }
+  ],
+  "staticTabs": [
+    {
+      "entityId": "help",
+      "name": "Help",
+      "contentUrl": "https://<<appDomain>>/help?theme={theme}",
+      "scopes": [
+        "personal"
+      ]
+    }
+  ],
+  "permissions": [
+    "identity",
+    "messageTeamMembers"
+  ],
+  "validDomains": [
+    "<<appDomain>>"
+  ]
+}

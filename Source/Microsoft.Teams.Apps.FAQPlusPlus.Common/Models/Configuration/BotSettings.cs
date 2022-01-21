@@ -20,9 +20,24 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models.Configuration
         public string AppBaseUri { get; set; }
 
         /// <summary>
-        /// Gets or sets microsoft app id.
+        /// Gets or sets user app id.
         /// </summary>
-        public string MicrosoftAppId { get; set; }
+        public string UserAppId { get; set; }
+
+        /// <summary>
+        /// Gets or sets user app password.
+        /// </summary>
+        public string UserAppPassword { get; set; }
+
+        /// <summary>
+        /// Gets or sets expert app id.
+        /// </summary>
+        public string ExpertAppId { get; set; }
+
+        /// <summary>
+        /// Gets or sets expert app password.
+        /// </summary>
+        public string ExpertAppPassword { get; set; }
 
         /// <summary>
         /// Gets or sets access tenant id string.

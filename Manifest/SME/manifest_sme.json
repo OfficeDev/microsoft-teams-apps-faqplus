@@ -1,0 +1,210 @@
+{
+  "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.8/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.8",
+  "version": "4.0.0",
+  "id": "97ee4132-77a2-4101-9aa8-aaa17a44f87c",
+  "packageName": "com.microsoft.teams.faqplus",
+  "developer": {
+    "name": "<<companyName>>",
+    "websiteUrl": "<<websiteUrl>>",
+    "privacyUrl": "<<privacyUrl>>",
+    "termsOfUseUrl": "<<termsOfUseUrl>>"
+  },
+  "localizationInfo": {
+    "defaultLanguageTag": "en",
+    "additionalLanguages": [
+      {
+        "languageTag": "en",
+        "file": "en.json"
+      },
+      {
+        "languageTag": "de",
+        "file": "de.json"
+      },
+      {
+        "languageTag": "fr",
+        "file": "fr.json"
+      },
+      {
+        "languageTag": "ar",
+        "file": "ar.json"
+      },
+      {
+        "languageTag": "ja",
+        "file": "ja.json"
+      },
+      {
+        "languageTag": "es",
+        "file": "es.json"
+      },
+      {
+        "languageTag": "he",
+        "file": "he.json"
+      },
+      {
+        "languageTag": "ko",
+        "file": "ko.json"
+      },
+      {
+        "languageTag": "pt-BR",
+        "file": "pt-BR.json"
+      },
+      {
+        "languageTag": "ru",
+        "file": "ru.json"
+      },
+      {
+        "languageTag": "zh-CN",
+        "file": "zh-CN.json"
+      },
+      {
+        "languageTag": "zh-TW",
+        "file": "zh-TW.json"
+      }
+    ]
+  },
+  "icons": {
+    "color": "color.png",
+    "outline": "outline.png"
+  },
+  "name": {
+    "short": "FAQ Plus (Experts Team)"
+  },
+  "description": {
+    "short": "A friendly FAQ bot that answers questions and connects you to experts.",
+    "full": "A friendly question and answer bot that answers commonly asked questions. If it can't answer, it will put you in touch with an expert as soon as they are available."
+  },
+  "accentColor": "#64A2CC",
+  "bots": [
+    {
+      "botId": "<<expertBotId>>",
+      "scopes": [
+        "team"
+      ],
+      "supportsFiles": false,
+      "isNotificationOnly": false
+    }
+  ],
+  "staticTabs": [
+    {
+      "entityId": "help",
+      "name": "Help",
+      "contentUrl": "https://<<appDomain>>/help?theme={theme}",
+      "scopes": [
+        "personal"
+      ]
+    }
+  ],
+  "composeExtensions": [
+    {
+      "botId": "<<expertBotId>>",
+      "canUpdateConfiguration": false,
+      "commands": [
+        {
+          "id": "recents",
+          "type": "query",
+          "title": "Recent",
+          "description": "Search recent requests",
+          "parameters": [
+            {
+              "name": "searchText",
+              "title": "Search",
+              "description": "Search tickets"
+            }
+          ],
+          "context": [
+            "compose"
+          ],
+          "initialRun": true
+        },
+        {
+          "id": "openrequests",
+          "type": "query",
+          "title": "Unassigned",
+          "description": "Search unassigned requests not yet assigned to an expert",
+          "parameters": [
+            {
+              "name": "searchText",
+              "title": "Search",
+              "description": "Search tickets"
+            }
+          ],
+          "context": [
+            "compose"
+          ],
+          "initialRun": true
+        },
+        {
+          "id": "assignedrequests",
+          "type": "query",
+          "title": "Assigned",
+          "description": "Search requests assigned to an expert",
+          "parameters": [
+            {
+              "name": "searchText",
+              "title": "Search",
+              "description": "Search tickets"
+            }
+          ],
+          "context": [
+            "compose"
+          ],
+          "initialRun": true
+        },
+        {
+          "id": "kbquestions",
+          "type": "query",
+          "title": "Knowledge base",
+          "description": "Search recent requests",
+          "parameters": [
+            {
+              "name": "searchText",
+              "title": "Search",
+              "description": "Search KB QnA pairs"
+            }
+          ],
+          "context": [
+            "compose"
+          ],
+          "initialRun": true
+        },
+        {
+          "id": "addquestion",
+          "type": "action",
+          "title": "Add new question",
+          "description": "Add a new qna pair",
+          "initialRun": true,
+          "fetchTask": true,
+          "context": [
+            "compose"
+          ],
+          "parameters": [
+            {
+              "name": "addquestion",
+              "title": "Add a question",
+              "description": "Add a new qna pair"
+            }
+          ]
+        },
+        {
+          "id": "migrateticket",
+          "type": "action",
+          "title": "Migrate Ticket",
+          "description": "Migrate the ticket from old bot to new expert bot",
+          "initialRun": true,
+          "fetchTask": true,
+          "context": [
+            "message"
+          ]
+        }
+      ]
+    }
+  ],
+  "permissions": [
+    "identity",
+    "messageTeamMembers"
+  ],
+  "validDomains": [
+    "<<appDomain>>"
+  ]
+}

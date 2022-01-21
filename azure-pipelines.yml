@@ -1,0 +1,85 @@
+pool:
+  name: Azure Pipelines
+  vmImage: 'windows-latest'
+  demands:
+  - msbuild
+  - visualstudio
+variables:
+  BuildPlatform: 'Any CPU'
+  BuildConfiguration: 'Release'
+steps:
+- task: UseDotNet@2 
+  displayName: '.NET Core 3.1.x'
+  inputs:
+    version: '3.1.x'
+    packageType: sdk
+    
+- task: DotNetCoreCLI@2
+  displayName: 'Build FAQPlusPlus'
+  inputs:
+    projects: Source/Microsoft.Teams.Apps.FAQPlusPlus/Microsoft.Teams.Apps.FAQPlusPlus.csproj
+    arguments: '--configuration $(BuildConfiguration)'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Publish FAQPlusPlus'
+  inputs:
+    command: publish
+    publishWebProjects: false
+    projects: Source/Microsoft.Teams.Apps.FAQPlusPlus/Microsoft.Teams.Apps.FAQPlusPlus.csproj
+    arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
+    zipAfterPublish: True
+
+- task: DotNetCoreCLI@2
+  displayName: 'Build AzureFunction'
+  inputs:
+    projects: Source/Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction/Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.csproj
+    arguments: '--configuration $(BuildConfiguration)'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Publish AzureFunction'
+  inputs:
+    command: publish
+    publishWebProjects: false
+    projects: Source/Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction/Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.csproj
+    arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
+    zipAfterPublish: True
+    
+- task: NuGetCommand@2
+  inputs:
+    command: 'restore'
+    restoreSolution: '"Source/Microsoft.Teams.Apps.FAQPlusPlus.Configuration/packages.config"'
+    feedsToUse: 'select'
+    restoreDirectory: '../Packages'
+
+- task: MSBuild@1
+  inputs:
+    solution: '"Source/Microsoft.Teams.Apps.FAQPlusPlus.Configuration/Microsoft.Teams.Apps.FAQPlusPlus.Configuration.csproj"'
+    configuration: 'Release'
+    clean: true
+
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: 'Source/Microsoft.Teams.Apps.FAQPlusPlus.Configuration/bin'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/Microsoft.Teams.Apps.FAQPlusPlus.Configuration.zip'
+    replaceExistingArchive: true
+
+- task: CopyFiles@2
+  displayName: 'Copy Files to: $(build.artifactstagingdirectory)/FAQ'
+  inputs:
+    SourceFolder: '$(build.artifactstagingdirectory)'
+    TargetFolder: '$(build.artifactstagingdirectory)/FAQ'
+
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact'
+  inputs:
+    PathtoPublish: '$(build.artifactstagingdirectory)/FAQ'
+
+- task: ComponentGovernanceComponentDetection@0
+  displayName: 'Component detection'
+  inputs:
+    scanType: 'Register'
+    verbosity: 'Verbose'
+    alertWarningLevel: 'High'
