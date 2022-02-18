@@ -7,7 +7,7 @@ products:
 description: FAQ Plus bot is a friendly Q&A bot that brings a human in the loop when it is unable to help with an answer from the knowledge base.
 urlFragment: microsoft-teams-apps-faqplus
 ---
-#  FAQ Plus App Template
+#  FAQ Plus App Template  
 
 | [Documentation](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Home) | [Deployment guide](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Deployment-Guide) | [Architecture](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Solution-Overview) |
 | ---- | ---- | ---- |
