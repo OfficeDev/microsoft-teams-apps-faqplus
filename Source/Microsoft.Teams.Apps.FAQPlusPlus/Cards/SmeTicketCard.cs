@@ -455,6 +455,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                              Id = nameof(ChangeTicketStatusPayload.ResolveComment),
                              Placeholder = Strings.CommentPlachHonderText,
                              IsMultiline = true,
+                             Value = Strings.DefaultResolutionComment,
                          },
                     },
                     Actions = new List<AdaptiveAction>

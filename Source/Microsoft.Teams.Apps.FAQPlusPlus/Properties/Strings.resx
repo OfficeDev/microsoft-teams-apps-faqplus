@@ -772,4 +772,8 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <value>SOS:</value>
     <comment>Available factset in user notification and SME facing cards.</comment>
   </data>
+  <data name="DefaultResolutionComment" xml:space="preserve">
+    <value>Resolved. Please feel free to contact Dolphin if anything we can help. ❤ </value>
+    <comment>Default reply message.</comment>
+  </data>
 </root>
