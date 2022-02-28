@@ -228,7 +228,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             var action = new AdaptiveShowCardAction
             {
                 Title = " ",
-                Card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
+                Card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 2))
                 {
                     Body = new List<AdaptiveElement>
                     {
@@ -245,6 +245,27 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                             Placeholder = Strings.SOSTicketDescriptionPlaceholderText,
                             IsMultiline = true,
                             Value = this.ticket.Description,
+                        },
+                        new AdaptiveTextBlock
+                        {
+                            Text = Strings.WatchListText,
+                            Wrap = true,
+                        },
+                        new AdaptiveChoiceSetInput
+                        {
+                            IsMultiSelect = true,
+                            Spacing = AdaptiveSpacing.Small,
+                            Id = nameof(ChangeTicketStatusPayload.SOSWatchList),
+                            AdditionalProperties = new SerializableDictionary<string, object>
+                            {
+                                {
+                                    "choices.data", new SerializableDictionary<string, object>()
+                                    {
+                                        { "type", "Data.Query" },
+                                        { "dataset", "graph.microsoft.com/users" },
+                                    }
+                                },
+                            },
                         },
                     },
                     Actions = new List<AdaptiveAction>

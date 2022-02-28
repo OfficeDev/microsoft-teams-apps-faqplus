@@ -1,4 +1,4 @@
-// <copyright file="FaqPlusPlusBot.cs" company="Microsoft">
+﻿// <copyright file="FaqPlusPlusBot.cs" company="Microsoft">
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 
@@ -992,16 +992,39 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     {
                         return;
                     }
+                    List<TeamsChannelAccount> watchList = new List<TeamsChannelAccount>();
+                    var watchListPlainText = string.Empty;
+                    if (!string.IsNullOrEmpty(payload.SOSWatchList))
+                    {
+                        //avoid user input incorrect split symbol. 
+                        var watchIDList = payload.SOSWatchList.Replace(';', ',').Split(',');
+                        foreach (var id in watchIDList)
+                        {
+                            var watchUser = await TeamsInfo.GetMemberAsync(turnContext, id, cancellationToken);
+                            if (watchUser != null && !string.IsNullOrEmpty(watchUser.Name))
+                            {
+                                watchListPlainText += watchUser.Name + ", ";
+                            }
+                        }
+                    }
+                    // var accounts = await this.GetTeamsChannelMembers(turnContext, cancellationToken).ConfigureAwait(false);
+                    // var trigger = accounts.Where(r => r.Name.Equals(message.From.Name)).First();
+                    if (!watchListPlainText.Contains(message.From.Name))
+                    {
+                        watchListPlainText += message.From.Name;
+                    }
+                    else
+                    {
+                        watchListPlainText = watchListPlainText.TrimEnd(new char[] { ',', ' ' });
+                    }
 
-                    var accounts = await this.GetTeamsChannelMembers(turnContext, cancellationToken).ConfigureAwait(false);
-                    var trigger = accounts.Where(r => r.Name.Equals(message.From.Name)).First();
                     SOSRequest request = new SOSRequest()
                     {
                         RequestFor = ticket.RequesterUserPrincipalName,
                         Topic = payload.SOSTopic,
                         ShortDescription = payload.SOSTitle,
                         Description = payload.SOSDescription,
-                        WatchList = trigger?.Email,
+                        WatchList = watchListPlainText,
                     };
                     DateTime start = DateTime.Now;
                     SOSRequestResult sosResult = await this.sosClient.CreateRequestAsync(request);
@@ -1015,7 +1038,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                         ticket.SOSDescription = payload.SOSDescription;
                         ticket.SOSLink = $"{this.sosClient.BaseUrl}sos/request_item.do?sysparm_sys_id={sosResult.Result.SysId}";
                         ticket.DateSOSCreated = DateTime.UtcNow;
-                        ticket.SOSTicketRequester = message.From.Name;
+                        ticket.SOSTicketRequester = message.From.Name;                        
 
                         userAction.Remark += $" to SOS Inprogress";
                         this.logger.LogWarning($"SOS ticket created succeed {sosResult.Result.Reference}");

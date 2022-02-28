@@ -776,4 +776,12 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <value>Resolved. Please feel free to contact Dolphin if anything we can help. ❤ </value>
     <comment>Default reply message.</comment>
   </data>
+  <data name="SOSTicketWatchListPlaceholderText" xml:space="preserve">
+    <value>Please input user's mail address, e.g: sample1@ubisoft.com;sample2@ubisoft.com</value>
+    <comment>Placeholder text for SOS Watch List text box.</comment>
+  </data>
+  <data name="WatchListText" xml:space="preserve">
+    <value>Watch List:</value>
+    <comment>Label text for Watch List.</comment>
+  </data>
 </root>

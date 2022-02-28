@@ -88,5 +88,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         /// </summary>
         [JsonProperty("SOSTitle")]
         public string SOSTitle { get; set; }
+
+        /// <summary>
+        /// Gets or sets the SOS Watch List.
+        /// </summary>
+        [JsonProperty("SOSWatchList")]
+        public string SOSWatchList { get; set; }
     }
 }

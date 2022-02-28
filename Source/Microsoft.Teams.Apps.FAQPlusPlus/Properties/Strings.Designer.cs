@@ -1186,6 +1186,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Please input user&apos;s mail address, e.g: sample1@ubisoft.com;sample2@ubisoft.com.
+        /// </summary>
+        public static string SOSTicketWatchListPlaceholderText {
+            get {
+                return ResourceManager.GetString("SOSTicketWatchListPlaceholderText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Status: .
         /// </summary>
         public static string StatusFactTitle {
@@ -1524,6 +1533,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         public static string WaitMessageAnswer {
             get {
                 return ResourceManager.GetString("WaitMessageAnswer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Watch List:.
+        /// </summary>
+        public static string WatchListText {
+            get {
+                return ResourceManager.GetString("WatchListText", resourceCulture);
             }
         }
         

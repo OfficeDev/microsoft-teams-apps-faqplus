@@ -267,11 +267,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         /// <returns>pending comment.</returns>
         public static string GetPendingComment(TicketEntity ticket)
         {
-            string[] pendingComments = ticket.PendingComment.Split(new string[] { "[*]" }, StringSplitOptions.None);
             string pendingComment = string.Empty;
-            if (pendingComments.Length >= 1)
+            if (!string.IsNullOrEmpty(ticket.PendingComment))
             {
-                pendingComment = pendingComments[pendingComments.Length - 1];
+                string[] pendingComments = ticket.PendingComment.Split(new string[] { "[*]" }, StringSplitOptions.None);
+                if (pendingComments.Length >= 1)
+                {
+                    pendingComment = pendingComments[pendingComments.Length - 1];
+                }
             }
 
             return pendingComment;
