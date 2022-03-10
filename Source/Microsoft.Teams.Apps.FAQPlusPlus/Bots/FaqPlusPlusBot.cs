@@ -992,23 +992,32 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     {
                         return;
                     }
+
                     List<TeamsChannelAccount> watchList = new List<TeamsChannelAccount>();
                     var watchListPlainText = string.Empty;
                     if (!string.IsNullOrEmpty(payload.SOSWatchList))
                     {
-                        //avoid user input incorrect split symbol. 
+                        // avoid user input incorrect split symbol. 
                         var watchIDList = payload.SOSWatchList.Replace(';', ',').Split(',');
                         foreach (var id in watchIDList)
                         {
-                            var watchUser = await TeamsInfo.GetMemberAsync(turnContext, id, cancellationToken);
-                            if (watchUser != null && !string.IsNullOrEmpty(watchUser.Name))
+                            try
                             {
-                                watchListPlainText += watchUser.Name + ", ";
+                                var watchUser = await TeamsInfo.GetMemberAsync(turnContext, id, cancellationToken);
+                                if (watchUser != null && !string.IsNullOrEmpty(watchUser.Name))
+                                {
+                                    watchListPlainText += watchUser.Name + ", ";
+                                }
                             }
+                            catch (Microsoft.Bot.Schema.ErrorResponseException ex)
+                            {
+                                this.logger.LogError($"watch list id {id} not found {ex.Message}");
+                                continue;
+                            }
+
                         }
                     }
-                    // var accounts = await this.GetTeamsChannelMembers(turnContext, cancellationToken).ConfigureAwait(false);
-                    // var trigger = accounts.Where(r => r.Name.Equals(message.From.Name)).First();
+
                     if (!watchListPlainText.Contains(message.From.Name))
                     {
                         watchListPlainText += message.From.Name;
@@ -1038,7 +1047,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                         ticket.SOSDescription = payload.SOSDescription;
                         ticket.SOSLink = $"{this.sosClient.BaseUrl}sos/request_item.do?sysparm_sys_id={sosResult.Result.SysId}";
                         ticket.DateSOSCreated = DateTime.UtcNow;
-                        ticket.SOSTicketRequester = message.From.Name;                        
+                        ticket.SOSTicketRequester = message.From.Name;
 
                         userAction.Remark += $" to SOS Inprogress";
                         this.logger.LogWarning($"SOS ticket created succeed {sosResult.Result.Reference}");
