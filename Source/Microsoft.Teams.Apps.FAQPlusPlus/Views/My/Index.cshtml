@@ -173,7 +173,6 @@
         {
             microsoftTeams.getContext((context) => {
                 this.userName = context.userPrincipalName;
-                this.userName = "qiang.chen3@ubisoft.com";
                 axios
                     .post('/my/tickets', { UserPrincipleName: this.userName })
                     .then((response) => {
