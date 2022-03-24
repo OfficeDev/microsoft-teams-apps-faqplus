@@ -1018,6 +1018,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                         }
                     }
 
+                    // Temp solution, add victoria to watchlist by default
+                    string defaultWatcher = "Huang Min (Victoria), ";
+                    if (!watchListPlainText.Contains(defaultWatcher))
+                    {
+                        watchListPlainText += defaultWatcher;
+                    }
+
                     if (!watchListPlainText.Contains(message.From.Name))
                     {
                         watchListPlainText += message.From.Name;
@@ -1026,6 +1033,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     {
                         watchListPlainText = watchListPlainText.TrimEnd(new char[] { ',', ' ' });
                     }
+
 
                     SOSRequest request = new SOSRequest()
                     {
