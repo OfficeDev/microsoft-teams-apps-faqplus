@@ -113,6 +113,42 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         }
 
         /// <summary>
+        /// get all tickets of sepcific user.
+        /// </summary>
+        /// <param name="userPrincipleName">user PrincipleName(email).</param>
+        /// <returns>list of tickets.</returns>
+        public async Task<List<TicketEntity>> GetUserTicketsAsync(string userPrincipleName)
+        {
+            List<TicketEntity> tickets = new List<TicketEntity>();
+
+            string filterUserPrincipleName = TableQuery.GenerateFilterCondition("RequesterUserPrincipalName", QueryComparisons.Equal, userPrincipleName);
+            TableContinuationToken continuationToken = null;
+
+            await this.EnsureInitializedAsync().ConfigureAwait(false);
+            do
+            {
+                var result = await this.ticketCloudTable.ExecuteQuerySegmentedAsync(new TableQuery<TicketEntity>().Where(filterUserPrincipleName), continuationToken);
+                continuationToken = result.ContinuationToken;
+                int index = 0;
+                if (result.Results != null)
+                {
+                    foreach (TicketEntity entity in result.Results)
+                    {
+                        tickets.Add(entity);
+                        index++;
+                        if (index == 500)
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+            while (continuationToken != null);
+
+            return tickets.OrderBy(i => i.Status).ToList();
+        }
+
+        /// <summary>
         /// Initialization of InitializeAsync method which will help in creating table.
         /// </summary>
         /// <returns>Represent a task with initialized connection data.</returns>

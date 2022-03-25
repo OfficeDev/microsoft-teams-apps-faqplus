@@ -12,6 +12,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
     using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Models;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
 
@@ -189,14 +190,30 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         /// <summary>
         /// Save or update help tab text to be used by bot in table storage which is received from View.
         /// </summary>
-        /// <param name="helpTabText">help tab text.</param>
+        /// <param name="assignTimeout">timeout from unassigned to assigned.</param>
+        /// <param name="unAssigneInterval">when ticket is unassigned, send notification intervally after first notification.</param>
+        /// <param name="pendingTimeout">timeout from pending to resolve.</param>
+        /// <param name="pendingInterval">when ticket is pending, send notification intervally after first notification.</param>
+        /// <param name="pendingCCInterval">when ticket is pending, send notification to admin intervally after first notification.</param>
+        /// <param name="resolveTimeout">timeout from assigned to resolve.</param>
+        /// <param name="unResolveInterval">when ticket is not resolved, send notification intervally after first notification.</param>
+        /// <param name="unResolveCCInterval">when ticket is not resolved, send notification to admin intervally after first notification.</param>
+        /// <param name="expertsAdmins">admins of expert channel.</param>
         /// <returns>View.</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> SaveHelpTabTextAsync(string helpTabText)
+        public async Task<ActionResult> SaveSLAAsync(string assignTimeout, string unAssigneInterval, string pendingTimeout, string pendingInterval, string pendingCCInterval, string resolveTimeout, string unResolveInterval, string unResolveCCInterval, string expertsAdmins)
         {
-            bool saved = await this.configurationPovider.UpsertEntityAsync(helpTabText, ConfigurationEntityTypes.HelpTabText).ConfigureAwait(false);
-            if (saved)
+            bool savedAssignTimeout = await this.configurationPovider.UpsertEntityAsync(assignTimeout, ConfigurationEntityTypes.AssignTimeout).ConfigureAwait(false);
+            bool savedUnAssignInterval = await this.configurationPovider.UpsertEntityAsync(unAssigneInterval, ConfigurationEntityTypes.UnassigneInterval).ConfigureAwait(false);
+            bool savedPendingTimeout = await this.configurationPovider.UpsertEntityAsync(pendingTimeout, ConfigurationEntityTypes.PendingTimeout).ConfigureAwait(false);
+            bool savedPendingInterval = await this.configurationPovider.UpsertEntityAsync(pendingInterval, ConfigurationEntityTypes.PendingInterval).ConfigureAwait(false);
+            bool savedPendingCCInterval = await this.configurationPovider.UpsertEntityAsync(pendingCCInterval, ConfigurationEntityTypes.PendingCCInterval).ConfigureAwait(false);
+            bool savedResolveTimeout = await this.configurationPovider.UpsertEntityAsync(resolveTimeout, ConfigurationEntityTypes.ResolveTimeout).ConfigureAwait(false);
+            bool savedUnResolveInterval = await this.configurationPovider.UpsertEntityAsync(unResolveInterval, ConfigurationEntityTypes.UnResolveInterval).ConfigureAwait(false);
+            bool savedUnResolveCCInterval = await this.configurationPovider.UpsertEntityAsync(unResolveCCInterval, ConfigurationEntityTypes.UnResolveCCInterval).ConfigureAwait(false);
+            bool savedExpertsAdmins = await this.configurationPovider.UpsertEntityAsync(expertsAdmins, ConfigurationEntityTypes.ExpertsAdmins).ConfigureAwait(false);
+            if (savedAssignTimeout && savedPendingTimeout && savedResolveTimeout && savedExpertsAdmins && savedUnAssignInterval && savedPendingInterval && savedPendingCCInterval && savedUnResolveInterval && savedUnResolveCCInterval)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.OK);
             }
@@ -210,59 +227,55 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         /// Get already saved help tab message from table storage.
         /// </summary>
         /// <returns>Help tab text.</returns>
-        public async Task<string> GetSavedHelpTabTextAsync()
+        [HttpGet]
+        public async Task<string> GetSavedSLAAsync()
         {
-            var helpText = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.HelpTabText).ConfigureAwait(false);
-            if (string.IsNullOrWhiteSpace(helpText))
+            var assignTimeout = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.AssignTimeout).ConfigureAwait(false);
+            var unAssigneInterval = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.UnassigneInterval).ConfigureAwait(false);
+            var pendingTimeout = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.PendingTimeout).ConfigureAwait(false);
+            var pendingInterval = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.PendingInterval).ConfigureAwait(false);
+            var pendingCCInterval = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.PendingCCInterval).ConfigureAwait(false);
+            var resolveTimeout = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.ResolveTimeout).ConfigureAwait(false);
+            var unResolveInterval = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.UnResolveInterval).ConfigureAwait(false);
+            var unResolveCCInterval = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.UnResolveCCInterval).ConfigureAwait(false);
+            var expertsAdmins = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.ExpertsAdmins).ConfigureAwait(false);
+            if (string.IsNullOrWhiteSpace(assignTimeout) || string.IsNullOrWhiteSpace(pendingTimeout) || string.IsNullOrWhiteSpace(resolveTimeout)
+                || string.IsNullOrWhiteSpace(unAssigneInterval) || string.IsNullOrWhiteSpace(pendingInterval) || string.IsNullOrWhiteSpace(pendingCCInterval) || string.IsNullOrWhiteSpace(unResolveInterval) || string.IsNullOrWhiteSpace(unResolveCCInterval))
             {
-                await this.SaveHelpTabTextAsync(Strings.DefaultHelpTabText).ConfigureAwait(false);
+                await this.SaveSLAAsync(
+                    string.IsNullOrWhiteSpace(assignTimeout) ? Strings.DefaultAssignTimeout : assignTimeout,
+                    string.IsNullOrWhiteSpace(unAssigneInterval) ? Strings.DefaultUnAssignInterval : unAssigneInterval,
+                    string.IsNullOrWhiteSpace(pendingTimeout) ? Strings.DefaultPendingTimeout : pendingTimeout,
+                    string.IsNullOrWhiteSpace(pendingInterval) ? Strings.DefaultPendingInterval : pendingInterval,
+                    string.IsNullOrWhiteSpace(pendingCCInterval) ? Strings.DefaultPendingCCInterval : pendingCCInterval,
+                    string.IsNullOrWhiteSpace(resolveTimeout) ? Strings.DefaultResolveTimeout : resolveTimeout,
+                    string.IsNullOrWhiteSpace(unResolveInterval) ? Strings.DefaultUnResolveInterval : unResolveInterval,
+                    string.IsNullOrWhiteSpace(unResolveCCInterval) ? Strings.DefaultUnResolveCCInterval : unResolveCCInterval,
+                    string.IsNullOrWhiteSpace(expertsAdmins) ? string.Empty : expertsAdmins).ConfigureAwait(false);
             }
 
-            return await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.HelpTabText).ConfigureAwait(false);
-        }
+            assignTimeout = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.AssignTimeout).ConfigureAwait(false);
+            unAssigneInterval = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.UnassigneInterval).ConfigureAwait(false);
+            pendingTimeout = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.PendingTimeout).ConfigureAwait(false);
+            pendingInterval = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.PendingInterval).ConfigureAwait(false);
+            pendingCCInterval = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.PendingCCInterval).ConfigureAwait(false);
+            resolveTimeout = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.ResolveTimeout).ConfigureAwait(false);
+            unResolveInterval = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.UnResolveInterval).ConfigureAwait(false);
+            unResolveCCInterval = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.UnResolveCCInterval).ConfigureAwait(false);
+            expertsAdmins = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.ExpertsAdmins).ConfigureAwait(false);
 
-        /// <summary>
-        /// Save or update help tab text to be used by bot in table storage which is received from View.
-        /// </summary>
-        /// <param name="subjects">help tab text.</param>
-        /// <returns>View.</returns>
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> SaveSubjectsAsync(string subjects)
-        {
-            try
+            return JsonConvert.SerializeObject(new SLAViewModel()
             {
-                JToken.Parse(subjects);
-            }
-            catch (JsonReaderException jex)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Subjects must be json format");
-            }
-
-            bool saved = await this.configurationPovider.UpsertEntityAsync(subjects, ConfigurationEntityTypes.Subjects).ConfigureAwait(false);
-            if (saved)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.OK);
-            }
-            else
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Sorry, unable to save the subjects due to an internal error. Try again.");
-            }
-        }
-
-        /// <summary>
-        /// Get already saved subjects from table storage.
-        /// </summary>
-        /// <returns>subjects json.</returns>
-        public async Task<string> GetSavedSubjectsAsync()
-        {
-            var helpText = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.Subjects).ConfigureAwait(false);
-            if (string.IsNullOrWhiteSpace(helpText))
-            {
-                await this.SaveHelpTabTextAsync(Strings.DefaultSubjects).ConfigureAwait(false);
-            }
-
-            return await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.Subjects).ConfigureAwait(false);
+                AssignTimeOut = assignTimeout,
+                UnAssigneInterval = unAssigneInterval,
+                PendingTimeOut = pendingTimeout,
+                PendingInterval = pendingInterval,
+                PendingCCInterval = pendingCCInterval,
+                ResolveTimeOut = resolveTimeout,
+                UnResolveInterval = unResolveInterval,
+                UnResolveCCInterval = unResolveCCInterval,
+                ExpertsAdmins = expertsAdmins,
+            });
         }
 
         /// <summary>

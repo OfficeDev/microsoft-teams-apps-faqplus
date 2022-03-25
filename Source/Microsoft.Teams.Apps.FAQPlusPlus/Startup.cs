@@ -18,6 +18,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Options;
+    using Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.Repositories;
+    using Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.Repositories.TeamData;
+    using Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.Repositories.UserData;
+    using Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.Services;
     using Microsoft.Teams.Apps.FAQPlusPlus.Bots;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models.Configuration;
@@ -91,6 +95,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
                 botSettings.MicrosoftAppId = this.Configuration["MicrosoftAppId"];
                 botSettings.TenantId = this.Configuration["TenantId"];
                 botSettings.AppId = this.Configuration["APPId"];
+                botSettings.SessionExpiryInMinutes = Convert.ToInt32(this.Configuration["SessionExpiryInMinutes"]);
+            });
+            services.AddOptions<RepositoryOptions>().Configure<IConfiguration>((repositoryOptions, configuration) =>
+            {
+                repositoryOptions.StorageAccountConnectionString =
+                    configuration.GetValue<string>("StorageConnectionString");
+
+                // Setting this to true because the main application should ensure that all
+                // tables exist.
+                repositoryOptions.EnsureTableExists = true;
             });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
@@ -104,6 +118,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
             services.AddSingleton<IExpertProvider>(new ExpertProvider(this.Configuration["StorageConnectionString"]));
             services.AddSingleton<IBotFrameworkHttpAdapter, BotFrameworkHttpAdapter>();
             services.AddSingleton(new MicrosoftAppCredentials(this.Configuration["MicrosoftAppId"], this.Configuration["MicrosoftAppPassword"]));
+
+            // Add SOS service
+            services.AddSingleton<ISOSClient>(new SOSClient(this.Configuration["SOSBaseUrl"], new SOSBasicAuth(this.Configuration["SOSUserName"], this.Configuration["SOSPassword"])));
 
             IQnAMakerClient qnaMakerClient = new QnAMakerClient(new ApiKeyServiceClientCredentials(this.Configuration["QnAMakerSubscriptionKey"])) { Endpoint = this.Configuration["QnAMakerApiEndpointUrl"] };
             string endpointKey = Task.Run(() => qnaMakerClient.EndpointKeys.GetKeysAsync()).Result.PrimaryEndpointKey;
@@ -126,6 +143,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
             // You can inspect the UserState
             services.AddSingleton<UserState>();
 
+            // Add TeamDataCapture services
+            services.AddTransient<TeamsDataCapture>();
+
+            // Add repositories
+            services.AddSingleton<TeamDataRepository>();
+            services.AddSingleton<UserDataRepository>();
+            services.AddSingleton<AppConfigRepository>();
+
             // You can inspect the ConversationState
             services.AddSingleton<ConversationState>();
             services.AddTransient<IBot, FaqPlusPlusBot>();
@@ -139,6 +164,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
             // Create the telemetry middleware(used by the telemetry initializer) to track conversation events
             services.AddSingleton<TelemetryLoggerMiddleware>();
             services.AddMemoryCache();
+
+            // Add miscellaneous dependencies
+            services.AddSingleton<IAppSettingsService, AppSettingsService>();
+
+            // Add retrymessage service
+            services.AddSingleton<IRetryMessageService, RetryMessageService>();
         }
     }
 }

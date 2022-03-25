@@ -61,6 +61,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 10.
+        /// </summary>
+        public static string DefaultAssignTimeout {
+            get {
+                return ResourceManager.GetString("DefaultAssignTimeout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Hi, I&apos;m your friendly Q&amp;A bot. You can ask me questions, and I&apos;ll do my best to answer. If I can&apos;t help, I&apos;ll connect you to an expert.
         ///
         ///My key features:
@@ -76,11 +85,74 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 120.
+        /// </summary>
+        public static string DefaultPendingCCInterval {
+            get {
+                return ResourceManager.GetString("DefaultPendingCCInterval", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 30.
+        /// </summary>
+        public static string DefaultPendingInterval {
+            get {
+                return ResourceManager.GetString("DefaultPendingInterval", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 240.
+        /// </summary>
+        public static string DefaultPendingTimeout {
+            get {
+                return ResourceManager.GetString("DefaultPendingTimeout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 30.
+        /// </summary>
+        public static string DefaultResolveTimeout {
+            get {
+                return ResourceManager.GetString("DefaultResolveTimeout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {&quot;Project&quot;:&quot;ForHonor,Liberty,ACK,APEX,Orpheus,Yutu&quot;,&quot;Other&quot;:&quot;IT,HR&quot;}.
         /// </summary>
         public static string DefaultSubjects {
             get {
                 return ResourceManager.GetString("DefaultSubjects", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 10.
+        /// </summary>
+        public static string DefaultUnAssignInterval {
+            get {
+                return ResourceManager.GetString("DefaultUnAssignInterval", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 120.
+        /// </summary>
+        public static string DefaultUnResolveCCInterval {
+            get {
+                return ResourceManager.GetString("DefaultUnResolveCCInterval", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 60.
+        /// </summary>
+        public static string DefaultUnResolveInterval {
+            get {
+                return ResourceManager.GetString("DefaultUnResolveInterval", resourceCulture);
             }
         }
         
@@ -113,6 +185,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration {
         public static string KnowledgeBaseToolTipHoverMessage {
             get {
                 return ResourceManager.GetString("KnowledgeBaseToolTipHoverMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Provide SLA to send notification and anaylysis service quality then click on Ok to add or Edit to modify.
+        /// </summary>
+        public static string SLAToolTipHoverMessage {
+            get {
+                return ResourceManager.GetString("SLAToolTipHoverMessage", resourceCulture);
             }
         }
         

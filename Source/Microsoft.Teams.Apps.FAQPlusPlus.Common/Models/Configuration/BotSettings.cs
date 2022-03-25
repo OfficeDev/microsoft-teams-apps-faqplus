@@ -33,5 +33,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models.Configuration
         /// Gets or sets access app id string.
         /// </summary>
         public string AppId { get; set; }
+
+        /// <summary>
+        /// Gets or sets access session expiry minutes.
+        /// </summary>
+        public int SessionExpiryInMinutes { get; set; }
     }
 }

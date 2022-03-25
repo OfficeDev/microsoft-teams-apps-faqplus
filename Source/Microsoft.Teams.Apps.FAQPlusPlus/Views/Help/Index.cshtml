@@ -11,7 +11,7 @@
                          alt="profile-image">
                     <h4 class="mb-0 mt-2">Dolphin</h4>
                     <p class="text-muted font-14">CTU Production Services</p>
-                    <button type="button" class="btn btn-primary btn-sm mb-2" v-on:click="deepLinkToChat()">Message</button>
+                    <button type="button" class="btn btn-primary btn-sm mb-2" v-on:click="deepLinkToChat()">Chat with Dolphin</button>
                     <div class="text-left mt-3">
                         <h4 class="font-13 text-uppercase">About Me :</h4>
                         <p class="text-muted font-13 mb-3">
@@ -23,6 +23,12 @@
                         <a href="mailto:CTU-PS_Products@ubisoft.com?subject=[PS] Question for Dolphin" class="btn btn-success btn-sm mt-2"><i class="mdi mdi-email-outline mr-1"></i> CTU PS Products</a>
                     </div>
                 </div> <!-- end card-body -->
+                <div class="card-body">
+                    <div class="embed-responsive embed-responsive-16by9" height='300'>
+                        <iframe class="embed-responsive-item" src="https://videocdn01.ubisoft.org/PROD/player/index.aspx?c=yfmfe&amp;s=0&amp;bgcolor=white"></iframe>
+                    </div>
+                </div>
+
             </div> <!-- end card -->
         </div> <!-- end col-->
 
@@ -31,90 +37,19 @@
                 <div class="card-body">
                     <ul class="nav nav-pills bg-nav-pills nav-justified mb-3">
                         <li class="nav-item">
-                            <a href="#feature" data-toggle="tab" aria-expanded="false" class="nav-link rounded-0 active">
-                                Feature
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#timeline" data-toggle="tab" aria-expanded="true" class="nav-link rounded-0">
-                                Timeline
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#faq" data-toggle="tab" aria-expanded="false" class="nav-link rounded-0">
+                            <a href="#faq" data-toggle="tab" aria-expanded="false" class="nav-link rounded-0 active">
                                 FAQ
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="#feature" data-toggle="tab" aria-expanded="false" class="nav-link rounded-0">
+                                Feature
                             </a>
                         </li>
                     </ul>
                     <div class="tab-content">
-                        <div class="tab-pane active" id="feature">
-
-                            <div class="timeline-alt pb-0">
-                                <div class="timeline-item">
-                                    <i class="mdi mdi-circle bg-info-lighten text-info timeline-icon"></i>
-                                    <div class="timeline-item-info">
-                                        <h5 class="mt-0 mb-1">QnA <span class="ml-2 font-12">[Apr.2020]</span></h5>
-                                        <p class="text-muted mt-2 mb-0 pb-3">
-                                            Dolphin could provide the Prod teams the daily troubleshooting answers, as well as benefits / policy of HR part or IT queries.
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div class="timeline-item">
-                                    <i class="mdi mdi-circle bg-primary-lighten text-primary timeline-icon"></i>
-                                    <div class="timeline-item-info">
-                                        <h5 class="mt-0 mb-1">Ask an expert  <span class="ml-2 font-12">[Jun.2020]</span></h5>
-                                        <p class="text-muted mt-2 mb-0 pb-3">
-                                            For non-relevant answers or extra support, Dolphin also provides the ticket system to inform the expert among the Production Services team.  
-                                        </p>
-
-                                    </div>
-                                </div>
-
-                                <div class="timeline-item">
-                                    <i class="mdi mdi-circle bg-info-lighten text-info timeline-icon"></i>
-
-                                    <div class="timeline-item-info">
-                                        <h5 class="mt-0 mb-1">Feedback <span class="ml-2 font-12">[Aug.2020]</span></h5>
-                                        <p class="text-muted mt-2 mb-0 pb-3">
-                                            Not only for certain questions, but we also sincerely waiting for your feedback for Dolphin, but it will also help us build a smarter, stronger Dolphin!
-                                        </p>
-
-                                    </div>
-                                </div>
-
-                                <div class="timeline-item">
-                                    <i class="mdi mdi-circle bg-primary-lighten text-primary timeline-icon"></i>
-                                    <div class="timeline-item-info">
-                                        <h5 class="mt-0 mb-1">
-                                            New features is approaching!
-                                        </h5>
-                                        <p class="text-muted mt-2 mb-0 pb-3">
-                                            Stay tuned! We will keep you posted once released new features in Dolphin!
-                                        </p>
-
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-xl-8">
-                                <div class="embed-responsive embed-responsive-16by9" height='300'>
-                                    <iframe class="embed-responsive-item" src="https://videocdn01.ubisoft.org/PROD/player/index.aspx?c=yfmfe&amp;s=0&amp;bgcolor=white"></iframe>
-                                </div>
-                            </div>
-                        </div> <!-- end tab-pane -->
-                        <!-- end Feature section content -->
-
-                        <div class="tab-pane show " id="timeline">
-
-                            <div class="text-center">
-                                <img src="~/Content/Help-Page_Timeline_V1.png" height="350" alt="File not found Image">
-                              
-                            </div> <!-- end /.text-center-->
-                        </div>
-                        <!-- end timeline content-->
-
-                        <div class="tab-pane" id="faq">
+                        <div class="tab-pane active" id="faq">
                             <div class="content">
                                 <div class="row">
                                     <div class="col-sm-12">
@@ -263,6 +198,82 @@
                             </div> <!-- End Content -->
                         </div>
                         <!-- end FAQ content-->
+
+                        <div class="tab-pane " id="feature">
+
+                            <div class="timeline-alt pb-0">
+                                <div class="timeline-item">
+                                    <i class="mdi mdi-circle bg-info-lighten text-info timeline-icon"></i>
+                                    <div class="timeline-item-info">
+                                        <h5 class="mt-0 mb-1">QnA <span class="ml-2 font-12">[Apr.2020]</span></h5>
+                                        <p class="text-muted mt-2 mb-0 pb-3">
+                                            Dolphin could provide the Prod teams the daily troubleshooting answers, as well as benefits / policy of HR part or IT queries.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="timeline-item">
+                                    <i class="mdi mdi-circle bg-primary-lighten text-primary timeline-icon"></i>
+                                    <div class="timeline-item-info">
+                                        <h5 class="mt-0 mb-1">Ask an expert  <span class="ml-2 font-12">[Jun.2020]</span></h5>
+                                        <p class="text-muted mt-2 mb-0 pb-3">
+                                            For non-relevant answers or extra support, Dolphin also provides the ticket system to inform the expert among the Production Services team.  
+                                        </p>
+
+                                    </div>
+                                </div>
+
+                                <div class="timeline-item">
+                                    <i class="mdi mdi-circle bg-info-lighten text-info timeline-icon"></i>
+
+                                    <div class="timeline-item-info">
+                                        <h5 class="mt-0 mb-1">Feedback <span class="ml-2 font-12">[Aug.2020]</span></h5>
+                                        <p class="text-muted mt-2 mb-0 pb-3">
+                                            Not only for certain questions, we also sincerely waiting for your feedback for Dolphin, but it will also help us build a smarter, stronger Dolphin!
+                                        </p>
+
+                                    </div>
+                                </div>
+
+                                <div class="timeline-item">
+                                    <i class="mdi mdi-circle bg-info-lighten text-primary timeline-icon"></i>
+
+                                    <div class="timeline-item-info">
+                                        <h5 class="mt-0 mb-1">Help Page/User Guide<span class="ml-2 font-12">[Nov.2020]</span></h5>
+                                        <p class="text-muted mt-2 mb-0 pb-3">
+                                            Provide the list for more frequently asked questions if you have no idea how to start a conversation with Dolphin.
+                                        </p>
+
+                                    </div>
+                                </div>
+
+                                <div class="timeline-item">
+                                    <i class="mdi mdi-circle bg-info-lighten text-primary timeline-icon"></i>
+
+                                    <div class="timeline-item-info">
+                                        <h5 class="mt-0 mb-1">"My" tab<span class="ml-2 font-12">[Jan.2021]</span></h5>
+                                        <p class="text-muted mt-2 mb-0 pb-3">
+                                            This is the ticket overview page for all the users. It can help us quickly find the history tickets and high frequency Q&A key words..
+                                        </p>
+
+                                    </div>
+                                </div>
+
+                                <div class="timeline-item">
+                                    <i class="mdi mdi-circle bg-primary-lighten text-info timeline-icon"></i>
+                                    <div class="timeline-item-info">
+                                        <h5 class="mt-0 mb-1">
+                                            New features is approaching!
+                                        </h5>
+                                        <p class="text-muted mt-2 mb-0 pb-3">
+                                            Stay tuned! We will keep you posted once released new features in Dolphin!
+                                        </p>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div> <!-- end tab-pane -->
+                        <!-- end Feature section content -->
                     </div> <!-- end tab-content -->
                 </div> <!-- end card body -->
             </div> <!-- end card -->
@@ -276,7 +287,8 @@
     new Vue({
         el: '#app',
         data: {
-            appid:""
+            appid: "",
+            userName: "",
         },
         methods: {
             opendeeplink: function (link) {
@@ -289,14 +301,18 @@
             }
         },
         mounted() {
-            axios
-                .post('/help/appID')
-                .then((response) => {
-                    this.appid = response.data["appid"];
-                })
-                .catch(function (error) { // 请求失败处理
-                    console.log(error);
-                });
+            microsoftTeams.getContext((context) => {
+                this.userName = context.userPrincipalName;
+                axios
+                    .post('/help/appID', { UserPrincipleName: this.userName })
+                    .then((response) => {
+                        this.appid = response.data["appid"];
+                    })
+                    .catch(function (error) { // 请求失败处理
+                        console.log(error);
+                    });
+            });
+
         },
     })
 </script>

@@ -1,0 +1,323 @@
+﻿@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles
+    {
+    <link href="~/lib/tab/css/vendor/dataTables.bootstrap4.css" rel="stylesheet" type="text/css" />
+    <link href="~/lib/tab/css/vendor/responsive.bootstrap4.css" rel="stylesheet" type="text/css" />
+}
+
+<div class="content" id="app">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card ribbon-box">
+                <div class="card-body">
+                    <div class="ribbon ribbon-primary ribbon-success float-left">
+                        <i class="mdi mdi-access-point mr-1"></i>
+                        My Ticket
+                    </div>
+                    <div v-if="isLoading">
+                        <div class="spinner-border avatar-md text-primary" role="status"></div>
+                    </div>
+
+                    <div v-else-if="isLoading == false" class="table-responsive">
+                        <table class="table table-centered w-100 dt-responsive nowrap" id="my-tickets-datatable">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th class="all">Title</th>
+                                    <th>Description</th>
+                                    <th><i class='uil uil-schedule font-16 mr-1'></i>CreateTime</th>
+                                    <th>Status</th>
+                                    <th>Assignee</th>
+                                    <th><i class='uil uil-schedule font-16 mr-1'></i>CloseTime</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="ticket in myTickets">
+                                    <td>
+                                        {{ticket.Title|string_short(titleMaxLength)}}
+                                        <a v-if="ticket.Title && ticket.Title.length > titleMaxLength" href="javascript:void(0);" class="action-icon" data-toggle="tooltip" v-bind:title="ticket.Title"><span class="text-primary"> <i class="mdi mdi-eye"></i></span></a>
+                                    </td>
+                                    <td>
+                                        {{ticket.Description|string_short(descriptionMaxLength)}}
+                                        <a v-if="ticket.Description && ticket.Description.length > descriptionMaxLength" href="javascript:void(0);" class="action-icon" data-toggle="tooltip" v-bind:title="ticket.Description"><span class="text-primary"> <i class="mdi mdi-eye"></i></span></a>
+                                    </td>
+                                    <td>{{ticket.DateCreated|time_local}}</td>
+                                    <td v-if="ticket.Status == '0'"><span class="badge badge-secondary badge-pill">{{ticket.Status|status}}</span></td>
+                                    <td v-else-if="ticket.Status == '1'"><span class="badge badge-info badge-pill">{{ticket.Status|status}}</span></td>
+                                    <td v-else-if="ticket.Status == '2'"><span class="badge badge-warning badge-pill">{{ticket.Status|status}}</span></td>
+                                    <td v-else-if="ticket.Status == '3'"><span class="badge badge-success badge-pill">{{ticket.Status|status}}</span></td>
+                                    <td v-else-if="ticket.Status == '4'"><span class="badge badge-warning badge-pill">{{ticket.Status|status}}</span></td>
+                                    <td>{{ticket.AssignedToName}}</td>
+                                    <td>{{ticket.DateClosed|time_local}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div> <!-- end card-body -->
+            </div> <!-- end card-->
+        </div>
+    </div>
+    <!-- end row-->
+    <div class="row">
+        <div class="col-xl-4">
+
+            <div class="mt-2">
+                <a class="text-dark" data-toggle="collapse" href="#todayTasks" aria-expanded="false"
+                   aria-controls="todayTasks">
+                    <h5 class="m-0 pb-2">
+                        <i class='uil uil-angle-down font-18'></i>What are others asking?
+                    </h5>
+                </a>
+
+                <div class="collapse show" id="todayTasks">
+                    <div class="card mb-0">
+                        <div class="card-body">
+                            <div class="row justify-content-sm-between" v-for="question in faq.slice(0,8)">
+                                <div class="col-sm-10 mb-2 mb-sm-0">
+                                    {{question.key}}
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <ul class="list-inline font-13 text-right">
+                                                <li class="list-inline-item ml-2">
+                                                    <span class="badge badge-success-lighten p-1">{{question.value.catagory|capitalizeFirstLetter}}</span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div> <!-- end .d-flex-->
+                                </div> <!-- end col -->
+                            </div>
+                            <!-- end task -->
+                        </div> <!-- end card-body-->
+                    </div> <!-- end card -->
+                </div> <!-- end .collapse-->
+            </div> <!-- end .mt-2-->
+        </div>
+    </div> <!-- End Content -->
+</div>
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            appid: "",
+            isLoading: true,
+            myTickets: [],
+            faq: [],
+            userName: "",
+            titleMaxLength: 15,
+            descriptionMaxLength: 35,
+
+        },
+        methods: {
+            opendeeplink: function (link) {
+                microsoftTeams.executeDeepLink(link);
+            },
+            deepLinkToChat: function () {
+                var link = "https://teams.microsoft.com/l/chat/0/0?users=28:" + this.appid;
+                this.opendeeplink(link);
+
+            },
+            sleep: function (time) {
+                return new Promise((resolve) => setTimeout(resolve, time));
+            },
+            UpdateData: function (data) {
+                this.isLoading = false
+                this.myTickets = data;
+                this.sleep(200).then(() => {
+                    $("#my-tickets-datatable").DataTable({
+                        language: {
+                            paginate: {
+                                previous: "<i class='mdi mdi-chevron-left'>",
+                                next: "<i class='mdi mdi-chevron-right'>"
+                            },
+                            info: "Showing tickets _START_ to _END_ of _TOTAL_",
+                            lengthMenu: 'Display <select class=\'custom-select custom-select-sm ml-1 mr-1\'><option value="5">5</option><option value="10">10</option><option value="20">20</option><option value="-1">All</option></select> tickets'
+                        },
+                        pageLength: 5,
+                        columns: [
+                            {
+                                orderable: !0
+                            },
+                            {
+                                orderable: !0
+                            },
+                            {
+                                orderable: !0
+                            },
+                            {
+                                orderable: !0
+                            },
+                            {
+                                orderable: !0
+                            },
+                            {
+                                orderable: !0
+                            }
+                        ],
+                        select: {
+                            style: "multi"
+                        },
+                        order: [[2, "desc"]],
+                        drawCallback: function () {
+                            $(".dataTables_paginate > .pagination").addClass("pagination-rounded")
+                        }
+                    })
+                });
+            },
+        },
+        mounted()
+        {
+            microsoftTeams.getContext((context) => {
+                this.userName = context.userPrincipalName;
+                axios
+                    .post('/my/tickets', { UserPrincipleName: this.userName })
+                    .then((response) => {
+                        this.UpdateData(response.data);
+                    })
+                    .catch(function (error) { // 请求失败处理
+                        console.log(error);
+                    });
+            });
+            axios
+                .post('/my/FAQ')
+                .then((response) => {
+                    this.faq = response.data;
+                })
+                .catch(function (error) { // 请求失败处理
+                    console.log(error);
+                });
+        },
+        filters: {
+            status: function (value) {
+                if (value == 0)
+                    return "unassigned"
+                if (value == 1)
+                    return "assigned"
+                if (value == 2)
+                    return "pending"
+                if (value == 3)
+                    return "resolved"
+                if (value == 4)
+                    return "SOS"
+            },
+            string_short: function (value, maxlength)
+            {
+                if (value == null)
+                {
+                    return "";
+                }
+
+                if (value.length > maxlength)
+                    return value.substring(0, maxlength) + "……"
+                else return value
+            },
+            time_local: function (value) {
+                if (value == null) {
+                    return "";
+                }
+                var localDate = new Date(value);
+                return formatDate(localDate, "yyyy-MM-d H:mm");
+            },
+            capitalizeFirstLetter: function (string) {
+                return string.charAt(0).toUpperCase() + string.slice(1);
+            }
+        }
+    })
+    function formatDate(date, format, utc) {
+        var MMMM = ["\x00", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        var MMM = ["\x01", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        var dddd = ["\x02", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        var ddd = ["\x03", "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+        function ii(i, len) {
+            var s = i + "";
+            len = len || 2;
+            while (s.length < len) s = "0" + s;
+            return s;
+        }
+
+        var y = utc ? date.getUTCFullYear() : date.getFullYear();
+        format = format.replace(/(^|[^\\])yyyy+/g, "$1" + y);
+        format = format.replace(/(^|[^\\])yy/g, "$1" + y.toString().substr(2, 2));
+        format = format.replace(/(^|[^\\])y/g, "$1" + y);
+
+        var M = (utc ? date.getUTCMonth() : date.getMonth()) + 1;
+        format = format.replace(/(^|[^\\])MMMM+/g, "$1" + MMMM[0]);
+        format = format.replace(/(^|[^\\])MMM/g, "$1" + MMM[0]);
+        format = format.replace(/(^|[^\\])MM/g, "$1" + ii(M));
+        format = format.replace(/(^|[^\\])M/g, "$1" + M);
+
+        var d = utc ? date.getUTCDate() : date.getDate();
+        format = format.replace(/(^|[^\\])dddd+/g, "$1" + dddd[0]);
+        format = format.replace(/(^|[^\\])ddd/g, "$1" + ddd[0]);
+        format = format.replace(/(^|[^\\])dd/g, "$1" + ii(d));
+        format = format.replace(/(^|[^\\])d/g, "$1" + d);
+
+        var H = utc ? date.getUTCHours() : date.getHours();
+        format = format.replace(/(^|[^\\])HH+/g, "$1" + ii(H));
+        format = format.replace(/(^|[^\\])H/g, "$1" + H);
+
+        var h = H > 12 ? H - 12 : H == 0 ? 12 : H;
+        format = format.replace(/(^|[^\\])hh+/g, "$1" + ii(h));
+        format = format.replace(/(^|[^\\])h/g, "$1" + h);
+
+        var m = utc ? date.getUTCMinutes() : date.getMinutes();
+        format = format.replace(/(^|[^\\])mm+/g, "$1" + ii(m));
+        format = format.replace(/(^|[^\\])m/g, "$1" + m);
+
+        var s = utc ? date.getUTCSeconds() : date.getSeconds();
+        format = format.replace(/(^|[^\\])ss+/g, "$1" + ii(s));
+        format = format.replace(/(^|[^\\])s/g, "$1" + s);
+
+        var f = utc ? date.getUTCMilliseconds() : date.getMilliseconds();
+        format = format.replace(/(^|[^\\])fff+/g, "$1" + ii(f, 3));
+        f = Math.round(f / 10);
+        format = format.replace(/(^|[^\\])ff/g, "$1" + ii(f));
+        f = Math.round(f / 10);
+        format = format.replace(/(^|[^\\])f/g, "$1" + f);
+
+        var T = H < 12 ? "AM" : "PM";
+        format = format.replace(/(^|[^\\])TT+/g, "$1" + T);
+        format = format.replace(/(^|[^\\])T/g, "$1" + T.charAt(0));
+
+        var t = T.toLowerCase();
+        format = format.replace(/(^|[^\\])tt+/g, "$1" + t);
+        format = format.replace(/(^|[^\\])t/g, "$1" + t.charAt(0));
+
+        var tz = -date.getTimezoneOffset();
+        var K = utc || !tz ? "Z" : tz > 0 ? "+" : "-";
+        if (!utc) {
+            tz = Math.abs(tz);
+            var tzHrs = Math.floor(tz / 60);
+            var tzMin = tz % 60;
+            K += ii(tzHrs) + ":" + ii(tzMin);
+        }
+        format = format.replace(/(^|[^\\])K/g, "$1" + K);
+
+        var day = (utc ? date.getUTCDay() : date.getDay()) + 1;
+        format = format.replace(new RegExp(dddd[0], "g"), dddd[day]);
+        format = format.replace(new RegExp(ddd[0], "g"), ddd[day]);
+
+        format = format.replace(new RegExp(MMMM[0], "g"), MMMM[M]);
+        format = format.replace(new RegExp(MMM[0], "g"), MMM[M]);
+
+        format = format.replace(/\\(.)/g, "$1");
+
+        return format;
+    };
+</script>
+
+@section Scripts
+    {
+    <!-- third party js -->
+    <script src="~/lib/tab/js/vendor/jquery.dataTables.min.js"></script>
+    <script src="~/lib/tab/js/vendor/dataTables.bootstrap4.js"></script>
+    <script src="~/lib/tab/js/vendor/dataTables.responsive.min.js"></script>
+    <script src="~/lib/tab/js/vendor/responsive.bootstrap4.min.js"></script>
+    <script src="~/lib/tab/js/vendor/dataTables.checkboxes.min.js"></script>
+    <!-- third party js ends -->
+}

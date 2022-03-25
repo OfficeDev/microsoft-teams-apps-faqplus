@@ -19,8 +19,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <summary>
         /// This method will construct the welcome team card when bot is added to the team.
         /// </summary>
+        /// <param name="appBaseUri">The base URI where the app is hosted.</param>
         /// <returns>Team welcome card.</returns>
-        public static Attachment GetCard()
+        public static Attachment GetCard(string appBaseUri)
         {
             AdaptiveCard teamWelcomeCard = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
             {
@@ -47,6 +48,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                 Text = Constants.TeamTour,
                             },
                         },
+                        IconUrl = appBaseUri + "/content/take_tour.png",
                     },
                 },
             };

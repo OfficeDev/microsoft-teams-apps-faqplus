@@ -43,9 +43,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         {
             var cardPayload = new ShareFeedbackCardPayload
             {
-                DescriptionHelpful = payload.UserQuestion,             // Pre-populate the description with the user's question
-                DescriptionNeedsImprovement = payload.UserQuestion,    // Pre-populate the description with the user's question
-                DescriptionNotHelpful = payload.UserQuestion,          // Pre-populate the description with the user's question
                 UserQuestion = payload.UserQuestion,
                 KnowledgeBaseAnswer = payload?.KnowledgeBaseAnswer,
                 Project = payload.Project,
@@ -81,6 +78,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <returns>Share feedback card.</returns>
         private static Attachment GetCard(ShareFeedbackCardPayload data, bool showValidationErrors, string appBaseUri)
         {
+            string text;
+            if (string.IsNullOrWhiteSpace(data.UserQuestion))
+            {
+                text = string.IsNullOrWhiteSpace(data.TicketId) ? Strings.ShareFeedbackTitleText : Strings.UserNotificationFooterText;
+            }
+            else
+            {
+                text = string.Format(CultureInfo.InvariantCulture, Strings.ResultsFeedbackText, data.UserQuestion);
+            }
+
             AdaptiveCard shareFeedbackCard = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
             {
                 Body = new List<AdaptiveElement>
@@ -88,150 +95,30 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     new AdaptiveTextBlock
                     {
                         Weight = AdaptiveTextWeight.Bolder,
-                        Text = !string.IsNullOrWhiteSpace(data.UserQuestion) ? string.Format(CultureInfo.InvariantCulture, Strings.ResultsFeedbackText, data.UserQuestion) : Strings.ShareFeedbackTitleText,
-                        Size = AdaptiveTextSize.Large,
+                        Text = text,
+                        Size = AdaptiveTextSize.Medium,
                         Wrap = true,
                     },
                 },
                 Actions = new List<AdaptiveAction>
                 {
-                    new AdaptiveShowCardAction
+                    new AdaptiveSubmitAction
                     {
-                        IconUrl = appBaseUri + "/content/face_smile.png",
                         Title = " ",
-                        Card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
+                        Data = new ShareFeedbackCardPayload
                         {
-                           Body = new List<AdaptiveElement>
+                            MsTeams = new CardAction
                             {
-                                new AdaptiveColumnSet
-                                {
-                                    Columns = new List<AdaptiveColumn>
-                                    {
-                                         new AdaptiveColumn
-                                         {
-                                            Width = AdaptiveColumnWidth.Auto,
-                                            Items = new List<AdaptiveElement>
-                                            {
-                                                 new AdaptiveTextBlock
-                                                {
-                                                    Text = Strings.DescriptionText,
-                                                    Wrap = true,
-                                                },
-                                            },
-                                         },
-                                         new AdaptiveColumn
-                                         {
-                                            Items = new List<AdaptiveElement>
-                                            {
-                                                new AdaptiveTextBlock
-                                                {
-                                                    Text = (showValidationErrors && data?.DescriptionHelpful?.Length > 500) ? Strings.MaxCharactersText : string.Empty,
-                                                    Color = AdaptiveTextColor.Attention,
-                                                    HorizontalAlignment = AdaptiveHorizontalAlignment.Right,
-                                                    Wrap = true,
-                                                },
-                                            },
-                                         },
-                                    },
-                                },
-                                new AdaptiveTextInput
-                                {
-                                    Spacing = AdaptiveSpacing.Small,
-                                    Id = nameof(ShareFeedbackCardPayload.DescriptionHelpful),
-                                    Placeholder = Strings.FeedbackDescriptionPlaceholderText,
-                                    IsMultiline = true,
-                                    Value = data?.DescriptionHelpful,
-                                },
+                                Type = ActionTypes.MessageBack,
+                                Text = ShareFeedbackSubmitText,
                             },
-                           Actions = new List<AdaptiveAction>
-                           {
-                                new AdaptiveSubmitAction
-                                {
-                                    Data = new ShareFeedbackCardPayload
-                                    {
-                                        MsTeams = new CardAction
-                                        {
-                                            Type = ActionTypes.MessageBack,
-                                            DisplayText = Strings.ShareFeedbackDisplayText,
-                                            Text = ShareFeedbackSubmitText,
-                                        },
-                                        UserQuestion = data.UserQuestion,
-                                        KnowledgeBaseAnswer = data.KnowledgeBaseAnswer,
-                                        Rating = nameof(FeedbackRating.Helpful),
-                                        Project = data.Project,
-                                    },
-                                },
-                           },
+                            UserQuestion = data.UserQuestion,
+                            KnowledgeBaseAnswer = data.KnowledgeBaseAnswer,
+                            Rating = nameof(FeedbackRating.Helpful),
+                            Project = data.Project,
+                            TicketId = data.TicketId,
                         },
-                    },
-                    new AdaptiveShowCardAction
-                    {
-                        IconUrl = appBaseUri + "/content/face_straigh.png",
-                        Title = " ",
-                        Card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
-                        {
-                           Body = new List<AdaptiveElement>
-                           {
-                               new AdaptiveColumnSet
-                               {
-                                   Columns = new List<AdaptiveColumn>
-                                   {
-                                        new AdaptiveColumn
-                                        {
-                                           Width = AdaptiveColumnWidth.Auto,
-                                           Items = new List<AdaptiveElement>
-                                           {
-                                                new AdaptiveTextBlock
-                                               {
-                                                   Text = Strings.DescriptionText,
-                                                   Wrap = true,
-                                               },
-                                           },
-                                        },
-                                        new AdaptiveColumn
-                                        {
-                                           Items = new List<AdaptiveElement>
-                                           {
-                                               new AdaptiveTextBlock
-                                               {
-                                                   Text = (showValidationErrors && data?.DescriptionNeedsImprovement?.Length > 500) ? Strings.MaxCharactersText : string.Empty,
-                                                   Color = AdaptiveTextColor.Attention,
-                                                   HorizontalAlignment = AdaptiveHorizontalAlignment.Right,
-                                                   Wrap = true,
-                                               },
-                                           },
-                                        },
-                                   },
-                               },
-                               new AdaptiveTextInput
-                               {
-                                   Spacing = AdaptiveSpacing.Small,
-                                   Id = nameof(ShareFeedbackCardPayload.DescriptionNeedsImprovement),
-                                   Placeholder = Strings.FeedbackDescriptionPlaceholderText,
-                                   IsMultiline = true,
-                                   Value = data?.DescriptionNeedsImprovement,
-                               },
-                           },
-                           Actions = new List<AdaptiveAction>
-                           {
-                               new AdaptiveSubmitAction
-                               {
-                                   Data = new ShareFeedbackCardPayload
-                                   {
-                                       MsTeams = new CardAction
-                                       {
-                                           Type = ActionTypes.MessageBack,
-                                           DisplayText = Strings.ShareFeedbackDisplayText,
-                                           Text = ShareFeedbackSubmitText,
-                                       },
-                                       UserQuestion = data.UserQuestion,
-                                       KnowledgeBaseAnswer = data.KnowledgeBaseAnswer,
-                                       Rating = nameof(FeedbackRating.NeedsImprovement),
-                                       Project = data.Project,
-                                   },
-                               },
-                           },
-                        },
+                        IconUrl = appBaseUri + "/content/face_smile.png",
                     },
                     new AdaptiveShowCardAction
                     {
@@ -252,7 +139,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                            {
                                                 new AdaptiveTextBlock
                                                {
-                                                   Text = Strings.DescriptionText,
+                                                   Text = Strings.DescriptionOptionalText,
                                                    Wrap = true,
                                                },
                                            },
@@ -290,13 +177,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                         MsTeams = new CardAction
                                         {
                                             Type = ActionTypes.MessageBack,
-                                            DisplayText = Strings.ShareFeedbackDisplayText,
                                             Text = ShareFeedbackSubmitText,
                                         },
                                         UserQuestion = data.UserQuestion,
                                         KnowledgeBaseAnswer = data.KnowledgeBaseAnswer,
                                         Rating = nameof(FeedbackRating.NotHelpful),
                                         Project = data.Project,
+                                        TicketId = data.TicketId,
                                     },
                                 },
                             },
@@ -304,10 +191,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     },
                 },
             };
-
-            //shareFeedbackCard.Actions[0].AdditionalProperties.Add("iconUrl", appBaseUri + "/content/face_smile.png");
-            //shareFeedbackCard.Actions[1].AdditionalProperties.Add("iconUrl", appBaseUri + "/content/face_straigh.png");
-            //shareFeedbackCard.Actions[2].AdditionalProperties.Add("iconUrl", appBaseUri + "/content/face_sad.png");
 
             return new Attachment
             {

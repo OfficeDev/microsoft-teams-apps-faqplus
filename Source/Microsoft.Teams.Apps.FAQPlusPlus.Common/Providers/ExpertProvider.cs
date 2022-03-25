@@ -55,7 +55,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         /// <summary>
         /// Get already saved entity detail from storage table.
         /// </summary>
-        /// <param name="expertId">expert channelaccount id</param>
+        /// <param name="expertId">expert channelaccount id.</param>
         /// <returns><see cref="Task"/> Already saved entity detail.</returns>
         public async Task<ExpertEntity> GetExpertAsync(string expertId)
         {
@@ -86,7 +86,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
                 var queryResult = await this.expertCloudTable.ExecuteQuerySegmentedAsync(new TableQuery<ExpertEntity>(), token).ConfigureAwait(false);
                 entities.AddRange(queryResult.Results);
                 token = queryResult.ContinuationToken;
-            } while (token != null);
+            }
+            while (token != null);
 
             return entities;
         }

@@ -33,15 +33,7 @@
     </div>
     <div class="col-lg-12">
         <div class="col-lg-8">
-            @Html.Partial("~/Views/Home/_HelpTab.cshtml")
-        </div>
-    </div>
-    <div class="col-lg-12 marginBetweenView">
-        <hr />
-    </div>
-    <div class="col-lg-12">
-        <div class="col-lg-8">
-            @Html.Partial("~/Views/Home/_Subjects.cshtml")
+            @Html.Partial("~/Views/Home/_SLA.cshtml")
         </div>
     </div>
 </div>
@@ -93,33 +85,27 @@
             }
         });
 
-        //Display help tab message text if its saved if yes then perform edit UI changes
+       //Display help tab message text if its saved if yes then perform edit UI changes
         $.ajax({
             type: "GET",
-            url: '@Url.Action("GetSavedHelpTabTextAsync")',
+            url: '@Url.Action("GetSavedSLAAsync")',
             success: function (result) {
                 if (result != "") {                //Display the default UI when no help tab text results are available for display
-                    $(".helpTabTextIdTextBox").val(result);
-                    toggleToEdit("helpTabText");
+                    var obj = JSON.parse(result);
+                    $("#SLAAssignTimeOut").val(obj.AssignTimeOut);
+                    $("#SLAUnAssigneInterval").val(obj.UnAssigneInterval);
+                    $("#SLAPendingTimeOut").val(obj.PendingTimeOut);
+                    $("#SLAPendingInterval").val(obj.PendingInterval);
+                    $("#SLAPendingCCInterval").val(obj.PendingCCInterval);
+                    $("#SLAResolveTimeOut").val(obj.ResolveTimeOut);
+                    $("#SLAUnResolveInterval").val(obj.UnResolveInterval);
+                    $("#SLAUnResolveCCInterval").val(obj.UnResolveCCInterval);
+                    $("#SLAExpertsAdmins").val(obj.ExpertsAdmins);
+                    toggleToEdit("SLA");
                 }
             },
             error: function (error) {
-                saveFailureIconAndText("helpTabTextStorageStatusIcon", "helpTabTextStorageStatusMessage", "Unable to display help tab text due to HTTP: " + error.status + ", " + error.statusText);
-            }
-        });
-
-        //Display subjects text if its saved if yes then perform edit UI changes
-        $.ajax({
-            type: "GET",
-            url: '@Url.Action("GetSavedSubjectsAsync")',
-            success: function (result) {
-                if (result != "") {                //Display the default UI when no help tab text results are available for display
-                    $(".subjectsIdTextBox").val(result);
-                    toggleToEdit("subjects");
-                }
-            },
-            error: function (error) {
-                saveFailureIconAndText("subjectsStorageStatusIcon", "subjectsStorageStatusMessage", "Unable to display subjects due to HTTP: " + error.status + ", " + error.statusText);
+                saveFailureIconAndText("SLAStorageStatusIcon", "SLAStorageStatusMessage", "Unable to display SLA text due to HTTP: " + error.status + ", " + error.statusText);
             }
         });
     });

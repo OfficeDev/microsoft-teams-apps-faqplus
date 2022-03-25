@@ -1,4 +1,4 @@
-// <copyright file="FaqPlusPlusBot.cs" company="Microsoft">
+﻿// <copyright file="FaqPlusPlusBot.cs" company="Microsoft">
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 
@@ -6,13 +6,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 {
     using System;
     using System.Collections.Generic;
+    using System.Data;
     using System.Globalization;
+    using System.IO;
     using System.Linq;
     using System.Net;
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
     using System.Xml;
+    using ExcelDataReader;
     using Microsoft.ApplicationInsights.DataContracts;
     using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker.Models;
     using Microsoft.Bot.Builder;
@@ -23,6 +26,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
     using Microsoft.Extensions.Caching.Memory;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
+    using Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.Repositories.UserData;
     using Microsoft.Teams.Apps.FAQPlusPlus.Cards;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
@@ -74,6 +78,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// </summary>
         private const string ChangeStatus = "change status";
 
+        private static readonly string TeamRenamedEventType = "teamRenamed";
+
         /// <summary>
         /// Represents a set of key/value application configuration properties for FaqPlusPlus bot.
         /// </summary>
@@ -99,6 +105,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         private readonly BotState conversationState;
         private readonly BotState userState;
         private readonly RecommendConfiguration recommendConfiguration;
+        private readonly TeamsDataCapture teamsDataCapture;
+        private readonly ISOSClient sosClient;
+        private readonly IRetryMessageService retryMessageService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FaqPlusPlusBot"/> class.
@@ -121,6 +130,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <param name="conversationState">conversation sate cache.</param>
         /// <param name="userState">user state cache.</param>
         /// <param name="recommendConfiguration">configuration to decide recommend.</param>
+        /// <param name="teamsDataCapture">Teams data capture service.</param>
+        /// <param name="sosClient">Service now Client.</param>
+        /// <param name="retryMessageService">This service is to check retry message.</param>
         public FaqPlusPlusBot(
             Common.Providers.IConfigurationDataProvider configurationProvider,
             MicrosoftAppCredentials microsoftAppCredentials,
@@ -139,7 +151,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             ILogger<FaqPlusPlusBot> logger,
             ConversationState conversationState,
             UserState userState,
-            RecommendConfiguration recommendConfiguration)
+            RecommendConfiguration recommendConfiguration,
+            TeamsDataCapture teamsDataCapture,
+            ISOSClient sosClient,
+            IRetryMessageService retryMessageService)
         {
             this.configurationProvider = configurationProvider;
             this.microsoftAppCredentials = microsoftAppCredentials;
@@ -169,6 +184,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             this.conversationState = conversationState;
             this.userState = userState;
             this.recommendConfiguration = recommendConfiguration;
+            this.teamsDataCapture = teamsDataCapture ?? throw new ArgumentNullException(nameof(teamsDataCapture));
+            this.sosClient = sosClient;
+            this.retryMessageService = retryMessageService;
         }
 
         /// <summary>
@@ -212,6 +230,109 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             }
         }
 
+        private async Task<int> UpdateQnADateTimeAsync()
+        {
+            string path = @"F:\QnAConversation0514.xlsx";
+            DataTable dt = new DataTable();
+            dt = ExcelToDataTableUsingExcelDataReader(path);
+            var histories = await this.conversationProvider.GetAllQnAListAsync();
+            Dictionary<string, DateTimeOffset> keyTimeDic = new Dictionary<string, DateTimeOffset>();
+            foreach (DataRow row in dt.Rows)
+            {
+                string key = row[1].ToString();
+                DateTimeOffset dto;
+                DateTimeOffset.TryParse(row[2].ToString(), out dto);
+                if (!keyTimeDic.ContainsKey(key))
+                {
+                    keyTimeDic.Add(key, dto);
+                }
+            }
+
+            int count = histories.Count();
+            foreach (ConversationEntity his in histories)
+            {
+                if (keyTimeDic.ContainsKey(his.RowKey))
+                {
+                    his.ConversationTime = keyTimeDic[his.RowKey];
+                }
+                else
+                {
+                    his.ConversationTime = his.Timestamp;
+                }
+
+                await this.conversationProvider.UpsertConversationAsync(his);
+            }
+
+            return count;
+        }
+
+        public static DataTable ExcelToDataTableUsingExcelDataReader(string storePath)
+        {
+            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+            using (var stream = File.Open(storePath, FileMode.Open, FileAccess.Read))
+            {
+                string fileExtension = Path.GetExtension(storePath);
+                IExcelDataReader excelReader = null;
+                excelReader = ExcelDataReader.ExcelReaderFactory.CreateReader(stream);
+
+                //// reader.IsFirstRowAsColumnNames
+                var conf = new ExcelDataSetConfiguration
+                {
+                    ConfigureDataTable = _ => new ExcelDataTableConfiguration
+                    {
+                        UseHeaderRow = true,
+                    },
+                };
+
+                var dataSet = excelReader.AsDataSet(conf);
+
+                // Now you can get data from each sheet by its index or its "name"
+                var dataTable = dataSet.Tables[0];
+                return dataTable;
+            }
+        }
+
+        private async Task<int> AddSessionIdAsync()
+        {
+            var histories = await this.conversationProvider.GetAllQnAListAsync();
+
+            foreach (var group in histories.GroupBy(h => h.UserName))
+            {
+                int count = 0;
+                string LastSessionId = null;
+                DateTimeOffset lastTimeStamp = DateTime.Now;
+                foreach (var history in group)
+                {
+                    if (count == 0)
+                    {
+                        if (string.IsNullOrEmpty(history.SessionId))
+                        {
+                            history.SessionId = Guid.NewGuid().ToString();
+                        }
+                    }
+                    else
+                    {
+                        if ((history.Timestamp - lastTimeStamp).TotalMinutes > 10)
+                        {
+                            history.SessionId = Guid.NewGuid().ToString();
+                        }
+                        else
+                        {
+                            history.SessionId = LastSessionId;
+                        }
+                    }
+
+                    await this.conversationProvider.UpsertConversationAsync(history);
+
+                    count++;
+                    LastSessionId = history.SessionId;
+                    lastTimeStamp = history.Timestamp;
+                }
+            }
+
+            return histories.Count();
+        }
+
         /// <summary>
         /// Invoked when a message activity is received from the user.
         /// </summary>
@@ -229,6 +350,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             {
                 var message = turnContext?.Activity;
                 this.logger.LogInformation($"from: {message.From?.Id}, conversation: {message.Conversation.Id}, replyToId: {message.ReplyToId}");
+
                 await this.SendTypingIndicatorAsync(turnContext).ConfigureAwait(false);
 
                 switch (message.Conversation.ConversationType.ToLower())
@@ -279,25 +401,43 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 this.logger.LogInformation("Received conversationUpdate activity");
                 this.logger.LogInformation($"conversationType: {activity.Conversation.ConversationType}, membersAdded: {activity.MembersAdded?.Count}, membersRemoved: {activity.MembersRemoved?.Count}");
 
+                var isTeamRenamed = this.IsTeamInformationUpdated(activity);
+                if (isTeamRenamed)
+                {
+                    await this.teamsDataCapture.OnTeamInformationUpdatedAsync(activity);
+                }
+
+                // members removed
+                if (activity.MembersRemoved != null)
+                {
+                    await this.teamsDataCapture.OnBotRemovedAsync(activity);
+                }
+
                 if (activity?.MembersAdded?.Count == 0)
                 {
                     this.logger.LogInformation("Ignoring conversationUpdate that was not a membersAdded event");
                     return;
                 }
 
+                // members added
                 switch (activity.Conversation.ConversationType.ToLower())
                 {
                     case ConversationTypePersonal:
                         await this.OnMembersAddedToPersonalChatAsync(activity.MembersAdded, turnContext).ConfigureAwait(false);
-                        return;
+                        break;
 
                     case ConversationTypeChannel:
                         await this.OnMembersAddedToTeamAsync(activity.MembersAdded, turnContext, cancellationToken).ConfigureAwait(false);
-                        return;
+                        break;
 
                     default:
                         this.logger.LogInformation($"Ignoring event from conversation type {activity.Conversation.ConversationType}");
-                        return;
+                        break;
+                }
+
+                if (activity.MembersAdded != null)
+                {
+                    await this.teamsDataCapture.OnBotAddedAsync(activity);
                 }
             }
             catch (Exception ex)
@@ -305,435 +445,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 this.logger.LogError(ex, $"Error processing conversationUpdate: {ex.Message}", SeverityLevel.Error);
                 throw;
             }
-        }
-
-        /// <summary>
-        /// Invoke when user clicks on edit button on a question in SME team.
-        /// </summary>
-        /// <param name="turnContext">Context object containing information cached for a single turn of conversation with a user.</param>
-        /// <param name="taskModuleRequest">Task module invoke request value payload.</param>
-        /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
-        /// <returns>A task that represents the work queued to execute.</returns>
-        /// <remarks>
-        /// Reference link: https://docs.microsoft.com/en-us/dotnet/api/microsoft.bot.builder.teams.teamsactivityhandler.onteamstaskmodulefetchasync?view=botbuilder-dotnet-stable.
-        /// </remarks>
-        protected override Task<TaskModuleResponse> OnTeamsTaskModuleFetchAsync(
-            ITurnContext<IInvokeActivity> turnContext,
-            TaskModuleRequest taskModuleRequest,
-            CancellationToken cancellationToken)
-        {
-            try
-            {
-                var postedValues = JsonConvert.DeserializeObject<AdaptiveSubmitActionData>(JObject.Parse(taskModuleRequest?.Data?.ToString()).ToString());
-                var adaptiveCardEditor = MessagingExtensionQnaCard.AddQuestionForm(postedValues, this.appBaseUri);
-                return GetTaskModuleResponseAsync(adaptiveCardEditor, Strings.EditQuestionSubtitle);
-            }
-            catch (Exception ex)
-            {
-                this.logger.LogError(ex, "Error while fetch event is received from the user.");
-            }
-
-            return default;
-        }
-
-        /// <summary>
-        /// Invoked when the user submits a edited question from SME team.
-        /// </summary>
-        /// <param name="turnContext">Context object containing information cached for a single turn of conversation with a user.</param>
-        /// <param name="taskModuleRequest">Task module invoke request value payload.</param>
-        /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
-        /// <returns>A task that represents the work queued to execute.</returns>
-        /// <remarks>
-        /// Reference link: https://docs.microsoft.com/en-us/dotnet/api/microsoft.bot.builder.teams.teamsactivityhandler.onteamstaskmodulesubmitasync?view=botbuilder-dotnet-stable.
-        /// </remarks>
-        protected override async Task<TaskModuleResponse> OnTeamsTaskModuleSubmitAsync(
-            ITurnContext<IInvokeActivity> turnContext,
-            TaskModuleRequest taskModuleRequest,
-            CancellationToken cancellationToken)
-        {
-            try
-            {
-                var postedQuestionData = ((JObject)turnContext?.Activity?.Value).GetValue("data", StringComparison.OrdinalIgnoreCase).ToObject<AdaptiveSubmitActionData>();
-                if (postedQuestionData == null)
-                {
-                    await turnContext.SendActivityAsync(Strings.ErrorMessage).ConfigureAwait(false);
-                    return default;
-                }
-
-                if (postedQuestionData.BackButtonCommandText == Strings.BackButtonCommandText)
-                {
-                    // Populates the prefilled data on task module for adaptive card form fields on back button click.
-                    return await GetTaskModuleResponseAsync(MessagingExtensionQnaCard.AddQuestionForm(postedQuestionData, this.appBaseUri), Strings.EditQuestionSubtitle).ConfigureAwait(false);
-                }
-
-                if (postedQuestionData.PreviewButtonCommandText == Constants.PreviewCardCommandText)
-                {
-                    // Preview the actual view of the card on preview button click.
-                    return await GetTaskModuleResponseAsync(MessagingExtensionQnaCard.PreviewCardResponse(postedQuestionData, this.appBaseUri)).ConfigureAwait(false);
-                }
-
-                return await this.RespondToQuestionTaskModuleAsync(postedQuestionData, turnContext).ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                // Check if knowledge base is empty and has not published yet when sme user is trying to edit the qna pair.
-                if (((ErrorResponseException)ex?.InnerException)?.Response.StatusCode == HttpStatusCode.BadRequest)
-                {
-                    var knowledgeBaseId = await this.configurationProvider.GetSavedEntityDetailAsync(Constants.KnowledgeBaseEntityId).ConfigureAwait(false);
-                    var hasPublished = await this.qnaServiceProvider.GetInitialPublishedStatusAsync(knowledgeBaseId).ConfigureAwait(false);
-
-                    // Check if knowledge base has not published yet.
-                    if (!hasPublished)
-                    {
-                        this.logger.LogError(ex, "Error while fetching the qna pair: knowledge base may be empty or it has not published yet.");
-                        await turnContext.SendActivityAsync("Please wait for some time, updates to this question will be available in short time.").ConfigureAwait(false);
-                    }
-                }
-                else
-                {
-                    this.logger.LogError(ex, "Error while submit event is received from the user.");
-                    await turnContext.SendActivityAsync(Strings.ErrorMessage).ConfigureAwait(false);
-                }
-            }
-
-            return default;
-        }
-
-        /// <summary>
-        /// Invoked when the user opens the messaging extension or searching any content in it.
-        /// </summary>
-        /// <param name="turnContext">Context object containing information cached for a single turn of conversation with a user.</param>
-        /// <param name="query">Contains messaging extension query keywords.</param>
-        /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
-        /// <returns>Messaging extension response object to fill compose extension section.</returns>
-        /// <remarks>
-        /// https://docs.microsoft.com/en-us/dotnet/api/microsoft.bot.builder.teams.teamsactivityhandler.onteamsmessagingextensionqueryasync?view=botbuilder-dotnet-stable.
-        /// </remarks>
-        protected override async Task<MessagingExtensionResponse> OnTeamsMessagingExtensionQueryAsync(
-            ITurnContext<IInvokeActivity> turnContext,
-            MessagingExtensionQuery query,
-            CancellationToken cancellationToken)
-        {
-            var turnContextActivity = turnContext?.Activity;
-            try
-            {
-                turnContextActivity.TryGetChannelData<TeamsChannelData>(out var teamsChannelData);
-                string expertTeamId = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.TeamId).ConfigureAwait(false);
-
-                if (turnContext != null && teamsChannelData?.Team?.Id == expertTeamId && await this.IsMemberOfSmeTeamAsync(turnContext).ConfigureAwait(false))
-                {
-                    var messageExtensionQuery = JsonConvert.DeserializeObject<MessagingExtensionQuery>(turnContextActivity.Value.ToString());
-                    var searchQuery = this.GetSearchQueryString(messageExtensionQuery);
-
-                    return new MessagingExtensionResponse
-                    {
-                        ComposeExtension = await SearchHelper.GetSearchResultAsync(searchQuery, messageExtensionQuery.CommandId, messageExtensionQuery.QueryOptions.Count, messageExtensionQuery.QueryOptions.Skip, turnContextActivity.LocalTimestamp, this.searchService, this.knowledgeBaseSearchService, this.activityStorageProvider, this.appBaseUri).ConfigureAwait(false),
-                    };
-                }
-
-                return new MessagingExtensionResponse
-                {
-                    ComposeExtension = new MessagingExtensionResult
-                    {
-                        Text = Strings.NonSMEErrorText,
-                        Type = "message",
-                    },
-                };
-            }
-            catch (Exception ex)
-            {
-                this.logger.LogError(ex, $"Failed to handle the messaging extension command {turnContextActivity.Name}: {ex.Message}", SeverityLevel.Error);
-                throw;
-            }
-        }
-
-        /// <summary>
-        /// Invoked when user clicks on "Add new question" button on messaging extension from SME team.
-        /// </summary>
-        /// <param name="turnContext">Context object containing information cached for a single turn of conversation with a user.</param>
-        /// <param name="action">Action to be performed.</param>
-        /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
-        /// <returns>Response of messaging extension action.</returns>
-        /// <remarks>
-        /// Reference link: https://docs.microsoft.com/en-us/dotnet/api/microsoft.bot.builder.teams.teamsactivityhandler.onteamsmessagingextensionfetchtaskasync?view=botbuilder-dotnet-stable.
-        /// </remarks>
-        protected override Task<MessagingExtensionActionResponse> OnTeamsMessagingExtensionFetchTaskAsync(
-            ITurnContext<IInvokeActivity> turnContext,
-            MessagingExtensionAction action,
-            CancellationToken cancellationToken)
-        {
-            try
-            {
-                turnContext.Activity.TryGetChannelData<TeamsChannelData>(out var teamsChannelData);
-                string expertTeamId = this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.TeamId).GetAwaiter().GetResult();
-
-                if (teamsChannelData?.Team?.Id != expertTeamId)
-                {
-                    var unauthorizedUserCard = MessagingExtensionQnaCard.UnauthorizedUserActionCard();
-                    return Task.FromResult(new MessagingExtensionActionResponse
-                    {
-                        Task = new TaskModuleContinueResponse
-                        {
-                            Value = new TaskModuleTaskInfo
-                            {
-                                Card = unauthorizedUserCard,
-                                Height = 250,
-                                Width = 300,
-                                Title = Strings.AddQuestionSubtitle,
-                            },
-                        },
-                    });
-                }
-
-                var adaptiveCardEditor = MessagingExtensionQnaCard.AddQuestionForm(new AdaptiveSubmitActionData(), this.appBaseUri);
-                return GetMessagingExtensionActionResponseAsync(adaptiveCardEditor, Strings.AddQuestionSubtitle);
-            }
-            catch (Exception ex)
-            {
-                this.logger.LogError(ex, "Error while fetching task received by the bot.");
-            }
-
-            return default;
-        }
-
-        /// <summary>
-        /// Invoked when the user submits a new question from SME team.
-        /// </summary>
-        /// <param name="turnContext">Context object containing information cached for a single turn of conversation with a user.</param>
-        /// <param name="action">Action to be performed.</param>
-        /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
-        /// <returns>Response of messaging extension action.</returns>
-        /// <remarks>
-        /// Reference link: https://docs.microsoft.com/en-us/dotnet/api/microsoft.bot.builder.teams.teamsactivityhandler.onteamsmessagingextensionsubmitactionasync?view=botbuilder-dotnet-stable.
-        /// </remarks>
-        protected override async Task<MessagingExtensionActionResponse> OnTeamsMessagingExtensionSubmitActionAsync(
-            ITurnContext<IInvokeActivity> turnContext,
-            MessagingExtensionAction action,
-            CancellationToken cancellationToken)
-        {
-            try
-            {
-                var postedQuestionObject = ((JObject)turnContext.Activity.Value).GetValue("data", StringComparison.OrdinalIgnoreCase).ToObject<AdaptiveSubmitActionData>();
-                if (postedQuestionObject == null)
-                {
-                    return default;
-                }
-
-                if (postedQuestionObject.BackButtonCommandText == Strings.BackButtonCommandText)
-                {
-                    // Populates the prefilled data on task module for adaptive card form fields on back button click.
-                    return await GetMessagingExtensionActionResponseAsync(MessagingExtensionQnaCard.AddQuestionForm(postedQuestionObject, this.appBaseUri), Strings.AddQuestionSubtitle).ConfigureAwait(false);
-                }
-
-                if (postedQuestionObject.PreviewButtonCommandText == Constants.PreviewCardCommandText)
-                {
-                    // Preview the actual view of the card on preview button click.
-                    return await GetMessagingExtensionActionResponseAsync(MessagingExtensionQnaCard.PreviewCardResponse(postedQuestionObject, this.appBaseUri)).ConfigureAwait(false);
-                }
-
-                // Response of messaging extension action.
-                return await this.RespondToQuestionMessagingExtensionAsync(postedQuestionObject, turnContext, cancellationToken).ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                if (((ErrorResponseException)ex).Body?.Error?.Code == ErrorCodeType.QuotaExceeded)
-                {
-                    this.logger.LogError(ex, "QnA storage limit exceeded and is not able to save the qna pair. Please contact your system administrator to provision additional storage space.");
-                    await turnContext.SendActivityAsync("QnA storage limit exceeded and is not able to save the qna pair. Please contact your system administrator to provision additional storage space.").ConfigureAwait(false);
-                    return null;
-                }
-
-                this.logger.LogError(ex, "Error at OnTeamsMessagingExtensionSubmitActionAsync()");
-                await turnContext.SendActivityAsync(Strings.ErrorMessage).ConfigureAwait(false);
-            }
-
-            return default;
-        }
-
-        /// <summary>
-        /// Get TaskModuleResponse object while adding or editing the question and answer pair.
-        /// </summary>
-        /// <param name="questionAnswerAdaptiveCardEditor">Card as an input.</param>
-        /// <param name="titleText">Gets or sets text that appears below the app name and to the right of the app icon.</param>
-        /// <returns>Envelope for Task Module Response.</returns>
-        private static Task<TaskModuleResponse> GetTaskModuleResponseAsync(Attachment questionAnswerAdaptiveCardEditor, string titleText = "")
-        {
-            return Task.FromResult(new TaskModuleResponse
-            {
-                Task = new TaskModuleContinueResponse
-                {
-                    Value = new TaskModuleTaskInfo
-                    {
-                        Card = questionAnswerAdaptiveCardEditor,
-                        Height = TaskModuleHeight,
-                        Width = TaskModuleWidth,
-                        Title = titleText,
-                    },
-                },
-            });
-        }
-
-        /// <summary>
-        /// Get messaging extension response object.
-        /// </summary>
-        /// <param name="questionAnswerAdaptiveCardEditor">Card as an input.</param>
-        /// <param name="titleText">Gets or sets text that appears below the app name and to the right of the app icon.</param>
-        /// <returns>Response of messaging extension action object.</returns>
-        private static Task<MessagingExtensionActionResponse> GetMessagingExtensionActionResponseAsync(
-            Attachment questionAnswerAdaptiveCardEditor,
-            string titleText = "")
-        {
-            return Task.FromResult(new MessagingExtensionActionResponse
-            {
-                Task = new TaskModuleContinueResponse
-                {
-                    Value = new TaskModuleTaskInfo
-                    {
-                        Card = questionAnswerAdaptiveCardEditor,
-                        Height = TaskModuleHeight,
-                        Width = TaskModuleWidth,
-                        Title = titleText,
-                    },
-                },
-            });
-        }
-
-        /// <summary>
-        /// Return normal card as response if only question and answer fields are filled while adding the QnA pair in the knowledgebase.
-        /// </summary>
-        /// <param name="turnContext">Context object containing information cached for a single turn of conversation with a user.</param>
-        /// <param name="qnaPairEntity">Qna pair entity that contains question and answer information.</param>
-        /// <param name="isRichCard">Indicate whether it's a rich card or normal. While adding the qna pair,
-        /// if sme user is providing the value for fields like: image url or title or subtitle or redirection url then it's a rich card otherwise it will be a normal card containing only question and answer. </param>
-        /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
-        /// <returns>Response of messaging extension action object.</returns>
-        private async Task<MessagingExtensionActionResponse> AddQuestionCardResponseAsync(
-        ITurnContext<IInvokeActivity> turnContext,
-        AdaptiveSubmitActionData qnaPairEntity,
-        bool isRichCard,
-        CancellationToken cancellationToken)
-        {
-            string combinedDescription = QnaHelper.BuildCombinedDescriptionAsync(qnaPairEntity);
-
-            try
-            {
-                // Check if question exist in the production/test knowledgebase & exactly the same question.
-                var hasQuestionExist = await this.qnaServiceProvider.QuestionExistsInKbAsync(qnaPairEntity.UpdatedQuestion).ConfigureAwait(false);
-
-                // Question already exist in knowledgebase.
-                if (hasQuestionExist)
-                {
-                    // Response with question already exist(in test knowledgebase).
-                    // If edited question text is already exist in the test knowledgebase.
-                    qnaPairEntity.IsQuestionAlreadyExists = true;
-
-                    // Messaging extension response object.
-                    return await GetMessagingExtensionActionResponseAsync(MessagingExtensionQnaCard.AddQuestionForm(qnaPairEntity, this.appBaseUri)).ConfigureAwait(false);
-                }
-            }
-            catch (Exception ex)
-            {
-                // Check if exception is not related to empty kb then add the qna pair otherwise throw it.
-                if (((ErrorResponseException)ex).Response.StatusCode == HttpStatusCode.BadRequest)
-                {
-                    var knowledgeBaseId = await this.configurationProvider.GetSavedEntityDetailAsync(Constants.KnowledgeBaseEntityId).ConfigureAwait(false);
-                    var hasPublished = await this.qnaServiceProvider.GetInitialPublishedStatusAsync(knowledgeBaseId).ConfigureAwait(false);
-
-                    // Check if knowledge base has not published yet.
-                    // If knowledge base has published then throw the error otherwise contiue to add the question & answer pair.
-                    if (hasPublished)
-                    {
-                        this.logger.LogError(ex, "Error while checking if the question exists in knowledge base.");
-                        throw;
-                    }
-                }
-            }
-
-            // Save the question in the knowledgebase.
-            var activityReferenceId = Guid.NewGuid().ToString();
-            await this.qnaServiceProvider.AddQnaAsync(qnaPairEntity.UpdatedQuestion?.Trim(), combinedDescription, turnContext.Activity.From.AadObjectId, turnContext.Activity.Conversation.Id, activityReferenceId).ConfigureAwait(false);
-            qnaPairEntity.IsTestKnowledgeBase = true;
-            ResourceResponse activityResponse;
-
-            // Rich card as response.
-            if (isRichCard)
-            {
-                qnaPairEntity.IsPreviewCard = false;
-                activityResponse = await turnContext.SendActivityAsync(MessageFactory.Attachment(MessagingExtensionQnaCard.ShowRichCard(qnaPairEntity, turnContext.Activity.From.Name, Strings.EntryCreatedByText)), cancellationToken).ConfigureAwait(false);
-            }
-            else
-            {
-                // Normal card as response.
-                activityResponse = await turnContext.SendActivityAsync(MessageFactory.Attachment(MessagingExtensionQnaCard.ShowNormalCard(qnaPairEntity, turnContext.Activity.From.Name, actionPerformed: Strings.EntryCreatedByText)), cancellationToken).ConfigureAwait(false);
-            }
-
-            this.logger.LogInformation($"Question added by: {turnContext.Activity.From.AadObjectId}");
-            ActivityEntity activityEntity = new ActivityEntity { ActivityId = activityResponse.Id, ActivityReferenceId = activityReferenceId };
-            bool operationStatus = await this.activityStorageProvider.AddActivityEntityAsync(activityEntity).ConfigureAwait(false);
-            if (!operationStatus)
-            {
-                this.logger.LogInformation($"Unable to add activity data in table storage.");
-            }
-
-            return default;
-        }
-
-        /// <summary>
-        /// Return card response.
-        /// </summary>
-        /// <param name="turnContext">Context object containing information cached for a single turn of conversation with a user.</param>
-        /// <param name="postedQnaPairEntity">Qna pair entity that contains question and answer information.</param>
-        /// <param name="answer">Answer text.</param>
-        /// <returns>Card attachment.</returns>
-        private async Task<Attachment> CardResponseAsync(
-            ITurnContext<IInvokeActivity> turnContext,
-            AdaptiveSubmitActionData postedQnaPairEntity,
-            string answer)
-        {
-            Attachment qnaAdaptiveCard = new Attachment();
-            bool isSaved;
-
-            if (postedQnaPairEntity.UpdatedQuestion?.ToUpperInvariant().Trim() == postedQnaPairEntity.OriginalQuestion?.ToUpperInvariant().Trim())
-            {
-                postedQnaPairEntity.IsTestKnowledgeBase = false;
-                isSaved = await this.SaveQnaAsync(turnContext, answer, postedQnaPairEntity).ConfigureAwait(false);
-                if (!isSaved)
-                {
-                    postedQnaPairEntity.IsTestKnowledgeBase = true;
-                    await this.SaveQnaAsync(turnContext, answer, postedQnaPairEntity).ConfigureAwait(false);
-                }
-            }
-            else
-            {
-                // Check if question exist in the production/test knowledgebase & exactly the same question.
-                var hasQuestionExist = await this.qnaServiceProvider.QuestionExistsInKbAsync(postedQnaPairEntity.UpdatedQuestion).ConfigureAwait(false);
-
-                // Edit the question if it doesn't exist in the test knowledgebse.
-                if (hasQuestionExist)
-                {
-                    // If edited question text is already exist in the test knowledgebase.
-                    postedQnaPairEntity.IsQuestionAlreadyExists = true;
-                }
-                else
-                {
-                    // Save the edited question in the knowledgebase.
-                    postedQnaPairEntity.IsTestKnowledgeBase = false;
-                    isSaved = await this.SaveQnaAsync(turnContext, answer, postedQnaPairEntity).ConfigureAwait(false);
-                    if (!isSaved)
-                    {
-                        postedQnaPairEntity.IsTestKnowledgeBase = true;
-                        await this.SaveQnaAsync(turnContext, answer, postedQnaPairEntity).ConfigureAwait(false);
-                    }
-                }
-
-                if (postedQnaPairEntity.IsQuestionAlreadyExists)
-                {
-                    // Response with question already exist(in test knowledgebase).
-                    qnaAdaptiveCard = MessagingExtensionQnaCard.AddQuestionForm(postedQnaPairEntity, this.appBaseUri);
-                }
-            }
-
-            return qnaAdaptiveCard;
         }
 
         /// <summary>
@@ -752,7 +463,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 // User started chat with the bot in personal scope, for the first time.
                 this.logger.LogInformation($"Bot added to 1:1 chat {activity.Conversation.Id}");
                 var welcomeText = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.WelcomeMessageText).ConfigureAwait(false);
-                var userWelcomeCardAttachment = WelcomeCard.GetCard(welcomeText);
+                var userWelcomeCardAttachment = WelcomeCard.GetCard(welcomeText, this.appBaseUri);
                 await turnContext.SendActivityAsync(MessageFactory.Attachment(userWelcomeCardAttachment)).ConfigureAwait(false);
             }
         }
@@ -777,7 +488,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
                 var teamDetails = ((JObject)turnContext.Activity.ChannelData).ToObject<TeamsChannelData>();
                 var botDisplayName = turnContext.Activity.Recipient.Name;
-                var teamWelcomeCardAttachment = WelcomeTeamCard.GetCard();
+                var teamWelcomeCardAttachment = WelcomeTeamCard.GetCard(this.appBaseUri);
                 await this.SendCardToTeamAsync(turnContext, teamWelcomeCardAttachment, teamDetails.Team.Id, cancellationToken).ConfigureAwait(false);
             }
         }
@@ -838,6 +549,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             {
                 await this.userActionProvider.UpsertUserActionAsync(userAction).ConfigureAwait(false);
             }
+
+            await this.teamsDataCapture.OnPersonalTurnAsync(turnContext, cancellationToken);
         }
 
         /// <summary>
@@ -931,7 +644,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             CancellationToken cancellationToken)
         {
             Attachment smeTeamCard = null;      // Notification to SME team
-            Attachment userCard = null;         // Acknowledgement to the user
+            Activity updateCardActivity = null;
+            Activity updateTeamsCardActivity = null;
             TicketEntity newTicket = null;      // New ticket
             FeedbackEntity newFeedback = null;      // New Feedback
             List<ExpertEntity> experts = null;
@@ -961,38 +675,58 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     {
                         experts = await this.expertProvider.GetExpertsAsync().ConfigureAwait(false);
                         smeTeamCard = new SmeTicketCard(newTicket, experts).ToAttachment(message?.LocalTimestamp, this.appBaseUri);
-                        userCard = new UserNotificationCard(newTicket, this.appBaseUri).ToAttachment(Strings.NotificationCardContent, message?.LocalTimestamp);
+                        Attachment userCard = new UserNotificationCard(newTicket, this.appBaseUri, this.options.AppId).ToAttachment(Strings.NotificationCardContent, message?.LocalTimestamp);
+
+                        updateCardActivity = new Activity(ActivityTypes.Message)
+                        {
+                            Id = turnContext.Activity.ReplyToId,
+                            Conversation = turnContext.Activity.Conversation,
+                            Attachments = new List<Attachment> { userCard },
+                        };
                     }
 
                     userAction.Action = nameof(UserActionType.AskExpert);
                     break;
 
                 case ShareFeedbackCard.ShareFeedbackSubmitText:
-                    this.logger.LogInformation("Received app feedback");
+                    this.logger.LogInformation("Received app or answer or ticket feedback");
+                    var shareFeedbackCardPayload = ((JObject)message.Value).ToObject<ShareFeedbackCardPayload>();
                     newFeedback = await AdaptiveCardHelper.ShareFeedbackSubmitText(message, this.appBaseUri, turnContext, cancellationToken, this.feedbackProvider).ConfigureAwait(false);
                     if (newFeedback != null)
                     {
-                        smeTeamCard = SmeFeedbackCard.GetCard(newFeedback, this.appBaseUri);
-                        await turnContext.SendActivityAsync(MessageFactory.Text(Strings.ThankYouTextContent)).ConfigureAwait(false);
+                        if (!string.IsNullOrEmpty(shareFeedbackCardPayload.TicketId))
+                        {
+                            // if is ticket feedback
+                            var ticket = await this.ticketsProvider.GetTicketAsync(shareFeedbackCardPayload.TicketId).ConfigureAwait(false);
+                            ticket.Feedback = newFeedback.Rating;
+                            ticket.FeedbackDescription = newFeedback.Description;
+
+                            await this.ticketsProvider.UpsertTicketAsync(ticket).ConfigureAwait(false);
+                            experts = await this.expertProvider.GetExpertsAsync().ConfigureAwait(false);
+                            updateTeamsCardActivity = new Activity(ActivityTypes.Message)
+                            {
+                                Id = ticket.SmeCardActivityId,
+                                Conversation = new ConversationAccount { Id = ticket.SmeThreadConversationId },
+                                Attachments = new List<Attachment> { new SmeTicketCard(ticket, experts).ToAttachment(message.LocalTimestamp, this.appBaseUri) },
+                            };
+                        }
+                        else
+                        {
+                            // is app or answer feedback
+                            smeTeamCard = SmeFeedbackCard.GetCard(newFeedback, this.appBaseUri);
+                        }
+
+                        Attachment userCard = UserNotificationCard.ToAttachmentString(Strings.ThankYouTextContent);
+                        updateCardActivity = new Activity(ActivityTypes.Message)
+                        {
+                            Id = turnContext.Activity.ReplyToId,
+                            Conversation = turnContext.Activity.Conversation,
+                            Attachments = new List<Attachment> { userCard },
+                        };
                     }
 
                     userAction.Action = nameof(UserActionType.ShareFeedback);
                     break;
-
-                case UserNotificationCard.TicketFeedback:
-                    this.logger.LogInformation("Received ticket feedback");
-                    var ticketFeedbackPayload = ((JObject)message.Value).ToObject<TicketFeedbackPayload>();
-                    var ticket = await this.ticketsProvider.GetTicketAsync(ticketFeedbackPayload.TicketId).ConfigureAwait(false);
-                    ticket.Feedback = ticketFeedbackPayload.Rating;
-                    await this.ticketsProvider.UpsertTicketAsync(ticket).ConfigureAwait(false);
-
-                    await turnContext.SendActivityAsync(MessageFactory.Text(Strings.ThankYouTextContent)).ConfigureAwait(false);
-
-                    // experts = await this.expertProvider.GetExpertsAsync().ConfigureAwait(false);
-                    // smeTeamCard = new SmeTicketCard(ticket, experts).ToAttachment(message?.LocalTimestamp, this.appBaseUri);
-                    userAction.Action = nameof(UserActionType.ShareTicketFeedback);
-                    break;
-
                 default:
                     var payload = ((JObject)message.Value).ToObject<ResponseCardPayload>();
 
@@ -1030,14 +764,27 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 {
                     newTicket.SmeCardActivityId = resourceResponse.ActivityId;
                     newTicket.SmeThreadConversationId = resourceResponse.Id;
-                    await this.ticketsProvider.UpsertTicketAsync(newTicket).ConfigureAwait(false);
                 }
             }
 
-            // Send acknowledgment to the user
-            if (userCard != null)
+            if (updateTeamsCardActivity != null)
             {
-                await turnContext.SendActivityAsync(MessageFactory.Attachment(userCard), cancellationToken).ConfigureAwait(false);
+                await turnContext.Adapter.UpdateActivityAsync(turnContext, updateTeamsCardActivity, cancellationToken).ConfigureAwait(false);
+            }
+
+            // Send acknowledgment to the user by updating the original card
+            if (updateCardActivity != null)
+            {
+                var resourceResponse = await turnContext.UpdateActivityAsync(updateCardActivity, cancellationToken).ConfigureAwait(false);
+                if (newTicket != null)
+                {
+                    newTicket.RequesterCardActivityId = updateCardActivity.Id;
+                }
+            }
+
+            if (newTicket != null)
+            {
+                await this.ticketsProvider.UpsertTicketAsync(newTicket).ConfigureAwait(false);
             }
 
             // Save user action
@@ -1060,6 +807,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             ITurnContext<IMessageActivity> turnContext,
             CancellationToken cancellationToken)
         {
+            //await SaveChannelMembers(turnContext, cancellationToken);
+
+            if (this.retryMessageService.IsRetryMessage(message.Id))
+            {
+                return;
+            }
+
             var payload = ((JObject)message.Value).ToObject<ChangeTicketStatusPayload>();
             this.logger.LogInformation($"Received submit: ticketId={payload.TicketId} action={payload.Action}");
 
@@ -1079,8 +833,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             // Illegal operation, post warning to SME team thread and return
             if (payload.Action == ChangeTicketStatusPayload.PendingAction || payload.Action == ChangeTicketStatusPayload.ResolveAction)
             {
-                // if not the owner
-                if (ticket.AssignedToName != message.From.Name)
+                // if not the owner or admin
+                bool isAdmin = await this.IsExpertAdminAsync(message.From.Name);
+                if (ticket.AssignedToName != message.From.Name && !isAdmin && (ticket.Status == (int)TicketState.Pending || ticket.Status == (int)TicketState.Assigned))
                 {
                     var mention = await this.MentionSomeoneByName(turnContext, cancellationToken, message.From.Name).ConfigureAwait(false);
                     if (mention != null)
@@ -1114,32 +869,60 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             switch (payload.Action)
             {
                 case ChangeTicketStatusPayload.PendingAction:
+                    if (ticket.Status == (int)TicketState.Pending)
+                    {
+                        return;
+                    }
+
                     ticket.Status = (int)TicketState.Pending;
+                    ticket.DatePending = DateTime.UtcNow;
                     ticket.PendingComment = payload.PendingComment;
 
                     userAction.Remark += $" to Pending";
                     break;
 
+                case ChangeTicketStatusPayload.PendingUpdateAction:
+                    TicketEntity.AddPendingComment(ticket, payload.PendingComment);
+                    userAction.Remark = "Update pending comment";
+                    break;
+
                 case ChangeTicketStatusPayload.ResolveAction:
+                    if (ticket.Status == (int)TicketState.Resolved)
+                    {
+                        return;
+                    }
+
                     ticket.Status = (int)TicketState.Resolved;
-                    ticket.DateClosed = DateTime.UtcNow.AddHours(8);
+                    ticket.DateClosed = DateTime.UtcNow;
+                    ticket.DatePending = null;
                     ticket.ResolveComment = payload.ResolveComment;
 
                     userAction.Remark += $" to Resolved";
                     break;
 
                 case ChangeTicketStatusPayload.AssignToOthersAction:
-                    var info = payload.OtherAssigneeInfo.Split(':');
+                    var info = payload.OtherAssigneeInfo?.Split(':');
                     string assigneeName = null;
                     string assigneeID = null;
-                    if (info?.Length == 2)
+                    string assigneeUserPrincilpeName = null;
+                    if (info?.Length == 3)
                     {
                         assigneeName = info[0];
                         assigneeID = info?[1];
+                        assigneeUserPrincilpeName = info?[2];
                     }
                     else
                     {
-                        throw new ArgumentException("assigned infor error");
+                        var mention = await this.MentionSomeoneByName(turnContext, cancellationToken, message.From.Name).ConfigureAwait(false);
+                        if (mention != null)
+                        {
+                            var replyActivity = MessageFactory.Text(string.Format(CultureInfo.InvariantCulture, Strings.TicketAssignedToEmptyWarning, mention.Text));
+                            replyActivity.Entities = new List<Entity> { mention };
+
+                            await turnContext.SendActivityAsync(replyActivity, cancellationToken);
+                        }
+
+                        return;
                     }
 
                     // if already assigned
@@ -1152,20 +935,24 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                             replyActivity.Entities = new List<Entity> { mention };
 
                             await turnContext.SendActivityAsync(replyActivity, cancellationToken);
-                            return;
                         }
+
+                        return;
                     }
 
                     ticket.Status = (int)TicketState.Assigned;
-                    ticket.DateAssigned = DateTime.UtcNow.AddHours(8);
+                    ticket.DateAssigned = DateTime.UtcNow;
 
-                    if (info?.Length == 2)
+                    if (info?.Length == 3)
                     {
                         ticket.AssignedToName = assigneeName;
                         ticket.AssignedToObjectId = assigneeID;
+                        ticket.AssignedToUserPrincipalName = assigneeUserPrincilpeName;
                     }
 
                     ticket.DateClosed = null;
+                    ticket.DatePending = null;
+                    ticket.DatePendingUpdate = null;
 
                     userAction.Remark += $" to Assigned";
                     break;
@@ -1185,15 +972,99 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                         }
                     }
 
+                    var member = await TeamsInfo.GetMemberAsync(turnContext, turnContext.Activity.From.Id, cancellationToken);
                     ticket.Status = (int)TicketState.Assigned;
-                    ticket.DateAssigned = DateTime.UtcNow.AddHours(8);
+                    ticket.DateAssigned = DateTime.UtcNow;
                     ticket.AssignedToName = message.From.Name;
+                    ticket.AssignedToUserPrincipalName = member.UserPrincipalName;
                     ticket.AssignedToObjectId = message.From.AadObjectId;
                     ticket.DateClosed = null;
+                    ticket.DatePending = null;
+                    ticket.DatePendingUpdate = null;
                     ticket.PendingComment = null;
                     ticket.ResolveComment = null;
 
                     userAction.Remark += $" to Assigned";
+                    break;
+
+                case ChangeTicketStatusPayload.CreateSoSTicketAction:
+                    if (ticket.Status == (int)TicketState.SOSInProgress)
+                    {
+                        return;
+                    }
+
+                    List<TeamsChannelAccount> watchList = new List<TeamsChannelAccount>();
+                    var watchListPlainText = string.Empty;
+                    if (!string.IsNullOrEmpty(payload.SOSWatchList))
+                    {
+                        // avoid user input incorrect split symbol. 
+                        var watchIDList = payload.SOSWatchList.Replace(';', ',').Split(',');
+                        foreach (var id in watchIDList)
+                        {
+                            try
+                            {
+                                var watchUser = await TeamsInfo.GetMemberAsync(turnContext, id, cancellationToken);
+                                if (watchUser != null && !string.IsNullOrEmpty(watchUser.Name))
+                                {
+                                    watchListPlainText += watchUser.Name + ", ";
+                                }
+                            }
+                            catch (Microsoft.Bot.Schema.ErrorResponseException ex)
+                            {
+                                this.logger.LogError($"watch list id {id} not found {ex.Message}");
+                                continue;
+                            }
+
+                        }
+                    }
+
+                    // Temp solution, add victoria to watchlist by default
+                    string defaultWatcher = "Huang Min (Victoria), ";
+                    if (!watchListPlainText.Contains(defaultWatcher))
+                    {
+                        watchListPlainText += defaultWatcher;
+                    }
+
+                    if (!watchListPlainText.Contains(message.From.Name))
+                    {
+                        watchListPlainText += message.From.Name;
+                    }
+                    else
+                    {
+                        watchListPlainText = watchListPlainText.TrimEnd(new char[] { ',', ' ' });
+                    }
+
+
+                    SOSRequest request = new SOSRequest()
+                    {
+                        RequestFor = ticket.RequesterUserPrincipalName,
+                        Topic = payload.SOSTopic,
+                        ShortDescription = payload.SOSTitle,
+                        Description = payload.SOSDescription,
+                        WatchList = watchListPlainText,
+                    };
+                    DateTime start = DateTime.Now;
+                    SOSRequestResult sosResult = await this.sosClient.CreateRequestAsync(request);
+                    DateTime end = DateTime.Now;
+                    double seconds = (end - start).TotalSeconds;
+                    if (sosResult != null)
+                    {
+                        ticket.Status = (int)TicketState.SOSInProgress;
+                        ticket.SOSTicketNumber = sosResult.Result.Reference;
+                        ticket.SOSTopic = payload.SOSTopic;
+                        ticket.SOSDescription = payload.SOSDescription;
+                        ticket.SOSLink = $"{this.sosClient.BaseUrl}sos/request_item.do?sysparm_sys_id={sosResult.Result.SysId}";
+                        ticket.DateSOSCreated = DateTime.UtcNow;
+                        ticket.SOSTicketRequester = message.From.Name;
+
+                        userAction.Remark += $" to SOS Inprogress";
+                        this.logger.LogWarning($"SOS ticket created succeed {sosResult.Result.Reference}");
+                    }
+                    else
+                    {
+                        this.logger.LogWarning($"SOS ticket create failed");
+                    }
+
                     break;
 
                 default:
@@ -1214,74 +1085,139 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             {
                 Id = ticket.SmeCardActivityId,
                 Conversation = new ConversationAccount { Id = ticket.SmeThreadConversationId },
-                Attachments = new List<Attachment> { new SmeTicketCard(ticket, experts).ToAttachment(message.LocalTimestamp, this.appBaseUri) },
+                Attachments = new List<Attachment> { new SmeTicketCard(ticket, experts, message.From.Name).ToAttachment(message.LocalTimestamp, this.appBaseUri) },
             };
             var updateResponse = await turnContext.UpdateActivityAsync(updateCardActivity, cancellationToken).ConfigureAwait(false);
             this.logger.LogInformation($"Card for ticket {ticket.TicketId} updated to status ({ticket.Status}, {ticket.AssignedToObjectId}), activityId = {updateResponse.Id}");
 
-            // Post update to user and SME team thread.
-            IMessageActivity userNotification = null;
+            // Post update to user and SME team notification thread.
+            Activity updateUserCardActivity = null;
             switch (payload.Action)
             {
                 case ChangeTicketStatusPayload.PendingAction:
                     smeNotification = string.Format(CultureInfo.InvariantCulture, Strings.SMEPendingStatus, message.From.Name);
 
-                    userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket, this.appBaseUri).ToAttachment(Strings.PendingTicketUserNotification, message.LocalTimestamp));
-                    userNotification.Summary = Strings.PendingTicketUserNotification;
+                    updateUserCardActivity = new Activity(ActivityTypes.Message)
+                    {
+                        Id = ticket.RequesterCardActivityId,
+                        Conversation = new ConversationAccount { Id = ticket.RequesterConversationId },
+                        Attachments = new List<Attachment> { new UserNotificationCard(ticket, this.appBaseUri, this.options.AppId).ToAttachment(Strings.PendingTicketUserNotification, message.LocalTimestamp) },
+                    };
                     break;
+                case ChangeTicketStatusPayload.PendingUpdateAction:
+                    smeNotification = string.Format(CultureInfo.InvariantCulture, Strings.SMEPendingUpdated, message.From.Name);
 
+                    updateUserCardActivity = new Activity(ActivityTypes.Message)
+                    {
+                        Id = ticket.RequesterCardActivityId,
+                        Conversation = new ConversationAccount { Id = ticket.RequesterConversationId },
+                        Attachments = new List<Attachment> { new UserNotificationCard(ticket, this.appBaseUri, this.options.AppId).ToAttachment(Strings.PendingUpdateTicketUserNotification, message.LocalTimestamp) },
+                    };
+                    break;
                 case ChangeTicketStatusPayload.ResolveAction:
                     smeNotification = string.Format(CultureInfo.InvariantCulture, Strings.SMEClosedStatus, ticket.LastModifiedByName);
 
-                    userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket, this.appBaseUri).ToAttachment(Strings.ClosedTicketUserNotification, message.LocalTimestamp));
-                    userNotification.Summary = Strings.ClosedTicketUserNotification;
+                    updateUserCardActivity = new Activity(ActivityTypes.Message)
+                    {
+                        Id = ticket.RequesterCardActivityId,
+                        Conversation = new ConversationAccount { Id = ticket.RequesterConversationId },
+                        Attachments = new List<Attachment> { new UserNotificationCard(ticket, this.appBaseUri, this.options.AppId).ToAttachment(Strings.ClosedTicketUserNotification, message.LocalTimestamp) },
+                    };
                     break;
 
                 case ChangeTicketStatusPayload.AssignToSelfAction:
                     smeNotification = string.Format(CultureInfo.InvariantCulture, Strings.SMEAssignedStatus, ticket.AssignedToName);
                     if (previousState == (int)TicketState.Resolved)
                     {
-                        userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket, this.appBaseUri).ToAttachment(Strings.ReopenedTicketUserNotification, message.LocalTimestamp));
-                        userNotification.Summary = Strings.ReopenedTicketUserNotification;
+                        updateUserCardActivity = new Activity(ActivityTypes.Message)
+                        {
+                            Id = ticket.RequesterCardActivityId,
+                            Conversation = new ConversationAccount { Id = ticket.RequesterConversationId },
+                            Attachments = new List<Attachment> { new UserNotificationCard(ticket, this.appBaseUri, this.options.AppId).ToAttachment(Strings.ReopenedTicketUserNotification, message.LocalTimestamp) },
+                        };
                     }
                     else if (previousState == (int)TicketState.Assigned)
                     {
-                        userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket, this.appBaseUri).ToAttachment(Strings.ReAssigneTicketUserNotification, message.LocalTimestamp));
-                        userNotification.Summary = Strings.ReAssigneTicketUserNotification;
+                        updateUserCardActivity = new Activity(ActivityTypes.Message)
+                        {
+                            Id = ticket.RequesterCardActivityId,
+                            Conversation = new ConversationAccount { Id = ticket.RequesterConversationId },
+                            Attachments = new List<Attachment> { new UserNotificationCard(ticket, this.appBaseUri, this.options.AppId).ToAttachment(Strings.ReAssigneTicketUserNotification, message.LocalTimestamp) },
+                        };
                     }
                     else
                     {
-                        userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket, this.appBaseUri).ToAttachment(Strings.AssignedTicketUserNotification, message.LocalTimestamp));
-                        userNotification.Summary = Strings.AssignedTicketUserNotification;
+                        updateUserCardActivity = new Activity(ActivityTypes.Message)
+                        {
+                            Id = ticket.RequesterCardActivityId,
+                            Conversation = new ConversationAccount { Id = ticket.RequesterConversationId },
+                            Attachments = new List<Attachment> { new UserNotificationCard(ticket, this.appBaseUri, this.options.AppId).ToAttachment(Strings.AssignedTicketUserNotification, message.LocalTimestamp) },
+                        };
                     }
 
                     break;
                 case ChangeTicketStatusPayload.AssignToOthersAction:
-
-                    // @ assignee
-                    var mention = await this.MentionSomeoneByName(turnContext, cancellationToken, ticket.AssignedToName).ConfigureAwait(false);
-                    if (mention != null)
+                    if (message.From.AadObjectId == ticket.AssignedToObjectId)
                     {
-                        var replyActivity = MessageFactory.Text(string.Format(CultureInfo.InvariantCulture, Strings.SMEAssignedByOthersStatus, mention.Text, message.From.Name));
-                        replyActivity.Entities = new List<Entity> { mention };
-
+                        var replyActivity = MessageFactory.Text(string.Format(CultureInfo.InvariantCulture, Strings.SMEAssignedStatus, ticket.AssignedToName));
                         await turnContext.SendActivityAsync(replyActivity, cancellationToken);
+                    }
+                    else
+                    {
+                        // @ assignee
+                        var mention = await this.MentionSomeoneByName(turnContext, cancellationToken, ticket.AssignedToName).ConfigureAwait(false);
+                        if (mention != null)
+                        {
+                            var replyActivity = MessageFactory.Text(string.Format(CultureInfo.InvariantCulture, Strings.SMEAssignedByOthersStatus, mention.Text, message.From.Name));
+                            replyActivity.Entities = new List<Entity> { mention };
+                            await turnContext.SendActivityAsync(replyActivity, cancellationToken);
+                        }
                     }
 
                     if (previousState == (int)TicketState.Resolved)
                     {
-                        userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket, this.appBaseUri).ToAttachment(Strings.ReopenedTicketUserNotification, message.LocalTimestamp));
-                        userNotification.Summary = Strings.ReopenedTicketUserNotification;
+                        updateUserCardActivity = new Activity(ActivityTypes.Message)
+                        {
+                            Id = ticket.RequesterCardActivityId,
+                            Conversation = new ConversationAccount { Id = ticket.RequesterConversationId },
+                            Attachments = new List<Attachment> { new UserNotificationCard(ticket, this.appBaseUri, this.options.AppId).ToAttachment(Strings.ReopenedTicketUserNotification, message.LocalTimestamp) },
+                        };
                     }
                     else if (previousState == (int)TicketState.Assigned)
                     {
-                        userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket, this.appBaseUri).ToAttachment(Strings.ReAssigneTicketUserNotification, message.LocalTimestamp));
-                        userNotification.Summary = Strings.ReAssigneTicketUserNotification;
+                        updateUserCardActivity = new Activity(ActivityTypes.Message)
+                        {
+                            Id = ticket.RequesterCardActivityId,
+                            Conversation = new ConversationAccount { Id = ticket.RequesterConversationId },
+                            Attachments = new List<Attachment> { new UserNotificationCard(ticket, this.appBaseUri, this.options.AppId).ToAttachment(Strings.ReAssigneTicketUserNotification, message.LocalTimestamp) },
+                        };
                     }
                     else
                     {
-                        userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket, this.appBaseUri).ToAttachment(Strings.AssignedTicketUserNotification, message.LocalTimestamp));
-                        userNotification.Summary = Strings.AssignedTicketUserNotification;
+                        updateUserCardActivity = new Activity(ActivityTypes.Message)
+                        {
+                            Id = ticket.RequesterCardActivityId,
+                            Conversation = new ConversationAccount { Id = ticket.RequesterConversationId },
+                            Attachments = new List<Attachment> { new UserNotificationCard(ticket, this.appBaseUri, this.options.AppId).ToAttachment(Strings.AssignedTicketUserNotification, message.LocalTimestamp) },
+                        };
+                    }
+
+                    break;
+                case ChangeTicketStatusPayload.CreateSoSTicketAction:
+                    if (string.IsNullOrEmpty(ticket.SOSTicketNumber))
+                    {
+                        smeNotification = "SOS request failed";
+                    }
+                    else
+                    {
+                        smeNotification = string.Format(CultureInfo.InvariantCulture, Strings.SMESOSStatus, message.From.Name);
+
+                        updateUserCardActivity = new Activity(ActivityTypes.Message)
+                        {
+                            Id = ticket.RequesterCardActivityId,
+                            Conversation = new ConversationAccount { Id = ticket.RequesterConversationId },
+                            Attachments = new List<Attachment> { new UserNotificationCard(ticket, this.appBaseUri, this.options.AppId).ToAttachment(Strings.CreateSOSUserNotification, message.LocalTimestamp) },
+                        };
                     }
 
                     break;
@@ -1293,11 +1229,36 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 this.logger.LogInformation($"SME team notified of update to ticket {ticket.TicketId}, activityId = {smeResponse.Id}");
             }
 
-            if (userNotification != null)
+            if (updateUserCardActivity != null)
             {
-                userNotification.Conversation = new ConversationAccount { Id = ticket.RequesterConversationId };
-                var userResponse = await turnContext.Adapter.SendActivitiesAsync(turnContext, new Activity[] { (Activity)userNotification }, cancellationToken).ConfigureAwait(false);
-                this.logger.LogInformation($"User notified of update to ticket {ticket.TicketId}, activityId = {userResponse.FirstOrDefault()?.Id}");
+                var userResponse = await turnContext.Adapter.UpdateActivityAsync(turnContext, updateUserCardActivity, cancellationToken).ConfigureAwait(false);
+                this.logger.LogInformation($"Update user ticket {ticket.TicketId}, activityId = {userResponse?.Id}");
+
+                // send the text notification first
+                IMessageActivity userNotification = null;
+
+                if (payload.Action == ChangeTicketStatusPayload.PendingUpdateAction)
+                {
+                    userNotification = MessageFactory.Text($"Your request [{ticket.Title}] has new comment");
+                }
+                else
+                {
+                    userNotification = MessageFactory.Text($"Your request [{ticket.Title}] updated to status: {CardHelper.GetUserTicketDisplayStatus(ticket)} ");
+                }
+
+                userNotification.Conversation = updateUserCardActivity.Conversation;
+                var userNotificationResponse = await turnContext.Adapter.SendActivitiesAsync(turnContext, new Activity[] { (Activity)userNotification }, cancellationToken).ConfigureAwait(false);
+                this.logger.LogInformation($"User notified of update to ticket {ticket.TicketId}, activityId = {userNotificationResponse.FirstOrDefault()?.Id}");
+
+                // send the share feedback card
+                if (payload.Action == ChangeTicketStatusPayload.ResolveAction)
+                {
+                    ShareFeedbackCardPayload sfPayload = new ShareFeedbackCardPayload();
+                    sfPayload.TicketId = ticket.TicketId;
+                    userNotification = MessageFactory.Attachment(ShareFeedbackCard.GetCard(sfPayload, this.appBaseUri));
+                    userNotification.Conversation = updateUserCardActivity.Conversation;
+                    await turnContext.Adapter.SendActivitiesAsync(turnContext, new Activity[] { (Activity)userNotification }, cancellationToken).ConfigureAwait(false);
+                }
             }
 
             // record user action
@@ -1380,270 +1341,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         }
 
         /// <summary>
-        /// Method perform update operation of question and answer pair.
-        /// </summary>
-        /// <param name="turnContext">Context object containing information cached for a single turn of conversation with a user.</param>
-        /// <param name="answer">Answer of the given question.</param>
-        /// <param name="qnaPairEntity">Qna pair entity that contains question and answer information.</param>
-        /// <returns>A <see cref="Task"/> of type bool where true represents question and answer pair updated successfully while false indicates failure in updating the question and answer pair.</returns>
-        private async Task<bool> SaveQnaAsync(ITurnContext turnContext, string answer, AdaptiveSubmitActionData qnaPairEntity)
-        {
-            QnASearchResult searchResult;
-            var qnaAnswerResponse = await this.qnaServiceProvider.GenerateAnswerAsync(qnaPairEntity.OriginalQuestion, qnaPairEntity.IsTestKnowledgeBase).ConfigureAwait(false);
-            searchResult = qnaAnswerResponse.Answers.FirstOrDefault();
-            bool isSameQuestion = false;
-
-            // Check if question exist in the knowledgebase.
-            if (searchResult != null && searchResult.Questions.Count > 0)
-            {
-                // Check if the edited question & result returned from the knowledgebase are same.
-                isSameQuestion = searchResult.Questions.First().ToUpperInvariant() == qnaPairEntity.OriginalQuestion.ToUpperInvariant();
-            }
-
-            // Edit the QnA pair if the question is exist in the knowledgebase & exactly the same question on which we are performing the action.
-            if (searchResult.Id != -1 && isSameQuestion)
-            {
-                int qnaPairId = searchResult.Id.Value;
-                await this.qnaServiceProvider.UpdateQnaAsync(qnaPairId, answer, turnContext.Activity.From.AadObjectId, qnaPairEntity.UpdatedQuestion, qnaPairEntity.OriginalQuestion).ConfigureAwait(false);
-                this.logger.LogInformation($"Question updated by: {turnContext.Activity.Conversation.AadObjectId}");
-                Attachment attachment = new Attachment();
-                if (qnaPairEntity.IsRichCard)
-                {
-                    qnaPairEntity.IsPreviewCard = false;
-                    qnaPairEntity.IsTestKnowledgeBase = true;
-                    attachment = MessagingExtensionQnaCard.ShowRichCard(qnaPairEntity, turnContext.Activity.From.Name, Strings.LastEditedText);
-                }
-                else
-                {
-                    qnaPairEntity.IsTestKnowledgeBase = true;
-                    qnaPairEntity.Description = answer;
-                    attachment = MessagingExtensionQnaCard.ShowNormalCard(qnaPairEntity, turnContext.Activity.From.Name, actionPerformed: Strings.LastEditedText);
-                }
-
-                var activityId = this.activityStorageProvider.GetAsync(qnaAnswerResponse.Answers.First().Metadata.FirstOrDefault(x => x.Name == Constants.MetadataActivityReferenceId)?.Value).Result.FirstOrDefault().ActivityId;
-                var updateCardActivity = new Activity(ActivityTypes.Message)
-                {
-                    Id = activityId,
-                    Conversation = turnContext.Activity.Conversation,
-                    Attachments = new List<Attachment> { attachment },
-                };
-
-                // Send edited question and answer card as response.
-                await turnContext.UpdateActivityAsync(updateCardActivity, cancellationToken: default).ConfigureAwait(false);
-            }
-            else
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        /// Get the value of the searchText parameter in the messaging extension query.
-        /// </summary>
-        /// <param name="query">Contains messaging extension query keywords.</param>
-        /// <returns>A value of the searchText parameter.</returns>
-        private string GetSearchQueryString(MessagingExtensionQuery query)
-        {
-            var messageExtensionInputText = query.Parameters.FirstOrDefault(parameter => parameter.Name.Equals(SearchTextParameterName, StringComparison.OrdinalIgnoreCase));
-            return messageExtensionInputText?.Value?.ToString();
-        }
-
-        /// <summary>
-        /// Check if user using the app is a valid SME or not.
-        /// </summary>
-        /// <param name="turnContext">Context object containing information cached for a single turn of conversation with a user.</param>
-        /// <returns>A <see cref="Task"/> of type bool where true represents that user using the app is a valid SME while false indicates that user using the app is not a valid SME.</returns>
-        private async Task<bool> IsMemberOfSmeTeamAsync(ITurnContext<IInvokeActivity> turnContext)
-        {
-            bool isUserPartOfRoster = false;
-            string expertTeamId = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.TeamId).ConfigureAwait(false);
-            try
-            {
-                ConversationAccount conversationAccount = new ConversationAccount()
-                {
-                    Id = expertTeamId,
-                };
-
-                ConversationReference conversationReference = new ConversationReference()
-                {
-                    ServiceUrl = turnContext.Activity.ServiceUrl,
-                    Conversation = conversationAccount,
-                };
-
-                string currentUserId = turnContext.Activity.From.Id;
-
-                // Check for current user id in cache and add id of current user to cache if they are not added before
-                // once they are validated against SME roster.
-                if (!this.accessCache.TryGetValue(currentUserId, out string membersCacheEntry))
-                {
-                    await this.botAdapter.ContinueConversationAsync(
-                        this.appId,
-                        conversationReference,
-                        async (newTurnContext, newCancellationToken) =>
-                        {
-                            var members = await this.botAdapter.GetConversationMembersAsync(newTurnContext, default(CancellationToken)).ConfigureAwait(false);
-                            foreach (var member in members)
-                            {
-                                if (member.Id == currentUserId)
-                                {
-                                    membersCacheEntry = member.Id;
-                                    isUserPartOfRoster = true;
-                                    var cacheEntryOptions = new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromDays(this.accessCacheExpiryInDays));
-                                    this.accessCache.Set(currentUserId, membersCacheEntry, cacheEntryOptions);
-                                    break;
-                                }
-                            }
-                        },
-                        default(CancellationToken)).ConfigureAwait(false);
-                }
-                else
-                {
-                    isUserPartOfRoster = true;
-                }
-            }
-            catch (Exception error)
-            {
-                this.logger.LogError(error, $"Failed to get members of team {expertTeamId}: {error.Message}", SeverityLevel.Error);
-                isUserPartOfRoster = false;
-                throw;
-            }
-
-            return isUserPartOfRoster;
-        }
-
-        /// <summary>
-        ///  Validate the adaptiver card fields while adding the question and answer pair.
-        /// </summary>
-        /// <param name="postedQnaPairEntity">Qna pair entity contains submitted card data.</param>
-        /// <param name="turnContext">Context object containing information cached for a single turn of conversation with a user.</param>
-        /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
-        /// <returns>Response of messaging extension action.</returns>
-        private async Task<MessagingExtensionActionResponse> RespondToQuestionMessagingExtensionAsync(
-            AdaptiveSubmitActionData postedQnaPairEntity,
-            ITurnContext<IInvokeActivity> turnContext,
-            CancellationToken cancellationToken)
-        {
-            // Check if fields contains Html tags or Question and answer empty then return response with error message.
-            if (Validators.IsContainsHtml(postedQnaPairEntity) || Validators.IsQnaFieldsNullOrEmpty(postedQnaPairEntity))
-            {
-                // Returns the card with validation errors on add QnA task module.
-                return await GetMessagingExtensionActionResponseAsync(MessagingExtensionQnaCard.AddQuestionForm(Validators.HtmlAndQnaEmptyValidation(postedQnaPairEntity), this.appBaseUri)).ConfigureAwait(false);
-            }
-
-            if (Validators.IsRichCard(postedQnaPairEntity))
-            {
-                // While adding the new entry in knowledgebase,if user has entered invalid Image URL or Redirect URL then show the error message to user.
-                if (Validators.IsImageUrlInvalid(postedQnaPairEntity) || Validators.IsRedirectionUrlInvalid(postedQnaPairEntity))
-                {
-                    return await GetMessagingExtensionActionResponseAsync(MessagingExtensionQnaCard.AddQuestionForm(Validators.ValidateImageAndRedirectionUrls(postedQnaPairEntity), this.appBaseUri)).ConfigureAwait(false);
-                }
-
-                // Return the rich card as response to user if he has filled title & image URL while adding the new entry in knowledgebase.
-                return await this.AddQuestionCardResponseAsync(turnContext, postedQnaPairEntity, isRichCard: true, cancellationToken).ConfigureAwait(false);
-            }
-
-            // Normal card as response if only question and answer fields are filled while adding the QnA pair in the knowledgebase.
-            return await this.AddQuestionCardResponseAsync(turnContext, postedQnaPairEntity, isRichCard: false, cancellationToken).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Validate the adaptive card fields while editing the question and answer pair.
-        /// </summary>
-        /// <param name="postedQnaPairEntity">Qna pair entity contains submitted card data.</param>
-        /// <param name="turnContext">Context object containing information cached for a single turn of conversation with a user.</param>
-        /// <returns>Envelope for Task Module Response.</returns>
-        private async Task<TaskModuleResponse> RespondToQuestionTaskModuleAsync(
-            AdaptiveSubmitActionData postedQnaPairEntity,
-            ITurnContext<IInvokeActivity> turnContext)
-        {
-            // Check if fields contains Html tags or Question and answer empty then return response with error message.
-            if (Validators.IsContainsHtml(postedQnaPairEntity) || Validators.IsQnaFieldsNullOrEmpty(postedQnaPairEntity))
-            {
-                // Returns the card with validation errors on add QnA task module.
-                return await GetTaskModuleResponseAsync(MessagingExtensionQnaCard.AddQuestionForm(Validators.HtmlAndQnaEmptyValidation(postedQnaPairEntity), this.appBaseUri)).ConfigureAwait(false);
-            }
-
-            if (Validators.IsRichCard(postedQnaPairEntity))
-            {
-                if (Validators.IsImageUrlInvalid(postedQnaPairEntity) || Validators.IsRedirectionUrlInvalid(postedQnaPairEntity))
-                {
-                    // Show the error message on task module response for edit QnA pair, if user has entered invalid image or redirection url.
-                    return await GetTaskModuleResponseAsync(MessagingExtensionQnaCard.AddQuestionForm(Validators.ValidateImageAndRedirectionUrls(postedQnaPairEntity), this.appBaseUri)).ConfigureAwait(false);
-                }
-
-                string combinedDescription = QnaHelper.BuildCombinedDescriptionAsync(postedQnaPairEntity);
-                postedQnaPairEntity.IsRichCard = true;
-
-                if (postedQnaPairEntity.UpdatedQuestion?.ToUpperInvariant().Trim() == postedQnaPairEntity.OriginalQuestion?.ToUpperInvariant().Trim())
-                {
-                    // Save the QnA pair, return the response and closes the task module.
-                    await GetTaskModuleResponseAsync(this.CardResponseAsync(
-                        turnContext,
-                        postedQnaPairEntity,
-                        combinedDescription).Result).ConfigureAwait(false);
-                    return default;
-                }
-                else
-                {
-                    var hasQuestionExist = await this.qnaServiceProvider.QuestionExistsInKbAsync(postedQnaPairEntity.UpdatedQuestion).ConfigureAwait(false);
-                    if (hasQuestionExist)
-                    {
-                        // Shows the error message on task module, if question already exist.
-                        return await GetTaskModuleResponseAsync(this.CardResponseAsync(
-                            turnContext,
-                            postedQnaPairEntity,
-                            combinedDescription).Result).ConfigureAwait(false);
-                    }
-                    else
-                    {
-                        // Save the QnA pair, return the response and closes the task module.
-                        await GetTaskModuleResponseAsync(this.CardResponseAsync(
-                            turnContext,
-                            postedQnaPairEntity,
-                            combinedDescription).Result).ConfigureAwait(false);
-                        return default;
-                    }
-                }
-            }
-            else
-            {
-                // Normal card section.
-                if (postedQnaPairEntity.UpdatedQuestion?.ToUpperInvariant().Trim() == postedQnaPairEntity.OriginalQuestion?.ToUpperInvariant().Trim())
-                {
-                    // Save the QnA pair, return the response and closes the task module.
-                    await GetTaskModuleResponseAsync(this.CardResponseAsync(
-                        turnContext,
-                        postedQnaPairEntity,
-                        postedQnaPairEntity.Description).Result).ConfigureAwait(false);
-                    return default;
-                }
-                else
-                {
-                    var hasQuestionExist = await this.qnaServiceProvider.QuestionExistsInKbAsync(postedQnaPairEntity.UpdatedQuestion).ConfigureAwait(false);
-                    if (hasQuestionExist)
-                    {
-                        // Shows the error message on task module, if question already exist.
-                        return await GetTaskModuleResponseAsync(this.CardResponseAsync(
-                            turnContext,
-                            postedQnaPairEntity,
-                            postedQnaPairEntity.Description).Result).ConfigureAwait(false);
-                    }
-                    else
-                    {
-                        // Save the QnA pair, return the response and closes the task module.
-                        await GetTaskModuleResponseAsync(this.CardResponseAsync(
-                            turnContext,
-                            postedQnaPairEntity,
-                            postedQnaPairEntity.Description).Result).ConfigureAwait(false);
-                        return default;
-                    }
-                }
-            }
-        }
-
-        /// <summary>
         /// Get the reply to a question asked by end user.
         /// </summary>
         /// <param name="turnContext">Context object containing information cached for a single turn of conversation with a user.</param>
@@ -1671,7 +1368,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     payload = ((JObject)message.Value).ToObject<ResponseCardPayload>();
                 }
 
-                queryResult = await this.qnaServiceProvider.GenerateAnswerAsync(question: text, isTestKnowledgeBase: false, payload.PreviousQuestions?.First().Id.ToString(), payload.PreviousQuestions?.First().Questions.First(), payload.QnAID).ConfigureAwait(false);
+                queryResult = await this.qnaServiceProvider.GenerateAnswerAsync(question: text, isTestKnowledgeBase: false, payload.PreviousQuestions?.Last().Id.ToString(), payload.PreviousQuestions?.Last().Questions.First(), payload.QnAID).ConfigureAwait(false);
 
                 if (queryResult.Answers.First().Id != -1)
                 {
@@ -1681,7 +1378,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     conInfo.Answer = answerData.Answer;
                     conInfo.Score = answerData.Score.ToString();
                     conInfo.Project = (from r in answerData.Metadata where r.Name.Equals("project") select r).FirstOrDefault()?.Value;
-                    conInfo.PreviousQnAID = payload.PreviousQuestions?.First().Id.ToString();
+                    conInfo.PreviousQnAID = payload.PreviousQuestions?.Last().Id.ToString();
 
                     StringBuilder sb = new StringBuilder();
                     if (answerData?.Context.Prompts.Count > 0)
@@ -1734,6 +1431,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                             // Send recommend
                             await turnContext.SendActivityAsync(MessageFactory.Attachment(RecommendCard.GetCard(conList, this.options.AppId, this.appBaseUri))).ConfigureAwait(false);
 
+                            // Save user action
+                            UserActionEntity userAction = await this.GeneratePersonalActionEntityAsync(turnContext, cancellationToken);
+                            userAction.Action = nameof(UserActionType.Recommended);
+                            userAction.Remark = text;
+                            await this.userActionProvider.UpsertUserActionAsync(userAction).ConfigureAwait(false);
+
                             conPro.ContinousFailureTimes = 0;
                             conPro.LastRecommendTime = DateTime.Now;
                         }
@@ -1748,6 +1451,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 var userDetails = await AdaptiveCardHelper.GetUserDetailsInPersonalChatAsync(turnContext, cancellationToken).ConfigureAwait(false);
                 conInfo.UserName = userDetails.Name;
                 conInfo.UserPrincipalName = userDetails.UserPrincipalName;
+                conInfo.UserObjectId = userDetails.AadObjectId;
+                conInfo.SessionId = await this.conversationProvider.GetSessionIdAsync(userDetails.UserPrincipalName, this.options.SessionExpiryInMinutes);
+                conInfo.ConversationTime = DateTime.UtcNow;
 
                 await this.conversationProvider.UpsertConversationAsync(conInfo).ConfigureAwait(false);
             }
@@ -1825,22 +1531,32 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             List<ExpertEntity> experts = new List<ExpertEntity>();
             foreach (TeamsChannelAccount account in accounts)
             {
-                experts.Add(new ExpertEntity()
+                if (account.UserPrincipalName == "yuan-hao.cai@ubisoft.com")
                 {
-                    ID = account.AadObjectId,
-                    Name = account.Name,
-                    GivenName = account.GivenName,
-                    Surname = account.Surname,
-                    Email = account.Email,
-                    UserPrincipalName = account.UserPrincipalName,
-                    TenantId = account.TenantId,
-                    UserRole = account.UserRole,
-                });
+                    experts.Add(new ExpertEntity()
+                    {
+                        ID = account.AadObjectId,
+                        Name = account.Name,
+                        GivenName = account.GivenName,
+                        Surname = account.Surname,
+                        Email = account.Email,
+                        UserPrincipalName = account.UserPrincipalName,
+                        TenantId = account.TenantId,
+                        UserRole = account.UserRole,
+                    });
+                }
             }
 
             await this.expertProvider.UpserExpertsAsync(experts);
         }
 
+        /// <summary>
+        /// Create mention by user name.
+        /// </summary>
+        /// <param name="turnContext">Context object containing information cached for a single turn of conversation with a user.</param>
+        /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+        /// <param name="name">member name.</param>
+        /// <returns>a mention entity.</returns>
         private async Task<Mention> MentionSomeoneByName(ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken, string name)
         {
             var members = await this.GetTeamsChannelMembers(turnContext, cancellationToken);
@@ -1880,17 +1596,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         private async Task<List<string>> GetRecommendQuestionsAsync()
         {
             var ceList = await this.conversationProvider.GetRecentAskedQnAListAsync(30);
-            Dictionary<int, int> idCountDic = new Dictionary<int, int>();
+            Dictionary<string, int> idCountDic = new Dictionary<string, int>();
             foreach (ConversationEntity ce in ceList)
             {
-                int qnaID = Convert.ToInt32(ce.QnAID);
-                if (!idCountDic.ContainsKey(qnaID))
+                if (!idCountDic.ContainsKey(ce.Question))
                 {
-                    idCountDic.Add(qnaID, 1);
+                    idCountDic.Add(ce.Question, 1);
                 }
                 else
                 {
-                    idCountDic[qnaID]++;
+                    idCountDic[ce.Question]++;
                 }
             }
 
@@ -1915,10 +1630,39 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
             foreach (int i in listNumbers)
             {
-                result.Add(ceList.Where(r => { return Convert.ToInt32(r.QnAID) == list[i].Key; }).FirstOrDefault().Question);
+                result.Add(QnaHelper.CapitalizeString(list[i].Key));
             }
 
             return result;
+        }
+
+        /// <summary>
+        ///  Is information of Teams where this app installed updated.
+        /// </summary>
+        /// <param name="activity">activity.</param>
+        /// <returns>true or false.</returns>
+        private bool IsTeamInformationUpdated(IConversationUpdateActivity activity)
+        {
+            if (activity == null)
+            {
+                return false;
+            }
+
+            var channelData = activity.GetChannelData<TeamsChannelData>();
+            if (channelData == null)
+            {
+                return false;
+            }
+
+            return FaqPlusPlusBot.TeamRenamedEventType.Equals(channelData.EventType, StringComparison.OrdinalIgnoreCase);
+        }
+
+        private async Task<bool> IsExpertAdminAsync(string name)
+        {
+            var experts = await this.expertProvider.GetExpertsAsync();
+            var expert = experts?.Where(r => r.Name == name).FirstOrDefault();
+            var admins = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.ExpertsAdmins);
+            return admins.Split(';').Contains(expert?.UserPrincipalName);
         }
     }
 }

@@ -30,43 +30,45 @@
                         <i class="mdi mdi-access-point mr-1"></i>
                         Unresolved Ticket
                     </div>
-                    <div v-if="isUnResolveddLoading">
+                    <div v-if="isUnResolvedLoading">
                         <div class="spinner-border avatar-md text-primary" role="status"></div>
                     </div>
-                    <div v-else-if="isUnResolveddLoading == false" class="table-responsive">
+                    <div v-else-if="isUnResolvedLoading == false" class="table-responsive">
                         <table class="table table-centered w-100 dt-responsive nowrap" id="tickets-unresolved-datatable">
                             <thead class="thead-light">
                                 <tr>
                                     <th class="all">Title</th>
+                                    <th style="width: 85px;">Action</th>
                                     <th>Description</th>
-                                    <th>Catagory</th>
                                     <th>Request By</th>
                                     <th>CreateTime</th>
+                                    <th>Last Time</th>
                                     <th>Status</th>
                                     <th>Assignee</th>
-                                    <th style="width: 85px;">Action</th>
+
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr v-for="ticket in unResolvedTickets">
                                     <td>
                                         {{ticket.Title|string_short(titleMaxLength)}}
-                                        <a v-if="ticket.Title.length > titleMaxLength" href="javascript:void(0);" class="action-icon" data-toggle="tooltip" v-bind:title="ticket.Title"><span class="text-primary"> <i class="mdi mdi-eye"></i></span></a>
+                                        <a v-if="ticket.Title && ticket.Title.length > titleMaxLength" href="javascript:void(0);" class="action-icon" data-toggle="tooltip" v-bind:title="ticket.Title"><span class="text-primary"> <i class="mdi mdi-eye"></i></span></a>
                                     </td>
-                                    <td>
-                                        {{ticket.Description|string_short(descriptionMaxLength)}}
-                                        <a v-if="ticket.Description.length > descriptionMaxLength" href="javascript:void(0);" class="action-icon" data-toggle="tooltip" v-bind:title="ticket.Description"><span class="text-primary"> <i class="mdi mdi-eye"></i></span></a>
-                                    </td>
-                                    <td>{{ticket.Subject}}</td>
-                                    <td>{{ticket.RequesterName}} <a href="javascript:void(0);" class="action-icon" data-toggle="tooltip" title="chat with user" v-on:click="opendeeplink(ticket.RequesterUserPrincipalName)"> <span class="text-primary"><i class="dripicons-message"></i></span></a></td>
-                                    <td>{{ticket.DateCreated|time_local}}</td>
-                                    <td v-if="ticket.Status == '0'"><span class="badge badge-secondary badge-pill">{{ticket.Status|status}}</span></td>
-                                    <td v-else-if="ticket.Status == '1'"><span class="badge badge-success badge-pill">{{ticket.Status|status}}</span></td>
-                                    <td v-else-if="ticket.Status == '2'"><span class="badge badge-warning badge-pill">{{ticket.Status|status}}</span></td>
-                                    <td>{{ticket.AssignedToName}}</td>
                                     <td class="table-action">
                                         <a href="javascript:void(0);" class="action-icon" data-toggle="tooltip" title="go to ticket card" v-on:click="deepLinkToTicket(ticket.SmeThreadConversationId)"><span class="text-primary"><i class="dripicons-enter"></i></span></a>
                                     </td>
+                                    <td>
+                                        {{ticket.Description|string_short(descriptionMaxLength)}}
+                                        <a v-if="ticket.Description && ticket.Description.length > descriptionMaxLength" href="javascript:void(0);" class="action-icon" data-toggle="tooltip" v-bind:title="ticket.Description"><span class="text-primary"> <i class="mdi mdi-eye"></i></span></a>
+                                    </td>
+                                    <td>{{ticket.RequesterName}} <a href="javascript:void(0);" class="action-icon" data-toggle="tooltip" title="chat with user" v-on:click="opendeeplink(ticket.RequesterUserPrincipalName)"> <span class="text-primary"><i class="dripicons-message"></i></span></a></td>
+                                    <td>{{ticket.DateCreated|time_local}}</td>
+                                    <td>{{ticket.DateCreated|lastTimeUnResolved}}</td>
+                                    <td v-if="ticket.Status == '0'"><span class="badge badge-secondary badge-pill">{{ticket.Status|status}}</span></td>
+                                    <td v-else-if="ticket.Status == '1'"><span class="badge badge-success badge-pill">{{ticket.Status|status}}</span></td>
+                                    <td v-else-if="ticket.Status == '2'"><span class="badge badge-warning badge-pill">{{ticket.Status|status}}</span></td>
+                                    <td v-else-if="ticket.Status == '4'"><span class="badge badge-warning badge-pill">{{ticket.Status|status}}</span></td>
+                                    <td>{{ticket.AssignedToName}}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -93,10 +95,11 @@
                                 <tr>
                                     <th class="all">Title</th>
                                     <th>Description</th>
-                                    <th>Catagory</th>
                                     <th>Request By</th>
+                                    <th>Resolved By</th>
                                     <th>ResolveTime</th>
-                                    <th>Assignee</th>
+                                    <th>Last Time</th>
+
                                     <th style="width: 85px;">Action</th>
                                 </tr>
                             </thead>
@@ -104,17 +107,16 @@
                                 <tr v-for="ticket in resolvedTickets">
                                     <td>
                                         {{ticket.Title|string_short(titleMaxLength)}}
-                                        <a v-if="ticket.Title.length > titleMaxLength" href="javascript:void(0);" class="action-icon" data-toggle="tooltip" v-bind:title="ticket.Title"><span class="text-primary"> <i class="mdi mdi-eye"></i></span></a>
+                                        <a v-if="ticket.Title && ticket.Title.length > titleMaxLength" href="javascript:void(0);" class="action-icon" data-toggle="tooltip" v-bind:title="ticket.Title"><span class="text-primary"> <i class="mdi mdi-eye"></i></span></a>
                                     </td>
                                     <td>
                                         {{ticket.Description|string_short(descriptionMaxLength)}}
-                                        <a v-if="ticket.Description.length > descriptionMaxLength" href="javascript:void(0);" class="action-icon" data-toggle="tooltip" v-bind:title="ticket.Description"><span class="text-primary"> <i class="mdi mdi-eye"></i></span></a>
+                                         <a v-if="ticket.Description && ticket.Description.length > descriptionMaxLength" href="javascript:void(0);" class="action-icon" data-toggle="tooltip" v-bind:title="ticket.Description"><span class="text-primary"> <i class="mdi mdi-eye"></i></span></a>
                                     </td>
-                                    <td>{{ticket.Subject}}</td>
                                     <td>{{ticket.RequesterName}} </td>
-                                    @*<td>{{ticket.DateCreated|time_local}}</td>*@
-                                    <td>{{ticket.DateClosed|time_local}}</td>
                                     <td>{{ticket.AssignedToName}}</td>
+                                    <td>{{ticket.DateClosed|time_local}}</td>
+                                    <td>{{ticket.DateCreated|lastTimeResolved(ticket.DateClosed)}}</td>
                                     <td class="table-action">
                                         <a href="javascript:void(0);" class="action-icon" data-toggle="tooltip" title="go to ticket card" v-on:click="deepLinkToTicket(ticket.SmeThreadConversationId)"><span class="text-primary"><i class="dripicons-enter"></i></span></a>
                                     </td>
@@ -133,7 +135,7 @@
         el: '#app',
         data: {
             isResolvedLoading: true,
-            isUnResolveddLoading: true,
+            isUnResolvedLoading: true,
             unResolvedTickets: [],
             resolvedTickets: [],
             teamId: "",
@@ -144,11 +146,18 @@
             titleMaxLength: 10,
             descriptionMaxLength: 15,
         },
+        beforeCreate()
+        {
+            this.$options.filters.lastTimeResolved = this.$options.filters.lastTimeResolved.bind(this);
+            this.$options.filters.lastTimeUnResolved = this.$options.filters.lastTimeUnResolved.bind(this)
+        },
         methods: {
-            updateUnresolvedData: function (data) {
-                this.isUnResolveddLoading = false
+            updateUnresolvedData: function (data)
+            {
+                this.isUnResolvedLoading = false
                 this.unResolvedTickets = data;
-                this.sleep(200).then(() => {
+                this.sleep(200).then(() =>
+                {
                     $("#tickets-unresolved-datatable").DataTable({
                         language: {
                             paginate: {
@@ -188,16 +197,19 @@
                             style: "multi"
                         },
                         order: [[1, "asc"]],
-                        drawCallback: function () {
+                        drawCallback: function ()
+                        {
                             $(".dataTables_paginate > .pagination").addClass("pagination-rounded")
                         }
                     })
                 });
             },
-            updateResolvedData: function (data) {
+            updateResolvedData: function (data)
+            {
                 this.isResolvedLoading = false
                 this.resolvedTickets = data;
-                this.sleep(200).then(() => {
+                this.sleep(200).then(() =>
+                {
                     $("#tickets-resolved-datatable").DataTable({
                         language: {
                             paginate: {
@@ -213,46 +225,52 @@
                                 orderable: !0
                             },
                             {
-                                orderable: !0
-                            },
-                            {
-                                orderable: !0
-                            },
-                            {
-                                orderable: !0
-                            },
-                            {
-                                orderable: !0
-                            },
-                            {
-                                orderable: !0
-                            },
-                            {
                                 orderable: !1
+                            },
+                            {
+                                orderable: !0
+                            },
+                            {
+                                orderable: !0
+                            },
+                            {
+                                orderable: !0
+                            },
+                            {
+                                orderable: !0
+                            },
+                            {
+                                orderable: !0
                             }],
                         select: {
                             style: "multi"
                         },
                         order: [[1, "asc"]],
-                        drawCallback: function () {
+                        drawCallback: function ()
+                        {
                             $(".dataTables_paginate > .pagination").addClass("pagination-rounded")
                         }
                     })
                 });
             },
-            opendeeplink: function (link) {
+            opendeeplink: function (link)
+            {
                 microsoftTeams.executeDeepLink(link);
             },
-            deepLinkToTicket: function (messageId) {
+            deepLinkToTicket: function (messageId)
+            {
                 var link = "https://teams.microsoft.com/l/message/" + this.teamId + "/" + messageId + "?tenantId=" + this.tenantId + "&groupId=" + this.groupId + "&parentMessageId=" + messageId + "&teamName=" + encodeURIComponent(this.teamName) + "&channelName=" + encodeURIComponent(this.channelName);
                 this.opendeeplink(link);
             },
-            sleep: function (time) {
+            sleep: function (time)
+            {
                 return new Promise((resolve) => setTimeout(resolve, time));
             }
         },
-        mounted() {
-            microsoftTeams.getContext((context) => {
+        mounted()
+        {
+            microsoftTeams.getContext((context) =>
+            {
                 this.teamId = context.teamId;
                 this.tenantId = context.tid;
                 this.groupId = context.groupId;
@@ -261,48 +279,99 @@
             });
             axios
                 .post('/content/tickets', { isResolved: false })
-                .then((response) => {
+                .then((response) =>
+                {
                     this.updateUnresolvedData(response.data);
                 })
-                .catch(function (error) { // 请求失败处理
+                .catch(function (error)
+                { // 请求失败处理
                     console.log(error);
                 });
             axios
                 .post('/content/tickets', { isResolved: true })
-                .then((response) => {
+                .then((response) =>
+                {
                     this.updateResolvedData(response.data);
                 })
-                .catch(function (error) { // 请求失败处理
+                .catch(function (error)
+                { // 请求失败处理
                     console.log(error);
                 });
         },
         filters: {
-            status: function (value) {
+            status: function (value)
+            {
                 if (value == 0)
                     return "unassigned"
                 if (value == 1)
                     return "assigned"
                 if (value == 2)
                     return "pending"
+                if (value == 3)
+                    return "resolved"
+                if (value == 4)
+                    return "SOS"
             },
-            string_short: function (value, maxlength) {
+            string_short: function (value, maxlength)
+            {
+                if (value == null)
+                {
+                    return "";
+                }
+
                 if (value.length > maxlength)
                     return value.substring(0, maxlength) + "……"
                 else return value
             },
-            time_local: function (value) {
+            time_local: function (value)
+            {
                 var localDate = new Date(value);
-                return formatDate(localDate, "yyyy-MM-d h:mm");
+                return formatDate(localDate, "yyyy-MM-d H:mm");
+            },
+            timeJet: function (dateBegin, dateEnd)
+            {
+
+                var dateDiff = dateEnd.getTime() - dateBegin.getTime();//时间差的毫秒数
+                var dayDiff = Math.floor(dateDiff / (24 * 3600 * 1000));//计算出相差天数
+                var leave1 = dateDiff % (24 * 3600 * 1000)    //计算天数后剩余的毫秒数
+                var hours = Math.floor(leave1 / (3600 * 1000))//计算出小时数
+                //计算相差分钟数
+                var leave2 = leave1 % (3600 * 1000)    //计算小时数后剩余的毫秒数
+                var minutes = Math.floor(leave2 / (60 * 1000))//计算相差分钟数
+                //计算相差秒数
+                var leave3 = leave2 % (60 * 1000)      //计算分钟数后剩余的毫秒数
+                var seconds = Math.round(leave3 / 1000)
+
+                var result = "";
+                if (dayDiff > 0) { result += dayDiff + "d " }
+                if (hours > 0) { result += hours + "h " }
+                if (minutes > 0) { result += minutes + "m " }
+
+                return result;
+            },
+            lastTimeResolved: function (value, endtime)
+            {
+                var dateBegin = new Date(value);
+                var dateEnd = new Date(endtime);
+                return this.$options.filters.timeJet(dateBegin, dateEnd)
+            },
+            lastTimeUnResolved: function (value)
+            {
+                var dateBegin = new Date(value);
+                var dateEnd = new Date();
+                return this.$options.filters.timeJet(dateBegin, dateEnd)
             }
         }
     })
-    function formatDate(date, format, utc) {
+    function formatDate(date, format, utc)
+    {
         var MMMM = ["\x00", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
         var MMM = ["\x01", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
         var dddd = ["\x02", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
         var ddd = ["\x03", "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-        function ii(i, len) {
+        function ii(i, len)
+        {
             var s = i + "";
             len = len || 2;
             while (s.length < len) s = "0" + s;
@@ -359,7 +428,8 @@
 
         var tz = -date.getTimezoneOffset();
         var K = utc || !tz ? "Z" : tz > 0 ? "+" : "-";
-        if (!utc) {
+        if (!utc)
+        {
             tz = Math.abs(tz);
             var tzHrs = Math.floor(tz / 60);
             var tzMin = tz % 60;

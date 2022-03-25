@@ -17,6 +17,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         public const string PendingAction = "Pending";
 
         /// <summary>
+        /// Action that change update a pending comment.
+        /// </summary>
+        public const string PendingUpdateAction = "PendingUpdate";
+
+        /// <summary>
         /// Action that resolve a ticket.
         /// </summary>
         public const string ResolveAction = "Resolve";
@@ -30,6 +35,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         /// Action that assigns a ticket to the other persion in expert channel.
         /// </summary>
         public const string AssignToOthersAction = "AssignToOthers";
+
+        /// <summary>
+        /// Action that creat a SOS ticket.
+        /// </summary>
+        public const string CreateSoSTicketAction = "CreateSOSTicket";
 
         /// <summary>
         /// Gets or sets the ticket id.
@@ -60,5 +70,29 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         /// </summary>
         [JsonProperty("otherAssigneeInfo")]
         public string OtherAssigneeInfo { get; set; }
+
+        /// <summary>
+        /// Gets or sets the SOS topic.
+        /// </summary>
+        [JsonProperty("SOSTopic")]
+        public string SOSTopic { get; set; }
+
+        /// <summary>
+        /// Gets or sets the SOS description.
+        /// </summary>
+        [JsonProperty("SOSDescription")]
+        public string SOSDescription { get; set; }
+
+        /// <summary>
+        /// Gets or sets the SOS Title.
+        /// </summary>
+        [JsonProperty("SOSTitle")]
+        public string SOSTitle { get; set; }
+
+        /// <summary>
+        /// Gets or sets the SOS Watch List.
+        /// </summary>
+        [JsonProperty("SOSWatchList")]
+        public string SOSWatchList { get; set; }
     }
 }

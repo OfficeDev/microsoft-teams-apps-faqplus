@@ -16,12 +16,22 @@
         /// <returns>that resolves successfully if the data was saved successfully.</returns>
         Task UpsertConversationAsync(ConversationEntity conversation);
 
-
         /// <summary>
         /// get recently asked questions with answers.
         /// </summary>
         /// <param name="days">recent n days.</param>
         /// <returns>list of conversation entity.</returns>
         Task<List<ConversationEntity>> GetRecentAskedQnAListAsync(int days);
+
+        /// <summary>
+        /// Get conversation Id.
+        /// </summary>
+        /// <param name="userPrincipalName">user email.</param>
+        /// <param name="expiryMinute">session expriy in minutes.</param>
+        /// <returns>sessionId of current conversation.</returns>
+        Task<string> GetSessionIdAsync(string userPrincipalName, int expiryMinute);
+
+
+        Task<List<ConversationEntity>> GetAllQnAListAsync();
     }
 }

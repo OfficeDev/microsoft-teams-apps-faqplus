@@ -20,6 +20,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
     {
         private readonly TicketEntity ticket;
         private readonly List<ExpertEntity> experts;
+        private readonly string executor;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SmeTicketCard"/> class.
@@ -35,10 +36,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// </summary>
         /// <param name="ticket">The ticket model with the latest details.</param>
         /// <param name="experts">Experts details in expert channel.</param>
-        public SmeTicketCard(TicketEntity ticket, List<ExpertEntity> experts)
+        /// <param name="executor">The name of whom execute this operation.</param>
+        public SmeTicketCard(TicketEntity ticket, List<ExpertEntity> experts, string executor = null)
         {
             this.ticket = ticket;
             this.experts = experts;
+            this.executor = executor;
         }
 
         /// <summary>
@@ -98,11 +101,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 {
                     feedbackEmjio = "face_smile.png";
                 }
-                else if (this.ticket.Feedback == nameof(TicketSatisficationRating.Neutral))
-                {
-                    feedbackEmjio = "face_straigh.png";
-                }
-                else if (this.ticket.Feedback == nameof(TicketSatisficationRating.Disappointed))
+
+                if (this.ticket.Feedback == nameof(TicketSatisficationRating.Disappointed))
                 {
                     feedbackEmjio = "face_sad.png";
                 }
@@ -172,6 +172,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 IconUrl = appBaseUri + "/content/change.png",
             });
 
+            if (this.ticket.Status == (int)TicketState.Assigned || this.ticket.Status == (int)TicketState.UnAssigned)
+            {
+                actionsList.Add(this.CreateSOSAction(appBaseUri));
+            }
+
             if (!string.IsNullOrEmpty(this.Ticket.KnowledgeBaseAnswer))
             {
                 actionsList.Add(new AdaptiveShowCardAction
@@ -214,9 +219,77 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         }
 
         /// <summary>
+        /// Create an adaptive card action that create sos ticket.
+        /// </summary>
+        /// <param name="appBaseUri">The base URI where the app is hosted.</param>
+        /// <returns>Adaptive card action for creating sos ticket.</returns>
+        private AdaptiveAction CreateSOSAction(string appBaseUri)
+        {
+            var action = new AdaptiveShowCardAction
+            {
+                Title = " ",
+                Card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 2))
+                {
+                    Body = new List<AdaptiveElement>
+                    {
+                        this.GetTicketsTopicChoiceInput(),
+                        new AdaptiveTextBlock
+                        {
+                            Text = Strings.DescriptionText,
+                            Wrap = true,
+                        },
+                        new AdaptiveTextInput
+                        {
+                            Spacing = AdaptiveSpacing.Small,
+                            Id = nameof(ChangeTicketStatusPayload.SOSDescription),
+                            Placeholder = Strings.SOSTicketDescriptionPlaceholderText,
+                            IsMultiline = true,
+                            Value = this.ticket.Description,
+                        },
+                        new AdaptiveTextBlock
+                        {
+                            Text = Strings.WatchListText,
+                            Wrap = true,
+                        },
+                        new AdaptiveChoiceSetInput
+                        {
+                            IsMultiSelect = true,
+                            Spacing = AdaptiveSpacing.Small,
+                            Id = nameof(ChangeTicketStatusPayload.SOSWatchList),
+                            AdditionalProperties = new SerializableDictionary<string, object>
+                            {
+                                {
+                                    "choices.data", new SerializableDictionary<string, object>()
+                                    {
+                                        { "type", "Data.Query" },
+                                        { "dataset", "graph.microsoft.com/users" },
+                                    }
+                                },
+                            },
+                        },
+                    },
+                    Actions = new List<AdaptiveAction>
+                    {
+                        new AdaptiveSubmitAction
+                        {
+                            Data = new ChangeTicketStatusPayload
+                            {
+                                Action = ChangeTicketStatusPayload.CreateSoSTicketAction,
+                                TicketId = this.Ticket.TicketId,
+                                SOSTitle = this.ticket.Title,
+                            },
+                        },
+                    },
+                },
+                IconUrl = appBaseUri + "/content/SOS.png",
+            };
+            return action;
+        }
+
+        /// <summary>
         /// Create change state actions.
         /// </summary>
-        /// <returns>action list</returns>
+        /// <returns>action list.</returns>
         private List<AdaptiveAction> BuildChangeStatesActions()
         {
             List<AdaptiveAction> actionsList = new List<AdaptiveAction>();
@@ -235,11 +308,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             else if (this.Ticket.Status == (int)TicketState.Pending)
             {
                 actionsList.Add(this.CreateResolveAction());
+                actionsList.Add(this.CreatePendingUpdateAction());
             }
             else if (this.Ticket.Status == (int)TicketState.Resolved)
             {
                 actionsList.Add(this.CreateAssignToMeAction());
                 actionsList.Add(this.CreateAssignToOthersAction());
+            }
+            else if (this.Ticket.Status == (int)TicketState.SOSInProgress)
+            {
+                actionsList.Add(this.CreateResolveAction());
             }
 
             return actionsList;
@@ -275,7 +353,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 {
                     Body = new List<AdaptiveElement>
                     {
-                        this.GetAdaptiveChoiceSetInput(),
+                        this.GetExpertsChoiceSetInput(),
                     },
                     Actions = new List<AdaptiveAction>
                     {
@@ -307,7 +385,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     {
                          new AdaptiveTextBlock
                          {
-                             Text = Strings.CommentText,
+                             Text = Strings.PendingCommentText,
                              Wrap = true,
                          },
                          new AdaptiveTextInput
@@ -334,6 +412,47 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         }
 
         /// <summary>
+        /// Create pending update action.
+        /// </summary>
+        /// <returns>action.</returns>
+        private AdaptiveAction CreatePendingUpdateAction()
+        {
+            return new AdaptiveShowCardAction
+            {
+                Title = Strings.PendingUpdateActionTitle,
+                Card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
+                {
+                    Body = new List<AdaptiveElement>
+                    {
+                         new AdaptiveTextBlock
+                         {
+                             Text = Strings.PendingCommentText,
+                             Wrap = true,
+                         },
+                         new AdaptiveTextInput
+                         {
+                             Spacing = AdaptiveSpacing.Small,
+                             Id = nameof(ChangeTicketStatusPayload.PendingComment),
+                             Placeholder = Strings.CommentPlachHonderText,
+                             IsMultiline = true,
+                         },
+                    },
+                    Actions = new List<AdaptiveAction>
+                    {
+                        new AdaptiveSubmitAction
+                        {
+                            Data = new ChangeTicketStatusPayload
+                            {
+                                TicketId = this.Ticket.TicketId,
+                                Action = ChangeTicketStatusPayload.PendingUpdateAction,
+                            },
+                        },
+                    },
+                },
+            };
+        }
+
+        /// <summary>
         /// Create resolve action.
         /// </summary>
         /// <returns>action.</returns>
@@ -348,7 +467,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     {
                          new AdaptiveTextBlock
                          {
-                             Text = Strings.CommentText,
+                             Text = Strings.ResolveCommentText,
                              Wrap = true,
                          },
                          new AdaptiveTextInput
@@ -357,6 +476,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                              Id = nameof(ChangeTicketStatusPayload.ResolveComment),
                              Placeholder = Strings.CommentPlachHonderText,
                              IsMultiline = true,
+                             Value = Strings.DefaultResolutionComment,
                          },
                     },
                     Actions = new List<AdaptiveAction>
@@ -406,7 +526,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 factList.Add(new AdaptiveFact
                 {
                     Title = Strings.DescriptionFact,
-                    Value = this.Ticket.Description,
+                    Value = this.Ticket.Description.Replace(@"\", @"\\"),
                 });
             }
 
@@ -422,7 +542,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             factList.Add(new AdaptiveFact
             {
                 Title = Strings.StatusFactTitle,
-                Value = CardHelper.GetTicketDisplayStatusForSme(this.Ticket),
+                Value = CardHelper.GetTicketDisplayStatusForSme(this.Ticket, this.executor),
             });
 
             if (this.Ticket.Status == (int)TicketState.Pending)
@@ -430,7 +550,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 factList.Add(new AdaptiveFact
                 {
                     Title = Strings.CommentText,
-                    Value = this.Ticket.PendingComment,
+                    Value = TicketEntity.GetPendingComment(this.ticket).Replace(@"\", @"\\"),
                 });
             }
 
@@ -445,7 +565,25 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 factList.Add(new AdaptiveFact
                 {
                     Title = Strings.CommentText,
-                    Value = this.Ticket.ResolveComment,
+                    Value = this.Ticket.ResolveComment.Replace(@"\", @"\\"),
+                });
+            }
+
+            if (!string.IsNullOrEmpty(this.Ticket.FeedbackDescription))
+            {
+                factList.Add(new AdaptiveFact
+                {
+                    Title = Strings.UserfeedbackDescriptionFact,
+                    Value = this.Ticket.FeedbackDescription,
+                });
+            }
+
+            if (this.ticket.Status == (int)TicketState.SOSInProgress || !string.IsNullOrEmpty(this.ticket.SOSTicketNumber))
+            {
+                factList.Add(new AdaptiveFact
+                {
+                    Title = Strings.SOSFact,
+                    Value = $"[{this.Ticket.SOSTicketNumber}]({this.Ticket.SOSLink})",
                 });
             }
 
@@ -456,7 +594,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// Return the appropriate status choices based on the state and information in the ticket.
         /// </summary>
         /// <returns>An adaptive element which contains the dropdown choices.</returns>
-        private AdaptiveChoiceSetInput GetAdaptiveChoiceSetInput()
+        private AdaptiveChoiceSetInput GetExpertsChoiceSetInput()
         {
             AdaptiveChoiceSetInput choiceSet = new AdaptiveChoiceSetInput
             {
@@ -471,15 +609,91 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 choices.Add(new AdaptiveChoice()
                 {
                     Title = expert.Name,
-                    Value = $"{expert.Name}:{expert.ID}",
+                    Value = $"{expert.Name}:{expert.ID}:{expert.UserPrincipalName}",
                 });
             }
 
             choiceSet.Choices = choices;
             if (this.experts.Count > 0)
             {
-                choiceSet.Value = $"{this.experts[0].Name}:{this.experts[0].ID}";
+                choiceSet.Value = $"{this.experts[0].Name}:{this.experts[0].ID}:{this.experts[0].UserPrincipalName}";
             }
+
+            return choiceSet;
+        }
+
+        /// <summary>
+        ///  Return the appropriate IT ticket category.
+        /// </summary>
+        /// <returns>An adaptive element which contains the dropdown choices.</returns>
+        private AdaptiveChoiceSetInput GetTicketsTopicChoiceInput()
+        {
+            AdaptiveChoiceSetInput choiceSet = new AdaptiveChoiceSetInput
+            {
+                Id = nameof(ChangeTicketStatusPayload.SOSTopic),
+                IsMultiSelect = false,
+                Style = AdaptiveChoiceInputStyle.Compact,
+            };
+
+            List<AdaptiveChoice> choices = new List<AdaptiveChoice>();
+            choices.Add(new AdaptiveChoice()
+            {
+                Title = "Other",
+                Value = "Other Service > Request something",
+            });
+            choices.Add(new AdaptiveChoice()
+            {
+                Title = "Workstation > Ask for information",
+                Value = "Workstation > Ask for information",
+            });
+            choices.Add(new AdaptiveChoice()
+            {
+                Title = "Workstation > Retrieve computer",
+                Value = "Workstation > Retrieve computer",
+            });
+            choices.Add(new AdaptiveChoice()
+            {
+                Title = "Workstation > Report abnormal behavior",
+                Value = "Workstation > Report abnormal behavior",
+            });
+            choices.Add(new AdaptiveChoice()
+            {
+                Title = "Workstation > Request new components",
+                Value = "Workstation > Request new components",
+            });
+            choices.Add(new AdaptiveChoice()
+            {
+                Title = "Software > Ask for information",
+                Value = "Software > Ask for information",
+            });
+            choices.Add(new AdaptiveChoice()
+            {
+                Title = "Software > Request a software installation",
+                Value = "Software > Request a software installation",
+            });
+            choices.Add(new AdaptiveChoice()
+            {
+                Title = "Peripherals > Ask for information",
+                Value = "Peripherals > Ask for information",
+            });
+            choices.Add(new AdaptiveChoice()
+            {
+                Title = "Peripherals > Request other peripheral",
+                Value = "Peripherals > Request other peripheral",
+            });
+            choices.Add(new AdaptiveChoice()
+            {
+                Title = "Local Events > Setup streaming / recording",
+                Value = "Local Events > Setup streaming / recording",
+            });
+            choices.Add(new AdaptiveChoice()
+            {
+                Title = "Consoles > Ask for information",
+                Value = "Consoles > Ask for information",
+            });
+
+            choiceSet.Choices = choices;
+            choiceSet.Value = "Other Service > Request something";
 
             return choiceSet;
         }

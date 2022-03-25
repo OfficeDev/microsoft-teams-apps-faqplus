@@ -1,4 +1,8 @@
-﻿namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
+﻿// <copyright file="UserActionEntity.cs" company="Microsoft">
+// Copyright (c) Microsoft. All rights reserved.
+// </copyright>
+
+namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
 {
     using System;
     using System.Collections.Generic;
@@ -54,6 +58,21 @@
         /// Delete an QnA pair in KB.
         /// </summary>
         DeleteQnAPari,
+
+        /// <summary>
+        /// trigger recommend.
+        /// </summary>
+        Recommended,
+
+        /// <summary>
+        /// view my tab.
+        /// </summary>
+        ViewMyTab,
+
+        /// <summary>
+        /// view help tab.
+        /// </summary>
+        ViewHelpTab,
 
         /// <summary>
         /// Not defined.

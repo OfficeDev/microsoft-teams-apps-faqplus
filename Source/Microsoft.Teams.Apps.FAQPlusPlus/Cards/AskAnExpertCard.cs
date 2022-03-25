@@ -92,7 +92,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                 {
                                     new AdaptiveTextBlock
                                     {
-                                        Text = Strings.TitleRequiredText,
+                                        Text = Strings.TitleText,
                                         Wrap = true,
                                     },
                                 },
@@ -169,7 +169,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                             MsTeams = new CardAction
                             {
                                 Type = ActionTypes.MessageBack,
-                                DisplayText = Strings.AskAnExpertDisplayText,
                                 Text = AskAnExpertSubmitText,
                             },
                             UserQuestion = cardPayload?.UserQuestion,

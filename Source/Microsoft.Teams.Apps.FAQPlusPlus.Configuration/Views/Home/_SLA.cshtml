@@ -1,0 +1,67 @@
+﻿
+@model Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Models.SLAViewModel
+
+@using (Ajax.BeginForm("SaveSLAAsync", "Home", new AjaxOptions { HttpMethod = "POST", OnSuccess = "onSaveSuccess", OnFailure = "onSaveFailure" }, htmlAttributes: new { @class = "formToSubmit" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="form-group" data-form-name="SLA">
+        <div class="col-lg-3">
+            @Html.LabelFor(model => model.AssignTimeOut, htmlAttributes: new { @class = "font-bold" })
+            <span class="mandatoryField">*</span>
+            @Html.LabelFor(model => model.UnAssigneInterval, htmlAttributes: new { @class = "font-bold" })
+            <span class="mandatoryField">*</span>
+            @Html.LabelFor(model => model.PendingTimeOut, htmlAttributes: new { @class = "font-bold" })
+            <span class="mandatoryField">*</span>
+            @Html.LabelFor(model => model.PendingInterval, htmlAttributes: new { @class = "font-bold" })
+            <span class="mandatoryField">*</span>
+            @Html.LabelFor(model => model.PendingCCInterval, htmlAttributes: new { @class = "font-bold" })
+            <span class="mandatoryField">*</span>
+            @Html.LabelFor(model => model.ResolveTimeOut, htmlAttributes: new { @class = "font-bold" })
+            <span class="mandatoryField">*</span>
+            @Html.LabelFor(model => model.UnResolveInterval, htmlAttributes: new { @class = "font-bold" })
+            <span class="mandatoryField">*</span>
+            @Html.LabelFor(model => model.UnResolveCCInterval, htmlAttributes: new { @class = "font-bold" })
+            <span class="mandatoryField">*</span>
+            @Html.LabelFor(model => model.ExpertsAdmins, htmlAttributes: new { @class = "font-bold" })
+            <span class="mandatoryField">*</span>
+        </div>
+        <div class="col-lg-5">
+            @Html.TextBoxFor(model => model.AssignTimeOut, htmlAttributes: new { @class = "form-control SLAIdTextBox toggleTextBox", @id = "SLAAssignTimeOut", @placeholder = "Enter a number." })
+            @Html.ValidationMessageFor(model => model.AssignTimeOut, "", htmlAttributes: new { @class = "error-message" })
+
+            @Html.TextBoxFor(model => model.UnAssigneInterval, htmlAttributes: new { @class = "form-control SLAIdTextBox toggleTextBox", @id = "SLAUnAssigneInterval", @placeholder = "Enter a number." })
+            @Html.ValidationMessageFor(model => model.UnAssigneInterval, "", htmlAttributes: new { @class = "error-message" })
+
+            @Html.TextBoxFor(model => model.PendingTimeOut, htmlAttributes: new { @class = "form-control SLAIdTextBox toggleTextBox", @id = "SLAPendingTimeOut", @placeholder = "Enter a number." })
+            @Html.ValidationMessageFor(model => model.PendingTimeOut, "", htmlAttributes: new { @class = "error-message" })
+
+            @Html.TextBoxFor(model => model.PendingInterval, htmlAttributes: new { @class = "form-control SLAIdTextBox toggleTextBox", @id = "SLAPendingInterval", @placeholder = "Enter a number." })
+            @Html.ValidationMessageFor(model => model.PendingInterval, "", htmlAttributes: new { @class = "error-message" })
+
+            @Html.TextBoxFor(model => model.PendingCCInterval, htmlAttributes: new { @class = "form-control SLAIdTextBox toggleTextBox", @id = "SLAPendingCCInterval", @placeholder = "Enter a number." })
+            @Html.ValidationMessageFor(model => model.PendingCCInterval, "", htmlAttributes: new { @class = "error-message" })
+
+            @Html.TextBoxFor(model => model.ResolveTimeOut, htmlAttributes: new { @class = "form-control SLAIdTextBox toggleTextBox", @id = "SLAResolveTimeOut", @placeholder = "Enter a number." })
+            @Html.ValidationMessageFor(model => model.ResolveTimeOut, "", htmlAttributes: new { @class = "error-message" })
+
+            @Html.TextBoxFor(model => model.UnResolveInterval, htmlAttributes: new { @class = "form-control SLAIdTextBox toggleTextBox", @id = "SLAUnResolveInterval", @placeholder = "Enter a number." })
+            @Html.ValidationMessageFor(model => model.UnResolveInterval, "", htmlAttributes: new { @class = "error-message" })
+
+            @Html.TextBoxFor(model => model.UnResolveCCInterval, htmlAttributes: new { @class = "form-control SLAIdTextBox toggleTextBox", @id = "SLAUnResolveCCInterval", @placeholder = "Enter a number." })
+            @Html.ValidationMessageFor(model => model.UnResolveCCInterval, "", htmlAttributes: new { @class = "error-message" })
+
+            @Html.TextBoxFor(model => model.ExpertsAdmins, htmlAttributes: new { @class = "form-control SLAIdTextBox toggleTextBox", @id = "SLAExpertsAdmins", @placeholder = "Enter emails spearated by ';'." })
+            @Html.ValidationMessageFor(model => model.ExpertsAdmins, "", htmlAttributes: new { @class = "error-message" })
+        </div>
+        <div class="col-lg-1">
+            <span id="SLAStorageStatusIcon"></span>
+        </div>
+        <div class="col-lg-3">
+            <input type="button" value="OK" class="btn btn-primary toggleToEditButton" id="SLASubmitButton" />
+            <span class="glyphicon glyphicon-info-sign infoSignMargin" data-toggle="tooltip" title="@Strings.SLAToolTipHoverMessage"></span>
+        </div>
+        <div class="col-lg-offset-3 col-lg-5">
+            <div id="SLAStorageStatusMessage" class="error-message"></div>
+        </div>
+    </div>
+}

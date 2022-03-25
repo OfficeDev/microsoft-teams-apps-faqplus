@@ -23,6 +23,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         public string QnAID { get; set; }
 
         /// <summary>
+        /// Gets or sets the SessionId.
+        /// </summary>
+        public string SessionId { get; set; }
+
+        /// <summary>
         /// Gets or sets user name.
         /// </summary>
         public string UserName { get; set; }
@@ -31,6 +36,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         /// Gets or sets user email.
         /// </summary>
         public string UserPrincipalName { get; set; }
+
+        /// <summary>
+        /// Gets or sets user object id.
+        /// </summary>
+        public string UserObjectId { get; set; }
 
         /// <summary>
         ///  Gets or sets the question user asked.
@@ -61,5 +71,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         ///  Gets or sets the prompts.
         /// </summary>
         public string Prompts { get; set; }
+
+        /// <summary>
+        ///  Gets or sets the prompts.
+        /// </summary>
+        public DateTimeOffset ConversationTime { get; set; }
     }
 }

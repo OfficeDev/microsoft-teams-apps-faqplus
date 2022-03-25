@@ -1,8 +1,11 @@
 {
   "IsEncrypted": false,
   "Values": {
-    "AzureWebJobsStorage": "",
-    "AzureWebJobsDashboard": "",
+    "ServiceBusConnection": "",
+    "StorageAccountConnectionString": "",
+    "IsItExpectedThatTableAlreadyExists": false,
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "AzureWebJobsDashboard": "UseDevelopmentStorage=true",
     "QnAMakerSubscriptionKey": "",
     "QnAMakerApiUrl": "",
     "StorageConnectionString": "",

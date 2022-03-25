@@ -40,7 +40,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Helpers
             var askAnExpertSubmitTextPayload = ((JObject)message.Value).ToObject<AskAnExpertCardPayload>();
 
             // Validate required fields.
-            if (string.IsNullOrWhiteSpace(askAnExpertSubmitTextPayload?.Title) || askAnExpertSubmitTextPayload.Description.Length > 500)
+            if (string.IsNullOrWhiteSpace(askAnExpertSubmitTextPayload?.Title) || askAnExpertSubmitTextPayload.Description?.Length > 500)
             {
                 var updateCardActivity = new Activity(ActivityTypes.Message)
                 {
@@ -83,7 +83,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Helpers
             var shareFeedbackSubmitTextPayload = ((JObject)message.Value).ToObject<ShareFeedbackCardPayload>();
 
             // Validate required fields.
-            if (!Enum.TryParse(shareFeedbackSubmitTextPayload?.Rating, out FeedbackRating rating) || shareFeedbackSubmitTextPayload.DescriptionHelpful?.Length > 500 || shareFeedbackSubmitTextPayload.DescriptionNeedsImprovement?.Length > 500 || shareFeedbackSubmitTextPayload.DescriptionNotHelpful?.Length > 500)
+            if (!Enum.TryParse(shareFeedbackSubmitTextPayload?.Rating, out FeedbackRating rating) || shareFeedbackSubmitTextPayload.DescriptionNotHelpful?.Length > 500)
             {
                 var updateCardActivity = new Activity(ActivityTypes.Message)
                 {
@@ -150,17 +150,25 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Helpers
             IFeedbackProvider feedbackProvider)
         {
             string description = null;
-            if (data.Rating == nameof(FeedbackRating.Helpful))
-            {
-                description = data.DescriptionHelpful;
-            }
-            else if (data.Rating == nameof(FeedbackRating.NeedsImprovement))
-            {
-                description = data.DescriptionNeedsImprovement;
-            }
-            else if (data.Rating == nameof(FeedbackRating.NotHelpful))
+            string rating = data.Rating;
+
+            if (data.Rating == nameof(FeedbackRating.NotHelpful))
             {
                 description = data.DescriptionNotHelpful;
+            }
+
+            // if is ticket feedback
+            if (!string.IsNullOrEmpty(data.TicketId))
+            {
+                switch (data.Rating)
+                {
+                    case nameof(FeedbackRating.Helpful):
+                        rating = nameof(TicketSatisficationRating.Satisfied);
+                        break;
+                    case nameof(FeedbackRating.NotHelpful):
+                        rating = nameof(TicketSatisficationRating.Disappointed);
+                        break;
+                }
             }
 
             FeedbackEntity feedbackEntity = new FeedbackEntity
@@ -169,7 +177,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Helpers
                 UserPrincipalName = member.UserPrincipalName,
                 UserName = member.Name,
                 UserGivenName = member.GivenName,
-                Rating = data.Rating,
+                Rating = rating,
                 Description = description,
                 UserQuestion = data.UserQuestion,
                 KnowledgeBaseAnswer = data.KnowledgeBaseAnswer,

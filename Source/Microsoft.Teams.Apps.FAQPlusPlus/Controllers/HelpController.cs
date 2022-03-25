@@ -3,6 +3,7 @@
 // </copyright>
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Controllers
 {
+    using System;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Options;
@@ -19,15 +20,18 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Controllers
     {
         private readonly IConfigurationDataProvider configurationProvider;
         private readonly BotSettings options;
+        private readonly IUserActionProvider userActionProvider;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HelpController"/> class.
         /// </summary>
         /// <param name="configurationProvider">Configuration provider dependency injection.</param>
+        /// <param name="userActionProvider">UserAction Provider.</param>
         /// <param name="optionsAccessor">A set of key/value application configuration properties for FaqPlusPlus bot.</param>
-        public HelpController(IConfigurationDataProvider configurationProvider, IOptionsMonitor<BotSettings> optionsAccessor)
+        public HelpController(IConfigurationDataProvider configurationProvider, IUserActionProvider userActionProvider, IOptionsMonitor<BotSettings> optionsAccessor)
         {
             this.configurationProvider = configurationProvider;
+            this.userActionProvider = userActionProvider;
             this.options = optionsAccessor.CurrentValue;
         }
 
@@ -35,11 +39,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Controllers
         /// Display help tab.
         /// </summary>
         /// <returns>Help tab view.</returns>
-        public async Task<ActionResult> Index()
+        public ActionResult Index()
         {
-            string helpTabText = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.HelpTabText).ConfigureAwait(false);
-
-            var marked = new MarkedNet.Marked();
             return this.View(nameof(this.Index));
         }
 
@@ -49,16 +50,24 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Controllers
         /// <returns>unresolved tickets list in json format.</returns>
         [HttpPost]
         [Route("/help/appID")]
-        public async Task<ActionResult> AppIDAsync()
+        public async Task<ActionResult> AppIDAsync([FromBody] Parameter para)
         {
             Parameter p = new Parameter();
             p.APPID = this.options.MicrosoftAppId;
+
+            UserActionEntity userAction = new UserActionEntity();
+            userAction.UserPrincipalName = para.UserPrincipleName;
+            userAction.UserActionId = Guid.NewGuid().ToString();
+            userAction.Action = nameof(UserActionType.ViewHelpTab);
+            await this.userActionProvider.UpsertUserActionAsync(userAction).ConfigureAwait(false);
+
             return this.Json(p);
         }
 
         public class Parameter
         {
             public string APPID { get; set; }
+            public string UserPrincipleName { get; set; }
         }
     }
 }

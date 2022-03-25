@@ -185,7 +185,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         /// <param name="isTestKnowledgeBase">Prod or test.</param>
         /// <param name="previousQnAId">Id of previous question.</param>
         /// <param name="previousUserQuery">Previous question information.</param>
-        /// <param name="QnAID">Prompts should carry its QnAID</param>
+        /// <param name="QnAID">Prompts should carry its QnAID.</param>
         /// <returns>QnaSearchResultList result as response.</returns>
         public async Task<QnASearchResultList> GenerateAnswerAsync(string question, bool isTestKnowledgeBase, string previousQnAId = null, string previousUserQuery = null, string QnAID = null)
         {
@@ -196,8 +196,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
                 QnaId = QnAID,
                 IsTest = isTestKnowledgeBase,
                 Question = question?.Trim(),
-                ScoreThreshold = Convert.ToDouble(this.options.ScoreThreshold),
-                RankerType = "QuestionOnly",
+                ScoreThreshold = Convert.ToDouble(this.options.ScoreThreshold, CultureInfo.InvariantCulture),
+                //RankerType = "QuestionOnly",
             };
 
             if (previousQnAId != null && previousUserQuery != null)

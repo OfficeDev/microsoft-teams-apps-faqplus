@@ -19,7 +19,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Strings {
@@ -277,6 +277,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Your request require extra support, the expert has created an SOS ticket for you, you will get help from world wide..
+        /// </summary>
+        public static string CreateSOSUserNotification {
+            get {
+                return ResourceManager.GetString("CreateSOSUserNotification", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to I didn&apos;t find a relevant answer for your question. Would you like me to ask an expert?.
         /// </summary>
         public static string CustomMessage {
@@ -300,6 +309,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         public static string DateFormat {
             get {
                 return ResourceManager.GetString("DateFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Resolved. Please feel free to contact Dolphin if anything we can help. ❤ .
+        /// </summary>
+        public static string DefaultResolutionComment {
+            get {
+                return ResourceManager.GetString("DefaultResolutionComment", resourceCulture);
             }
         }
         
@@ -349,6 +367,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Description (Optional).
+        /// </summary>
+        public static string DescriptionOptionalText {
+            get {
+                return ResourceManager.GetString("DescriptionOptionalText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Open to hear any of your feedback here (500 characters max).
         /// </summary>
         public static string DescriptionPlaceholderText {
@@ -358,7 +385,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Description (Optional).
+        ///   Looks up a localized string similar to Description:.
         /// </summary>
         public static string DescriptionText {
             get {
@@ -619,6 +646,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to My tickets.
+        /// </summary>
+        public static string MyTicketButtonText {
+            get {
+                return ResourceManager.GetString("MyTicketButtonText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Needs Improvement.
         /// </summary>
         public static string NeedsImprovementRatingText {
@@ -664,7 +700,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0},only the owner can change this request! Assigne to yourself first..
+        ///   Looks up a localized string similar to {0},only the owner or admin can change this request! Assigne to yourself first..
         /// </summary>
         public static string NotTicketOwnerWarning {
             get {
@@ -700,11 +736,38 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Pending Comment:.
+        /// </summary>
+        public static string PendingCommentText {
+            get {
+                return ResourceManager.GetString("PendingCommentText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Your request has changed to pending state, experts will investigate and back to you soon..
         /// </summary>
         public static string PendingTicketUserNotification {
             get {
                 return ResourceManager.GetString("PendingTicketUserNotification", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update.
+        /// </summary>
+        public static string PendingUpdateActionTitle {
+            get {
+                return ResourceManager.GetString("PendingUpdateActionTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The comment of your request has been update by expert..
+        /// </summary>
+        public static string PendingUpdateTicketUserNotification {
+            get {
+                return ResourceManager.GetString("PendingUpdateTicketUserNotification", resourceCulture);
             }
         }
         
@@ -790,7 +853,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rating.
+        ///   Looks up a localized string similar to Rating:.
         /// </summary>
         public static string RatingTitle {
             get {
@@ -867,6 +930,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         public static string ResolveActionChoiceTitle {
             get {
                 return ResourceManager.GetString("ResolveActionChoiceTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Resolve Comment:.
+        /// </summary>
+        public static string ResolveCommentText {
+            get {
+                return ResourceManager.GetString("ResolveCommentText", resourceCulture);
             }
         }
         
@@ -1015,6 +1087,24 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The comment of request is updated by {0}..
+        /// </summary>
+        public static string SMEPendingUpdated {
+            get {
+                return ResourceManager.GetString("SMEPendingUpdated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This request is now forward to SOS. Forwarded by {0}..
+        /// </summary>
+        public static string SMESOSStatus {
+            get {
+                return ResourceManager.GetString("SMESOSStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Assigned to {0}.
         /// </summary>
         public static string SMETicketAssignedStatus {
@@ -1042,6 +1132,24 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to SOS In Progress.
+        /// </summary>
+        public static string SMETicketSOSInProgressStatus {
+            get {
+                return ResourceManager.GetString("SMETicketSOSInProgressStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SOS forwarded by {0} .
+        /// </summary>
+        public static string SMETicketSOSStatus {
+            get {
+                return ResourceManager.GetString("SMETicketSOSStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unassigned.
         /// </summary>
         public static string SMETicketUnassignedStatus {
@@ -1056,6 +1164,33 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         public static string SMEUserChatMessage {
             get {
                 return ResourceManager.GetString("SMEUserChatMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SOS:.
+        /// </summary>
+        public static string SOSFact {
+            get {
+                return ResourceManager.GetString("SOSFact", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The description to create SOS ticket..
+        /// </summary>
+        public static string SOSTicketDescriptionPlaceholderText {
+            get {
+                return ResourceManager.GetString("SOSTicketDescriptionPlaceholderText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please input user&apos;s mail address, e.g: sample1@ubisoft.com;sample2@ubisoft.com.
+        /// </summary>
+        public static string SOSTicketWatchListPlaceholderText {
+            get {
+                return ResourceManager.GetString("SOSTicketWatchListPlaceholderText", resourceCulture);
             }
         }
         
@@ -1222,11 +1357,20 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Thanks for your feedback! I&apos;ve shared it with the experts. This helps me learn and improve..
+        ///   Looks up a localized string similar to Thanks for your feedback!  ❤~ I&apos;ve shared it with the experts. This helps me learn and improve..
         /// </summary>
         public static string ThankYouTextContent {
             get {
                 return ResourceManager.GetString("ThankYouTextContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}, you must choose an expert!.
+        /// </summary>
+        public static string TicketAssignedToEmptyWarning {
+            get {
+                return ResourceManager.GetString("TicketAssignedToEmptyWarning", resourceCulture);
             }
         }
         
@@ -1276,11 +1420,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Title (Required).
+        ///   Looks up a localized string similar to Title:.
         /// </summary>
-        public static string TitleRequiredText {
+        public static string TitleText {
             get {
-                return ResourceManager.GetString("TitleRequiredText", resourceCulture);
+                return ResourceManager.GetString("TitleText", resourceCulture);
             }
         }
         
@@ -1330,6 +1474,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Feedback:.
+        /// </summary>
+        public static string UserfeedbackDescriptionFact {
+            get {
+                return ResourceManager.GetString("UserfeedbackDescriptionFact", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to User Guide.
         /// </summary>
         public static string UserGuideButtonText {
@@ -1344,6 +1497,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         public static string UserNotificationFooterText {
             get {
                 return ResourceManager.GetString("UserNotificationFooterText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to View your tickets:.
+        /// </summary>
+        public static string UserNotificationUpdateFooterText {
+            get {
+                return ResourceManager.GetString("UserNotificationUpdateFooterText", resourceCulture);
             }
         }
         
@@ -1371,6 +1533,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         public static string WaitMessageAnswer {
             get {
                 return ResourceManager.GetString("WaitMessageAnswer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Watch List:.
+        /// </summary>
+        public static string WatchListText {
+            get {
+                return ResourceManager.GetString("WatchListText", resourceCulture);
             }
         }
         

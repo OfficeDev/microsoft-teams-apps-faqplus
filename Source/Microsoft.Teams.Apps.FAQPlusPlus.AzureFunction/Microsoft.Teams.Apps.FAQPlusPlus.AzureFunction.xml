@@ -9,7 +9,7 @@
             Azure Function to publish QnA Maker knowledge base.
             </summary>
         </member>
-        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.PublishFunction.#ctor(Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers.IQnaServiceProvider,Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers.IConfigurationDataProvider,Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers.ISearchServiceDataProvider,Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers.IKnowledgeBaseSearchService)">
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.PublishFunction.#ctor(Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.Providers.IQnaServiceProvider,Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.Providers.IConfigurationDataProvider,Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.Providers.ISearchServiceDataProvider,Microsoft.Teams.Apps.FAQPlusPlus.AzureFunctionCommon.Providers.IKnowledgeBaseSearchService)">
             <summary>
             Initializes a new instance of the <see cref="T:Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.PublishFunction"/> class.
             </summary>

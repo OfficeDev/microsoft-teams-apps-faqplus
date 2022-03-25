@@ -164,7 +164,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// </summary>
         /// <param name="userQuestion">The user question - the actual question asked to the bot.</param>
         /// <param name="answer">The answer string.</param>
-        /// <param name="project"> the value of project metadata </param>
+        /// <param name="project"> the value of project metadata.</param>
         /// <param name="appBaseUri">The base URI where the app is hosted.</param>
         /// <returns>A list of adaptive actions.</returns>
         private static List<AdaptiveAction> BuildListOfActions(string userQuestion, string answer, string project, string appBaseUri)
@@ -224,7 +224,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         private static List<QnADTO> BuildListOfPreviousQuestions(int id, string userQuestion, string answer, ResponseCardPayload payload)
         {
             var previousQuestions = payload.PreviousQuestions ?? new List<QnADTO>();
-
+            previousQuestions.Clear();
             previousQuestions.Add(new QnADTO
             {
                 Id = id,

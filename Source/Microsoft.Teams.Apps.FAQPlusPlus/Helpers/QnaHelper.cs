@@ -127,6 +127,27 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Helpers
         }
 
         /// <summary>
+        /// capitalize all words in a string.
+        /// </summary>
+        /// <param name="str">input string.</param>
+        /// <returns>processed string.</returns>
+        public static string CapitalizeString(string str)
+        {
+            string[] strArray = str.Split(" ".ToCharArray());
+            string result = string.Empty;
+            for (int i = 0; i < strArray.Length; i++)
+            {
+                result += Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(strArray[i]);
+                if (i != strArray.Length - 1)
+                {
+                    result += " ";
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// Checks whether question exist in production/test knowledgebase.
         /// </summary>
         /// <param name="provider">Qna service provider.</param>
