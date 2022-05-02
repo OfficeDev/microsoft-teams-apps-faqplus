@@ -57,7 +57,7 @@ IF DEFINED CLEAN_LOCAL_DEPLOYMENT_TEMP (
   mkdir "%DEPLOYMENT_TEMP%"
 )
 
-SET MSBUILD_PATH=%MSBUILD_16_DIR%\MSBuild.exe
+SET MSBUILD_PATH=%MSBUILD_1670_DIR%\MSBuild.exe
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 :: Deployment
@@ -67,7 +67,7 @@ echo Handling .NET Web Application deployment.
 
 :: 1. Restore NuGet packages
 IF /I "Source\Microsoft.Teams.Apps.FAQPlusPlus.sln" NEQ "" (
-  call :ExecuteCmd nuget restore "%DEPLOYMENT_SOURCE%\Source\Microsoft.Teams.Apps.FAQPlusPlus.sln" -MSBuildPath "%MSBUILD_16_DIR%"
+  call :ExecuteCmd nuget restore "%DEPLOYMENT_SOURCE%\Source\Microsoft.Teams.Apps.FAQPlusPlus.sln" -MSBuildPath "%MSBUILD_1670_DIR%"
   IF !ERRORLEVEL! NEQ 0 goto error
 )
 
