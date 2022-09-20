@@ -1,17 +1,19 @@
 ﻿// <copyright file="HomeController.cs" company="Microsoft">
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
+using Azure.AI.Language.QuestionAnswering.Projects;
 
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
 {
+    using System;
     using System.Net;
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using System.Web;
     using System.Web.Mvc;
-    using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers;
+    using Newtonsoft.Json.Linq;
 
     /// <summary>
     /// Home Controller.
@@ -20,17 +22,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
     public class HomeController : Controller
     {
         private readonly IConfigurationDataProvider configurationPovider;
-        private readonly IQnAMakerClient qnaMakerClient;
+        private readonly QuestionAnsweringProjectsClient questionAnsweringProjectsClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HomeController"/> class.
         /// </summary>
         /// <param name="configurationPovider">configurationPovider dependency injection.</param>
-        /// <param name="qnaMakerClient">qnaMakerClient dependency injection.</param>
-        public HomeController(IConfigurationDataProvider configurationPovider, IQnAMakerClient qnaMakerClient)
+        /// <param name="questionAnsweringProjectsClient">questionAnsweringProjectsClient dependency injection.</param>
+        public HomeController(IConfigurationDataProvider configurationPovider, QuestionAnsweringProjectsClient questionAnsweringProjectsClient)
         {
             this.configurationPovider = configurationPovider;
-            this.qnaMakerClient = qnaMakerClient;
+            this.questionAnsweringProjectsClient = questionAnsweringProjectsClient;
         }
 
         /// <summary>
@@ -248,8 +250,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         {
             try
             {
-                var knowledgebaseDetail = await this.qnaMakerClient.Knowledgebase.GetDetailsAsync(knowledgeBaseId).ConfigureAwait(false);
-                return knowledgebaseDetail.Id == knowledgeBaseId;
+                var knowledgebaseDetail = await this.questionAnsweringProjectsClient.GetProjectDetailsAsync(knowledgeBaseId).ConfigureAwait(false);
+                var formatter = new BinaryData(knowledgebaseDetail.Content);
+                var responseJson = JObject.Parse(formatter.ToString());
+
+                if (knowledgebaseDetail != null && knowledgebaseDetail != null && responseJson["projectName"] != null)
+                {
+                    return responseJson["projectName"].ToString() == knowledgeBaseId;
+                }
+
+                return false;
             }
 #pragma warning disable CA1031 // Do not catch general exception types
             catch
@@ -267,8 +277,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         {
             try
             {
-                var endpointKeys = await this.qnaMakerClient.EndpointKeys.GetKeysAsync().ConfigureAwait(false);
-                await this.configurationPovider.UpsertEntityAsync(endpointKeys.PrimaryEndpointKey, ConfigurationEntityTypes.QnAMakerEndpointKey).ConfigureAwait(false);
+                // TODO :: Get the keys manually as the SDK does not provide Keys values to be read automatically.
+                var endpointKeys = "TODO";
+                await this.configurationPovider.UpsertEntityAsync(endpointKeys, ConfigurationEntityTypes.QnAMakerEndpointKey).ConfigureAwait(false);
                 return true;
             }
 #pragma warning disable CA1031 // Do not catch general exception types

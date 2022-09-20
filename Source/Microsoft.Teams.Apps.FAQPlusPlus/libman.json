@@ -3,7 +3,7 @@
   "defaultProvider": "cdnjs",
   "libraries": [
     {
-      "library": "jquery@3.4.1",
+      "library": "jquery@3.6.0",
       "destination": "wwwroot/lib/jquery/",
       "files": [
         "jquery.min.js",
@@ -22,7 +22,7 @@
       ]
     },
     {
-      "library": "i18next@20.2.1",
+      "library": "i18next@21.9.0",
       "destination": "wwwroot/lib/i18next/"
     }
   ]

@@ -1,15 +1,17 @@
 ﻿// <copyright file="AutofacConfig.cs" company="Microsoft">
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
+using Azure.AI.Language.QuestionAnswering.Projects;
 
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration
 {
+    using System;
     using System.Configuration;
     using System.Reflection;
     using System.Web.Mvc;
     using Autofac;
     using Autofac.Integration.Mvc;
-    using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker;
+    using Azure;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers;
 
     /// <summary>
@@ -31,32 +33,20 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration
                 .As<IConfigurationDataProvider>()
                 .SingleInstance();
 
-            var qnaMakerClient = new QnAMakerClient(
-                new ApiKeyServiceClientCredentials(
-                ConfigurationManager.AppSettings["QnAMakerSubscriptionKey"]))
-                { Endpoint = StripRouteFromQnAMakerEndpoint(ConfigurationManager.AppSettings["QnAMakerApiEndpointUrl"]) };
+            //var questionAnsweringProjectsClient = new QuestionAnsweringProjectsClient(
+            //    new Uri(
+            //        Environment.GetEnvironmentVariable("QnAMakerApiUrl"),
+            //        new AzureKeyCredential(
+            //        Environment.GetEnvironmentVariable("QnAMakerSubscriptionKey"))));
 
-            builder.Register(c => qnaMakerClient)
-                .As<IQnAMakerClient>()
-                .SingleInstance();
+            //builder.Register(c => questionAnsweringProjectsClient)
+            //    .As<QuestionAnsweringProjectsClient>()
+            //    .SingleInstance();
 
             var container = builder.Build();
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
 
             return container;
-        }
-
-        // Strip the route suffix from the endpoint
-        private static string StripRouteFromQnAMakerEndpoint(string endpoint)
-        {
-            const string apiRoute = "/qnamaker/v4.0";
-
-            if (endpoint.EndsWith(apiRoute, System.StringComparison.OrdinalIgnoreCase))
-            {
-                endpoint = endpoint.Substring(0, endpoint.Length - apiRoute.Length);
-            }
-
-            return endpoint;
         }
     }
 }

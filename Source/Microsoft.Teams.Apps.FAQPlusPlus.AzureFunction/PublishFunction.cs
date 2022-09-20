@@ -17,7 +17,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction
     /// </summary>
     public class PublishFunction
     {
-        private readonly IQnaServiceProvider qnaServiceProvider;
+        private readonly IQuestionAnswerServiceProvider questionAnswerServiceProvider;
         private readonly IConfigurationDataProvider configurationProvider;
         private readonly ISearchServiceDataProvider searchServiceDataProvider;
         private readonly IKnowledgeBaseSearchService knowledgeBaseSearchService;
@@ -25,13 +25,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction
         /// <summary>
         /// Initializes a new instance of the <see cref="PublishFunction"/> class.
         /// </summary>
-        /// <param name="qnaServiceProvider">Qna service provider.</param>
+        /// <param name="questionAnswerServiceProvider">question answer service provider.</param>
         /// <param name="configurationProvider">Configuration service provider.</param>
         /// <param name="searchServiceDataProvider">Search service data provider.</param>
         /// <param name="knowledgeBaseSearchService">Knowledgebase search service.</param>
-        public PublishFunction(IQnaServiceProvider qnaServiceProvider, IConfigurationDataProvider configurationProvider, ISearchServiceDataProvider searchServiceDataProvider, IKnowledgeBaseSearchService knowledgeBaseSearchService)
+        public PublishFunction(IQuestionAnswerServiceProvider questionAnswerServiceProvider, IConfigurationDataProvider configurationProvider, ISearchServiceDataProvider searchServiceDataProvider, IKnowledgeBaseSearchService knowledgeBaseSearchService)
         {
-            this.qnaServiceProvider = qnaServiceProvider;
+            this.questionAnswerServiceProvider = questionAnswerServiceProvider;
             this.configurationProvider = configurationProvider;
             this.searchServiceDataProvider = searchServiceDataProvider;
             this.knowledgeBaseSearchService = knowledgeBaseSearchService;
@@ -44,19 +44,19 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction
         /// <param name="log">Log.</param>
         /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
         [FunctionName("PublishFunction")]
-        public async Task Run([TimerTrigger("0 */15 * * * *")]TimerInfo myTimer, ILogger log)
+        public async Task Run([TimerTrigger("0/15 * * * * *")]TimerInfo myTimer, ILogger log)
         {
             try
             {
                 var knowledgeBaseId = await this.configurationProvider.GetSavedEntityDetailAsync(Constants.KnowledgeBaseEntityId).ConfigureAwait(false);
-                bool toBePublished = await this.qnaServiceProvider.GetPublishStatusAsync(knowledgeBaseId).ConfigureAwait(false);
+                bool toBePublished = await this.questionAnswerServiceProvider.GetPublishStatusAsync(knowledgeBaseId).ConfigureAwait(false);
                 log.LogInformation("To be published - " + toBePublished);
                 log.LogInformation("knowledge base id - " + knowledgeBaseId);
 
                 if (toBePublished)
                 {
                     log.LogInformation("Publishing knowledge base");
-                    await this.qnaServiceProvider.PublishKnowledgebaseAsync(knowledgeBaseId).ConfigureAwait(false);
+                    await this.questionAnswerServiceProvider.PublishKnowledgebaseAsync(knowledgeBaseId).ConfigureAwait(false);
                 }
 
                 log.LogInformation("Setup azure search data");
@@ -67,7 +67,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction
             }
             catch (Exception ex)
             {
-                log.LogError(ex, "Exception occured while publishing knowledge base in QnA Maker.", SeverityLevel.Error);
+                log.LogError(ex, "Exception occured while publishing knowledge base.", SeverityLevel.Error);
                 throw;
             }
         }

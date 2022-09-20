@@ -118,15 +118,14 @@
         "description": "Location for all resources."
       }
     },
-    "qnaMakerSku": {
+    "questionAnswserServiceSku": {
       "type": "string",
       "allowedValues": [
-        "F0 (3 managed documents per month, 3 transactions per second, 100 transactions per minute, 50K transactions per month)",
-        "S0 ($10 per month for unlimited documents, 3 transactions per second, 100 transactions per minute)"
+        "S"
       ],
-      "defaultValue": "S0 ($10 per month for unlimited documents, 3 transactions per second, 100 transactions per minute)",
+      "defaultValue": "S",
       "metadata": {
-        "description": "The pricing tier for the QnAMaker service."
+        "description": "The pricing tier for the Question and answer service."
       }
     },
     "defaultCulture": {
@@ -193,11 +192,11 @@
     "configAppName": "[concat(parameters('baseResourceName'), '-config')]",
     "configAppUrl": "[concat('https://', variables('configAppName'), '.azurewebsites.net')]",
     "configAppInsightsName": "[concat(parameters('baseResourceName'), '-config')]",
-    "qnaMakerAccountName": "[parameters('baseResourceName')]",
-    "qnaMakerLocation": "westus",
-    "qnaMakerAppServiceName": "[concat(parameters('baseResourceName'), '-qnamaker')]",
-    "qnaMakerAppInsightsName": "[concat(parameters('baseResourceName'), '-qnamaker')]",
-    "qnaMakerSkuValue": "[substring(parameters('qnaMakerSku'), 0, 2)]",
+    "questionAnswserAccountName": "[parameters('baseResourceName')]",
+    "questionAnswserLocation": "westus",
+    "questionAnswserAppServiceName": "[concat(parameters('baseResourceName'), '-qnamaker')]",
+    "questionAnswserAppInsightsName": "[concat(parameters('baseResourceName'), '-qnamaker')]",
+    "questionAnswserServiceSkuValue": "[parameters('questionAnswserServiceSku')]",
     "azureSearchName": "[concat(uniquestring(concat(resourceGroup().id, parameters('baseResourceName'))), '-search')]",
     "azureSearchSkus": {
       "F ": "free",
@@ -288,7 +287,7 @@
             },
             {
               "name": "QnAMakerHostUrl",
-              "value": "[concat('https://', reference(resourceId('Microsoft.Web/sites', variables('qnaMakerAppServiceName'))).hostNames[0])]"
+              "value": "[concat('https://', reference(resourceId('Microsoft.Web/sites', variables('questionAnswserAppServiceName'))).hostNames[0])]"
             },
             {
               "name": "TenantId",
@@ -328,11 +327,11 @@
             },
             {
               "name": "QnAMakerSubscriptionKey",
-              "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts/', variables('qnaMakerAccountName')), '2017-04-18').key1]"
+              "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts/', variables('questionAnswserAccountName')), '2017-04-18').key1]"
             },
             {
               "name": "QnAMakerApiEndpointUrl",
-              "value": "https://westus.api.cognitive.microsoft.com"
+              "value": "[reference(resourceId('Microsoft.CognitiveServices/accounts/', variables('questionAnswserAccountName')), '2017-04-18').endpoint]"
             },
             {
               "name": "ApplicationInsightsLogLevel",
@@ -356,8 +355,8 @@
       "dependsOn": [
         "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
         "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
-        "[resourceId('Microsoft.Web/sites', variables('qnaMakerAppServiceName'))]",
-        "[resourceId('Microsoft.CognitiveServices/accounts/', variables('qnaMakerAccountName'))]",
+        "[resourceId('Microsoft.Web/sites', variables('questionAnswserAppServiceName'))]",
+        "[resourceId('Microsoft.CognitiveServices/accounts/', variables('questionAnswserAccountName'))]",
         "[resourceId('Microsoft.Search/searchServices/', variables('azureSearchName'))]",
         "[resourceId('Microsoft.Insights/components/', variables('botAppInsightsName'))]"
       ],
@@ -485,7 +484,7 @@
       "dependsOn": [
         "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
         "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
-        "[resourceId('Microsoft.CognitiveServices/accounts/', variables('qnaMakerAccountName'))]",
+        "[resourceId('Microsoft.CognitiveServices/accounts/', variables('questionAnswserAccountName'))]",
         "[resourceId('Microsoft.Insights/components/', variables('configAppInsightsName'))]"
       ],
       "kind": "app",
@@ -514,11 +513,11 @@
             },
             {
               "name": "QnAMakerApiEndpointUrl",
-              "value": "[reference(resourceId('Microsoft.CognitiveServices/accounts/', variables('qnaMakerAccountName')), '2017-04-18').endpoint]"
+              "value": "[reference(resourceId('Microsoft.CognitiveServices/accounts/', variables('questionAnswserAccountName')), '2017-04-18').endpoint]"
             },
             {
               "name": "QnAMakerSubscriptionKey",
-              "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts/', variables('qnaMakerAccountName')), '2017-04-18').key1]"
+              "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts/', variables('questionAnswserAccountName')), '2017-04-18').key1]"
             },
             {
               "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
@@ -583,22 +582,32 @@
     },
     {
       "type": "Microsoft.CognitiveServices/accounts",
-      "kind": "QnAMaker",
-      "name": "[variables('qnaMakerAccountName')]",
-      "apiVersion": "2017-04-18",
-      "location": "[variables('qnaMakerLocation')]",
+      "kind": "TextAnalytics",
+      "name": "[variables('questionAnswserAccountName')]",
+      "apiVersion": "2022-03-01",
+      "location": "[variables('questionAnswserLocation')]",
+      "identity": {
+        "type": "SystemAssigned"
+      },
       "sku": {
-        "name": "[variables('qnaMakerSkuValue')]"
+        "name": "[variables('questionAnswserServiceSkuValue')]"
       },
       "properties": {
         "apiProperties": {
-          "qnaRuntimeEndpoint": "[concat('https://', reference(resourceId('Microsoft.Web/sites', variables('qnaMakerAppServiceName'))).hostNames[0])]"
-        }
+          "qnaAzureSearchEndpointId": "[concat('/subscriptions/', subscription().subscriptionId,'/resourcegroups/', resourceGroup().name, 'providers/Microsoft.Search/searchServices/', variables('questionAnswserAccountName'), '-migration')]"
+        },
+        "customSubDomainName": "[concat(variables('questionAnswserAccountName'), '-migration')]",
+        "networkAcls": {
+          "defaultAction": "Allow",
+          "virtualNetworkRules": [],
+          "ipRules": []
+        },
+        "publicNetworkAccess": "Enabled"
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Web/Sites', variables('qnaMakerAppServiceName'))]",
+        "[resourceId('Microsoft.Web/Sites', variables('questionAnswserAppServiceName'))]",
         "[resourceId('Microsoft.Search/searchServices/', variables('azureSearchName'))]",
-        "[resourceId('microsoft.insights/components/', variables('qnaMakerAppInsightsName'))]"
+        "[resourceId('microsoft.insights/components/', variables('questionAnswserAppInsightsName'))]"
       ]
     },
     {
@@ -662,11 +671,11 @@
             },
             {
               "name": "QnAMakerApiUrl",
-              "value": "https://westus.api.cognitive.microsoft.com"
+              "value": "[reference(resourceId('Microsoft.CognitiveServices/accounts/', variables('questionAnswserAccountName')), '2017-04-18').endpoint]"
             },
             {
               "name": "QnAMakerSubscriptionKey",
-              "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts/', variables('qnaMakerAccountName')), '2017-04-18').key1]"
+              "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts/', variables('questionAnswserAccountName')), '2017-04-18').key1]"
             },
             {
               "name": "SearchServiceName",
@@ -723,7 +732,7 @@
     {
       "type": "Microsoft.Web/sites",
       "apiVersion": "2016-08-01",
-      "name": "[variables('qnaMakerAppServiceName')]",
+      "name": "[variables('questionAnswserAppServiceName')]",
       "location": "[parameters('location')]",
       "properties": {
         "enabled": true,
@@ -734,7 +743,7 @@
             ]
           }
         },
-        "name": "[variables('qnaMakerAppServiceName')]",
+        "name": "[variables('questionAnswserAppServiceName')]",
         "serverFarmId": "[concat('/subscriptions/', subscription().subscriptionId,'/resourcegroups/', resourceGroup().name, '/providers/Microsoft.Web/serverfarms/', variables('hostingPlanName'))]",
         "hostingEnvironment": ""
       },
@@ -747,19 +756,19 @@
       ],
       "resources": [
         {
-          "name": "[variables('qnaMakerAppInsightsName')]",
+          "name": "[variables('questionAnswserAppInsightsName')]",
           "type": "microsoft.insights/components",
           "kind": "web",
           "apiVersion": "2015-05-01",
           "location": "[parameters('location')]",
           "tags": {
-            "[concat('hidden-link:', resourceId('Microsoft.Web/sites/', variables('qnaMakerAppServiceName')))]": "Resource"
+            "[concat('hidden-link:', resourceId('Microsoft.Web/sites/', variables('questionAnswserAppServiceName')))]": "Resource"
           },
           "dependsOn": [
-            "[resourceId('Microsoft.Web/sites/', variables('qnaMakerAppServiceName'))]"
+            "[resourceId('Microsoft.Web/sites/', variables('questionAnswserAppServiceName'))]"
           ],
           "properties": {
-            "ApplicationId": "[variables('qnaMakerAppServiceName')]"
+            "ApplicationId": "[variables('questionAnswserAppServiceName')]"
           }
         },
         {
@@ -767,17 +776,17 @@
           "name": "appsettings",
           "type": "config",
           "dependsOn": [
-            "[resourceId('Microsoft.Web/Sites', variables('qnaMakerAppServiceName'))]",
+            "[resourceId('Microsoft.Web/Sites', variables('questionAnswserAppServiceName'))]",
             "[resourceId('Microsoft.Search/searchServices/', variables('azureSearchName'))]"
           ],
           "properties": {
             "AzureSearchName": "[variables('azureSearchName')]",
             "AzureSearchAdminKey": "[listAdminKeys(resourceId('Microsoft.Search/searchServices/', variables('azureSearchName')), '2015-08-19').primaryKey]",
-            "UserAppInsightsKey": "[reference(resourceId('Microsoft.Insights/components/', variables('qnaMakerAppInsightsName')), '2015-05-01').InstrumentationKey]",
-            "UserAppInsightsName": "[variables('qnaMakerAppInsightsName')]",
-            "UserAppInsightsAppId": "[reference(resourceId('Microsoft.Insights/components/', variables('qnaMakerAppInsightsName')), '2015-05-01').AppId]",
-            "PrimaryEndpointKey": "[concat(variables('qnaMakerAppServiceName'), '-PrimaryEndpointKey')]",
-            "SecondaryEndpointKey": "[concat(variables('qnaMakerAppServiceName'), '-SecondaryEndpointKey')]",
+            "UserAppInsightsKey": "[reference(resourceId('Microsoft.Insights/components/', variables('questionAnswserAppInsightsName')), '2015-05-01').InstrumentationKey]",
+            "UserAppInsightsName": "[variables('questionAnswserAppInsightsName')]",
+            "UserAppInsightsAppId": "[reference(resourceId('Microsoft.Insights/components/', variables('questionAnswserAppInsightsName')), '2015-05-01').AppId]",
+            "PrimaryEndpointKey": "[concat(variables('questionAnswserAppServiceName'), '-PrimaryEndpointKey')]",
+            "SecondaryEndpointKey": "[concat(variables('questionAnswserAppServiceName'), '-SecondaryEndpointKey')]",
             "DefaultAnswer": "No good match found in KB.",
             "QNAMAKER_EXTENSION_VERSION": "latest"
           }

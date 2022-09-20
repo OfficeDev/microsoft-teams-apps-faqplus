@@ -3,7 +3,9 @@
 // </copyright>
 
 using System;
-using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker;
+using Azure;
+using Azure.AI.Language.QuestionAnswering;
+using Azure.AI.Language.QuestionAnswering.Projects;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -21,17 +23,21 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction
     /// </summary>
     public class Startup : FunctionsStartup
     {
+        private readonly Uri endpoint = new Uri(Environment.GetEnvironmentVariable("QnAMakerApiUrl"));
+        private readonly AzureKeyCredential credential = new AzureKeyCredential(Environment.GetEnvironmentVariable("QnAMakerSubscriptionKey"));
+        private readonly string projectName = Environment.GetEnvironmentVariable("ProjectName");
+        private readonly string deploymentName = Environment.GetEnvironmentVariable("DeploymentName");
+
         /// <summary>
         /// Application startup configuration.
         /// </summary>
         /// <param name="builder">Webjobs builder.</param>
         public override void Configure(IFunctionsHostBuilder builder)
         {
-            IQnAMakerClient qnaMakerClient = new QnAMakerClient(new ApiKeyServiceClientCredentials(Environment.GetEnvironmentVariable("QnAMakerSubscriptionKey"))) { Endpoint = Environment.GetEnvironmentVariable("QnAMakerApiUrl") };
-            builder.Services.AddSingleton<IQnaServiceProvider>((provider) => new QnaServiceProvider(
-                provider.GetRequiredService<IConfigurationDataProvider>(), provider.GetRequiredService<IOptionsMonitor<QnAMakerSettings>>(), qnaMakerClient));
+            builder.Services.AddSingleton<IQuestionAnswerServiceProvider>((provider) => new QuestionAnswerServiceProvider(
+                provider.GetRequiredService<IConfigurationDataProvider>(), provider.GetRequiredService<IOptionsMonitor<QnAMakerSettings>>(), this.endpoint, this.credential, this.projectName, this.deploymentName));
             builder.Services.AddSingleton<IConfigurationDataProvider, Common.Providers.ConfigurationDataProvider>();
-            builder.Services.AddSingleton<ISearchServiceDataProvider>((provider) => new SearchServiceDataProvider(provider.GetRequiredService<IQnaServiceProvider>(), Environment.GetEnvironmentVariable("StorageConnectionString")));
+            builder.Services.AddSingleton<ISearchServiceDataProvider>((provider) => new SearchServiceDataProvider(provider.GetRequiredService<IQuestionAnswerServiceProvider>(), Environment.GetEnvironmentVariable("StorageConnectionString")));
             builder.Services.AddSingleton<IConfigurationDataProvider>(new Common.Providers.ConfigurationDataProvider(Environment.GetEnvironmentVariable("StorageConnectionString")));
             builder.Services.AddSingleton<IKnowledgeBaseSearchService, KnowledgeBaseSearchService>();
             var isGCCHybridDeployment = Convert.ToBoolean(Environment.GetEnvironmentVariable("IsGCCHybridDeployment"));
