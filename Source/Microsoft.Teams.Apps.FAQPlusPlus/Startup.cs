@@ -46,7 +46,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
         public Startup(IConfiguration configuration)
         {
             this.Configuration = configuration;
-            this.qnAServicerSubscriptionKey = this.Configuration.GetValue<string>("QnAServicerSubscriptionKey");
+            this.qnAServicerSubscriptionKey = this.Configuration.GetValue<string>("QnAMakerSubscriptionKey");
         }
 
         /// <summary>
