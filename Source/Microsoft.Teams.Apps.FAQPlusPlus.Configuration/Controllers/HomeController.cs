@@ -1,7 +1,7 @@
 ﻿// <copyright file="HomeController.cs" company="Microsoft">
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
-using Azure.AI.Language.QuestionAnswering.Projects;
+//using Azure.AI.Language.QuestionAnswering.Projects;
 
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
 {
@@ -22,17 +22,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
     public class HomeController : Controller
     {
         private readonly IConfigurationDataProvider configurationPovider;
-        private readonly QuestionAnsweringProjectsClient questionAnsweringProjectsClient;
+        //private readonly QuestionAnsweringProjectsClient questionAnsweringProjectsClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HomeController"/> class.
         /// </summary>
         /// <param name="configurationPovider">configurationPovider dependency injection.</param>
         /// <param name="questionAnsweringProjectsClient">questionAnsweringProjectsClient dependency injection.</param>
-        public HomeController(IConfigurationDataProvider configurationPovider, QuestionAnsweringProjectsClient questionAnsweringProjectsClient)
+        public HomeController(IConfigurationDataProvider configurationPovider)
         {
             this.configurationPovider = configurationPovider;
-            this.questionAnsweringProjectsClient = questionAnsweringProjectsClient;
+            //this.questionAnsweringProjectsClient = questionAnsweringProjectsClient;
         }
 
         /// <summary>
@@ -124,14 +124,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ValidateAndSaveKnowledgeBaseIdAsync(string knowledgeBaseId)
         {
-            bool isValidKnowledgeBaseId = await this.IsKnowledgeBaseIdValid(knowledgeBaseId).ConfigureAwait(false);
+            //bool isValidKnowledgeBaseId = await this.IsKnowledgeBaseIdValid(knowledgeBaseId).ConfigureAwait(false);
+            bool isValidKnowledgeBaseId = true;
+
             if (isValidKnowledgeBaseId)
             {
-                var endpointRefreshStatus = await this.RefreshQnAMakerEndpointKeyAsync().ConfigureAwait(false);
-                if (!endpointRefreshStatus)
-                {
-                    return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Sorry, unable to save the QnAMaker endpoint key due to an internal error. Try again.");
-                }
+                //var endpointRefreshStatus = await this.RefreshQnAMakerEndpointKeyAsync().ConfigureAwait(false);
+                //if (!endpointRefreshStatus)
+                //{
+                //    return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Sorry, unable to save the QnAMaker endpoint key due to an internal error. Try again.");
+                //}
 
                 return await this.UpsertKnowledgeBaseIdAsync(knowledgeBaseId).ConfigureAwait(false);
             }
@@ -246,28 +248,28 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         /// </summary>
         /// <param name="knowledgeBaseId">knowledgebase id.</param>
         /// <returns>A <see cref="Task"/> of type bool where true represents provided knowledgebase id is valid while false indicates provided knowledgebase id is not valid.</returns>
-        private async Task<bool> IsKnowledgeBaseIdValid(string knowledgeBaseId)
-        {
-            try
-            {
-                var knowledgebaseDetail = await this.questionAnsweringProjectsClient.GetProjectDetailsAsync(knowledgeBaseId).ConfigureAwait(false);
-                var formatter = new BinaryData(knowledgebaseDetail.Content);
-                var responseJson = JObject.Parse(formatter.ToString());
+//        private async Task<bool> IsKnowledgeBaseIdValid(string knowledgeBaseId)
+//        {
+//            try
+//            {
+//                //var knowledgebaseDetail = await this.questionAnsweringProjectsClient.GetProjectDetailsAsync(knowledgeBaseId).ConfigureAwait(false);
+//                var formatter = new BinaryData(knowledgebaseDetail.Content);
+//                var responseJson = JObject.Parse(formatter.ToString());
 
-                if (knowledgebaseDetail != null && knowledgebaseDetail != null && responseJson["projectName"] != null)
-                {
-                    return responseJson["projectName"].ToString() == knowledgeBaseId;
-                }
+//                if (knowledgebaseDetail != null && knowledgebaseDetail != null && responseJson["projectName"] != null)
+//                {
+//                    return responseJson["projectName"].ToString() == knowledgeBaseId;
+//                }
 
-                return false;
-            }
-#pragma warning disable CA1031 // Do not catch general exception types
-            catch
-#pragma warning restore CA1031 // Do not catch general exception types
-            {
-                return false;
-            }
-        }
+//                return false;
+//            }
+//#pragma warning disable CA1031 // Do not catch general exception types
+//            catch
+//#pragma warning restore CA1031 // Do not catch general exception types
+//            {
+//                return false;
+//            }
+//        }
 
         /// <summary>
         /// Update the saved endpoint key.

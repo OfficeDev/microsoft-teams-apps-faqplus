@@ -1,7 +1,7 @@
 ﻿// <copyright file="AutofacConfig.cs" company="Microsoft">
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
-using Azure.AI.Language.QuestionAnswering.Projects;
+//using Azure.AI.Language.QuestionAnswering.Projects;
 
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration
 {
