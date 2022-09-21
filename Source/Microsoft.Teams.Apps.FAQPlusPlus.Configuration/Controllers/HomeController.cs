@@ -1,11 +1,9 @@
 ﻿// <copyright file="HomeController.cs" company="Microsoft">
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
-//using Azure.AI.Language.QuestionAnswering.Projects;
 
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
 {
-    using System;
     using System.Net;
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
@@ -13,7 +11,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
     using System.Web.Mvc;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers;
-    using Newtonsoft.Json.Linq;
 
     /// <summary>
     /// Home Controller.
@@ -22,17 +19,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
     public class HomeController : Controller
     {
         private readonly IConfigurationDataProvider configurationPovider;
-        //private readonly QuestionAnsweringProjectsClient questionAnsweringProjectsClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HomeController"/> class.
         /// </summary>
         /// <param name="configurationPovider">configurationPovider dependency injection.</param>
-        /// <param name="questionAnsweringProjectsClient">questionAnsweringProjectsClient dependency injection.</param>
+        /// <param name="qnaMakerClient">qnaMakerClient dependency injection.</param>
         public HomeController(IConfigurationDataProvider configurationPovider)
         {
             this.configurationPovider = configurationPovider;
-            //this.questionAnsweringProjectsClient = questionAnsweringProjectsClient;
         }
 
         /// <summary>
@@ -125,22 +120,21 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         public async Task<ActionResult> ValidateAndSaveKnowledgeBaseIdAsync(string knowledgeBaseId)
         {
             //bool isValidKnowledgeBaseId = await this.IsKnowledgeBaseIdValid(knowledgeBaseId).ConfigureAwait(false);
-            bool isValidKnowledgeBaseId = true;
-
-            if (isValidKnowledgeBaseId)
+            //if (isValidKnowledgeBaseId)
+            //{
+            //var endpointRefreshStatus = await this.RefreshQnAMakerEndpointKeyAsync().ConfigureAwait(false);
+            var endpointRefreshStatus = true;
+            if (!endpointRefreshStatus)
             {
-                //var endpointRefreshStatus = await this.RefreshQnAMakerEndpointKeyAsync().ConfigureAwait(false);
-                //if (!endpointRefreshStatus)
-                //{
-                //    return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Sorry, unable to save the QnAMaker endpoint key due to an internal error. Try again.");
-                //}
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Sorry, unable to save the QnAMaker endpoint key due to an internal error. Try again.");
+            }
 
-                return await this.UpsertKnowledgeBaseIdAsync(knowledgeBaseId).ConfigureAwait(false);
-            }
-            else
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "The provided knowledgebase id is not valid.");
-            }
+            return await this.UpsertKnowledgeBaseIdAsync(knowledgeBaseId).ConfigureAwait(false);
+            //}
+            //else
+            //{
+            //    return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "The provided knowledgebase id is not valid.");
+            //}
         }
 
         /// <summary>
@@ -248,48 +242,39 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         /// </summary>
         /// <param name="knowledgeBaseId">knowledgebase id.</param>
         /// <returns>A <see cref="Task"/> of type bool where true represents provided knowledgebase id is valid while false indicates provided knowledgebase id is not valid.</returns>
-//        private async Task<bool> IsKnowledgeBaseIdValid(string knowledgeBaseId)
-//        {
-//            try
-//            {
-//                //var knowledgebaseDetail = await this.questionAnsweringProjectsClient.GetProjectDetailsAsync(knowledgeBaseId).ConfigureAwait(false);
-//                var formatter = new BinaryData(knowledgebaseDetail.Content);
-//                var responseJson = JObject.Parse(formatter.ToString());
-
-//                if (knowledgebaseDetail != null && knowledgebaseDetail != null && responseJson["projectName"] != null)
-//                {
-//                    return responseJson["projectName"].ToString() == knowledgeBaseId;
-//                }
-
-//                return false;
-//            }
-//#pragma warning disable CA1031 // Do not catch general exception types
-//            catch
-//#pragma warning restore CA1031 // Do not catch general exception types
-//            {
-//                return false;
-//            }
-//        }
+        //        private async Task<bool> IsKnowledgeBaseIdValid(string knowledgeBaseId)
+        //        {
+        //            try
+        //            {
+        //                var knowledgebaseDetail = await this.qnaMakerClient.Knowledgebase.GetDetailsAsync(knowledgeBaseId).ConfigureAwait(false);
+        //                return knowledgebaseDetail.Id == knowledgeBaseId;
+        //            }
+        //#pragma warning disable CA1031 // Do not catch general exception types
+        //            catch
+        //#pragma warning restore CA1031 // Do not catch general exception types
+        //            {
+        //                return false;
+        //            }
+        //        }
 
         /// <summary>
         /// Update the saved endpoint key.
         /// </summary>
         /// <returns>A <see cref="Task"/> of type bool where true represents updated data is saved or updated successfully while false indicates failure in saving or updating the updated data.</returns>
-        private async Task<bool> RefreshQnAMakerEndpointKeyAsync()
-        {
-            try
-            {
-                // TODO :: Get the keys manually as the SDK does not provide Keys values to be read automatically.
-                var endpointKeys = "TODO";
-                await this.configurationPovider.UpsertEntityAsync(endpointKeys, ConfigurationEntityTypes.QnAMakerEndpointKey).ConfigureAwait(false);
-                return true;
-            }
-#pragma warning disable CA1031 // Do not catch general exception types
-            catch
-#pragma warning restore CA1031 // Do not catch general exception types
-            {
-                return false;
-            }
-        }
+        //        private async Task<bool> RefreshQnAMakerEndpointKeyAsync()
+        //        {
+        //            try
+        //            {
+        //                var endpointKeys = await this.qnaMakerClient.EndpointKeys.GetKeysAsync().ConfigureAwait(false);
+        //                await this.configurationPovider.UpsertEntityAsync(endpointKeys.PrimaryEndpointKey, ConfigurationEntityTypes.QnAMakerEndpointKey).ConfigureAwait(false);
+        //                return true;
+        //            }
+        //#pragma warning disable CA1031 // Do not catch general exception types
+        //            catch
+        //#pragma warning restore CA1031 // Do not catch general exception types
+        //            {
+        //                return false;
+        //            }
+        //        }
     }
 }
