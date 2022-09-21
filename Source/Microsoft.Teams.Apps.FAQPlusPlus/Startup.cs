@@ -124,8 +124,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
             services.AddSingleton<UserAppCredentials>();
             services.AddSingleton<ExpertAppCredentials>();
 
-            //services.AddSingleton<IQuestionAnswerServiceProvider>((provider) => new QuestionAnswerServiceProvider(
-            //    provider.GetRequiredService<IConfigurationDataProvider>(), provider.GetRequiredService<IOptionsMonitor<QnAMakerSettings>>(), this.endpoint, this.credential, this.projectName, this.deploymentName, this.qnAServicerSubscriptionKey));
+            services.AddSingleton<IQuestionAnswerServiceProvider>((provider) => new QuestionAnswerServiceProvider(
+                provider.GetRequiredService<IConfigurationDataProvider>(), provider.GetRequiredService<IOptionsMonitor<QnAMakerSettings>>(), this.endpoint, this.credential, this.projectName, this.deploymentName, this.qnAServicerSubscriptionKey));
 
             services.AddSingleton<IActivityStorageProvider>((provider) => new ActivityStorageProvider(provider.GetRequiredService<IOptionsMonitor<KnowledgeBaseSettings>>()));
             services.AddSingleton<IKnowledgeBaseSearchService>((provider) => new KnowledgeBaseSearchService(this.Configuration["SearchServiceName"], this.Configuration["SearchServiceQueryApiKey"], this.Configuration["SearchServiceAdminApiKey"], this.Configuration["StorageConnectionString"], this.Configuration.GetValue<bool>("IsGCCHybridDeployment")));
