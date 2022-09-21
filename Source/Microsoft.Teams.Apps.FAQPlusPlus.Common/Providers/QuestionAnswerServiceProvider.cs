@@ -122,7 +122,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
                                                     },
                                                 });
 
-            return await this.questionAnsweringProjectsClient.UpdateQnasAsync(waitForCompletion: true, this.projectName, updateQnasRequestContent);
+            return await this.questionAnsweringProjectsClient.UpdateQnasAsync(waitForCompletion: false, this.projectName, updateQnasRequestContent);
         }
 
         /// <summary>
@@ -164,7 +164,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
                                                         },
                                                     });
 
-            return await this.questionAnsweringProjectsClient.UpdateQnasAsync(waitForCompletion: true, this.projectName, updateQnasRequestContent);
+            return await this.questionAnsweringProjectsClient.UpdateQnasAsync(waitForCompletion: false, this.projectName, updateQnasRequestContent);
         }
 
         /// <summary>
@@ -187,7 +187,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
                                                                         },
                                                                     });
 
-            return await this.questionAnsweringProjectsClient.UpdateQnasAsync(waitForCompletion: true, this.projectName, updateQnasRequestContent).ConfigureAwait(false); ;
+            return await this.questionAnsweringProjectsClient.UpdateQnasAsync(waitForCompletion: false, this.projectName, updateQnasRequestContent).ConfigureAwait(false); ;
         }
 
         /// <summary>
