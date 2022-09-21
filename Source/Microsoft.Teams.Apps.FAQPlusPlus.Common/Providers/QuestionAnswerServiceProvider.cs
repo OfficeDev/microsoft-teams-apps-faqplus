@@ -29,11 +29,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
     public class QuestionAnswerServiceProvider : IQuestionAnswerServiceProvider
     {
         /// <summary>
-        /// Environment type.
-        /// </summary>
-        private const string EnvironmentType = "Prod";
-
-        /// <summary>
         /// Maximum number of answers to be returned by the QnA maker for a given question.
         /// </summary>
         private const int MaxNumberOfAnswersToFetch = 3;
@@ -70,7 +65,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
             AzureKeyCredential credential,
             string projectName,
             string deploymentName,
-            string qnaServiceSubscriptionKey = ""
+            string qnaServiceSubscriptionKey 
             )
         {
             this.endpoint = endpoint ?? throw new ArgumentNullException(nameof(endpoint));
@@ -241,12 +236,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
                 HttpResponseMessage response = client.GetAsync(exportedFileUrl).Result;
                 if (response.IsSuccessStatusCode)
                 {
-                    var test = response.Content.ReadAsStringAsync().Result;
-                    JsonDocument exportedFileResult = JsonDocument.Parse(test);
+                    JsonDocument exportedFileResult = JsonDocument.Parse(response.Content.ReadAsStringAsync().Result);
                     var asasas = exportedFileResult.RootElement.GetProperty("Assets").GetProperty("Qnas").ToString();
 
-                    // [Test Code] :: To be removed.
-                    // knowledgebaseList = JsonConvert.DeserializeObject<IEnumerable<KnowledgeBaseAnswer>>(asasas.ToString());
                     knowledgebaseList = JsonConvert.DeserializeObject<IEnumerable<KnowledgeBaseAnswerDTO>>(asasas.ToString());
                 }
                 else
@@ -261,9 +253,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         /// <summary>
         /// Checks whether knowledgebase need to be published.
         /// </summary>
-        /// <param name="knowledgeBaseId">Knowledgebase id.</param>
         /// <returns>A <see cref="Task"/> of type bool where true represents knowledgebase need to be published while false indicates knowledgebase not need to be published.</returns>
-        public async Task<bool> GetPublishStatusAsync(string knowledgeBaseId)
+        public async Task<bool> GetPublishStatusAsync()
         {
             var qnaDocuments = await this.questionAnsweringProjectsClient.GetProjectDetailsAsync(this.projectName).ConfigureAwait(false);
             var formatter = new BinaryData(qnaDocuments.Content);
@@ -280,9 +271,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         /// <summary>
         /// Method is used to publish knowledgebase.
         /// </summary>
-        /// <param name="knowledgeBaseId">Knowledgebase Id.</param>
         /// <returns>Task for published data.</returns>
-        public async Task<Operation<BinaryData>> PublishKnowledgebaseAsync(string knowledgeBaseId)
+        public async Task<Operation<BinaryData>> PublishKnowledgebaseAsync()
         {
             return await this.questionAnsweringProjectsClient.DeployProjectAsync(waitForCompletion: true, this.projectName, this.deploymentName).ConfigureAwait(false);
         }

@@ -23,10 +23,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction
     /// </summary>
     public class Startup : FunctionsStartup
     {
-        private Uri endpoint = new Uri(Environment.GetEnvironmentVariable("QnAMakerApiUrl"));
-        private AzureKeyCredential credential = new AzureKeyCredential(Environment.GetEnvironmentVariable("QnAMakerSubscriptionKey"));
-        private string projectName = Environment.GetEnvironmentVariable("ProjectName");
-        private string deploymentName = Environment.GetEnvironmentVariable("DeploymentName");
+        private Uri endpoint;
+        private AzureKeyCredential credential;
+        private string projectName;
+        private string deploymentName;
+        private string qnAServicerSubscriptionKey;
 
         /// <summary>
         /// Application startup configuration.
@@ -38,12 +39,20 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction
             this.credential = new AzureKeyCredential(Environment.GetEnvironmentVariable("QnAMakerSubscriptionKey"));
             this.projectName = Environment.GetEnvironmentVariable("ProjectName");
             this.deploymentName = Environment.GetEnvironmentVariable("DeploymentName");
+            this.qnAServicerSubscriptionKey = Environment.GetEnvironmentVariable("QnAMakerSubscriptionKey");
 
             builder.Services.AddSingleton<IQuestionAnswerServiceProvider>((provider) => new QuestionAnswerServiceProvider(
-                provider.GetRequiredService<IConfigurationDataProvider>(), provider.GetRequiredService<IOptionsMonitor<QnAMakerSettings>>(), this.endpoint, this.credential, this.projectName, this.deploymentName, Environment.GetEnvironmentVariable("QnAMakerSubscriptionKey")));
-            builder.Services.AddSingleton<IConfigurationDataProvider, Common.Providers.ConfigurationDataProvider>();
+                                                            provider.GetRequiredService<IConfigurationDataProvider>(),
+                                                            provider.GetRequiredService<IOptionsMonitor<QnAMakerSettings>>(),
+                                                            this.endpoint,
+                                                            this.credential,
+                                                            this.projectName,
+                                                            this.deploymentName,
+                                                            this.qnAServicerSubscriptionKey));
+
+            builder.Services.AddSingleton<IConfigurationDataProvider, ConfigurationDataProvider>();
             builder.Services.AddSingleton<ISearchServiceDataProvider>((provider) => new SearchServiceDataProvider(provider.GetRequiredService<IQuestionAnswerServiceProvider>(), Environment.GetEnvironmentVariable("StorageConnectionString")));
-            builder.Services.AddSingleton<IConfigurationDataProvider>(new Common.Providers.ConfigurationDataProvider(Environment.GetEnvironmentVariable("StorageConnectionString")));
+            builder.Services.AddSingleton<IConfigurationDataProvider>(new ConfigurationDataProvider(Environment.GetEnvironmentVariable("StorageConnectionString")));
             builder.Services.AddSingleton<IKnowledgeBaseSearchService, KnowledgeBaseSearchService>();
             var isGCCHybridDeployment = Convert.ToBoolean(Environment.GetEnvironmentVariable("IsGCCHybridDeployment"));
             builder.Services.AddSingleton<IKnowledgeBaseSearchService>((provider) => new KnowledgeBaseSearchService(Environment.GetEnvironmentVariable("SearchServiceName"), Environment.GetEnvironmentVariable("SearchServiceQueryApiKey"), Environment.GetEnvironmentVariable("SearchServiceAdminApiKey"), Environment.GetEnvironmentVariable("StorageConnectionString"), isGCCHybridDeployment));

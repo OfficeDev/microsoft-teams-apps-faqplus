@@ -49,21 +49,25 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction
             try
             {
                 var knowledgeBaseId = await this.configurationProvider.GetSavedEntityDetailAsync(Constants.KnowledgeBaseEntityId).ConfigureAwait(false);
-                bool toBePublished = await this.questionAnswerServiceProvider.GetPublishStatusAsync(knowledgeBaseId).ConfigureAwait(false);
+                bool toBePublished = await this.questionAnswerServiceProvider.GetPublishStatusAsync().ConfigureAwait(false);
                 log.LogInformation("To be published - " + toBePublished);
                 log.LogInformation("knowledge base id - " + knowledgeBaseId);
 
                 if (toBePublished)
                 {
                     log.LogInformation("Publishing knowledge base");
-                    await this.questionAnswerServiceProvider.PublishKnowledgebaseAsync(knowledgeBaseId).ConfigureAwait(false);
+                    await this.questionAnswerServiceProvider.PublishKnowledgebaseAsync().ConfigureAwait(false);
+                    log.LogInformation("Successfully published the knowledge base" + knowledgeBaseId);
                 }
 
                 log.LogInformation("Setup azure search data");
                 await this.searchServiceDataProvider.SetupAzureSearchDataAsync(knowledgeBaseId).ConfigureAwait(false);
+                log.LogInformation("Successfully setup the azure search data");
 
                 log.LogInformation("Update azure search service");
                 await this.knowledgeBaseSearchService.InitializeSearchServiceDependencyAsync().ConfigureAwait(false);
+                log.LogInformation("Successfully updated azure search service");
+
             }
             catch (Exception ex)
             {

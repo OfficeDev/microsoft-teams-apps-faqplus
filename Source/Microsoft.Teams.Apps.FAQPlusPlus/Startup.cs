@@ -33,10 +33,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
     /// </summary>
     public class Startup
     {
-        private readonly Uri endpoint = new Uri(Environment.GetEnvironmentVariable("QnAMakerApiEndpointUrl"));
-        private readonly AzureKeyCredential credential = new AzureKeyCredential(Environment.GetEnvironmentVariable("QnAMakerSubscriptionKey"));
-        private readonly string projectName = Environment.GetEnvironmentVariable("ProjectName");
-        private readonly string deploymentName = Environment.GetEnvironmentVariable("DeploymentName");
+        private readonly Uri endpoint;
+        private readonly AzureKeyCredential credential;
+        private readonly string projectName;
+        private readonly string deploymentName;
         private readonly string qnAServicerSubscriptionKey;
 
         /// <summary>
@@ -47,7 +47,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
         {
             this.Configuration = configuration;
             this.qnAServicerSubscriptionKey = this.Configuration.GetValue<string>("QnAMakerSubscriptionKey");
-        }
+            this.endpoint = new Uri(this.Configuration.GetValue<string>("QnAMakerApiEndpointUrl"));
+            this.credential = new AzureKeyCredential(this.Configuration.GetValue<string>("QnAMakerSubscriptionKey"));
+            this.projectName = this.Configuration.GetValue<string>("ProjectName");
+            this.deploymentName = this.Configuration.GetValue<string>("DeploymentName");
+    }
 
         /// <summary>
         /// Gets Configurations Interfaces.
@@ -125,10 +129,21 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
             services.AddSingleton<ExpertAppCredentials>();
 
             services.AddSingleton<IQuestionAnswerServiceProvider>((provider) => new QuestionAnswerServiceProvider(
-                provider.GetRequiredService<IConfigurationDataProvider>(), provider.GetRequiredService<IOptionsMonitor<QnAMakerSettings>>(), this.endpoint, this.credential, this.projectName, this.deploymentName, this.qnAServicerSubscriptionKey));
+                                                                                        provider.GetRequiredService<IConfigurationDataProvider>(),
+                                                                                        provider.GetRequiredService<IOptionsMonitor<QnAMakerSettings>>(),
+                                                                                        this.endpoint,
+                                                                                        this.credential,
+                                                                                        this.projectName,
+                                                                                        this.deploymentName,
+                                                                                        this.qnAServicerSubscriptionKey));
 
             services.AddSingleton<IActivityStorageProvider>((provider) => new ActivityStorageProvider(provider.GetRequiredService<IOptionsMonitor<KnowledgeBaseSettings>>()));
-            services.AddSingleton<IKnowledgeBaseSearchService>((provider) => new KnowledgeBaseSearchService(this.Configuration["SearchServiceName"], this.Configuration["SearchServiceQueryApiKey"], this.Configuration["SearchServiceAdminApiKey"], this.Configuration["StorageConnectionString"], this.Configuration.GetValue<bool>("IsGCCHybridDeployment")));
+            services.AddSingleton<IKnowledgeBaseSearchService>((provider) => new KnowledgeBaseSearchService(
+                                                                                        this.Configuration["SearchServiceName"],
+                                                                                        this.Configuration["SearchServiceQueryApiKey"],
+                                                                                        this.Configuration["SearchServiceAdminApiKey"],
+                                                                                        this.Configuration["StorageConnectionString"],
+                                                                                        this.Configuration.GetValue<bool>("IsGCCHybridDeployment")));
 
             services.AddSingleton<ISearchService, SearchService>();
             services.AddSingleton<IMemoryCache, MemoryCache>();

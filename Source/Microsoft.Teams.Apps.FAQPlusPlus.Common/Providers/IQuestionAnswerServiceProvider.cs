@@ -65,16 +65,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         /// <summary>
         /// Checks whether knowledgebase need to be published.
         /// </summary>
-        /// <param name="knowledgeBaseId">Knowledgebase id.</param>
         /// <returns>A <see cref="Task"/> of type bool where true represents knowledgebase need to be published while false indicates knowledgebase not need to be published.</returns>
-        Task<bool> GetPublishStatusAsync(string knowledgeBaseId);
+        Task<bool> GetPublishStatusAsync();
 
         /// <summary>
         /// Method is used to publish knowledgebase.
         /// </summary>
-        /// <param name="knowledgeBaseId">Knowledgebase Id.</param>
         /// <returns>Task for published data.</returns>
-        Task<Operation<BinaryData>> PublishKnowledgebaseAsync(string knowledgeBaseId);
+        Task<Operation<BinaryData>> PublishKnowledgebaseAsync();
 
         /// <summary>
         /// Get knowledgebase published information.
