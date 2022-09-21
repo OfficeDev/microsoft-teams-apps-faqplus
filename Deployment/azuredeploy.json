@@ -175,8 +175,21 @@
         "description": "The branch of the GitHub repository to deploy."
       },
       "defaultValue": "master"
-    }
-  },
+    },
+    "questionAnswerProjectName": {
+      "type": "string",
+      "metadata": {
+        "description": "The question answer project name."
+      }
+    },
+      "questionAnswerDeploymentName": {
+        "type": "string",
+        "metadata": {
+          "description": "The question answer deployment name."
+        },
+        "defaultValue": "production"
+      }
+    },
   "variables": {
     "expertBotName": "[concat(parameters('baseResourceName'), '-expert')]",
     "expertBotDisplayName": "[concat(parameters('appDisplayName'), ' Expert')]",
@@ -348,6 +361,14 @@
             {
               "name": "IsGCCHybridDeployment",
               "value": false
+            },
+            {
+              "name": "ProjectName",
+              "value": "[parameters('questionAnswerProjectName')]"
+            },
+            {
+              "name": "DeploymentName",
+              "value": "[parameters('questionAnswerDeploymentName')]"
             }
           ]
         }
@@ -546,6 +567,14 @@
             {
               "name": "ValidUpns",
               "value": "[parameters('configAdminUPNList')]"
+            },
+            {
+              "name": "ProjectName",
+              "value": "[parameters('questionAnswerProjectName')]"
+            },
+            {
+              "name": "DeploymentName",
+              "value": "[parameters('questionAnswerDeploymentName')]"
             }
           ]
         }
@@ -708,6 +737,14 @@
             {
               "name": "IsGCCHybridDeployment",
               "value": false
+            },
+            {
+              "name": "ProjectName",
+              "value": "[parameters('questionAnswerProjectName')]"
+            },
+            {
+              "name": "DeploymentName",
+              "value": "[parameters('questionAnswerDeploymentName')]"
             }
           ]
         }
