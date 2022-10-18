@@ -155,8 +155,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Components
             if (searchResult.QnaId != -1 && isSameQuestion)
             {
                 int qnaPairId = searchResult.QnaId.Value;
+
+                this.logger.LogInformation($"Started : Question updated by: {turnContext.Activity.Conversation.AadObjectId} QnA Pair Id : {qnaPairId}");
                 await this.questionAnswerServiceProvider.UpdateQnaAsync(qnaPairId, answer, turnContext.Activity.From.AadObjectId, qnaPairEntity.UpdatedQuestion, qnaPairEntity.OriginalQuestion).ConfigureAwait(false);
-                this.logger.LogInformation($"Question updated by: {turnContext.Activity.Conversation.AadObjectId}");
+                this.logger.LogInformation($"Completed : Question updated by: {turnContext.Activity.Conversation.AadObjectId} QnA Pair Id : {qnaPairId}");
+
                 Attachment attachment = new Attachment();
                 if (qnaPairEntity.IsRichCard)
                 {

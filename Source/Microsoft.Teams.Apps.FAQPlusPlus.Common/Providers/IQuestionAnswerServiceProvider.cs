@@ -25,7 +25,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         /// <param name="conversationId">Conversation id.</param>
         /// <param name="activityReferenceId">Activity reference id.</param>
         /// <returns>Operation status of performed action.</returns>
-        Task<Operation<BinaryData>> AddQnaAsync(string question, string combinedDescription, string createdBy, string conversationId, string activityReferenceId);
+        Task<Operation<AsyncPageable<BinaryData>>> AddQnaAsync(string question, string combinedDescription, string createdBy, string conversationId, string activityReferenceId);
 
         /// <summary>
         /// Update Qna pair in knowledge base.
@@ -36,14 +36,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         /// <param name="updatedQuestion">Updated question text.</param>
         /// <param name="question">Original question text.</param>
         /// <returns>Perfomed action task.</returns>
-        Task<Operation<BinaryData>> UpdateQnaAsync(int questionId, string answer, string updatedBy, string updatedQuestion, string question);
+        Task<Operation<AsyncPageable<BinaryData>>> UpdateQnaAsync(int questionId, string answer, string updatedBy, string updatedQuestion, string question);
 
         /// <summary>
         /// This method is used to delete Qna pair from KB.
         /// </summary>
         /// <param name="questionId">Question id.</param>
         /// <returns>Delete response.</returns>
-        Task<Operation<BinaryData>> DeleteQnaAsync(int questionId);
+        Task<Operation<AsyncPageable<BinaryData>>> DeleteQnaAsync(int questionId);
 
         /// <summary>
         /// This method returns the downloaded knowledgebase documents.

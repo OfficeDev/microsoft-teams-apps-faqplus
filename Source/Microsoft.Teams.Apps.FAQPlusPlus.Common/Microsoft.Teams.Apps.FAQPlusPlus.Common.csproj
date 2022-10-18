@@ -10,7 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="AdaptiveCards" Version="2.5.0" />
-    <PackageReference Include="Azure.AI.Language.QuestionAnswering" Version="1.1.0-beta.1" />
+    <PackageReference Include="Azure.AI.Language.QuestionAnswering" Version="1.1.0" />
     <PackageReference Include="Azure.Core" Version="1.25.0" />
     <PackageReference Include="Microsoft.ApplicationInsights" Version="2.18.0" />
 	<PackageReference Include="Microsoft.Azure.Search" Version="10.1.0" />

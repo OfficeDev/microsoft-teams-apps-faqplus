@@ -4,7 +4,7 @@
 
 using Azure;
 using Azure.AI.Language.QuestionAnswering;
-using Azure.AI.Language.QuestionAnswering.Projects;
+using Azure.AI.Language.QuestionAnswering.Authoring;
 using Azure.Core;
 
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
@@ -41,7 +41,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         private readonly string qnaServiceSubscriptionKey;
         private readonly QuestionAnsweringClient client;
         private readonly QuestionAnsweringProject project;
-        private readonly QuestionAnsweringProjectsClient questionAnsweringProjectsClient;
+        private readonly QuestionAnsweringAuthoringClient questionAnsweringAuthoringClient;
 
         /// <summary>
         /// Represents a set of key/value application configuration properties.
@@ -65,8 +65,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
             AzureKeyCredential credential,
             string projectName,
             string deploymentName,
-            string qnaServiceSubscriptionKey 
-            )
+            string qnaServiceSubscriptionKey)
         {
             this.endpoint = endpoint ?? throw new ArgumentNullException(nameof(endpoint));
             this.credential = credential ?? throw new ArgumentNullException(nameof(credential));
@@ -87,7 +86,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
 
             this.client = new QuestionAnsweringClient(this.endpoint, this.credential);
             this.project = new QuestionAnsweringProject(this.projectName, this.deploymentName);
-            this.questionAnsweringProjectsClient = new QuestionAnsweringProjectsClient(this.endpoint, this.credential);
+            this.questionAnsweringAuthoringClient = new QuestionAnsweringAuthoringClient(this.endpoint, this.credential);
         }
 
         /// <summary>
@@ -99,7 +98,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         /// <param name="conversationId">Conversation id.</param>
         /// <param name="activityReferenceId">Activity reference id refer to activityid in storage table.</param>
         /// <returns>Operation state as task.</returns>
-        public async Task<Operation<BinaryData>> AddQnaAsync(string question, string combinedDescription, string createdBy, string conversationId, string activityReferenceId)
+        public async Task<Operation<AsyncPageable<BinaryData>>> AddQnaAsync(string question, string combinedDescription, string createdBy, string conversationId, string activityReferenceId)
         {
             RequestContent updateQnasRequestContent = RequestContent.Create(
                                                     new[]
@@ -122,7 +121,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
                                                     },
                                                 });
 
-            return await this.questionAnsweringProjectsClient.UpdateQnasAsync(waitForCompletion: false, this.projectName, updateQnasRequestContent);
+            return await this.questionAnsweringAuthoringClient.UpdateQnasAsync(WaitUntil.Completed, this.projectName, updateQnasRequestContent);
         }
 
         /// <summary>
@@ -134,7 +133,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         /// <param name="updatedQuestion">Updated question text.</param>
         /// <param name="question">Original question text.</param>
         /// <returns>Perfomed action task.</returns>
-        public async Task<Operation<BinaryData>> UpdateQnaAsync(int questionId, string answer, string updatedBy, string updatedQuestion, string question)
+        public async Task<Operation<AsyncPageable<BinaryData>>> UpdateQnaAsync(int questionId, string answer, string updatedBy, string updatedQuestion, string question)
         {
             string[] questions = null;
             if (!string.IsNullOrEmpty(updatedQuestion?.Trim()))
@@ -164,7 +163,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
                                                         },
                                                     });
 
-            return await this.questionAnsweringProjectsClient.UpdateQnasAsync(waitForCompletion: false, this.projectName, updateQnasRequestContent);
+            return await this.questionAnsweringAuthoringClient.UpdateQnasAsync(WaitUntil.Completed, this.projectName, updateQnasRequestContent);
         }
 
         /// <summary>
@@ -172,7 +171,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         /// </summary>
         /// <param name="questionId">Question id.</param>
         /// <returns>Perfomed action task.</returns>
-        public async Task<Operation<BinaryData>> DeleteQnaAsync(int questionId)
+        public async Task<Operation<AsyncPageable<BinaryData>>> DeleteQnaAsync(int questionId)
         {
             RequestContent updateQnasRequestContent = RequestContent.Create(
                                                                         new[]
@@ -187,7 +186,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
                                                                         },
                                                                     });
 
-            return await this.questionAnsweringProjectsClient.UpdateQnasAsync(waitForCompletion: false, this.projectName, updateQnasRequestContent).ConfigureAwait(false); ;
+            return await this.questionAnsweringAuthoringClient.UpdateQnasAsync(WaitUntil.Completed, this.projectName, updateQnasRequestContent).ConfigureAwait(false); ;
         }
 
         /// <summary>
@@ -202,11 +201,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         {
             string questions = question?.Trim();
             int previousQnAIds = Convert.ToInt32(previousQnAId);
+            var context = new KnowledgeBaseAnswerContext(previousQnAIds);
+            context.PreviousQuestion = previousUserQuery;
+
             AnswersOptions options = new AnswersOptions
             {
                 ConfidenceThreshold = Convert.ToDouble(this.options.ScoreThreshold, CultureInfo.InvariantCulture),
                 Size = MaxNumberOfAnswersToFetch,
-                AnswerContext = new KnowledgeBaseAnswerContext(previousQnAIds),
+                AnswerContext = context,
             };
 
             Response<AnswersResult> responseFollowUp = await this.client.GetAnswersAsync(questions, this.project, options).ConfigureAwait(false);
@@ -224,7 +226,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         {
             IEnumerable<KnowledgeBaseAnswerDTO> knowledgebaseList = null;
 
-            var qnaDocuments = await this.questionAnsweringProjectsClient.ExportAsync(waitForCompletion: true, this.projectName, "json").ConfigureAwait(false);
+            var qnaDocuments = await this.questionAnsweringAuthoringClient.ExportAsync(WaitUntil.Completed, this.projectName, "json").ConfigureAwait(false);
             JsonDocument operationValueJson = JsonDocument.Parse(qnaDocuments.Value);
             string exportedFileUrl = operationValueJson.RootElement.GetProperty("resultUrl").ToString();
 
@@ -243,7 +245,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
                 }
                 else
                 {
-                   // Todo :: Re-try Logic;
+                    // Todo :: Re-try Logic;
                 }
             }
 
@@ -256,7 +258,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         /// <returns>A <see cref="Task"/> of type bool where true represents knowledgebase need to be published while false indicates knowledgebase not need to be published.</returns>
         public async Task<bool> GetPublishStatusAsync()
         {
-            var qnaDocuments = await this.questionAnsweringProjectsClient.GetProjectDetailsAsync(this.projectName).ConfigureAwait(false);
+            var qnaDocuments = await this.questionAnsweringAuthoringClient.GetProjectDetailsAsync(this.projectName).ConfigureAwait(false);
             var formatter = new BinaryData(qnaDocuments.Content);
             var responseJson = JObject.Parse(formatter.ToString());
 
@@ -274,7 +276,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         /// <returns>Task for published data.</returns>
         public async Task<Operation<BinaryData>> PublishKnowledgebaseAsync()
         {
-            return await this.questionAnsweringProjectsClient.DeployProjectAsync(waitForCompletion: true, this.projectName, this.deploymentName).ConfigureAwait(false);
+            return await this.questionAnsweringAuthoringClient.DeployProjectAsync(WaitUntil.Completed, this.projectName, this.deploymentName).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -284,7 +286,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         /// <returns>A <see cref="Task"/> of type bool where true represents knowledgebase has published atleast once while false indicates that knowledgebase has not published yet.</returns>
         public async Task<bool> GetInitialPublishedStatusAsync(string knowledgeBaseId)
         {
-            var qnaDocuments = await this.questionAnsweringProjectsClient.GetProjectDetailsAsync(this.projectName).ConfigureAwait(false);
+            var qnaDocuments = await this.questionAnsweringAuthoringClient.GetProjectDetailsAsync(this.projectName).ConfigureAwait(false);
             var formatter = new BinaryData(qnaDocuments.Content);
             var responseJson = JObject.Parse(formatter.ToString());
 

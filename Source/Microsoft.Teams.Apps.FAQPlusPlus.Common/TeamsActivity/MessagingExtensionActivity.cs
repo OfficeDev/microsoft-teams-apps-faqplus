@@ -603,7 +603,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.TeamsActivity
 
             // Save the question in the knowledgebase.
             var activityReferenceId = Guid.NewGuid().ToString();
+
+            this.logger.LogInformation($"Started : Save the question in the knowledgebase by: {turnContext.Activity.From.AadObjectId}");
             await this.questionAnswerServiceProvider.AddQnaAsync(qnaPairEntity.UpdatedQuestion?.Trim(), combinedDescription, turnContext.Activity.From.AadObjectId, turnContext.Activity.Conversation.Id, activityReferenceId).ConfigureAwait(false);
+            this.logger.LogInformation($"Completed : Save the question in the knowledgebase by : {turnContext.Activity.From.AadObjectId}");
+
             qnaPairEntity.IsTestKnowledgeBase = true;
             ResourceResponse activityResponse;
 
