@@ -121,7 +121,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
                                                     },
                                                 });
 
-            return await this.questionAnsweringAuthoringClient.UpdateQnasAsync(WaitUntil.Completed, this.projectName, updateQnasRequestContent);
+            return await this.questionAnsweringAuthoringClient.UpdateQnasAsync(WaitUntil.Started, this.projectName, updateQnasRequestContent);
         }
 
         /// <summary>
@@ -163,7 +163,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
                                                         },
                                                     });
 
-            return await this.questionAnsweringAuthoringClient.UpdateQnasAsync(WaitUntil.Completed, this.projectName, updateQnasRequestContent);
+            return await this.questionAnsweringAuthoringClient.UpdateQnasAsync(WaitUntil.Started, this.projectName, updateQnasRequestContent);
         }
 
         /// <summary>
@@ -186,7 +186,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
                                                                         },
                                                                     });
 
-            return await this.questionAnsweringAuthoringClient.UpdateQnasAsync(WaitUntil.Completed, this.projectName, updateQnasRequestContent).ConfigureAwait(false); ;
+            return await this.questionAnsweringAuthoringClient.UpdateQnasAsync(WaitUntil.Started, this.projectName, updateQnasRequestContent).ConfigureAwait(false); ;
         }
 
         /// <summary>
