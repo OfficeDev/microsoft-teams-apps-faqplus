@@ -4,8 +4,6 @@
 
 using System;
 using Azure;
-using Azure.AI.Language.QuestionAnswering;
-using Azure.AI.Language.QuestionAnswering.Authoring;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
