@@ -24,7 +24,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         /// Initializes a new instance of the <see cref="HomeController"/> class.
         /// </summary>
         /// <param name="configurationPovider">configurationPovider dependency injection.</param>
-        /// <param name="qnaMakerClient">qnaMakerClient dependency injection.</param>
         public HomeController(IConfigurationDataProvider configurationPovider)
         {
             this.configurationPovider = configurationPovider;
@@ -126,7 +125,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
             var endpointRefreshStatus = true;
             if (!endpointRefreshStatus)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Sorry, unable to save the QnAMaker endpoint key due to an internal error. Try again.");
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Sorry, unable to save the QuestionAnswer endpoint key due to an internal error. Try again.");
             }
 
             return await this.UpsertKnowledgeBaseIdAsync(knowledgeBaseId).ConfigureAwait(false);

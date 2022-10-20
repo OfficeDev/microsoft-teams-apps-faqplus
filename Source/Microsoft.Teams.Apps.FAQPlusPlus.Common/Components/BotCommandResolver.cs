@@ -116,7 +116,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Components
             }
             else
             {
-                this.logger.LogInformation("Sending input to QnAMaker");
+                this.logger.LogInformation("Sending input to QuestionAnswer");
                 await this.qnaPairService.GetReplyToQnAAsync(turnContext, message).ConfigureAwait(false);
             }
         }

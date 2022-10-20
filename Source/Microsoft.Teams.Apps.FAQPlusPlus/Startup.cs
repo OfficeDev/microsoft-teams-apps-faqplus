@@ -46,9 +46,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
         public Startup(IConfiguration configuration)
         {
             this.Configuration = configuration;
-            this.qnAServicerSubscriptionKey = this.Configuration.GetValue<string>("QnAMakerSubscriptionKey");
-            this.endpoint = new Uri(this.Configuration.GetValue<string>("QnAMakerApiEndpointUrl"));
-            this.credential = new AzureKeyCredential(this.Configuration.GetValue<string>("QnAMakerSubscriptionKey"));
+            this.qnAServicerSubscriptionKey = this.Configuration.GetValue<string>("QuestionAnswerSubscriptionKey");
+            this.endpoint = new Uri(this.Configuration.GetValue<string>("QuestionAnswerApiEndpointUrl"));
+            this.credential = new AzureKeyCredential(this.Configuration.GetValue<string>("QuestionAnswerSubscriptionKey"));
             this.projectName = this.Configuration.GetValue<string>("ProjectName");
             this.deploymentName = this.Configuration.GetValue<string>("DeploymentName");
     }
@@ -105,9 +105,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
                 knowledgeBaseSettings.IsGCCHybridDeployment = this.Configuration.GetValue<bool>("IsGCCHybridDeployment");
             });
 
-            services.Configure<QnAMakerSettings>(qnAMakerSettings =>
+            services.Configure<QuestionAnswerSettings>(questionAnswerSettings =>
             {
-                qnAMakerSettings.ScoreThreshold = this.Configuration["ScoreThreshold"];
+                questionAnswerSettings.ScoreThreshold = this.Configuration["ScoreThreshold"];
             });
 
             services.Configure<BotSettings>(botSettings =>
@@ -130,7 +130,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
 
             services.AddSingleton<IQuestionAnswerServiceProvider>((provider) => new QuestionAnswerServiceProvider(
                                                                                         provider.GetRequiredService<IConfigurationDataProvider>(),
-                                                                                        provider.GetRequiredService<IOptionsMonitor<QnAMakerSettings>>(),
+                                                                                        provider.GetRequiredService<IOptionsMonitor<QuestionAnswerSettings>>(),
                                                                                         this.endpoint,
                                                                                         this.credential,
                                                                                         this.projectName,

@@ -46,7 +46,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         /// <summary>
         /// Represents a set of key/value application configuration properties.
         /// </summary>
-        private readonly QnAMakerSettings options;
+        private readonly QuestionAnswerSettings options;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="QuestionAnswerServiceProvider"/> class.
@@ -60,7 +60,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         /// <param name="qnaServiceSubscriptionKey">The qna service subscription key.</param>
         public QuestionAnswerServiceProvider(
             IConfigurationDataProvider configurationProvider,
-            IOptionsMonitor<QnAMakerSettings> optionsAccessor,
+            IOptionsMonitor<QuestionAnswerSettings> optionsAccessor,
             Uri endpoint,
             AzureKeyCredential credential,
             string projectName,

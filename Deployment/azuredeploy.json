@@ -207,8 +207,8 @@
     "configAppInsightsName": "[concat(parameters('baseResourceName'), '-config')]",
     "questionAnswserAccountName": "[parameters('baseResourceName')]",
     "questionAnswserLocation": "westus",
-    "questionAnswserAppServiceName": "[concat(parameters('baseResourceName'), '-qnamaker')]",
-    "questionAnswserAppInsightsName": "[concat(parameters('baseResourceName'), '-qnamaker')]",
+    "questionAnswserAppServiceName": "[concat(parameters('baseResourceName'), '-questionAnswser')]",
+    "questionAnswserAppInsightsName": "[concat(parameters('baseResourceName'), '-questionAnswser')]",
     "questionAnswserServiceSkuValue": "[parameters('questionAnswserServiceSku')]",
     "azureSearchName": "[concat(uniquestring(concat(resourceGroup().id, parameters('baseResourceName'))), '-search')]",
     "azureSearchSkus": {
@@ -299,7 +299,7 @@
               "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')),'2015-05-01-preview').key1)]"
             },
             {
-              "name": "QnAMakerHostUrl",
+              "name": "QuestionAnswerHostUrl",
               "value": "[concat('https://', reference(resourceId('Microsoft.Web/sites', variables('questionAnswserAppServiceName'))).hostNames[0])]"
             },
             {
@@ -339,11 +339,11 @@
               "value": "10"
             },
             {
-              "name": "QnAMakerSubscriptionKey",
+              "name": "QuestionAnswerSubscriptionKey",
               "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts/', variables('questionAnswserAccountName')), '2017-04-18').key1]"
             },
             {
-              "name": "QnAMakerApiEndpointUrl",
+              "name": "QuestionAnswerApiEndpointUrl",
               "value": "[reference(resourceId('Microsoft.CognitiveServices/accounts/', variables('questionAnswserAccountName')), '2017-04-18').endpoint]"
             },
             {
@@ -533,11 +533,11 @@
               "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')),'2015-05-01-preview').key1)]"
             },
             {
-              "name": "QnAMakerApiEndpointUrl",
+              "name": "QuestionAnswerApiEndpointUrl",
               "value": "[reference(resourceId('Microsoft.CognitiveServices/accounts/', variables('questionAnswserAccountName')), '2017-04-18').endpoint]"
             },
             {
-              "name": "QnAMakerSubscriptionKey",
+              "name": "QuestionAnswerSubscriptionKey",
               "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts/', variables('questionAnswserAccountName')), '2017-04-18').key1]"
             },
             {
@@ -699,11 +699,11 @@
               "value": "dotnet"
             },
             {
-              "name": "QnAMakerApiUrl",
+              "name": "QuestionAnswerApiUrl",
               "value": "[reference(resourceId('Microsoft.CognitiveServices/accounts/', variables('questionAnswserAccountName')), '2017-04-18').endpoint]"
             },
             {
-              "name": "QnAMakerSubscriptionKey",
+              "name": "QuestionAnswerSubscriptionKey",
               "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts/', variables('questionAnswserAccountName')), '2017-04-18').key1]"
             },
             {
@@ -824,8 +824,7 @@
             "UserAppInsightsAppId": "[reference(resourceId('Microsoft.Insights/components/', variables('questionAnswserAppInsightsName')), '2015-05-01').AppId]",
             "PrimaryEndpointKey": "[concat(variables('questionAnswserAppServiceName'), '-PrimaryEndpointKey')]",
             "SecondaryEndpointKey": "[concat(variables('questionAnswserAppServiceName'), '-SecondaryEndpointKey')]",
-            "DefaultAnswer": "No good match found in KB.",
-            "QNAMAKER_EXTENSION_VERSION": "latest"
+            "DefaultAnswer": "No good match found in KB."
           }
         }
       ]

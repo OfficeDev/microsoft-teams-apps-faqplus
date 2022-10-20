@@ -33,15 +33,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction
         /// <param name="builder">Webjobs builder.</param>
         public override void Configure(IFunctionsHostBuilder builder)
         {
-            this.endpoint = new Uri(Environment.GetEnvironmentVariable("QnAMakerApiUrl"));
-            this.credential = new AzureKeyCredential(Environment.GetEnvironmentVariable("QnAMakerSubscriptionKey"));
+            this.endpoint = new Uri(Environment.GetEnvironmentVariable("QuestionAnswerApiUrl"));
+            this.credential = new AzureKeyCredential(Environment.GetEnvironmentVariable("QuestionAnswerSubscriptionKey"));
             this.projectName = Environment.GetEnvironmentVariable("ProjectName");
             this.deploymentName = Environment.GetEnvironmentVariable("DeploymentName");
-            this.qnAServicerSubscriptionKey = Environment.GetEnvironmentVariable("QnAMakerSubscriptionKey");
+            this.qnAServicerSubscriptionKey = Environment.GetEnvironmentVariable("QuestionAnswerSubscriptionKey");
 
             builder.Services.AddSingleton<IQuestionAnswerServiceProvider>((provider) => new QuestionAnswerServiceProvider(
                                                             provider.GetRequiredService<IConfigurationDataProvider>(),
-                                                            provider.GetRequiredService<IOptionsMonitor<QnAMakerSettings>>(),
+                                                            provider.GetRequiredService<IOptionsMonitor<QuestionAnswerSettings>>(),
                                                             this.endpoint,
                                                             this.credential,
                                                             this.projectName,

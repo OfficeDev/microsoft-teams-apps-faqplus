@@ -1,12 +1,12 @@
-﻿// <copyright file="QnAMakerSettings.cs" company="Microsoft">
+﻿// <copyright file="QuestionAnswerSettings.cs" company="Microsoft">
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models.Configuration
 {
     /// <summary>
-    /// Provides app settings related to QnAMakerServiceProvider.
+    /// Provides app settings related to QuestionAnswerServiceProvider.
     /// </summary>
-    public class QnAMakerSettings
+    public class QuestionAnswerSettings
     {
         /// <summary>
         /// Gets or Sets scorethreshold.
