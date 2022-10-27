@@ -23,7 +23,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Components
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.TeamsActivity;
     using Newtonsoft.Json.Linq;
-    //using ErrorResponseException = Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker.Models.ErrorResponseException;
 
     /// <summary>
     /// Class that handles get/add/update of QnA pairs.
@@ -157,7 +156,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Components
                 int qnaPairId = searchResult.QnaId.Value;
 
                 this.logger.LogInformation($"Started : Question updated by: {turnContext.Activity.Conversation.AadObjectId} QnA Pair Id : {qnaPairId}");
-                await this.questionAnswerServiceProvider.UpdateQnaAsync(qnaPairId, answer, turnContext.Activity.From.AadObjectId, qnaPairEntity.UpdatedQuestion, qnaPairEntity.OriginalQuestion).ConfigureAwait(false);
+                await this.questionAnswerServiceProvider.UpdateQnaAsync(qnaPairId, answer, turnContext.Activity.From.AadObjectId, qnaPairEntity.UpdatedQuestion, qnaPairEntity.OriginalQuestion, searchResult.Metadata).ConfigureAwait(false);
                 this.logger.LogInformation($"Completed : Question updated by: {turnContext.Activity.Conversation.AadObjectId} QnA Pair Id : {qnaPairId}");
 
                 Attachment attachment = new Attachment();
@@ -183,7 +182,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Components
                 };
 
                 // Send edited question and answer card as response.
-                await turnContext.UpdateActivityAsync(updateCardActivity, cancellationToken: default).ConfigureAwait(false);
                 await turnContext.UpdateActivityAsync(updateCardActivity, cancellationToken: default).ConfigureAwait(false);
             }
             else

@@ -35,8 +35,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         /// <param name="updatedBy">Updated by user.</param>
         /// <param name="updatedQuestion">Updated question text.</param>
         /// <param name="question">Original question text.</param>
+        /// <param name="metadata">The metadata.</param>
         /// <returns>Perfomed action task.</returns>
-        Task<Operation<AsyncPageable<BinaryData>>> UpdateQnaAsync(int questionId, string answer, string updatedBy, string updatedQuestion, string question);
+        Task<Operation<AsyncPageable<BinaryData>>> UpdateQnaAsync(int questionId, string answer, string updatedBy, string updatedQuestion, string question, IReadOnlyDictionary<string, string> metadata);
 
         /// <summary>
         /// This method is used to delete Qna pair from KB.

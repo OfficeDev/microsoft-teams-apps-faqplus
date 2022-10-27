@@ -35,12 +35,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
 
         private readonly string projectName;
         private readonly string deploymentName = "production";
+        private readonly string testDeploymentName = "test";
+
         private readonly Uri endpoint;
         private readonly AzureKeyCredential credential;
         private readonly IConfigurationDataProvider configurationProvider;
         private readonly string qnaServiceSubscriptionKey;
         private readonly QuestionAnsweringClient client;
         private readonly QuestionAnsweringProject project;
+        private readonly QuestionAnsweringProject unPublishedProject;
+
         private readonly QuestionAnsweringAuthoringClient questionAnsweringAuthoringClient;
 
         /// <summary>
@@ -86,6 +90,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
 
             this.client = new QuestionAnsweringClient(this.endpoint, this.credential);
             this.project = new QuestionAnsweringProject(this.projectName, this.deploymentName);
+            this.unPublishedProject = new QuestionAnsweringProject(this.projectName, this.testDeploymentName);
             this.questionAnsweringAuthoringClient = new QuestionAnsweringAuthoringClient(this.endpoint, this.credential);
         }
 
@@ -132,13 +137,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         /// <param name="updatedBy">Updated by user.</param>
         /// <param name="updatedQuestion">Updated question text.</param>
         /// <param name="question">Original question text.</param>
+        /// <param name="metadata">The metadata.</param>
         /// <returns>Perfomed action task.</returns>
-        public async Task<Operation<AsyncPageable<BinaryData>>> UpdateQnaAsync(int questionId, string answer, string updatedBy, string updatedQuestion, string question)
+        public async Task<Operation<AsyncPageable<BinaryData>>> UpdateQnaAsync(int questionId, string answer, string updatedBy, string updatedQuestion, string question, IReadOnlyDictionary<string, string> metadata)
         {
             string[] questions = null;
             if (!string.IsNullOrEmpty(updatedQuestion?.Trim()))
             {
-                questions = (updatedQuestion?.ToUpperInvariant().Trim() == question?.ToUpperInvariant().Trim()) ? null
+                questions = (updatedQuestion?.ToUpperInvariant().Trim() == question?.ToUpperInvariant().Trim()) ? new[] { question }
                                     : new[] { updatedQuestion };
             }
 
@@ -156,6 +162,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
                                                                 answer = answer?.Trim(),
                                                                 metadata = new
                                                                     {
+                                                                      createdat = metadata.TryGetValue("createdat", out string createdat) ? createdat : DateTime.UtcNow.Ticks.ToString(CultureInfo.InvariantCulture),
+                                                                      createdby = metadata.TryGetValue("createdby", out string createdby) ? createdby : string.Empty,
+                                                                      conversationid = metadata.TryGetValue("conversationid", out string conversationid) ? conversationid : string.Empty,
+                                                                      activityreferenceid = metadata.TryGetValue("activityreferenceid", out string activityreferenceid) ? activityreferenceid : string.Empty,
                                                                       updatedat = DateTime.UtcNow.Ticks.ToString(CultureInfo.InvariantCulture),
                                                                       updatedby = updatedBy,
                                                                     },
@@ -202,6 +212,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
             string questions = question?.Trim();
             int previousQnAIds = Convert.ToInt32(previousQnAId);
             var context = new KnowledgeBaseAnswerContext(previousQnAIds);
+            var project = isTestKnowledgeBase ? this.unPublishedProject : this.project;
             context.PreviousQuestion = previousUserQuery;
 
             AnswersOptions options = new AnswersOptions
@@ -211,7 +222,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
                 AnswerContext = context,
             };
 
-            Response<AnswersResult> responseFollowUp = await this.client.GetAnswersAsync(questions, this.project, options).ConfigureAwait(false);
+            Response<AnswersResult> responseFollowUp = await this.client.GetAnswersAsync(questions, project, options).ConfigureAwait(false);
 
             return responseFollowUp.Value;
 
