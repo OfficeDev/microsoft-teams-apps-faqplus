@@ -68,7 +68,7 @@
     "Description": "The size of the hosting plan (small, medium, or large)."
   },
   "QuestionAnswserServiceSku": {
-    "Value": "S0 ($10 per month for unlimited documents, 3 transactions per second, 100 transactions per minute)",
+    "Value": "F0",
     "Description": "The pricing tier for the QuestionAnswser service."
   },
   "SearchServiceSku": {
@@ -104,5 +104,4 @@
     },
     "defaultValue": "production"
   }
-}
 }

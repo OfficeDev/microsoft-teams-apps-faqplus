@@ -121,9 +121,10 @@
     "questionAnswserServiceSku": {
       "type": "string",
       "allowedValues": [
+        "F0",
         "S"
       ],
-      "defaultValue": "S",
+      "defaultValue": "F0",
       "metadata": {
         "description": "The pricing tier for the Question and answer service."
       }
@@ -182,7 +183,7 @@
         "description": "The question answer project name."
       }
     },
-      "questionAnswerDeploymentName": {
+    "questionAnswerDeploymentName": {
         "type": "string",
         "metadata": {
           "description": "The question answer deployment name."
