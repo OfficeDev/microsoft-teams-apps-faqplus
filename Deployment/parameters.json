@@ -92,16 +92,9 @@
     "Description": "Default culture."
   },
   "QuestionAnswerProjectName": {
-    "type": "string",
-    "metadata": {
-      "description": "The question answer project name."
-    }
+    "value": ""
   },
   "QuestionAnswerDeploymentName": {
-    "type": "string",
-    "metadata": {
-      "description": "The question answer deployment name."
-    },
-    "defaultValue": "production"
+    "Value": ""
   }
 }
