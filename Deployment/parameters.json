@@ -92,9 +92,9 @@
     "Description": "Default culture."
   },
   "QuestionAnswerProjectName": {
-    "value": ""
+    "value": "<<value>>"
   },
   "QuestionAnswerDeploymentName": {
-    "Value": ""
+    "Value": "<<value>>"
   }
 }
