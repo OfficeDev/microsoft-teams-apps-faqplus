@@ -92,9 +92,11 @@
     "Description": "Default culture."
   },
   "QuestionAnswerProjectName": {
-    "value": "<<value>>"
+    "Value": "<<value>>",
+    "description": "The Question Answering service project name."
   },
   "QuestionAnswerDeploymentName": {
-    "Value": "<<value>>"
+    "value": "production",
+    "description": "The Question Answering service deployment name."
   }
 }

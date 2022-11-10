@@ -20,22 +20,22 @@ For ex: IT aka Contoso IT Support.
 
 ## Scenario 2:
 
-Configure the bot to use an existing knowledge base with QnA pairs instead of a raw vanilla knowledge base.
+Configure the bot to use an existing knowledge base with QnA pairs instead of a raw vanilla Question Answering knowledge base.
 
 **Suggested Solution:**
 
-1) Change the **Knowledge base ID** field value in the configurator app and your bot will start pointing to knowledge base with QnA pairs associated with updated knowledge base ID.
+1) Change the **Project Name** field value in the configurator app and your bot will start pointing to knowledge base with QnA pairs associated with updated Question Answering project knowledge base.
 
-   ![image4](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/config-web-app-login.png)
+![image4](./Images/config-web-app-login.png)
 
-2) Navigate to [Azure portal](https://portal.azure.com/) and go to configuration section of your bot app service, update the appsettings values for QnAMakerHostUrl, QnAMakerApiEndpointKey & QnAMakerApiEndpointUrl of your existing knowledge base.
+2) Navigate to [Azure portal](https://portal.azure.com/) and go to configuration section of your bot app service, update the appsettings values for ProjectName,QuestionAnswerHostUrl, QuestionAnswerApiEndpointKey & QuestionAnswerApiEndpointUrl of your existing knowledge base.
 
-![Configuration_app-settings](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/Configuration_app-settings.png)
+![App_service_app-settings](./Images/App_service_app-settings.png)
 
 ## Scenario 3:
 
-Expert wants to edit or delete the existing QnA pairs directly added from the QnAMaker portal.
+Expert wants to edit or delete the existing QnA pairs directly added from the Question Answering portal.
  
 **Suggested Solution:** 
 
-If expert wants to edit or delete the QnA pairs, the expert needs to navigate to that particular knowledge base in the [QnAMaker portal](https://www.qnamaker.ai/) and can perform the required operations. 
+If expert wants to edit or delete the QnA pairs, the expert needs to navigate to that particular knowledge base in the [Question Answering portal](https://language.cognitive.azure.com/) and can perform the required operations. 

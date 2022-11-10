@@ -2,11 +2,6 @@
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 
-using Azure;
-using Azure.AI.Language.QuestionAnswering;
-using Azure.AI.Language.QuestionAnswering.Authoring;
-using Azure.Core;
-
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
 {
     using System;
@@ -17,6 +12,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
     using System.Text.Json;
     using System.Threading.Tasks;
     using System.Web;
+    using global::Azure;
+    using global::Azure.AI.Language.QuestionAnswering;
+    using global::Azure.AI.Language.QuestionAnswering.Authoring;
+    using global::Azure.Core;
     using Microsoft.Extensions.Options;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models.Configuration;
@@ -24,12 +23,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
     using Newtonsoft.Json.Linq;
 
     /// <summary>
-    /// Qna maker service provider class.
+    /// Question Answering service provider class.
     /// </summary>
     public class QuestionAnswerServiceProvider : IQuestionAnswerServiceProvider
     {
         /// <summary>
-        /// Maximum number of answers to be returned by the QnA maker for a given question.
+        /// Maximum number of answers to be returned by the Question Answering for a given question.
         /// </summary>
         private const int MaxNumberOfAnswersToFetch = 3;
 
@@ -250,13 +249,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
                 if (response.IsSuccessStatusCode)
                 {
                     JsonDocument exportedFileResult = JsonDocument.Parse(response.Content.ReadAsStringAsync().Result);
-                    var asasas = exportedFileResult.RootElement.GetProperty("Assets").GetProperty("Qnas").ToString();
+                    var exportedAssests = exportedFileResult.RootElement.GetProperty("Assets").GetProperty("Qnas").ToString();
 
-                    knowledgebaseList = JsonConvert.DeserializeObject<IEnumerable<KnowledgeBaseAnswerDTO>>(asasas.ToString());
-                }
-                else
-                {
-                    // Todo :: Re-try Logic;
+                    knowledgebaseList = JsonConvert.DeserializeObject<IEnumerable<KnowledgeBaseAnswerDTO>>(exportedAssests.ToString());
                 }
             }
 

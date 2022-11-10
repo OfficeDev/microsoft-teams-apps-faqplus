@@ -7,7 +7,7 @@ The app uses the following data stores:
    * [Table] For maintaining card conversation state which is used to refresh cards when edited or deleted.
    * [Blob]  Storage for knowledge base QnA pairs with metadata information in JSON format.
 
-2. Azure Search service list item index, created and maintained by the QnAMaker cognitive service.
+2. Azure Search service list item index, created and maintained by the Question Answering cognitive service.
 
  All these resources are created in your Azure subscription. None are hosted directly by Microsoft.
 
@@ -18,7 +18,7 @@ The **ConfigurationInfo** table stores data about the necessary configurations t
 
 |Attribute | Comment|
 -----------|---------
-KnowledgeBaseId | This is the knowledge base Id for which the bot can return answers from the QnA Maker.
+KnowledgeBaseId | This is the Project name for which the bot can return answers from the Question Answering service.
 MSTeamId | The team Id which the bot can be able to post messages whenever the end-user asks for an expert's assistance with a query.
 StaticTabText | The static tab text, would be the standard text that is displayed in the help tab which will be installed along with the bot in a personal scope. The static tab text will be configured by the configurator application, and is publically accessible with no authentication.
 WelcomeMessage | The welcome message is a configurable text that the bot would send to the end-user the very first time that end-user installs the bot in a personal scope.
@@ -76,20 +76,11 @@ The same JSON is used by messaging extension search results for knowledge base t
       "questions":[ 
          "<<Question text added/updated by user.>>"
       ],
-      "metadata":[ 
-         { 
-            "name":"createdby",
-            "value":"<<AAD Object Id>>"
+      "metadata": { 
+            "createdby""<<AAD Object Id>>",
+            "conversationid""<<Conversation Id>>",
+            "updatedby""<<AAD Object Id>>",
          },
-         { 
-            "name":"conversationid",
-            "value":"<<Conversation Id>>"
-         },
-         { 
-            "name":"updatedby",
-            "value":"<<AAD Object Id>>"
-         }
-      ],
       "createddate":"<<Question creation date.>>",
       "updateddate":"<<Question or answer updation date.>>"
    }

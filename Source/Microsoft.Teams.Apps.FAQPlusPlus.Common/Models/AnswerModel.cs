@@ -7,7 +7,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
     using Newtonsoft.Json;
 
     /// <summary>
-    /// Represents the FAQPlus QnA Maker answer response model.
+    /// Represents the FAQPlus Question Answering answer response model.
     /// </summary>
     public class AnswerModel
     {

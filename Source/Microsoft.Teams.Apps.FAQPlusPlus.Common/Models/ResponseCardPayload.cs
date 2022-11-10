@@ -1,7 +1,6 @@
 ﻿// <copyright file="ResponseCardPayload.cs" company="Microsoft">
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
-using Azure.AI.Language.QuestionAnswering;
 
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
 {

@@ -126,7 +126,7 @@
       ],
       "defaultValue": "F0",
       "metadata": {
-        "description": "The pricing tier for the Question and answer service."
+        "description": "The pricing tier for the Question Answering service."
       }
     },
     "defaultCulture": {
@@ -180,14 +180,14 @@
     "questionAnswerProjectName": {
       "type": "string",
       "metadata": {
-        "description": "The question answer project name."
+        "description": "The Question Answering service project name."
       }
     },
     "questionAnswerDeploymentName": {
         "type": "string",
-        "metadata": {
-          "description": "The question answer deployment name."
-        },
+      "metadata": {
+        "description": "The Question Answering service deployment name."
+      },
         "defaultValue": "production"
       }
     },

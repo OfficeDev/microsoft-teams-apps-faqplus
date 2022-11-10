@@ -1,18 +1,18 @@
 ﻿// <copyright file="IQuestionAnswerServiceProvider.cs" company="Microsoft">
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
-using Azure;
-using Azure.AI.Language.QuestionAnswering;
 
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
 {
-    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using global::Azure;
+    using global::Azure.AI.Language.QuestionAnswering;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
 
     /// <summary>
-    /// Qna maker service provider interface.
+    /// Question Answering service provider interface.
     /// </summary>
     public interface IQuestionAnswerServiceProvider
     {

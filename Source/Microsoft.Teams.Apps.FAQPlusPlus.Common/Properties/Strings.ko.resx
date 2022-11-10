@@ -229,7 +229,7 @@
   </data>
   <data name="ResponseHeaderText" xml:space="preserve">
     <value>검색 결과:</value>
-    <comment>Response header-letting the user know that a response is generated to their request from QnA Maker.</comment>
+    <comment>Response header-letting the user know that a response is generated to their request from Question Answering.</comment>
   </data>
   <data name="ClosedFactTitle" xml:space="preserve">
     <value>닫힘: </value>
@@ -587,7 +587,7 @@
   </data>
   <data name="ManuallyAddedQuestionMessage" xml:space="preserve">
     <value>수동으로 추가된 질문</value>
-    <comment>Question answer pair added manually in QnA Maker</comment>
+    <comment>Question answer pair added manually in Question Answering</comment>
   </data>
   <data name="UpdateHistoryDateHeaderText" xml:space="preserve">
     <value>날짜</value>

@@ -1,15 +1,14 @@
 ﻿// <copyright file="SearchServiceDataProvider.cs" company="Microsoft">
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
-using Azure.AI.Language.QuestionAnswering;
 
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
 {
     using System;
     using System.Collections.Generic;
-    using System.Globalization;
     using System.Linq;
     using System.Threading.Tasks;
+    using global::Azure.AI.Language.QuestionAnswering;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.WindowsAzure.Storage;
     using Microsoft.WindowsAzure.Storage.Blob;
@@ -76,8 +75,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
                             CreatedDate = createdDate != null ? new DateTimeOffset(new DateTime(Convert.ToInt64(createdDate))) : new DateTimeOffset(DateTime.MinValue, TimeSpan.Zero),
                             UpdatedDate = updatedDate != null ? new DateTimeOffset(new DateTime(Convert.ToInt64(updatedDate))) : new DateTimeOffset(DateTime.MinValue, TimeSpan.Zero),
 
-                            // [IMP TODO] :: Temp workaround to create the serach service without MetaData.
-                            // Issue] :: MetaData in AzureSerach if of collection(Complex type) whereas the Json from KB is of Dictionary. Its throws error while serialization.
+                            // Create the serach service without MetaData.
+                            // MetaData in AzureSerach if of collection(Complex type) whereas the Json from KB is of Dictionary. Its throws error while serialization.
                             // Metadata = item.Metadata
                         });
             }

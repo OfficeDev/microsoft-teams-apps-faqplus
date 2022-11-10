@@ -9,8 +9,8 @@ To begin, you will need:
 	* Azure storage account
 	* Azure search
 	* Azure function
-	* QnAMaker cognitive service
-	* Application Insights  
+	* Question answering cognitive service
+	* Application insights  
 * A team in Microsoft Teams with your group of experts. (You can add and remove team members later!)
 * A copy of the FAQ Plus app GitHub repo (https://github.com/OfficeDev/microsoft-teams-apps-faqplus)
 * A reasonable set of Question and Answer pairs to set up the knowledge base for the bot.
@@ -23,7 +23,9 @@ To begin, you will need:
 Please follow below steps to deploy app template:
 
 * Download the whole solution folder from [GitHub](https://github.com/OfficeDev/microsoft-teams-apps-faqplus)
-![Screenshot of code download](/Wiki/Images/download-repo-github.png)
+
+	![Screenshot of code download](/Wiki/Images/download-repo-github.png)
+
 * Open the PowerShell in **administrator** mode
 * Navigate to [deploy.ps1](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/blob/master/Deployment/deploy.ps1) in your local machine.
 	* cd `<`PathToLocalFolder`>`\Deployment
@@ -36,7 +38,7 @@ Please follow below steps to deploy app template:
    - Open a new PowerShell window and in administrator mode. Go to the path of deploy.ps1 script file again. 
 
 * Fill-in the Deployment\Parameters.json file with required parameters values for the script. Replace `<<`value`>>` with the correct value for each parameter.
-![Screenshot of parameters file](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/Wiki/Images/parameters-file.png)
+![Screenshot of parameters file](/Wiki/Images/parameters-file.png)
 
 The script requires the following parameters:
 
@@ -54,7 +56,7 @@ The script requires the following parameters:
 * Location - Azure region in which to create the resources. The internal name should be used e.g. uksouth. The location MUST be in a data center that supports:
 	* Application Insights
 	* Azure Search
-	* QnA Maker.
+	* Cognitive Service for Language (Question Answering)
 	* For an up-to-date list, click [Valid Azure Locations](https://azure.microsoft.com/en-us/global-infrastructure/services/?products=logic-apps,cognitive-services,search,monitor), and select a region where the above services are available.
 
 * ResourceGroupName - Name for a new resource group to deploy the solution to - the script will create this resource group. e.g. FAQPlusResourceGroup.
@@ -62,7 +64,7 @@ The script requires the following parameters:
 * BaseAppName - Name for the Azure AD app that will be created e.g. FAQPlus.
 
 * BaseResourceName - Name which the template uses to generate names for the other resources.
-	* The app service names `[Base Resource Name]`, `[Base Resource Name]-config`, and `[Base Resource Name]-qnamaker` must be available. For example, if you select `contosofaqplus` as the base name, the names `contosofaqplus`, `contosofaqplus-config`, and `contosofaqplus-qnamaker` must be available (not taken in other resource groups/tenants); otherwise, the deployment will fail with a conflict error.
+	* The app service names `[Base Resource Name]`, `[Base Resource Name]-config`, and `[Base Resource Name]-questionAnswering` must be available. For example, if you select `contosofaqplus` as the base name, the names `contosofaqplus`, `contosofaqplus-config`, and `contosofaqplus-questionAnswering` must be available (not taken in other resource groups/tenants); otherwise, the deployment will fail with a conflict error.
 	* Remember the base resource name that you selected. We will need it later.
 
 * ConfigAdminUPNList - A semicolon-delimited list of users who will be allowed to access the configuration app. e.g. adminuser@contoso.onmicrosoft.com;user2@contoso.onmicrosoft.com
@@ -82,7 +84,7 @@ The script has some optional parameters with default values. You can change the 
 * AppIconUrl - The link to the icon for the app. It must resolve to a PNG file. Default value https://raw.githubusercontent.com/OfficeDev/microsoft-teams-apps-faqplus/master/Manifest/color.png
 * Sku - The pricing tier for the hosting plan. Default value: Standard
 * PlanSize - The size of the hosting plan (small, medium, or large). Default value: 2
-* QnaMakerSku - The pricing tier for the QnAMaker service. Default value: S0
+* QuestionAnsweringSku - The pricing tier for the Question Answering service. Default value: S
 * SearchServiceSku - The pricing tier for the Azure Search service. Default value: B (15 indexes)
 * GitRepoUrl - The URL to the GitHub repository to deploy. Default value: https://github.com/OfficeDev/microsoft-teams-apps-faqplus.git
 * GitBranch - The branch of the GitHub repository to deploy. Default value: master
@@ -96,6 +98,7 @@ The script has some optional parameters with default values. You can change the 
 
 *The script will prompt for login thrice during execution, once to get access to the Azure subscription, the other to get access to AAD where app template would be used, and the last one to get access to Azure subscription again. Please login using an account that has **contributor** role or higher. If the tenantId and subscriptionTenantId are same, the script wouls prompt for login only once.*
 ![Screenshot of Authentication Window](/Wiki/Images/auth-window.png)
+
 ![Screenshot of Authentication Window](/Wiki/Images/auth-window-browser.png)
 
 *The script will prompt for login with Azure subscription. Login using account that has Azure subscription.*
@@ -121,30 +124,24 @@ When the script has completed a "DEPLOYMENT SUCCEEDED" message will be displayed
 * If PowerShell script keeps failing, you may share deployment logs (generated in Deployment\\logs.zip) with the app template support team.
 ![Screenshot of logs file](/Wiki/Images/logs-share.png)
 
-## Step 2: Create the QnA Maker knowledge base
+## Step 2: Create the Question Answering Project
 
-Create a knowledge base on the [QnA Maker portal](https://www.qnamaker.ai/Create), following the instructions in the QnA Maker documentation [QnA Maker documentation](https://docs.microsoft.com/en-us/azure/cognitive-services/qnamaker/tutorials/create-publish-query-in-portal#create-a-knowledge-base).
 
-Skip the step, "Create a QnA service in Microsoft Azure", because the script that you deployed in Step 1 "Deploy to your Azure subscription" already created the QnA service. Proceed directly to the next step, "Connect your QnA service to your KB".
+Create a project on the [Question Answering portal](https://language.cognitive.azure.com/questionAnswering/projects), following the instructions in the Question Answering documentation [Question Answering documentation](https://learn.microsoft.com/en-us/azure/cognitive-services/language-service/question-answering/how-to/create-test-deploy).
 
-Use the following values when connecting to the QnA service:
+Select the existing Azure subscription and Choose language resource which created in step 1 "Deploy to your Azure subscription".
 
-* **Microsoft Azure Directory ID**: The tenant associated with the Azure subscription selected in Step 1.
-* **Azure subscription name**: The Azure subscription to which the template was deployed.
-* **Azure QnA service**: The QnA service created during the deployment. This is the same as the "Base resource name"; for example, if you chose "contosofaqplus" as the base name, the QnA Maker service will be named `contosofaqplus`.
+Skip the step, "Create a new language resource", because the script that you deployed in Step 1 "Deploy to your Azure subscription" already created the language service. Proceed directly to the next step, by selecting the already create language resource.
 
-![Screenshot of settings](https://docs.microsoft.com/en-us/azure/cognitive-services/qnamaker/media/qnamaker-tutorial-create-publish-query-in-portal/create-kb-step-2.png)
+![Custom Question Answering](./Images/create-question-answering.png)
 
+Create a new Custom Question Answering project with the same name which was entered in the Step 1.
+![Create Custom Question Answering Project](./Images/create-question-answering-project.png)
+
+![Create Custom Question Answering Project](./Images/create-question-answering-project-2.png)
+ 
 ### Multi-Turn Enablement
-With the new updates to the FAQ Plus app template, the knowledge base can now support multi-turn conversations. To understand the basics of multi-turn conversations, navigate to the [QnA Maker documentation](https://docs.microsoft.com/en-us/azure/cognitive-services/QnAMaker/how-to/multiturn-conversation#what-is-a-multi-turn-conversation) to understand about multi-turn conversations. To enable multi-turn on the newly created knowledge base, go to this [link](https://docs.microsoft.com/en-us/azure/cognitive-services/QnAMaker/how-to/multiturn-conversation#create-a-multi-turn-conversation-from-a-documents-structure) to enable multi-turn extraction. 
-
-* Note: For best practices with regards to formatting and document structure, please follow the guidelines [here](https://docs.microsoft.com/en-us/azure/cognitive-services/QnAMaker/how-to/multiturn-conversation#building-your-own-multi-turn-document).
-
-After [publishing the knowledge base](https://docs.microsoft.com/en-us/azure/cognitive-services/qnamaker/tutorials/create-publish-query-in-portal#publish-to-get-knowledge-base-endpoints), note the knowledge base ID (see screenshot).
-
-![Screenshot of the publishing page](/Wiki/Images/kb_publishing.png)
-
-Remember the knowledge base ID: we will need it in the next step.
+With the new updates to the FAQ Plus app template, the knowledge base can now support multi-turn conversations. 
 
 ## Step 3: Finish configuring the FAQ Plus app
 
@@ -166,7 +163,7 @@ Click on "Copy" to copy the link to the clipboard.
 
 ![Add team link form](/Wiki/Images/fill-in-team-link.png)
 
-5. Enter the QnA Maker knowledge base ID into the "Knowledge base ID" field, then press "OK".
+5. Enter the Question Answering Project name into the "Project Name" field, then press "OK".
 
 6. Customize the "Welcome message" that is sent to your End-users when they install the app. This message supports basic markdown, such as bold, italics, bulleted lists, numbered lists, and hyperlinks. See [here](https://docs.microsoft.com/en-us/adaptive-cards/authoring-cards/text-features#markdown) for complete details on what Markdown features are supported.
 

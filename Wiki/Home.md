@@ -4,10 +4,6 @@ Chatbots on Microsoft Teams are an easy way to provide answers to frequently ask
 
 FAQ Plus bot is a friendly Q&A bot that brings a human in the loop when it is unable to help. A user can ask the bot a question and the bot responds with an answer if it's in the knowledge base. If not, the bot offers  the user an option to "Ask an expert", which posts the question to a pre-configured team of experts to provide support. An expert can assign the question to themself, chat with the user to gain more context and add the question to the knowledge base from using a messaging extention so that the next user to ask that same question will get an answer from the chatbot!
 
-### Version History
-* The July 2020 (version 3) release of FAQ Plus includes a multi-turn feature to the end user experience. With the multi-turn feature, users will be presented with follow-up options along with an answer to their question. This enables the FAQ Plus bot to answer the user's question with more relevance. Multi-turn follow-up options are programmed directly into the QnA Maker when the tenant admin uploads the Q&A pairs into the knowledge base.
-* The latest (version 4) release of FAQ Plus separates the end-user and the sme bot. With splitting the bot and having different bot registrations, users can now setup different permission policies for these two bots.
-
 **FAQ Plus provides features to the expert team such as:**
 * Adding/editing/deleting/previewing QnA
 * Viewing update history of QnA

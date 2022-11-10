@@ -229,7 +229,7 @@
   </data>
   <data name="ResponseHeaderText" xml:space="preserve">
     <value>下面是我找到的内容:</value>
-    <comment>Response header-letting the user know that a response is generated to their request from QnA Maker.</comment>
+    <comment>Response header-letting the user know that a response is generated to their request from Question Answering.</comment>
   </data>
   <data name="ClosedFactTitle" xml:space="preserve">
     <value>已关闭: </value>
@@ -587,7 +587,7 @@
   </data>
   <data name="ManuallyAddedQuestionMessage" xml:space="preserve">
     <value>已手动添加问题</value>
-    <comment>Question answer pair added manually in QnA Maker</comment>
+    <comment>Question answer pair added manually in Question Answering</comment>
   </data>
   <data name="UpdateHistoryDateHeaderText" xml:space="preserve">
     <value>日期</value>

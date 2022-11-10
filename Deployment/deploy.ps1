@@ -504,7 +504,7 @@ https://azure.microsoft.com/en-us/global-infrastructure/services/?products=logic
 
     # Check for presence of Azure CLI
     If (-not (Test-Path -Path "C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2")) {
-        Write-Host "AZURE CLI NOT INSTALLED!`nPLEASE INSTALL THE CLI FROM https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest and re-run this script in a new PowerShell session" -ForegroundColor Red
+        Write-Host "AZURE CLI NOT INSTALLED!`nPLEASE INSTALL THE CLI FROM https://azcliprod.blob.core.windows.net/msi/azure-cli-2.30.0.msi and re-run this script in a new PowerShell session" -ForegroundColor Red
         break
     }
 

@@ -93,7 +93,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Cards
                 });
             }
 
-            // Question asked fact and view article show card is available when feedback is on QnA Maker response.
+            // Question asked fact and view article show card is available when feedback is on Question Answering response.
             if (!string.IsNullOrWhiteSpace(data.KnowledgeBaseAnswer) && !string.IsNullOrWhiteSpace(data.UserQuestion))
             {
                 smeFeedbackCard.Body.Add(new AdaptiveFactSet

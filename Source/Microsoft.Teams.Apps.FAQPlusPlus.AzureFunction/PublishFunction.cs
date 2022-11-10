@@ -13,7 +13,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers;
 
     /// <summary>
-    /// Azure Function to publish QnA Maker knowledge base.
+    /// Azure Function to publish Question Answering knowledge base.
     /// </summary>
     public class PublishFunction
     {
@@ -25,7 +25,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction
         /// <summary>
         /// Initializes a new instance of the <see cref="PublishFunction"/> class.
         /// </summary>
-        /// <param name="questionAnswerServiceProvider">question answer service provider.</param>
+        /// <param name="questionAnswerServiceProvider">Question Answering service provider.</param>
         /// <param name="configurationProvider">Configuration service provider.</param>
         /// <param name="searchServiceDataProvider">Search service data provider.</param>
         /// <param name="knowledgeBaseSearchService">Knowledgebase search service.</param>
@@ -38,13 +38,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction
         }
 
         /// <summary>
-        /// Function to get and publish QnA Maker knowledge base.
+        /// Function to get and publish Question Answering knowledge base.
         /// </summary>
         /// <param name="myTimer">Duration of publish operations.</param>
         /// <param name="log">Log.</param>
         /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
         [FunctionName("PublishFunction")]
-        public async Task Run([TimerTrigger("0/15 * * * * *")]TimerInfo myTimer, ILogger log)
+        public async Task Run([TimerTrigger("0 */15 * * * *")]TimerInfo myTimer, ILogger log)
         {
             try
             {

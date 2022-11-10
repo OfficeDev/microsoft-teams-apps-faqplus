@@ -1,7 +1,6 @@
 ﻿// <copyright file="ResponseCard.cs" company="Microsoft">
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
-using Azure.AI.Language.QuestionAnswering;
 
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Cards
 {
@@ -10,6 +9,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Cards
     using System.Globalization;
     using System.Linq;
     using AdaptiveCards;
+    using global::Azure.AI.Language.QuestionAnswering;
     using Microsoft.Bot.Schema;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers;
@@ -33,7 +33,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Cards
         private const uint IconHeight = 32;
 
         /// <summary>
-        /// Construct the response card - when user asks a question to the QnA Maker through the bot.
+        /// Construct the response card - when user asks a question to the Question Answering through the bot.
         /// </summary>
         /// <param name="response">The response model.</param>
         /// <param name="userQuestion">Actual question that the user has asked the bot.</param>
@@ -146,7 +146,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Cards
             // If there follow up prompts, then the follow up prompts will render accordingly.
             if (response?.Dialog.Prompts.Count > 0)
             {
-                // TOD :: Grey area :: Update the logic
                 List<KnowledgeBaseAnswerDTO> previousQuestions = BuildListOfPreviousQuestions((int)response.QnaId, userQuestion, answer, payload);
 
                 foreach (var item in response.Dialog.Prompts)
@@ -267,6 +266,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Cards
         }
 
         // TOD :: Grey area :: Update the logic
+
         /// <summary>
         /// This method will build the list of previous questions.
         /// </summary>

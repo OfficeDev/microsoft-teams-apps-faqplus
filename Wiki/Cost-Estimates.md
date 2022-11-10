@@ -10,7 +10,7 @@ The estimate below assumes:
 
 The recommended SKUs for a production environment are:
 
--   QnAMaker: Standard (S0)
+-   Congnitive Service for Language (Custom Question Answering): Standard (S)
 -   App Service: Standard (S2)
 -   Azure Search: Basic
     -   Create up to 14 knowledge bases
@@ -38,23 +38,24 @@ The recommended SKUs for a production environment are:
 
 **IMPORTANT:** This is only an estimate, based on the assumptions above. Your actual costs may vary.
 
-Prices were taken from the [Azure Pricing Overview](https://azure.microsoft.com/en-us/pricing/) on 27 December 2019, for the West US 2 region.
+Prices were taken from the [Azure Pricing Overview](https://azure.microsoft.com/en-us/pricing/) on 09 November 2022, for the West US 2 region.
 
 Use the [Azure Pricing Calculator](https://azure.com/e/595930b9653945a2870a339a5ea8bce2) to model different service tiers and usage patterns.
 
 Resource                                    | Tier          | Load          | Monthly price
 ---                                         | ---           | ---           | --- 
 Storage account (Table)                     | Standard_LRS  | < 1GB data, 75,000 operations | $0.05 + $0.01 = $0.06
-Storage account (Blob)                      |Standard_LRS   |< 1GB data, 5,000 write operations, 5,000 read operations|$0.05|
+Storage account (Blob)                      | Standard_LRS  | < 1GB data, 5,000 write operations, 5,000 read operations|$0.05|
 Bot Channels Registration                   | F0            | N/A           | Free
 App Service Plan                            | S2            | 744 hours     | $148.8
 App Service (Messaging Extension)           | -             |               | (charged to App Service Plan) 
 Application Insights (Messaging Extension)  | -             | < 5GB data    | (free up to 5 GB)
 App Service (Configuration)                 | -             |               |  (charged to App Service Plan)
 Application Insights (Configuration)        | -             | < 5GB data    | (free up to 5 GB)
-QnAMaker Cognitive Service                  | S0            |               | $10
+Question answering Cognitive Service        | S             | 0-2.5M text records | $1.50 per 1,000 text records
 Azure Search                                | B             |               | $75.14
-App Service (QnAMaker)                      | F0            |               | (charged to App Service Plan)
-Application Insights (QnAMaker)             | -             | < 5GB data    | (free up to 5 GB)
-Azure Function                              |Dedicated      |4 executions/hour * 24 hours/day * 30 days = 2880 executions|(free up to 1 million executions)
-**Total**                                   |               |               | **$233.99**
+App Service (Question Answering)            | F0            |               | (charged to App Service Plan)
+Application Insights (Question Answering)   | -             | < 5GB data    | (free up to 5 GB)
+Azure Function                              | Dedicated     | 4 executions/hour * 24 hours/day * 30 days = 2880 executions|(free up to 1 million executions)
+**Total**                                   |               |               | **$225.55**
+

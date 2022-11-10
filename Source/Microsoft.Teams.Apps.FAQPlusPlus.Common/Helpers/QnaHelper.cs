@@ -1,7 +1,6 @@
 ﻿// <copyright file="QnaHelper.cs" company="Microsoft">
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
-using Azure.AI.Language.QuestionAnswering;
 
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
 {
@@ -10,7 +9,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-
+    using global::Azure.AI.Language.QuestionAnswering;
     using Microsoft.Bot.Builder;
     using Microsoft.Bot.Schema;
     using Microsoft.Extensions.Logging;

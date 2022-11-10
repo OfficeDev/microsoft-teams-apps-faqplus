@@ -49,13 +49,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         [JsonProperty("questions")]
         public IList<string> Questions { get; set; }
 
-        //TODO :: Temp Fix :: Include the dependecny of MetaData
-        /// <summary>
-        /// Gets or sets Metadata.
-        /// </summary>
-        //[JsonProperty("metadata")]
-        //public IDictionary<string, string> Metadata { get; set; }
-
         /// <summary>
         /// Gets or sets CreatedDate.
         /// </summary>

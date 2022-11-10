@@ -30,32 +30,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration
                 .As<IConfigurationDataProvider>()
                 .SingleInstance();
 
-            //var qnaMakerClient = new QnAMakerClient(
-            //    new ApiKeyServiceClientCredentials(
-            //    ConfigurationManager.AppSettings["QnAMakerSubscriptionKey"]))
-            //    { Endpoint = StripRouteFromQnAMakerEndpoint(ConfigurationManager.AppSettings["QnAMakerApiEndpointUrl"]) };
-
-            //builder.Register(c => qnaMakerClient)
-            //    .As<IQnAMakerClient>()
-            //    .SingleInstance();
-
             var container = builder.Build();
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
 
             return container;
         }
-
-        //// Strip the route suffix from the endpoint
-        //private static string StripRouteFromQnAMakerEndpoint(string endpoint)
-        //{
-        //    const string apiRoute = "/qnamaker/v4.0";
-
-        //    if (endpoint.EndsWith(apiRoute, System.StringComparison.OrdinalIgnoreCase))
-        //    {
-        //        endpoint = endpoint.Substring(0, endpoint.Length - apiRoute.Length);
-        //    }
-
-        //    return endpoint;
-        //}
     }
 }

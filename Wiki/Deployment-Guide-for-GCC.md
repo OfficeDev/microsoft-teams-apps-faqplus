@@ -150,7 +150,7 @@ To begin, you will need:
 	- Azure storage account
 	- Azure Search
 	- Azure Function
-	- QnA Maker cognitive service
+	* Question answering cognitive service
 	- Application Insights  
 - An Azure Commercial subscription where you can create the following resources:  
     - Bot Channels Registration	
@@ -214,7 +214,7 @@ We recommend that you copy these values into a text file, using an application l
 	- We recommend creating a new resource group.
 	- The resource group location MUST be in a data center that supports Application Insights
 5. Enter a "Base Resource Name", which the template uses to generate names for the other resources.
-	- The app service names [Base Resource Name], [Base Resource Name]-config, and [Base Resource Name]-qnamaker must be available. For example, if you select contosofaqplus as the base name, the names contosofaqplus, contosofaqplus-config, and contosofaqplus-qnamaker must be available (not taken); otherwise, the deployment will fail with a conflict error.
+	- The app service names [Base Resource Name], [Base Resource Name]-config, and [Base Resource Name]-questionAnswering must be available. For example, if you select contosofaqplus as the base name, the names contosofaqplus, contosofaqplus-config, and contosofaqplus-questionAnswering must be available (not taken); otherwise, the deployment will fail with a conflict error.
 	- Remember the base resource name that you selected. We will need it later.
 6. Fill in the various IDs in the template:
     - Bot Client ID: The application (client) ID of the Microsoft Teams Bot app
@@ -245,11 +245,11 @@ We recommend that you copy these values into a text file, using an application l
 	- The resource group location MUST be in a data center that supports:
 	     - Application Insights
 		 - Azure Search
-		 - QnA Maker.
+		 - Cognitive Service for Language (Question Answering)
     - For an up-to-date list, click [here](https://azure.microsoft.com/en-us/global-infrastructure/services/?products=logic-apps%2Ccognitive-services%2Csearch%2Cmonitor). , and select a region where the following services are available:
 	     - Application Insights
 		 - Azure Search
-		 - QnA Maker.
+		 - Cognitive Service for Language (Question Answering)
 5.  Enter and reuse **the same Base Resource Name**, that you gave for bots deployment in your Azure commercial.
 	- The app service names [Base Resource Name], must be available. For example, if you select contosoworkplaceawards as the base name, the names contosoworkplaceawards must be available (not taken); otherwise, the deployment will fail with a Conflict error.
 6. Fill in the various IDs in the template:
@@ -298,30 +298,23 @@ We recommend that you copy these values into a text file, using an application l
 
 8. Click "Save" to commit your changes.
 
-## Step 5: Create the QnA Maker knowledge base
+## Step 5: Create the Question Answering Project
 
-1. Create a knowledge base on the [QnA Maker Azure Gov portal](https://www.qnamaker.azure.us/Create) using **Azure Government subscription**, following the instructions in the QnA Maker documentation [QnA Maker documentation](https://docs.microsoft.com/en-us/azure/cognitive-services/qnamaker/tutorials/create-publish-query-in-portal#create-a-knowledge-base).
+Create a project on the [Question Answering portal](https://language.cognitive.azure.com/questionAnswering/projects), following the instructions in the Question Answering documentation [Question Answering documentation](https://learn.microsoft.com/en-us/azure/cognitive-services/language-service/question-answering/how-to/create-test-deploy).
 
-2. Skip the step, "Create a QnA service in Microsoft Azure", because the ARM template that you deployed in Step 3 "Deploy to your Azure subscription" already created the QnA service. Proceed directly to the next step, "Connect your QnA service to your KB".
+Select the existing Azure subscription and Choose language resource which created in step 1 "Deploy to your Azure subscription".
 
-3. Use the following values when connecting to the QnA service:
+Skip the step, "Create a new language resource", because the script that you deployed in Step 1 "Deploy to your Azure subscription" already created the language service. Proceed directly to the next step, by selecting the already create language resource.
 
-	- **Microsoft Azure Directory ID**: The tenant associated with the Azure subscription used for Step 3.
-	- **Azure subscription name**: The Azure subscription to which the ARM template was deployed in Step 3.
-	- **Azure QnA service**: The QnA service was created during the deployment. This is the same as the "Base resource name"; for example, if you chose "contosofaqplus" as the base name, the QnA Maker service will be named `contosofaqplus`.
+![Custom Question Answering](./Images/create-question-answering.png)
 
-![Screenshot of settings](https://docs.microsoft.com/en-us/azure/cognitive-services/qnamaker/media/qnamaker-tutorial-create-publish-query-in-portal/create-kb-step-2.png)
+Create a new Custom Question Answering project with the same name which was entered in the Step 1.
+![Create Custom Question Answering Project](./Images/create-question-answering-project.png)
+
+![Create Custom Question Answering Project](./Images/create-question-answering-project-2.png)
 
 ### Multi-Turn Enablement
-With the new updates to the FAQ Plus app template, the knowledge base can now support multi-turn conversations. To understand the basics of multi-turn conversations, navigate to the [QnA Maker documentation](https://docs.microsoft.com/en-us/azure/cognitive-services/QnAMaker/how-to/multiturn-conversation#what-is-a-multi-turn-conversation) to understand about multi-turn conversations. To enable multi-turn on the newly created knowledge base, go to this [link](https://docs.microsoft.com/en-us/azure/cognitive-services/QnAMaker/how-to/multiturn-conversation#create-a-multi-turn-conversation-from-a-documents-structure) to enable multi-turn extraction. 
-
-* Note: For best practices with regards to formatting and document structure, please follow the guidelines [here](https://docs.microsoft.com/en-us/azure/cognitive-services/QnAMaker/how-to/multiturn-conversation#building-your-own-multi-turn-document).
-
-4. After [publishing the knowledge base](https://docs.microsoft.com/en-us/azure/cognitive-services/qnamaker/tutorials/create-publish-query-in-portal#publish-to-get-knowledge-base-endpoints), note the knowledge base ID (see screenshot).
-
-![Screenshot of the publishing page](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/kb_publishing.png)
-
-5. Remember the knowledge base ID: we will need it in the next step.
+With the new updates to the FAQ Plus app template, the knowledge base can now support multi-turn conversations. 
 
 ## Step 6: Finish configuring the FAQ Plus app
 
@@ -343,7 +336,7 @@ Click on "Copy" to copy the link to the clipboard.
 
 ![Add team link form](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/fill-in-team-link.png)
 
-5. Enter the QnA Maker knowledge base ID into the "Knowledge base ID" field, then press "OK".
+5. Enter the Question Answering Project name into the "Project Name" field, then press "OK".
 
 6. Customize the "Welcome message" that's sent to your End-users when they install the app. This message supports basic markdown, such as bold, italics, bulleted lists, numbered lists, and hyperlinks. See [here](https://docs.microsoft.com/en-us/adaptive-cards/authoring-cards/text-features#markdown) for complete details on what Markdown features are supported.
 

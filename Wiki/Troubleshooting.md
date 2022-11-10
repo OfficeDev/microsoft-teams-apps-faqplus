@@ -140,7 +140,7 @@ This happens when the admin user does not update the knowledge base id in the co
 
 In case of such a scenario, the admin user needs to make sure that the knowledge base id is updated in the configuration app and QnA pairs are existing in the knowledge base.
 
-If no QnA pairs exist in the knowledge base, then add new ones either directly from the QnA maker portal or add it from the messaging extension in the experts' team.
+If no QnA pairs exist in the knowledge base, then add new ones either directly from the Question Answering portal or add it from the messaging extension in the experts' team.
 
 **Didn't find your problem here?**
 

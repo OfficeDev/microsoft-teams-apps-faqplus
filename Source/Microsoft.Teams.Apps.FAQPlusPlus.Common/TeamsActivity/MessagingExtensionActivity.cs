@@ -29,7 +29,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.TeamsActivity
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
-    //using ErrorResponseException = Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker.Models.ErrorResponseException;
 
     /// <summary>
     /// Class that handles messaging extension query, fetch, submit activity in expert's team chat.
@@ -96,7 +95,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.TeamsActivity
         /// </summary>
         /// <param name="configurationProvider">Configuration Provider.</param>
         /// <param name="activityStorageProvider">Activity storage provider.</param>
-        /// <param name="questionAnswerServiceProvider">Question and answer maker service provider.</param>
+        /// <param name="questionAnswerServiceProvider">Question and answer service provider.</param>
         /// <param name="searchService">SearchService dependency injection.</param>
         /// <param name="botAdapter">Bot adapter dependency injection.</param>
         /// <param name="memoryCache">IMemoryCache dependency injection.</param>
@@ -320,14 +319,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.TeamsActivity
             }
             catch (Exception ex)
             {
-                // TODO:: Hanlde in a better way
-                // if (((ErrorResponseException)ex).Body?.Error?.Code == ErrorCodeType.QuotaExceeded)
-                // {
-                //    this.logger.LogError(ex, "QnA storage limit exceeded and is not able to save the qna pair. Please contact your system administrator to provision additional storage space.");
-                //    await turnContext.SendActivityAsync("QnA storage limit exceeded and is not able to save the qna pair. Please contact your system administrator to provision additional storage space.").ConfigureAwait(false);
-                //    return null;
-                //}
-
                 this.logger.LogError(ex, "Error while submitting new question via messaging extension");
                 await turnContext.SendActivityAsync(Strings.ErrorMessage).ConfigureAwait(false);
                 throw ex;

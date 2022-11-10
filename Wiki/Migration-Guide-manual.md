@@ -1,5 +1,6 @@
-This guide helps in migrating the older versions of FAQ+ (version < 4.0.0) to latest version.
-The latest version has two bots - one for end user and the other for SME team.
+**Note**: Migration approach to v5.0(lastest) is not yet finalized. This guide helps in migrating the older versions of FAQ+ (version < 4.0.0) to version = 4.0.0.
+
+FAQ v4.0 uses two bots - one for end user and the other for SME team.
 
 ## Step 1. Create a new Azure AD app for Expert bot.
 Register an Azure AD applications in your tenant's directory: the Expert bot app.
@@ -25,7 +26,7 @@ Register an Azure AD applications in your tenant's directory: the Expert bot app
 
 6. Once the client secret is created, copy its **Value**; we will need it later.
 
-7. At this point you have two values 
+7. At this point you have two values.
 * Application (client) ID for the expert bot.
 * Client secret for the expert bot.
 
