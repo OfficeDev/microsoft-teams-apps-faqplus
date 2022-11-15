@@ -49,7 +49,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
             this.qnAServicerSubscriptionKey = this.Configuration.GetValue<string>("QuestionAnswerSubscriptionKey");
             this.endpoint = new Uri(this.Configuration.GetValue<string>("QuestionAnswerApiEndpointUrl"));
             this.credential = new AzureKeyCredential(this.Configuration.GetValue<string>("QuestionAnswerSubscriptionKey"));
-            this.projectName = this.Configuration.GetValue<string>("ProjectName");
+            this.projectName = this.Configuration.GetValue<string>("QuestionAnswerProjectName");
             this.deploymentName = this.Configuration.GetValue<string>("DeploymentName");
     }
 

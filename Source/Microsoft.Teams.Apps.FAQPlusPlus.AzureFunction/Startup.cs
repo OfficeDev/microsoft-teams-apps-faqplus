@@ -35,7 +35,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction
         {
             this.endpoint = new Uri(Environment.GetEnvironmentVariable("QuestionAnswerApiUrl"));
             this.credential = new AzureKeyCredential(Environment.GetEnvironmentVariable("QuestionAnswerSubscriptionKey"));
-            this.projectName = Environment.GetEnvironmentVariable("ProjectName");
+            this.projectName = Environment.GetEnvironmentVariable("QuestionAnswerProjectName");
             this.deploymentName = Environment.GetEnvironmentVariable("DeploymentName");
             this.qnAServicerSubscriptionKey = Environment.GetEnvironmentVariable("QuestionAnswerSubscriptionKey");
 

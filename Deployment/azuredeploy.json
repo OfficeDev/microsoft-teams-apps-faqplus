@@ -364,7 +364,7 @@
               "value": false
             },
             {
-              "name": "ProjectName",
+              "name": "QuestionAnswerProjectName",
               "value": "[parameters('questionAnswerProjectName')]"
             },
             {
@@ -570,7 +570,7 @@
               "value": "[parameters('configAdminUPNList')]"
             },
             {
-              "name": "ProjectName",
+              "name": "QuestionAnswerProjectName",
               "value": "[parameters('questionAnswerProjectName')]"
             },
             {
@@ -740,7 +740,7 @@
               "value": false
             },
             {
-              "name": "ProjectName",
+              "name": "QuestionAnswerProjectName",
               "value": "[parameters('questionAnswerProjectName')]"
             },
             {

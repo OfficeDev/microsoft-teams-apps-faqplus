@@ -28,7 +28,7 @@ Configure the bot to use an existing knowledge base with QnA pairs instead of a 
 
 ![image4](./Images/config-web-app-login.png)
 
-2) Navigate to [Azure portal](https://portal.azure.com/) and go to configuration section of your bot app service, update the appsettings values for ProjectName,QuestionAnswerHostUrl, QuestionAnswerApiEndpointKey & QuestionAnswerApiEndpointUrl of your existing knowledge base.
+2) Navigate to [Azure portal](https://portal.azure.com/) and go to configuration section of your bot app service, update the appsettings values for QuestionAnswerProjectName,QuestionAnswerHostUrl, QuestionAnswerApiEndpointKey & QuestionAnswerApiEndpointUrl of your existing knowledge base.
 
 ![App_service_app-settings](./Images/App_service_app-settings.png)
 

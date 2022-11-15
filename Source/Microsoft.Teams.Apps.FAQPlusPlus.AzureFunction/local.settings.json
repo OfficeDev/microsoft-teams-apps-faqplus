@@ -10,7 +10,7 @@
     "SearchServiceAdminApiKey": "",
     "SearchServiceQueryApiKey": "",
     "IsGCCHybridDeployment": false,
-    "ProjectName": "",
+    "QuestionAnswerProjectName": "",
     "DeploymentName": ""
   }
 }
