@@ -67,9 +67,9 @@
     "Value": "2",
     "Description": "The size of the hosting plan (small, medium, or large)."
   },
-  "QuestionAnswserServiceSku": {
+  "QuestionAnswerServiceSku": {
     "Value": "F0",
-    "Description": "The pricing tier for the QuestionAnswser service."
+    "Description": "The pricing tier for the QuestionAnswer service."
   },
   "SearchServiceSku": {
     "Value": "B (15 indexes)",
