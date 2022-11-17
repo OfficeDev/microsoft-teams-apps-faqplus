@@ -56,7 +56,7 @@
     "Description": "The app (and bot) description."
   },
   "AppIconUrl": {
-    "Value": "https://raw.githubusercontent.com/OfficeDev/microsoft-teams-apps-faqplus/master/Manifest/color.png",
+    "Value": "https://raw.githubusercontent.com/v-royavinash/microsoft-teams-apps-faqplus/master/Manifest/color.png",
     "Description": "The link to the icon for the app. It must resolve to a PNG file."
   },
   "Sku": {
@@ -76,7 +76,7 @@
     "Description": "The pricing tier for the Azure Search service."
   },
   "GitRepoUrl": {
-    "Value": "https://github.com/OfficeDev/microsoft-teams-apps-faqplus.git",
+    "Value": "https://github.com/v-royavinash/microsoft-teams-apps-faqplus.git",
     "Description": "The URL to the GitHub repository to deploy."
   },
   "GitBranch": {

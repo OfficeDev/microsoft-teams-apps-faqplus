@@ -12,7 +12,7 @@ To begin, you will need:
 	* Question answering cognitive service
 	* Application insights  
 * A team in Microsoft Teams with your group of experts. (You can add and remove team members later!)
-* A copy of the FAQ Plus app GitHub repo (https://github.com/OfficeDev/microsoft-teams-apps-faqplus)
+* A copy of the FAQ Plus app GitHub repo (https://github.com/v-royavinash/microsoft-teams-apps-faqplus)
 * A reasonable set of Question and Answer pairs to set up the knowledge base for the bot.
 * A user on the Azure subscription with a contributor role or higher.
 
@@ -22,12 +22,12 @@ To begin, you will need:
 
 Please follow below steps to deploy app template:
 
-* Download the whole solution folder from [GitHub](https://github.com/OfficeDev/microsoft-teams-apps-faqplus)
+* Download the whole solution folder from [GitHub](https://github.com/v-royavinash/microsoft-teams-apps-faqplus)
 
 	![Screenshot of code download](/Wiki/Images/download-repo-github.png)
 
 * Open the PowerShell in **administrator** mode
-* Navigate to [deploy.ps1](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/blob/master/Deployment/deploy.ps1) in your local machine.
+* Navigate to [deploy.ps1](https://github.com/v-royavinash/microsoft-teams-apps-faqplus/blob/master/Deployment/deploy.ps1) in your local machine.
 	* cd `<`PathToLocalFolder`>`\Deployment
 * Before running the script, some installations are needed for the user who is running the script for the first time. Please find the steps below: 
    - In the above-navigated path in PowerShell, run the command "**Set-ExecutionPolicy -ExecutionPolicy RemoteSigned**". This command will allow the user to run deploy.ps1 as execution policy is restricted by default. You can change it to restricted again after successful deployment. 
@@ -81,12 +81,12 @@ The script has some optional parameters with default values. You can change the 
 
 * AppDisplayName - The app (and bot) display name. Default value: FAQ Plus.
 * AppDescription - The app (and bot) description. Default value: A friendly FAQ bot that answers questions and connects you to experts.
-* AppIconUrl - The link to the icon for the app. It must resolve to a PNG file. Default value https://raw.githubusercontent.com/OfficeDev/microsoft-teams-apps-faqplus/master/Manifest/color.png
+* AppIconUrl - The link to the icon for the app. It must resolve to a PNG file. Default value https://raw.githubusercontent.com/v-royavinash/microsoft-teams-apps-faqplus/master/Manifest/color.png
 * Sku - The pricing tier for the hosting plan. Default value: Standard
 * PlanSize - The size of the hosting plan (small, medium, or large). Default value: 2
 * QuestionAnsweringSku - The pricing tier for the Question Answering service. Default value: S
 * SearchServiceSku - The pricing tier for the Azure Search service. Default value: B (15 indexes)
-* GitRepoUrl - The URL to the GitHub repository to deploy. Default value: https://github.com/OfficeDev/microsoft-teams-apps-faqplus.git
+* GitRepoUrl - The URL to the GitHub repository to deploy. Default value: https://github.com/v-royavinash/microsoft-teams-apps-faqplus.git
 * GitBranch - The branch of the GitHub repository to deploy. Default value: master
 * IsMigration - True if the app template is being migrated from older version (< 4.0.0). False by default.
 * DefaultCulture - Default Culture. "en" is default.

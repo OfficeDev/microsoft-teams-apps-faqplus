@@ -12,7 +12,7 @@ To begin, you will need:
 	* Question answering cognitive service
 	* Application insights  
 * A team in Microsoft Teams with your group of experts. (You can add and remove team members later!)
-* A copy of the FAQ Plus app GitHub repo (https://github.com/OfficeDev/microsoft-teams-apps-faqplus)
+* A copy of the FAQ Plus app GitHub repo (https://github.com/v-royavinash/microsoft-teams-apps-faqplus)
 * A reasonable set of Question and Answer pairs to set up the knowledge base for the bot.
 
 ## Step 1: Register Azure AD applications
@@ -26,17 +26,17 @@ Register three Azure AD applications in your tenant's directory: one for the end
 	2. **Supported account types**: Select "Accounts in any organizational directory".
 	3. Leave the "Redirect URL" field blank.
 
-![Azure registration page](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/multitenant_app_creation.png)
+![Azure registration page](https://github.com/v-royavinash/microsoft-teams-apps-faqplus/wiki/Images/multitenant_app_creation.png)
 
 3. Click on the "Register" button.
 
 4. When the app is registered, you'll be taken to the app's "Overview" page. Copy the **Application (client) ID** and **Directory (tenant) ID**; we will need it later. Verify that the "Supported account types" is set to **Multiple organizations**.
 
-![Azure overview page](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/multitenant_app_overview.png)
+![Azure overview page](https://github.com/v-royavinash/microsoft-teams-apps-faqplus/wiki/Images/multitenant_app_overview.png)
 
 5. On the side rail in the Manage section, navigate to the "Certificates & secrets" section. In the Client secrets section, click on "+ New client secret". Add a description of the secret and select an expiry time. Click "Add".
 
-![Azure AD overview page](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/multitenant_app_secret.png)
+![Azure AD overview page](https://github.com/v-royavinash/microsoft-teams-apps-faqplus/wiki/Images/multitenant_app_secret.png)
 
 6. Once the client secret is created, copy its **Value**; we will need it later.
 
@@ -61,7 +61,7 @@ At this point you have 6 unique values:
 
 We recommend that you copy these values into a text file, using an application like Notepad. We will need these values later.
 
-![Configuration step 3](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/azure-config-app-step3.png)
+![Configuration step 3](https://github.com/v-royavinash/microsoft-teams-apps-faqplus/wiki/Images/azure-config-app-step3.png)
 
 ## Step 2: Deploy to your Azure subscription
 
@@ -132,7 +132,7 @@ Make sure that the values are copied as-is, with no extra spaces. The template c
 
 4. Click on Add a platform, select Web.
 
-![Adding Redirect URI1](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/AuthenticationImage1.png)
+![Adding Redirect URI1](https://github.com/v-royavinash/microsoft-teams-apps-faqplus/wiki/Images/AuthenticationImage1.png)
 
 5. Add new entry to "Redirect URIs":
 	If your configuration app's URL is https://contosofaqplus-config.azurewebsites.net, then add the following entry as the Redirect URIs:
@@ -142,14 +142,14 @@ Make sure that the values are copied as-is, with no extra spaces. The template c
 
 6. Under "Implicit grant", check "ID tokens" and "Access tokens". The reason to check "ID tokens" is because you are using only the accounts on your current Azure tenant and using that to authenticate yourself in the configuration app. Click configure.
 
-![Adding Redirect URI2](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/AuthenticationImage2.png)
+![Adding Redirect URI2](https://github.com/v-royavinash/microsoft-teams-apps-faqplus/wiki/Images/AuthenticationImage2.png)
 
 7. Add new entries to "Redirect URIs":
 	If your configuration app's URL is https://contosofaqplus-config.azurewebsites.net, then add the following entry as the Redirect URIs:
 	- https://contosofaqplus-config.azurewebsites.net/signin
 	- https://contosofaqplus-config.azurewebsites.net/configuration
 
-![Adding Redirect URI3](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/AuthenticationImage3.png)
+![Adding Redirect URI3](https://github.com/v-royavinash/microsoft-teams-apps-faqplus/wiki/Images/AuthenticationImage3.png)
 
 8. Click "Save" to commit your changes.
 
@@ -181,11 +181,11 @@ With the new updates to the FAQ Plus app template, the knowledge base can now su
 
 3. Get the link to the team with your experts from the Teams client. To do so, open Microsoft Teams, and navigate to the team. Click on the "..." next to the team name, then select "Get link to team".
 
-![Get link to Team](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/get-link-to-Team.png)
+![Get link to Team](https://github.com/v-royavinash/microsoft-teams-apps-faqplus/wiki/Images/get-link-to-Team.png)
 
 Click on "Copy" to copy the link to the clipboard.
 
-![Link to team](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/link-to-team.png)
+![Link to team](https://github.com/v-royavinash/microsoft-teams-apps-faqplus/wiki/Images/link-to-team.png)
 
 4. Paste the copied link into the "Team Id" field, then press "OK".
 
@@ -224,7 +224,7 @@ Create two Teams app packages: one for end-users to install personally, and one 
 6. Create a ZIP package with the all the files in `Manifest\EndUser` folder - `manifest.json`,`color.png` and `outline.png`, along with localization files - `ar.json`, `de.json`, `en.json`, `es.json`, `fr.json`, `he.json`, `ja.json`, `ko.json`, `pt-BR.json`, `ru.json`, `zh-CN.json`, `zh-TW.json`. The two image files are the icons for your app in Teams.
 * Name this package `faqplus-enduser.zip`, so you know that this is the app for end-users.
 * Make sure that the 15 files are the _top level_ of the ZIP package, with no nested folders.
-![File Explorer](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/file-explorer-user.png)
+![File Explorer](https://github.com/v-royavinash/microsoft-teams-apps-faqplus/wiki/Images/file-explorer-user.png)
 
 7. Rename the `manifest.json` file to `manifest_enduser.json` for reusing the file.
 
@@ -237,7 +237,7 @@ Create two Teams app packages: one for end-users to install personally, and one 
 11. Create a ZIP package with the all the files in `Manifest\SME` folder (except manifest_legacy) - `manifest.json`,`color.png` and `outline.png`, along with localization files - `ar.json`, `de.json`, `en.json`, `es.json`, `fr.json`, `he.json`, `ja.json`, `ko.json`, `pt-BR.json`, `ru.json`, `zh-CN.json`, `zh-TW.json`. The two image files are the icons for your app in Teams.
 * Name this package `faqplus-sme.zip`, so you know that this is the app for sme.
 * Make sure that the 15 files are the _top level_ of the ZIP package, with no nested folders.
-![File Explorer](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/file-explorer-sme.png)
+![File Explorer](https://github.com/v-royavinash/microsoft-teams-apps-faqplus/wiki/Images/file-explorer-sme.png)
 
 12. Rename the `manifest.json` file to `manifest_sme.json` for reusing the file.
 
@@ -255,4 +255,4 @@ Create two Teams app packages: one for end-users to install personally, and one 
 
 ## Troubleshooting
 
-Please see our [Troubleshooting](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Troubleshooting) page.
+Please see our [Troubleshooting](https://github.com/v-royavinash/microsoft-teams-apps-faqplus/wiki/Troubleshooting) page.

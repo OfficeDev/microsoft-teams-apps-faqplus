@@ -2,7 +2,7 @@
 
 ### **Generic possible issues**
 
-Certain issues can arise that are common to many of the app templates. Please check [here](https://github.com/OfficeDev/microsoft-teams-stickers-app/wiki/Troubleshooting) for reference to these.
+Certain issues can arise that are common to many of the app templates. Please check [here](https://github.com/v-royavinash/microsoft-teams-stickers-app/wiki/Troubleshooting) for reference to these.
 
 ### **Problems related to PowerShell script**
 
@@ -104,7 +104,7 @@ In case of such a scenario, the system administrator or the app installer will n
 
 This happens when the admin tries to install the app to Microsoft Teams using the zip file.
 
-![Manifest parsing has failed](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/manifest_parsing_failed.png)
+![Manifest parsing has failed](https://github.com/v-royavinash/microsoft-teams-apps-faqplus/wiki/Images/manifest_parsing_failed.png)
 
 #### Fix
 
@@ -144,4 +144,4 @@ If no QnA pairs exist in the knowledge base, then add new ones either directly f
 
 **Didn't find your problem here?**
 
-Please, report the issue [here](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/issues/new)
+Please, report the issue [here](https://github.com/v-royavinash/microsoft-teams-apps-faqplus/issues/new)

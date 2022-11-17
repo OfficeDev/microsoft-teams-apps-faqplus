@@ -12,17 +12,17 @@ Register an Azure AD applications in your tenant's directory: the Expert bot app
 	2. **Supported account types**: Select "Accounts in any organizational directory".
 	3. Leave the "Redirect URL" field blank.
 
-![Azure registration page](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/migration_multitenant_app_creation.png)
+![Azure registration page](https://github.com/v-royavinash/microsoft-teams-apps-faqplus/wiki/Images/migration_multitenant_app_creation.png)
 
 3. Click on the "Register" button.
 
 4. When the app is registered, you'll be taken to the app's "Overview" page. Copy the **Application (client) ID** and **Directory (tenant) ID**; we will need it later. Verify that the "Supported account types" is set to **Multiple organizations**.
 
-![Azure overview page](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/migration_multitenant_app_overview.png)
+![Azure overview page](https://github.com/v-royavinash/microsoft-teams-apps-faqplus/wiki/Images/migration_multitenant_app_overview.png)
 
 5. On the side rail in the Manage section, navigate to the "Certificates & secrets" section. In the Client secrets section, click on "+ New client secret". Add a description of the secret and select an expiry time. Click "Add".
 
-![Azure AD overview page](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/multitenant_app_secret.png)
+![Azure AD overview page](https://github.com/v-royavinash/microsoft-teams-apps-faqplus/wiki/Images/multitenant_app_secret.png)
 
 6. Once the client secret is created, copy its **Value**; we will need it later.
 
@@ -41,19 +41,19 @@ Register an Azure AD applications in your tenant's directory: the Expert bot app
 * **Pricing tier**: Select the appropriate pricing tier.
 * **Microsoft App ID**: Choose "Use existing app registration". Enter the app id and password of above expert app.
 
-![Azure Bot overview page](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/migration_create_bot.png)
+![Azure Bot overview page](https://github.com/v-royavinash/microsoft-teams-apps-faqplus/wiki/Images/migration_create_bot.png)
 
 3. Add Teams channel to the bot.
-![Azure Bot channel page](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/migration_add_channel.png)
+![Azure Bot channel page](https://github.com/v-royavinash/microsoft-teams-apps-faqplus/wiki/Images/migration_add_channel.png)
 
 4. Add messaging endpoint for the bot, e.g. `https://<<appDomain>>/api/messages/expert`
-![Azure Bot configuration page](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/migration_expert_endpoint.png)
+![Azure Bot configuration page](https://github.com/v-royavinash/microsoft-teams-apps-faqplus/wiki/Images/migration_expert_endpoint.png)
 
 ## Step 3. Update the exixting Azure Bot.
 The existing Azure bot in the already deloyed resource group would act as the end user bot.
 
 1. Update the messaging endpoint of the user bot. Append `user` to the end, e.g. e.g. `https://<<appDomain>>/api/messages/user`
-![Azure Bot configuration page](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/migration_endpoint_user.png)
+![Azure Bot configuration page](https://github.com/v-royavinash/microsoft-teams-apps-faqplus/wiki/Images/migration_endpoint_user.png)
 
 ## Step 4. Update the App Service Configuration for FAQ+ app.
 Go to Azure App Service for FAQ+ app. Click on "Configuration" and update the following:
@@ -63,10 +63,10 @@ Go to Azure App Service for FAQ+ app. Click on "Configuration" and update the fo
 3. Click "New application setting" and add **"ExpertAppId"** as expert app id from step 1.
 4. Click "New application setting" and add **"ExpertAppPassword"** as expert app secret from step 1.
 
-![Azure App Service configuration page](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/migration_update_configuration.png)
+![Azure App Service configuration page](https://github.com/v-royavinash/microsoft-teams-apps-faqplus/wiki/Images/migration_update_configuration.png)
 
 ## Step 5. Update App service code.
-Follow [Continuous Deployment](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Continuous-Deployment) for updating the app service code.
+Follow [Continuous Deployment](https://github.com/v-royavinash/microsoft-teams-apps-faqplus/wiki/Continuous-Deployment) for updating the app service code.
 
 ## Step 6. Generate manifest.
 Create three Teams app packages: one for end-users to install personally, one to be installed to the experts' team, and one the supports legacy code.
@@ -92,7 +92,7 @@ Create three Teams app packages: one for end-users to install personally, one to
 6. Create a ZIP package with the all the files in `Manifest\EndUser` folder - `manifest.json`,`color.png` and `outline.png`, along with localization files - `ar.json`, `de.json`, `en.json`, `es.json`, `fr.json`, `he.json`, `ja.json`, `ko.json`, `pt-BR.json`, `ru.json`, `zh-CN.json`, `zh-TW.json`. The two image files are the icons for your app in Teams.
 * Name this package `faqplus-enduser.zip`, so you know that this is the app for end-users.
 * Make sure that the 15 files are the _top level_ of the ZIP package, with no nested folders.
-![File Explorer](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/file-explorer-user.png)
+![File Explorer](https://github.com/v-royavinash/microsoft-teams-apps-faqplus/wiki/Images/file-explorer-user.png)
 
 7. Rename the `manifest.json` file to `manifest_enduser.json` for reusing the file.
 
@@ -105,7 +105,7 @@ Create three Teams app packages: one for end-users to install personally, one to
 11. Create a ZIP package with the all the files in `Manifest\SME` folder (except manifest_legacy) - `manifest.json`,`color.png` and `outline.png`, along with localization files - `ar.json`, `de.json`, `en.json`, `es.json`, `fr.json`, `he.json`, `ja.json`, `ko.json`, `pt-BR.json`, `ru.json`, `zh-CN.json`, `zh-TW.json`. The two image files are the icons for your app in Teams.
 * Name this package `faqplus-sme.zip`, so you know that this is the app for sme.
 * Make sure that the 15 files are the _top level_ of the ZIP package, with no nested folders.
-![File Explorer](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/file-explorer-sme.png)
+![File Explorer](https://github.com/v-royavinash/microsoft-teams-apps-faqplus/wiki/Images/file-explorer-sme.png)
 
 12. Rename the `manifest.json` file to `manifest_sme.json` for reusing the file.
 
@@ -116,7 +116,7 @@ Create three Teams app packages: one for end-users to install personally, one to
 15. Create a ZIP package with the all the files in `Manifest\SME` folder (except manifest_sme) - `manifest.json`,`color.png` and `outline.png`, along with localization files - `ar.json`, `de.json`, `en.json`, `es.json`, `fr.json`, `he.json`, `ja.json`, `ko.json`, `pt-BR.json`, `ru.json`, `zh-CN.json`, `zh-TW.json`. The two image files are the icons for your app in Teams.
 * Name this package `faqplus-legacy.zip`, so you know that this is the app for sme.
 * Make sure that the 15 files are the _top level_ of the ZIP package, with no nested folders.
-![File Explorer](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/file-explorer-legacy.png)
+![File Explorer](https://github.com/v-royavinash/microsoft-teams-apps-faqplus/wiki/Images/file-explorer-legacy.png)
 
 12. Rename the `manifest.json` file to `manifest_legacy.json` for reusing the file.
 

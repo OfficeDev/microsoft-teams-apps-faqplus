@@ -1,6 +1,6 @@
 # How to choose the deployment procedure appropriate for your configuration?
 
-> **Note** : This guide is intended for customers requiring the deployment of FAQ Plus of Office 365 Government Community Cloud (aka GCC) only - The standard deployment for Azure AD Commercial tenant is located [here](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Deployment-Guide) 
+> **Note** : This guide is intended for customers requiring the deployment of FAQ Plus of Office 365 Government Community Cloud (aka GCC) only - The standard deployment for Azure AD Commercial tenant is located [here](https://github.com/v-royavinash/microsoft-teams-apps-faqplus/wiki/Deployment-Guide) 
 
 Microsoft provides different cloud offering across Office 365, Azure or the Power Platform to meet customers compliance and regulation requirements. While the global Office 365 and Azure flavors, referred as “Commercial” cloud, are the default and most used environments, customers can choose other alternatives that we’ll refer as Microsoft Cloud for Government.
 
@@ -134,7 +134,7 @@ The hybrid deployment guide considers these multiple Azure subscriptions and Azu
 
 # Deployment in O365 GCC tenant and Azure Commercial subscription
 
-For O365 GCC deployment and Azure Commercial, the same [deployment guide](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Deployment-Guide) (available on FAQ Plus GitHub repo) can be followed. Use O365 GCC tenant for App registration (Step 1 in deployment guide) and Azure commercial subscription for ARM deployment (Step 2 in deployment guide). Make sure tenant Id of O365 GCC tenant is added during ARM deployment.
+For O365 GCC deployment and Azure Commercial, the same [deployment guide](https://github.com/v-royavinash/microsoft-teams-apps-faqplus/wiki/Deployment-Guide) (available on FAQ Plus GitHub repo) can be followed. Use O365 GCC tenant for App registration (Step 1 in deployment guide) and Azure commercial subscription for ARM deployment (Step 2 in deployment guide). Make sure tenant Id of O365 GCC tenant is added during ARM deployment.
  
 # Deployment in O365 GCC tenant and Azure Government subscription
 
@@ -156,7 +156,7 @@ To begin, you will need:
     - Bot Channels Registration	
 - A team in Microsoft Teams GCC with your group of experts. (You can add and remove team members later!)
 - A reasonable set of Question and Answer pairs to set up the knowledge base for the bot.
-- A copy of the FAQ Plus app GitHub repo (https://github.com/OfficeDev/microsoft-teams-apps-faqplus)
+- A copy of the FAQ Plus app GitHub repo (https://github.com/v-royavinash/microsoft-teams-apps-faqplus)
 
 # Deployment Steps for hybrid mode
 
@@ -172,17 +172,17 @@ Verify that you are on the same Azure AD tenant than your O365 users and where M
 	2. **Supported account types**: Select "Accounts in any organizational directory"
 	3. Leave the "Redirect URL" field blank.
 
-![Azure registration page](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/multitenant_app_creation.png)
+![Azure registration page](https://github.com/v-royavinash/microsoft-teams-apps-faqplus/wiki/Images/multitenant_app_creation.png)
 
 3. Click on the "Register" button.
 
 4. When the app is registered, you'll be taken to the app's "Overview" page. Copy the **Application (client) ID** and **Directory (tenant) ID**; we will need it later. Verify that the "Supported account types" is set to **Multiple organizations**.
 
-![Azure overview page](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/multitenant_app_overview.png)
+![Azure overview page](https://github.com/v-royavinash/microsoft-teams-apps-faqplus/wiki/Images/multitenant_app_overview.png)
 
 5. On the side rail in the Manage section, navigate to the "Certificates & secrets" section. In the Client secrets section, click on "+ New client secret". Add a description of the secret and select an expiry time. Click "Add".
 
-![Azure AD overview page](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/multitenant_app_secret.png)
+![Azure AD overview page](https://github.com/v-royavinash/microsoft-teams-apps-faqplus/wiki/Images/multitenant_app_secret.png)
 
 6. Once the client secret is created, copy its **Value**; we will need it later.
 
@@ -200,7 +200,7 @@ At this point you have 4 unique values:
 
 We recommend that you copy these values into a text file, using an application like Notepad. We will need these values later.
 
-![Configuration step 3](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/azure-config-app-step3.png)
+![Configuration step 3](https://github.com/v-royavinash/microsoft-teams-apps-faqplus/wiki/Images/azure-config-app-step3.png)
 
 ## Step 2: Deploy bot to your Azure Commercial subscription
 
@@ -277,7 +277,7 @@ We recommend that you copy these values into a text file, using an application l
 
 4. Click on Add a platform, select Web.
 
-![Adding Redirect URI1](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/AuthenticationImage1.png)
+![Adding Redirect URI1](https://github.com/v-royavinash/microsoft-teams-apps-faqplus/wiki/Images/AuthenticationImage1.png)
 
 5. Add new entry to "Redirect URIs":
 	If your configuration app's URL is https://contosofaqplus-config.azurewebsites.us, then add the following entry as the Redirect URIs:
@@ -287,14 +287,14 @@ We recommend that you copy these values into a text file, using an application l
 
 6. Under "Implicit grant", check "ID tokens" and "Access tokens". The reason to check "ID tokens" is because you are using only the accounts on your current Azure tenant and using that to authenticate yourself in the configuration app. Click configure.
 
-![Adding Redirect URI2](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/AuthenticationImage2.png)
+![Adding Redirect URI2](https://github.com/v-royavinash/microsoft-teams-apps-faqplus/wiki/Images/AuthenticationImage2.png)
 
 7. Add new entries to "Redirect URIs":
 	If your configuration app's URL is https://contosofaqplus-config.azurewebsites.us, then add the following entry as the Redirect URIs:
 	- https://contosofaqplus-config.azurewebsites.us/signin
 	- https://contosofaqplus-config.azurewebsites.us/configuration
 
-![Adding Redirect URI3](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/AuthenticationImage3.png)
+![Adding Redirect URI3](https://github.com/v-royavinash/microsoft-teams-apps-faqplus/wiki/Images/AuthenticationImage3.png)
 
 8. Click "Save" to commit your changes.
 
@@ -322,19 +322,19 @@ With the new updates to the FAQ Plus app template, the knowledge base can now su
 
 2. You will be prompted to log in with your credentials. Make sure that you log in with an account that is in the list of users allowed to access the configuration app.
 
-![Config web app page](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/config-web-app-login.png)
+![Config web app page](https://github.com/v-royavinash/microsoft-teams-apps-faqplus/wiki/Images/config-web-app-login.png)
 
 3. Get the link to the team with your experts from the Teams client. To do so, open Microsoft Teams, and navigate to the team. Click on the "..." next to the team name, then select "Get link to team".
 
-![Get link to Team](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/get-link-to-Team.png)
+![Get link to Team](https://github.com/v-royavinash/microsoft-teams-apps-faqplus/wiki/Images/get-link-to-Team.png)
 
 Click on "Copy" to copy the link to the clipboard.
 
-![Link to team](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/link-to-team.png)
+![Link to team](https://github.com/v-royavinash/microsoft-teams-apps-faqplus/wiki/Images/link-to-team.png)
 
 4. Paste the copied link into the "Team Id" field, then press "OK".
 
-![Add team link form](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/fill-in-team-link.png)
+![Add team link form](https://github.com/v-royavinash/microsoft-teams-apps-faqplus/wiki/Images/fill-in-team-link.png)
 
 5. Enter the Question Answering Project name into the "Project Name" field, then press "OK".
 
@@ -366,7 +366,7 @@ Create two Teams app packages: one for end-users to install personally, and one 
 6. Create a ZIP package with the `manifest.json`,`color.png`, and `outline.png`. The two image files are the icons for your app in Teams.
 - Name this package `faqplus-enduser.zip`, so you know that this is the app for end-users.
 - Make sure that the 3 files are the _top level_ of the ZIP package, with no nested folders.
-![File Explorer](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/file-explorer.png)
+![File Explorer](https://github.com/v-royavinash/microsoft-teams-apps-faqplus/wiki/Images/file-explorer.png)
 
 7. Rename the `manifest.json` file to `manifest_enduser.json` for reusing the file.
 
@@ -379,7 +379,7 @@ Create two Teams app packages: one for end-users to install personally, and one 
 11. Create a ZIP package with the `manifest.json`,`color.png`, and `outline.png`. The two image files are the icons for your app in Teams.
 * Name this package `faqplus-experts.zip`, so you know that this is the app for sme/experts.
 * Make sure that the 3 files are the _top level_ of the ZIP package, with no nested folders.
-![File Explorer](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/file-explorer.png)
+![File Explorer](https://github.com/v-royavinash/microsoft-teams-apps-faqplus/wiki/Images/file-explorer.png)
 
 12. Rename the `manifest.json` file to `manifest_sme.json` for reusing the file.
 
@@ -397,4 +397,4 @@ Create two Teams app packages: one for end-users to install personally, and one 
 
 ## Troubleshooting
 
-Please see our [Troubleshooting](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Troubleshooting) page.
+Please see our [Troubleshooting](https://github.com/v-royavinash/microsoft-teams-apps-faqplus/wiki/Troubleshooting) page.

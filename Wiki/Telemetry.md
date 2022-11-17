@@ -77,7 +77,7 @@ traces
 ```
 For e.g.: trace showing the total number of times feedback card is sent.
 
-![trace_example](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Images/trace_example.png)
+![trace_example](https://github.com/v-royavinash/microsoft-teams-apps-faqplus/wiki/Images/trace_example.png)
 
 The **Configurator** app with Application Insights to gather event activity analytics, as described [here]((https://docs.microsoft.com/en-us/azure/azure-monitor/app/app-insights-overview)).
 
