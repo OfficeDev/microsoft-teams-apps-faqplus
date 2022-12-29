@@ -192,7 +192,7 @@ https://azure.microsoft.com/en-us/global-infrastructure/services/?products=logic
             AuthorizationToken = $authorizationToken
         },
         @{
-            Name               = $parameters.BaseResourceName.Value + '-qnamaker'
+            Name               = $parameters.BaseResourceName.Value + '-questionAnswer'
             ServiceType        = 'WebApp'
             AuthorizationToken = $authorizationToken
         },
@@ -210,7 +210,7 @@ https://azure.microsoft.com/en-us/global-infrastructure/services/?products=logic
             ServiceType        = 'ApplicationInsights'
         },
         @{
-            Name               = $parameters.BaseResourceName.Value + '-qnamaker'
+            Name               = $parameters.BaseResourceName.Value + '-questionAnswer'
             ServiceType        = 'ApplicationInsights'
         })
 
@@ -420,7 +420,7 @@ https://azure.microsoft.com/en-us/global-infrastructure/services/?products=logic
             
             # Deploy ARM templates
             Write-Host "Deploying app services, storage accounts, bot service, and cognitive services..." -ForegroundColor Yellow
-            az deployment group create --resource-group $parameters.ResourceGroupName.Value --subscription $parameters.SubscriptionId.Value --template-file 'azuredeploy.json' --parameters "baseResourceName=$($parameters.BaseResourceName.Value)" "userBotClientId=$userBotAppId" "userBotClientSecret=$userBotClientSecret" "expertBotClientId=$botAppId" "expertBotClientSecret=$appSecret" "configAppClientId=$configAppId" "configAdminUPNList=$($parameters.ConfigAdminUPNList.Value)" "appDisplayName=$($parameters.AppDisplayName.Value)" "appDescription=$($parameters.AppDescription.Value)" "tenantId=$($parameters.tenantId.Value)" "appIconUrl=$($parameters.AppIconUrl.Value)" "sku=$($parameters.Sku.Value)" "planSize=$($parameters.PlanSize.Value)" "qnaMakerSku=$($parameters.QnaMakerSku.Value)" "searchServiceSku=$($parameters.SearchServiceSku.Value)" "gitRepoUrl=$($parameters.GitRepoUrl.Value)" "gitBranch=$($parameters.GitBranch.Value)" "defaultCulture=$($parameters.DefaultCulture.Value)"
+            az deployment group create --resource-group $parameters.ResourceGroupName.Value --subscription $parameters.SubscriptionId.Value --template-file 'azuredeploy.json' --parameters "baseResourceName=$($parameters.BaseResourceName.Value)" "userBotClientId=$userBotAppId" "userBotClientSecret=$userBotClientSecret" "expertBotClientId=$botAppId" "expertBotClientSecret=$appSecret" "configAppClientId=$configAppId" "configAdminUPNList=$($parameters.ConfigAdminUPNList.Value)" "appDisplayName=$($parameters.AppDisplayName.Value)" "appDescription=$($parameters.AppDescription.Value)" "tenantId=$($parameters.tenantId.Value)" "appIconUrl=$($parameters.AppIconUrl.Value)" "sku=$($parameters.Sku.Value)" "planSize=$($parameters.PlanSize.Value)" "questionAnswerServiceSku=$($parameters.QuestionAnswerServiceSku.Value)" "searchServiceSku=$($parameters.SearchServiceSku.Value)" "gitRepoUrl=$($parameters.GitRepoUrl.Value)" "gitBranch=$($parameters.GitBranch.Value)" "defaultCulture=$($parameters.DefaultCulture.Value)" "questionAnswerDeploymentName=$($parameters.QuestionAnswerDeploymentName.Value)" "questionAnswerProjectName=$($parameters.QuestionAnswerProjectName.Value)"
             if($LASTEXITCODE -ne 0){
             #    CollectARMDeploymentLogs
                 Throw "ERROR: ARM template deployment error."
@@ -504,7 +504,7 @@ https://azure.microsoft.com/en-us/global-infrastructure/services/?products=logic
 
     # Check for presence of Azure CLI
     If (-not (Test-Path -Path "C:\Program Files (x86)\Microsoft SDKs\Azure\CLI2")) {
-        Write-Host "AZURE CLI NOT INSTALLED!`nPLEASE INSTALL THE CLI FROM https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest and re-run this script in a new PowerShell session" -ForegroundColor Red
+        Write-Host "AZURE CLI NOT INSTALLED!`nPLEASE INSTALL THE CLI FROM https://azcliprod.blob.core.windows.net/msi/azure-cli-2.30.0.msi and re-run this script in a new PowerShell session" -ForegroundColor Red
         break
     }
 

@@ -29,8 +29,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         public const string HelpTabText = "HelpTabText";
 
         /// <summary>
-        /// QnaMaker endpoint key entity.
+        /// QuestionAnswer endpoint key entity.
         /// </summary>
-        public const string QnAMakerEndpointKey = "QnaMakerEndpointKey";
+        public const string QuestionAnswerEndpointKey = "QuestionAnswerEndpointKey";
     }
 }

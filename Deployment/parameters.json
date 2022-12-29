@@ -67,9 +67,9 @@
     "Value": "2",
     "Description": "The size of the hosting plan (small, medium, or large)."
   },
-  "QnaMakerSku": {
-    "Value": "S0 ($10 per month for unlimited documents, 3 transactions per second, 100 transactions per minute)",
-    "Description": "The pricing tier for the QnAMaker service."
+  "QuestionAnswerServiceSku": {
+    "Value": "F0",
+    "Description": "The pricing tier for the QuestionAnswer service."
   },
   "SearchServiceSku": {
     "Value": "B (15 indexes)",
@@ -90,5 +90,13 @@
   "DefaultCulture": {
     "Value": "en",
     "Description": "Default culture."
+  },
+  "QuestionAnswerProjectName": {
+    "Value": "<<value>>",
+    "description": "The Question Answering service project name."
+  },
+  "QuestionAnswerDeploymentName": {
+    "value": "production",
+    "description": "The Question Answering service deployment name."
   }
 }

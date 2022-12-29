@@ -6,7 +6,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
 {
     using System;
     using System.Collections.Generic;
-    using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker.Models;
     using Microsoft.Azure.Search;
     using Microsoft.Azure.Search.Models;
     using Newtonsoft.Json;
@@ -49,12 +48,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         [Analyzer(AnalyzerName.AsString.ElMicrosoft)]
         [JsonProperty("questions")]
         public IList<string> Questions { get; set; }
-
-        /// <summary>
-        /// Gets or sets Metadata.
-        /// </summary>
-        [JsonProperty("metadata")]
-        public IList<MetadataDTO> Metadata { get; set; }
 
         /// <summary>
         /// Gets or sets CreatedDate.

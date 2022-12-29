@@ -8,11 +8,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
-    using System.Threading.Tasks;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Localization;
-    using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker;
     using Microsoft.Bot.Builder;
     using Microsoft.Bot.Builder.Integration.AspNet.Core;
     using Microsoft.Bot.Connector.Authentication;
@@ -28,12 +26,19 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Components;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Extensions;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.TeamsActivity;
+    using global::Azure;
 
     /// <summary>
     /// This a Startup class for this Bot.
     /// </summary>
     public class Startup
     {
+        private readonly Uri endpoint;
+        private readonly AzureKeyCredential credential;
+        private readonly string projectName;
+        private readonly string deploymentName;
+        private readonly string qnAServicerSubscriptionKey;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Startup"/> class.
         /// </summary>
@@ -41,7 +46,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
         public Startup(IConfiguration configuration)
         {
             this.Configuration = configuration;
-        }
+            this.qnAServicerSubscriptionKey = this.Configuration.GetValue<string>("QuestionAnswerSubscriptionKey");
+            this.endpoint = new Uri(this.Configuration.GetValue<string>("QuestionAnswerApiEndpointUrl"));
+            this.credential = new AzureKeyCredential(this.Configuration.GetValue<string>("QuestionAnswerSubscriptionKey"));
+            this.projectName = this.Configuration.GetValue<string>("QuestionAnswerProjectName");
+            this.deploymentName = this.Configuration.GetValue<string>("DeploymentName");
+    }
 
         /// <summary>
         /// Gets Configurations Interfaces.
@@ -95,9 +105,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
                 knowledgeBaseSettings.IsGCCHybridDeployment = this.Configuration.GetValue<bool>("IsGCCHybridDeployment");
             });
 
-            services.Configure<QnAMakerSettings>(qnAMakerSettings =>
+            services.Configure<QuestionAnswerSettings>(questionAnswerSettings =>
             {
-                qnAMakerSettings.ScoreThreshold = this.Configuration["ScoreThreshold"];
+                questionAnswerSettings.ScoreThreshold = this.Configuration["ScoreThreshold"];
             });
 
             services.Configure<BotSettings>(botSettings =>
@@ -118,16 +128,22 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
             services.AddSingleton<UserAppCredentials>();
             services.AddSingleton<ExpertAppCredentials>();
 
-            IQnAMakerClient qnaMakerClient = new QnAMakerClient(new ApiKeyServiceClientCredentials(this.Configuration["QnAMakerSubscriptionKey"])) { Endpoint = this.Configuration["QnAMakerApiEndpointUrl"] };
-            string endpointKey = Task.Run(() => qnaMakerClient.EndpointKeys.GetKeysAsync()).Result.PrimaryEndpointKey;
+            services.AddSingleton<IQuestionAnswerServiceProvider>((provider) => new QuestionAnswerServiceProvider(
+                                                                                        provider.GetRequiredService<IConfigurationDataProvider>(),
+                                                                                        provider.GetRequiredService<IOptionsMonitor<QuestionAnswerSettings>>(),
+                                                                                        this.endpoint,
+                                                                                        this.credential,
+                                                                                        this.projectName,
+                                                                                        this.deploymentName,
+                                                                                        this.qnAServicerSubscriptionKey));
 
-            services.AddSingleton<IQnaServiceProvider>((provider) => new QnaServiceProvider(
-                provider.GetRequiredService<Common.Providers.IConfigurationDataProvider>(),
-                provider.GetRequiredService<IOptionsMonitor<QnAMakerSettings>>(),
-                qnaMakerClient,
-                new QnAMakerRuntimeClient(new EndpointKeyServiceClientCredentials(endpointKey)) { RuntimeEndpoint = this.Configuration["QnAMakerHostUrl"] }));
             services.AddSingleton<IActivityStorageProvider>((provider) => new ActivityStorageProvider(provider.GetRequiredService<IOptionsMonitor<KnowledgeBaseSettings>>()));
-            services.AddSingleton<IKnowledgeBaseSearchService>((provider) => new KnowledgeBaseSearchService(this.Configuration["SearchServiceName"], this.Configuration["SearchServiceQueryApiKey"], this.Configuration["SearchServiceAdminApiKey"], this.Configuration["StorageConnectionString"], this.Configuration.GetValue<bool>("IsGCCHybridDeployment")));
+            services.AddSingleton<IKnowledgeBaseSearchService>((provider) => new KnowledgeBaseSearchService(
+                                                                                        this.Configuration["SearchServiceName"],
+                                                                                        this.Configuration["SearchServiceQueryApiKey"],
+                                                                                        this.Configuration["SearchServiceAdminApiKey"],
+                                                                                        this.Configuration["StorageConnectionString"],
+                                                                                        this.Configuration.GetValue<bool>("IsGCCHybridDeployment")));
 
             services.AddSingleton<ISearchService, SearchService>();
             services.AddSingleton<IMemoryCache, MemoryCache>();

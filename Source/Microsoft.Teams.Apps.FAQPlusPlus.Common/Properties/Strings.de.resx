@@ -229,7 +229,7 @@ ich bin Ihr freundlicher Bot für Fragen und Antworten, mit dem Sie Personen unt
   </data>
   <data name="ResponseHeaderText" xml:space="preserve">
     <value>Das habe ich gefunden:</value>
-    <comment>Response header-letting the user know that a response is generated to their request from QnA Maker.</comment>
+    <comment>Response header-letting the user know that a response is generated to their request from Question Answering.</comment>
   </data>
   <data name="ClosedFactTitle" xml:space="preserve">
     <value>Geschlossen: </value>
@@ -587,7 +587,7 @@ ich bin Ihr freundlicher Bot für Fragen und Antworten, mit dem Sie Personen unt
   </data>
   <data name="ManuallyAddedQuestionMessage" xml:space="preserve">
     <value>Frage manuell hinzugefügt</value>
-    <comment>Question answer pair added manually in QnA Maker</comment>
+    <comment>Question answer pair added manually in Question Answering</comment>
   </data>
   <data name="UpdateHistoryDateHeaderText" xml:space="preserve">
     <value>Datum</value>

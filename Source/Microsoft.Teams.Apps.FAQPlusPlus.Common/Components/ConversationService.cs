@@ -166,7 +166,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Components
 
                     if (payload.IsPrompt)
                     {
-                        this.logger.LogInformation("Sending input to QnAMaker for prompt");
+                        this.logger.LogInformation("Sending input to QuestionAnswer for prompt");
                         await this.qnaPairServiceFacade.GetReplyToQnAAsync(turnContext, message).ConfigureAwait(false);
                     }
                     else

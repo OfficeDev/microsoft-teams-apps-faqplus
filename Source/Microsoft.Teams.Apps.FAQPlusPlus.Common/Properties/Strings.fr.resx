@@ -229,7 +229,7 @@ Je suis votre robot Questions et réponses convivial qui vous aide à prendre en
   </data>
   <data name="ResponseHeaderText" xml:space="preserve">
     <value>Voici ce que j’ai trouvé :</value>
-    <comment>Response header-letting the user know that a response is generated to their request from QnA Maker.</comment>
+    <comment>Response header-letting the user know that a response is generated to their request from Question Answering.</comment>
   </data>
   <data name="ClosedFactTitle" xml:space="preserve">
     <value>Fermé : </value>
@@ -587,7 +587,7 @@ Je suis votre robot Questions et réponses convivial qui vous aide à prendre en
   </data>
   <data name="ManuallyAddedQuestionMessage" xml:space="preserve">
     <value>Question ajoutée manuellement</value>
-    <comment>Question answer pair added manually in QnA Maker</comment>
+    <comment>Question answer pair added manually in Question Answering</comment>
   </data>
   <data name="UpdateHistoryDateHeaderText" xml:space="preserve">
     <value>Date</value>

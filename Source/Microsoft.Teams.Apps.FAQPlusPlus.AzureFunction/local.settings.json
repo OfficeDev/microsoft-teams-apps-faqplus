@@ -3,12 +3,14 @@
   "Values": {
     "AzureWebJobsStorage": "",
     "AzureWebJobsDashboard": "",
-    "QnAMakerSubscriptionKey": "",
-    "QnAMakerApiUrl": "",
+    "QuestionAnswerSubscriptionKey": "",
+    "QuestionAnswerApiUrl": "",
     "StorageConnectionString": "",
     "SearchServiceName": "",
     "SearchServiceAdminApiKey": "",
     "SearchServiceQueryApiKey": "",
-    "IsGCCHybridDeployment": false
+    "IsGCCHybridDeployment": false,
+    "QuestionAnswerProjectName": "",
+    "DeploymentName": ""
   }
 }

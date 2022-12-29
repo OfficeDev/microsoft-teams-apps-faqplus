@@ -17,7 +17,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.TeamsActivity
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Properties;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers;
-    using Microsoft.Teams.Apps.FAQPlusPlus.Common.TeamsActivity;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
 
@@ -37,7 +36,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.TeamsActivity
         private const int TaskModuleWidth = 500;
 
         private readonly IConfigurationDataProvider configurationProvider;
-        private readonly IQnaServiceProvider qnaServiceProvider;
+
+        private readonly IQuestionAnswerServiceProvider questionAnswerServiceProvider;
+
         private readonly ILogger<TaskModuleActivity> logger;
         private readonly IQnAPairServiceFacade qnaPairServiceFacade;
 
@@ -45,17 +46,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.TeamsActivity
         /// Initializes a new instance of the <see cref="TaskModuleActivity"/> class.
         /// </summary>
         /// <param name="configurationProvider">Configuration Provider.</param>
-        /// <param name="qnaServiceProvider">QnA service provider.</param>
+        /// <param name="questionAnswerServiceProvider">Question answer service provider.</param>
         /// <param name="logger">Instance to send logs to the Application Insights service.</param>
         /// <param name="qnaPairServiceFacade">Instance of QnA pair service class to call add/update/get QnA pair.</param>
         public TaskModuleActivity(
             Common.Providers.IConfigurationDataProvider configurationProvider,
-            IQnaServiceProvider qnaServiceProvider,
+            IQuestionAnswerServiceProvider questionAnswerServiceProvider,
             ILogger<TaskModuleActivity> logger,
             IQnAPairServiceFacade qnaPairServiceFacade)
         {
             this.configurationProvider = configurationProvider ?? throw new ArgumentNullException(nameof(configurationProvider));
-            this.qnaServiceProvider = qnaServiceProvider ?? throw new ArgumentNullException(nameof(qnaServiceProvider));
+            this.questionAnswerServiceProvider = questionAnswerServiceProvider ?? throw new ArgumentNullException(nameof(questionAnswerServiceProvider));
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.qnaPairServiceFacade = qnaPairServiceFacade ?? throw new ArgumentNullException(nameof(qnaPairServiceFacade));
         }
@@ -145,7 +146,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.TeamsActivity
                 if (((ErrorResponseException)ex?.InnerException)?.Response.StatusCode == HttpStatusCode.BadRequest)
                 {
                     var knowledgeBaseId = await this.configurationProvider.GetSavedEntityDetailAsync(Constants.KnowledgeBaseEntityId).ConfigureAwait(false);
-                    var hasPublished = await this.qnaServiceProvider.GetInitialPublishedStatusAsync(knowledgeBaseId).ConfigureAwait(false);
+                    var hasPublished = await this.questionAnswerServiceProvider.GetInitialPublishedStatusAsync(knowledgeBaseId).ConfigureAwait(false);
 
                     // Check if knowledge base has not published yet.
                     if (!hasPublished)

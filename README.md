@@ -24,7 +24,11 @@ Chatbots on Microsoft Teams are an easy way to provide answers to frequently ask
 
 FAQ Plus bot is a friendly Q&A bot that brings a human in the loop when it is unable to help. A user can ask the bot a question and the bot responds with an answer if it's in the knowledge base. If not, the bot offers  the user an option to "Ask an expert", which posts the question to a pre-configured team of experts to provide support. An expert can assign the question to themself, chat with the user to gain more context and add the question to the knowledge base from using a messaging extention so that the next user to ask that same question will get an answer from the chatbot!
 
-**The July 2020 (version 3) release of FAQ Plus includes a multi-turn feature to the end user experience. With the multi-turn feature, users will be presented with follow-up options along with an answer to their question. This enables the FAQ Plus bot to answer the user's question with more relevance. Multi-turn follow-up options are programmed directly into the QnA Maker when the tenant admin uploads the Q&A pairs into the knowledge base.**
+**The November 2022 (version 5) release of FAQ Plus includes [Question Answering](https://learn.microsoft.com/en-us/azure/cognitive-services/language-service/question-answering/overview), an Azure Cognitive Service for Language feature. Question answering provides cloud-based Natural Language Processing (NLP) that allows you to create a natural conversational layer over your data. It is used to find the most appropriate answer for any input from your custom knowledge base (KB) of information. 
+Build a knowledge base by adding unstructured documents or extracting questions and answers from your semi-structured content, including FAQ, manuals, and documents. Get the best answers from the questions and answers in your knowledge base—automatically. Question Answering supports a multi-turn feature to the end user experience. With the multi-turn feature, users will be presented with follow-up options along with an answer to their question. This enables the FAQ Plus bot to answer the user's question with more relevance. Multi-turn follow-up options are programmed directly into the Question Answering when the tenant admin uploads the Q&A pairs into the knowledge base.
+The latest (version 5) release of FAQ Plus separates the end-user and the sme bot. With splitting the bot and having different bot registrations, users can now setup different permission policies for these two bots.**
+
+****
 
 **FAQ Plus provides features to the expert team such as:**
 * Adding/editing/deleting/previewing QnA
@@ -73,17 +77,17 @@ Begin with the [Solution overview](https://github.com/OfficeDev/microsoft-teams-
 
 When you're ready to try out FAQ Plus, or to use it in your own organization,  you can choose to follow one of the below guides.
 * [Deployment guide powershell](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Deployment-Guide-manual).
-    * **Recommended** Use this option to deploy the FAQ Plus v4.0 using powershell script. The entire set-up is done by the powershell script.
+    * **Recommended** Use this option to deploy the FAQ Plus v5.0 using powershell script. The entire set-up is done by the powershell script.
 * [Deployment guide](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Deployment-Guide).
-    * Use this option to deploy the FAQ+ v4.0 manually.
+    * Use this option to deploy the FAQ+ v5.0 manually.
 
 ## Migration
 
-If you already have older version of FAQ Plus installed, then please use this [v4 migration guide](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Migration-Guide-manual). Please note that deploying the major version update, like FAQ Plus version 4.0 involves more than syncing the App Service and Azure Functions, so plan to review the migration guide before migrating to latest.
+If you already have older version of FAQ Plus installed, then please use this [migration guide](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/wiki/Migration-Guide-manual). Please note that deploying the major version update, like FAQ Plus version 5.0 involves more than syncing the App Service and Azure Functions, so plan to review the migration guide before migrating to latest.
 
 ## Feedback
 
-Thoughts? Questions? Ideas? Share them with us on [Teams UserVoice](https://microsoftteams.uservoice.com/forums/555103-public)!
+Thoughts? Questions? Ideas? Share them with us [here](https://aka.ms/fqbappfeedback)!
 
 Please report bugs and other code issues [here](https://github.com/OfficeDev/microsoft-teams-apps-faqplus/issues/new).
 

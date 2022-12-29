@@ -9,7 +9,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Cards
     using System.Globalization;
     using System.Linq;
     using AdaptiveCards;
-    using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker.Models;
+    using global::Azure.AI.Language.QuestionAnswering;
     using Microsoft.Bot.Schema;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers;
@@ -33,14 +33,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Cards
         private const uint IconHeight = 32;
 
         /// <summary>
-        /// Construct the response card - when user asks a question to the QnA Maker through the bot.
+        /// Construct the response card - when user asks a question to the Question Answering through the bot.
         /// </summary>
         /// <param name="response">The response model.</param>
         /// <param name="userQuestion">Actual question that the user has asked the bot.</param>
         /// <param name="appBaseUri">The base URI where the app is hosted.</param>
         /// <param name="payload">The response card payload.</param>
         /// <returns>The response card to append to a message as an attachment.</returns>
-        public static Attachment GetCard(QnASearchResult response, string userQuestion, string appBaseUri, ResponseCardPayload payload)
+        public static Attachment GetCard(KnowledgeBaseAnswer response, string userQuestion, string appBaseUri, ResponseCardPayload payload)
         {
             bool isRichCard = false;
             AdaptiveSubmitActionData answerModel = new AdaptiveSubmitActionData();
@@ -84,7 +84,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Cards
         /// <param name="payload">The response card payload.</param>
         /// <param name="isRichCard">Boolean value where true represent it is a rich card while false represent it is a normal card.</param>
         /// <returns>A list of adaptive elements which makes up the body of the adaptive card.</returns>
-        private static List<AdaptiveElement> BuildResponseCardBody(QnASearchResult response, string userQuestion, string answer, string appBaseUri, ResponseCardPayload payload, bool isRichCard)
+        private static List<AdaptiveElement> BuildResponseCardBody(KnowledgeBaseAnswer response, string userQuestion, string answer, string appBaseUri, ResponseCardPayload payload, bool isRichCard)
         {
             var textAlignment = CultureInfo.CurrentCulture.TextInfo.IsRightToLeft ? AdaptiveHorizontalAlignment.Right : AdaptiveHorizontalAlignment.Left;
             var answerModel = isRichCard ? JsonConvert.DeserializeObject<AnswerModel>(response?.Answer) : new AnswerModel();
@@ -144,11 +144,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Cards
             });
 
             // If there follow up prompts, then the follow up prompts will render accordingly.
-            if (response?.Context.Prompts.Count > 0)
+            if (response?.Dialog.Prompts.Count > 0)
             {
-                List<QnADTO> previousQuestions = BuildListOfPreviousQuestions((int)response.Id, userQuestion, answer, payload);
+                List<KnowledgeBaseAnswerDTO> previousQuestions = BuildListOfPreviousQuestions((int)response.QnaId, userQuestion, answer, payload);
 
-                foreach (var item in response.Context.Prompts)
+                foreach (var item in response.Dialog.Prompts)
                 {
                     var container = new AdaptiveContainer
                     {
@@ -203,7 +203,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Cards
                                     DisplayText = item.DisplayText,
                                     Text = item.DisplayText,
                                 },
-                                PreviousQuestions = new List<QnADTO> { previousQuestions.Last() },
+                                PreviousQuestions = new List<KnowledgeBaseAnswerDTO> { previousQuestions.Last() },
                                 IsPrompt = true,
                             },
                         },
@@ -265,6 +265,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Cards
             return actionsList;
         }
 
+        // TOD :: Grey area :: Update the logic
+
         /// <summary>
         /// This method will build the list of previous questions.
         /// </summary>
@@ -273,13 +275,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Cards
         /// <param name="answer">The knowledge base answer.</param>
         /// <param name="payload">The response card payload.</param>
         /// <returns>A list of previous questions.</returns>
-        private static List<QnADTO> BuildListOfPreviousQuestions(int id, string userQuestion, string answer, ResponseCardPayload payload)
+        private static List<KnowledgeBaseAnswerDTO> BuildListOfPreviousQuestions(int id, string userQuestion, string answer, ResponseCardPayload payload)
         {
-            var previousQuestions = payload.PreviousQuestions ?? new List<QnADTO>();
+            var previousQuestions = payload.PreviousQuestions ?? new List<KnowledgeBaseAnswerDTO>();
 
-            previousQuestions.Add(new QnADTO
+            previousQuestions.Add(new KnowledgeBaseAnswerDTO
             {
-                Id = id,
+                QnaId = id,
                 Questions = new List<string>()
                 {
                     userQuestion,

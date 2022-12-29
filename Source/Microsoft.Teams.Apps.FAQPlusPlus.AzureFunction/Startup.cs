@@ -3,7 +3,7 @@
 // </copyright>
 
 using System;
-using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker;
+using Azure;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -21,18 +21,36 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction
     /// </summary>
     public class Startup : FunctionsStartup
     {
+        private Uri endpoint;
+        private AzureKeyCredential credential;
+        private string projectName;
+        private string deploymentName;
+        private string qnAServicerSubscriptionKey;
+
         /// <summary>
         /// Application startup configuration.
         /// </summary>
         /// <param name="builder">Webjobs builder.</param>
         public override void Configure(IFunctionsHostBuilder builder)
         {
-            IQnAMakerClient qnaMakerClient = new QnAMakerClient(new ApiKeyServiceClientCredentials(Environment.GetEnvironmentVariable("QnAMakerSubscriptionKey"))) { Endpoint = Environment.GetEnvironmentVariable("QnAMakerApiUrl") };
-            builder.Services.AddSingleton<IQnaServiceProvider>((provider) => new QnaServiceProvider(
-                provider.GetRequiredService<IConfigurationDataProvider>(), provider.GetRequiredService<IOptionsMonitor<QnAMakerSettings>>(), qnaMakerClient));
-            builder.Services.AddSingleton<IConfigurationDataProvider, Common.Providers.ConfigurationDataProvider>();
-            builder.Services.AddSingleton<ISearchServiceDataProvider>((provider) => new SearchServiceDataProvider(provider.GetRequiredService<IQnaServiceProvider>(), Environment.GetEnvironmentVariable("StorageConnectionString")));
-            builder.Services.AddSingleton<IConfigurationDataProvider>(new Common.Providers.ConfigurationDataProvider(Environment.GetEnvironmentVariable("StorageConnectionString")));
+            this.endpoint = new Uri(Environment.GetEnvironmentVariable("QuestionAnswerApiUrl"));
+            this.credential = new AzureKeyCredential(Environment.GetEnvironmentVariable("QuestionAnswerSubscriptionKey"));
+            this.projectName = Environment.GetEnvironmentVariable("QuestionAnswerProjectName");
+            this.deploymentName = Environment.GetEnvironmentVariable("DeploymentName");
+            this.qnAServicerSubscriptionKey = Environment.GetEnvironmentVariable("QuestionAnswerSubscriptionKey");
+
+            builder.Services.AddSingleton<IQuestionAnswerServiceProvider>((provider) => new QuestionAnswerServiceProvider(
+                                                            provider.GetRequiredService<IConfigurationDataProvider>(),
+                                                            provider.GetRequiredService<IOptionsMonitor<QuestionAnswerSettings>>(),
+                                                            this.endpoint,
+                                                            this.credential,
+                                                            this.projectName,
+                                                            this.deploymentName,
+                                                            this.qnAServicerSubscriptionKey));
+
+            builder.Services.AddSingleton<IConfigurationDataProvider, ConfigurationDataProvider>();
+            builder.Services.AddSingleton<ISearchServiceDataProvider>((provider) => new SearchServiceDataProvider(provider.GetRequiredService<IQuestionAnswerServiceProvider>(), Environment.GetEnvironmentVariable("StorageConnectionString")));
+            builder.Services.AddSingleton<IConfigurationDataProvider>(new ConfigurationDataProvider(Environment.GetEnvironmentVariable("StorageConnectionString")));
             builder.Services.AddSingleton<IKnowledgeBaseSearchService, KnowledgeBaseSearchService>();
             var isGCCHybridDeployment = Convert.ToBoolean(Environment.GetEnvironmentVariable("IsGCCHybridDeployment"));
             builder.Services.AddSingleton<IKnowledgeBaseSearchService>((provider) => new KnowledgeBaseSearchService(Environment.GetEnvironmentVariable("SearchServiceName"), Environment.GetEnvironmentVariable("SearchServiceQueryApiKey"), Environment.GetEnvironmentVariable("SearchServiceAdminApiKey"), Environment.GetEnvironmentVariable("StorageConnectionString"), isGCCHybridDeployment));
