@@ -1,6 +1,7 @@
 {
   "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.5/MicrosoftTeams.schema.json",
   "name.short": "שאלות נפוצות פלוס",
+  "name.full": "שאלות נפוצות פלוס",
   "description.short": "FAQ bot ידידותי שעונה על שאלות נפוצות ומקשר אותך למומחים.",
   "description.full": "bot ידידותי לניהול דיאלוג שאלות ותשובות עונה על שאלות נפוצות. אם הוא לא יודע לענות, הוא מקשר אותך למומחה ברגע שהוא זמין.",
   "bots[0].commandLists[0].commands[0].title": "צא לסיור",

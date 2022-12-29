@@ -1,6 +1,7 @@
 {
   "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.5/MicrosoftTeams.schema.json",
   "name.short": "Вопросы и ответы Плюс",
+  "name.full": "Вопросы и ответы Плюс",
   "description.short": "Бот вопросов и ответов, отвечающий на вопросы и связывающий со специалистами.",
   "description.full": "Простой в использовании бот вопросов и ответов, который отвечает на часто задаваемые вопросы. Если бот не сможет ответить на вопрос, он свяжет вас с первым освободившимся специалистом.",
   "bots[0].commandLists[0].commands[0].title": "Обзор",

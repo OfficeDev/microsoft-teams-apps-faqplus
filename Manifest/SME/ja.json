@@ -1,6 +1,7 @@
 {
   "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.5/MicrosoftTeams.schema.json",
   "name.short": "FAQ プラス (専門家チーム)",
+  "name.full": "FAQ プラス (専門家チーム)",
   "description.short": "質問に答えて専門家に接続する、フレンドリーな FAQ ボットです。",
   "description.full": "よくある質問に答えるフレンドリーな質問と回答用のボットです。 回答できない場合は、専門家が対応できるようになり次第、専門家につなぎます。",
   "bots[0].commandLists[0].commands[0].title": "ツアーを開始",

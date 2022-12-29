@@ -1,6 +1,7 @@
 {
   "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.5/MicrosoftTeams.schema.json",
   "name.short": "FAQ Plus (Expertenteam)",
+  "name.full": "FAQ Plus (Expertenteam)",
   "description.short": "Ein freundlicher FAQ-Bot, der Fragen beantworten und Sie mit Experten verbindet.",
   "description.full": "Ein freundlicher Frage- und Antwort-Bot, der häufig gestellte Fragen beantwortet. Wenn er keine Antwort liefern kann, wird er Sie in Verbindung mit einem Experten bringen, sobald einer verfügbar ist.",
   "bots[0].commandLists[0].commands[0].title": "Einen Rundgang machen",
