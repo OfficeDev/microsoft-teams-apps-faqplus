@@ -169,7 +169,10 @@ Create a new Custom Question Answering project with the same name which was ente
 ![Create Custom Question Answering Project](./Images/create-question-answering-project-2.png)
 
 ### Multi-Turn Enablement
-With the new updates to the FAQ Plus app template, the knowledge base can now support multi-turn conversations. 
+With the new updates to the FAQ Plus app template, the knowledge base can now support multi-turn conversations. To understand the basics of multi-turn conversations, navigate to the [Question Answering documentation](https://learn.microsoft.com/en-us/azure/cognitive-services/language-service/question-answering/overview#multi-turn-conversations) to understand about multi-turn conversations.
+
+To enable QnA pairs to appear in the multi-turn follow-up prompts please check the 'Show in contextual flow only' checkbox while creating the QnA pairs as multi-turn works only for contextual flow QnA pairs.
+![multi_turn_contextual_flow](./Images/multi_turn_contextual_flow.png)
 
 ## Step 5: Finish configuring the FAQ Plus app
 
