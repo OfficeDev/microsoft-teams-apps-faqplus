@@ -507,11 +507,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Cards
                     string customMessage = string.Empty;
 
                     DateTime createdAt = default;
-                    if (qnaDocument.Metadata.Count > 1)
-                    {
-                        var createdAtvalue = qnaDocument.Metadata.FirstOrDefault(metadata => metadata.Name == Constants.MetadataCreatedAt)?.Value;
-                        createdAt = createdAtvalue != null ? new DateTime(long.Parse(createdAtvalue, CultureInfo.InvariantCulture)) : default;
-                    }
 
                     string conversationId = string.Empty;
                     string activityId = string.Empty;
@@ -529,20 +524,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Cards
                     }
 
                     string metadataCreatedAt = string.Empty;
-
-                    if (qnaDocument.Metadata.Count > 1)
-                    {
-                        activityReferenceId = qnaDocument.Metadata.FirstOrDefault(metadata => metadata.Name == Constants.MetadataActivityReferenceId)?.Value;
-                        conversationId = qnaDocument.Metadata.FirstOrDefault(metadata => metadata.Name == Constants.MetadataConversationId)?.Value;
-                        activityId = activitiesData?.FirstOrDefault(activity => activity.ActivityReferenceId == activityReferenceId)?.ActivityId;
-                        dateString = string.Format(CultureInfo.InvariantCulture, Strings.DateFormat, "{{DATE(" + createdAt.ToString(Rfc3339DateTimeFormat, CultureInfo.InvariantCulture) + ", SHORT)}}", "{{TIME(" + createdAt.ToString(Rfc3339DateTimeFormat, CultureInfo.InvariantCulture) + ")}}");
-                        metadataCreatedAt = qnaDocument.Metadata.FirstOrDefault(metadata => metadata.Name == Constants.MetadataCreatedAt)?.Value;
-                    }
-                    else
-                    {
-                        customMessage = string.IsNullOrEmpty(metadataCreatedAt) ? Strings.ManuallyAddedQuestionMessage : string.Empty;
-                    }
-
+                    customMessage = string.IsNullOrEmpty(metadataCreatedAt) ? Strings.ManuallyAddedQuestionMessage : string.Empty;
+                    
                     var card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
                     {
                         Body = new List<AdaptiveElement>

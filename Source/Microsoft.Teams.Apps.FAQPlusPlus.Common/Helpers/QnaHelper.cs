@@ -9,7 +9,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker.Models;
+    using global::Azure.AI.Language.QuestionAnswering;
     using Microsoft.Bot.Builder;
     using Microsoft.Bot.Schema;
     using Microsoft.Extensions.Logging;
@@ -59,24 +59,25 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         /// Delete qna pair.
         /// </summary>
         /// <param name="turnContext">Turn context.</param>
-        /// <param name="qnaServiceProvider">Qna Service provider.</param>
+        /// <param name="questionAnswerServiceProvider">Question answer service provider.</param>
         /// <param name="activityStorageProvider">Activity Storage Provider.</param>
         /// <param name="logger">Logger.</param>
         /// <param name="cancellationToken">Cancellation Token.</param>
         /// <returns>A task that represents the work queued to execute.</returns>
         public static async Task DeleteQnaPair(
             ITurnContext<IMessageActivity> turnContext,
-            IQnaServiceProvider qnaServiceProvider,
+            IQuestionAnswerServiceProvider questionAnswerServiceProvider,
             IActivityStorageProvider activityStorageProvider,
             ILogger logger,
             CancellationToken cancellationToken)
         {
-            QnASearchResult searchResult;
+            KnowledgeBaseAnswer searchResult;
             Attachment attachment;
 
             var activity = (Activity)turnContext.Activity;
             var activityValue = ((JObject)activity.Value).ToObject<AdaptiveSubmitActionData>();
-            QnASearchResultList qnaAnswerResponse = await qnaServiceProvider.GenerateAnswerAsync(activityValue?.OriginalQuestion, isTestKnowledgeBase: false).ConfigureAwait(false);
+
+            AnswersResult qnaAnswerResponse = await questionAnswerServiceProvider.GenerateAnswerAsync(activityValue?.OriginalQuestion, isTestKnowledgeBase: false).ConfigureAwait(false);
 
             bool isSameQuestion = false;
             searchResult = qnaAnswerResponse.Answers.First();
@@ -89,12 +90,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
             }
 
             // Delete the QnA pair if question exist in the knowledgebase & exactly the same question user wants to delete.
-            if (searchResult.Id != -1 && isSameQuestion)
+            if (searchResult.QnaId != -1 && isSameQuestion)
             {
-                await qnaServiceProvider.DeleteQnaAsync(searchResult.Id.Value).ConfigureAwait(false);
+                await questionAnswerServiceProvider.DeleteQnaAsync(searchResult.QnaId.Value).ConfigureAwait(false);
                 logger.LogInformation($"Question deleted by: {activity.Conversation.AadObjectId}");
                 attachment = MessagingExtensionQnaCard.DeletedEntry(activityValue?.OriginalQuestion, searchResult.Answer, activity.From.Name, activityValue?.UpdateHistoryData);
-                ActivityEntity activityEntity = new ActivityEntity { ActivityReferenceId = searchResult.Metadata.FirstOrDefault(x => x.Name == Constants.MetadataActivityReferenceId)?.Value };
+                ActivityEntity activityEntity = new ActivityEntity { ActivityReferenceId = searchResult.Metadata.FirstOrDefault(x => x.Key == Constants.MetadataActivityReferenceId).Value };
 
                 bool operationStatus = await activityStorageProvider.DeleteActivityEntityAsync(activityEntity).ConfigureAwait(false);
                 if (!operationStatus)
@@ -115,9 +116,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
             else
             {
                 // check if question and answer is present in unpublished version.
-                qnaAnswerResponse = await qnaServiceProvider.GenerateAnswerAsync(activityValue?.OriginalQuestion, isTestKnowledgeBase: true).ConfigureAwait(false);
+                qnaAnswerResponse = await questionAnswerServiceProvider.GenerateAnswerAsync(activityValue?.OriginalQuestion, isTestKnowledgeBase: true).ConfigureAwait(false);
 
-                if (qnaAnswerResponse?.Answers?.First().Id != -1)
+                if (qnaAnswerResponse?.Answers?.First().QnaId != -1)
                 {
                     await turnContext.SendActivityAsync(MessageFactory.Text(string.Format(CultureInfo.InvariantCulture, Strings.WaitMessage, activityValue?.OriginalQuestion))).ConfigureAwait(false);
                 }
@@ -132,7 +133,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         /// <param name="provider">Qna service provider.</param>
         /// <param name="question">Question.</param>
         /// <returns>A <see cref="Task"/> of type bool where true represents question is already exist in knowledgebase while false indicates the question does not exist in knowledgebase.</returns>
-        public static async Task<bool> QuestionExistsInKbAsync(this IQnaServiceProvider provider, string question)
+        public static async Task<bool> QuestionExistsInKbAsync(this IQuestionAnswerServiceProvider provider, string question)
         {
             var prodHasQuestion = await provider.HasQuestionAsync(question, isTestKnowledgeBase: false).ConfigureAwait(false);
             if (prodHasQuestion)
@@ -150,7 +151,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         /// <param name="question">Question.</param>
         /// <param name="isTestKnowledgeBase">Knowledgebase.</param>
         /// <returns>A <see cref="Task"/> of type bool where true represents question is already exist in knowledgebase while false indicates the question does not exist in knowledgebase.</returns>
-        private static async Task<bool> HasQuestionAsync(this IQnaServiceProvider provider, string question, bool isTestKnowledgeBase)
+        private static async Task<bool> HasQuestionAsync(this IQuestionAnswerServiceProvider provider, string question, bool isTestKnowledgeBase)
         {
             var qnaPreviewAnswerResponse = await provider.GenerateAnswerAsync(question, isTestKnowledgeBase).ConfigureAwait(false);
             var questionAnswerResponse = qnaPreviewAnswerResponse.Answers.FirstOrDefault();

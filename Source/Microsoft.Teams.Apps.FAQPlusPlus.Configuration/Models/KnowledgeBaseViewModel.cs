@@ -13,11 +13,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Models
         /// <summary>
         /// Gets or sets knowledge base id text box to be used in View.
         /// </summary>
-        [Required(ErrorMessage = "Enter knowledge base id.")]
+        [Required(ErrorMessage = "Enter project name of QA service.")]
         [MinLength(1)]
         [DataType(DataType.Text)]
-        [Display(Name = "Knowledge base ID")]
-        [RegularExpression(@"(\S)+", ErrorMessage = "Enter knowledge base ID which should not contain any whitespace.")]
+        [Display(Name = "Project Name")]
+        [RegularExpression(@"(\S)+", ErrorMessage = "Enter project name which should not contain any whitespace.")]
         public string KnowledgeBaseId { get; set; }
     }
 }

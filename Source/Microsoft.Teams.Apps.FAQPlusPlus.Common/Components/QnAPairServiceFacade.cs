@@ -8,7 +8,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Components
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker.Models;
+    using global::Azure.AI.Language.QuestionAnswering;
     using Microsoft.Bot.Builder;
     using Microsoft.Bot.Schema;
     using Microsoft.Bot.Schema.Teams;
@@ -23,7 +23,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Components
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.TeamsActivity;
     using Newtonsoft.Json.Linq;
-    using ErrorResponseException = Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker.Models.ErrorResponseException;
 
     /// <summary>
     /// Class that handles get/add/update of QnA pairs.
@@ -32,7 +31,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Components
     {
         private readonly IConfigurationDataProvider configurationProvider;
         private readonly IActivityStorageProvider activityStorageProvider;
-        private readonly IQnaServiceProvider qnaServiceProvider;
+        private readonly IQuestionAnswerServiceProvider questionAnswerServiceProvider;
         private readonly ILogger<QnAPairServiceFacade> logger;
         private readonly string appBaseUri;
         private readonly BotSettings options;
@@ -42,18 +41,18 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Components
         /// </summary>
         /// <param name="configurationProvider">Configuration Provider.</param>
         /// <param name="activityStorageProvider">Activity storage provider.</param>
-        /// <param name="qnaServiceProvider">QnA service provider.</param>
+        /// <param name="questionAnswerServiceProvider">Question answer service provider.</param>
         /// <param name="botSettings">Represents a set of key/value application configuration properties for FaqPlusPlus bot.</param>ram>
         /// <param name="logger">Instance to send logs to the Application Insights service.</param>
         public QnAPairServiceFacade(
             Common.Providers.IConfigurationDataProvider configurationProvider,
-            IQnaServiceProvider qnaServiceProvider,
+            IQuestionAnswerServiceProvider questionAnswerServiceProvider,
             IActivityStorageProvider activityStorageProvider,
             IOptionsMonitor<BotSettings> botSettings,
             ILogger<QnAPairServiceFacade> logger)
         {
             this.configurationProvider = configurationProvider ?? throw new ArgumentNullException(nameof(configurationProvider));
-            this.qnaServiceProvider = qnaServiceProvider ?? throw new ArgumentNullException(nameof(qnaServiceProvider));
+            this.questionAnswerServiceProvider = questionAnswerServiceProvider ?? throw new ArgumentNullException(nameof(questionAnswerServiceProvider));
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.activityStorageProvider = activityStorageProvider ?? throw new ArgumentNullException(nameof(activityStorageProvider));
             if (botSettings == null)
@@ -79,8 +78,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Components
 
             try
             {
-                var queryResult = new QnASearchResultList();
-
                 ResponseCardPayload payload = new ResponseCardPayload();
 
                 if (!string.IsNullOrEmpty(message.ReplyToId) && (message.Value != null))
@@ -88,13 +85,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Components
                     payload = ((JObject)message.Value).ToObject<ResponseCardPayload>();
                 }
 
-                queryResult = await this.qnaServiceProvider.GenerateAnswerAsync(question: text, isTestKnowledgeBase: false, payload.PreviousQuestions?.Last().Id.ToString(), payload.PreviousQuestions?.Last().Questions.First()).ConfigureAwait(false);
+                var queryResult = await this.questionAnswerServiceProvider.GenerateAnswerAsync(question: text, isTestKnowledgeBase: false, payload.PreviousQuestions?.Last().QnaId.ToString(), payload.PreviousQuestions?.Last().Questions.First()).ConfigureAwait(false);
                 bool answerFound = false;
 
-                foreach (QnASearchResult answerData in queryResult.Answers)
+                foreach (KnowledgeBaseAnswer answerData in queryResult.Answers)
                 {
-                    bool isContextOnly = answerData.Context?.IsContextOnly ?? false;
-                    if (answerData.Id != -1 &&
+                    bool isContextOnly = answerData.Dialog?.IsContextOnly ?? false;
+                    if (answerData.QnaId != -1 &&
                         ((!isContextOnly && payload.PreviousQuestions == null) ||
                             (isContextOnly && payload.PreviousQuestions != null)))
                     {
@@ -116,7 +113,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Components
                 if (((ErrorResponseException)ex).Response.StatusCode == System.Net.HttpStatusCode.BadRequest)
                 {
                     var knowledgeBaseId = await this.configurationProvider.GetSavedEntityDetailAsync(Constants.KnowledgeBaseEntityId).ConfigureAwait(false);
-                    var hasPublished = await this.qnaServiceProvider.GetInitialPublishedStatusAsync(knowledgeBaseId).ConfigureAwait(false);
+                    var hasPublished = await this.questionAnswerServiceProvider.GetInitialPublishedStatusAsync(knowledgeBaseId).ConfigureAwait(false);
 
                     // Check if knowledge base has not published yet.
                     if (!hasPublished)
@@ -141,8 +138,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Components
         /// <returns>A <see cref="Task"/> of type bool where true represents question and answer pair updated successfully while false indicates failure in updating the question and answer pair.</returns>
         public async Task<bool> SaveQnAPairAsync(ITurnContext turnContext, string answer, AdaptiveSubmitActionData qnaPairEntity)
         {
-            QnASearchResult searchResult;
-            var qnaAnswerResponse = await this.qnaServiceProvider.GenerateAnswerAsync(qnaPairEntity.OriginalQuestion, qnaPairEntity.IsTestKnowledgeBase).ConfigureAwait(false);
+            KnowledgeBaseAnswer searchResult;
+            var qnaAnswerResponse = await this.questionAnswerServiceProvider.GenerateAnswerAsync(qnaPairEntity.OriginalQuestion, qnaPairEntity.IsTestKnowledgeBase).ConfigureAwait(false);
             searchResult = qnaAnswerResponse.Answers.FirstOrDefault();
             bool isSameQuestion = false;
 
@@ -154,11 +151,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Components
             }
 
             // Edit the QnA pair if the question is exist in the knowledgebase & exactly the same question on which we are performing the action.
-            if (searchResult.Id != -1 && isSameQuestion)
+            if (searchResult.QnaId != -1 && isSameQuestion)
             {
-                int qnaPairId = searchResult.Id.Value;
-                await this.qnaServiceProvider.UpdateQnaAsync(qnaPairId, answer, turnContext.Activity.From.AadObjectId, qnaPairEntity.UpdatedQuestion, qnaPairEntity.OriginalQuestion).ConfigureAwait(false);
-                this.logger.LogInformation($"Question updated by: {turnContext.Activity.Conversation.AadObjectId}");
+                int qnaPairId = searchResult.QnaId.Value;
+
+                this.logger.LogInformation($"Started : Question updated by: {turnContext.Activity.Conversation.AadObjectId} QnA Pair Id : {qnaPairId}");
+                await this.questionAnswerServiceProvider.UpdateQnaAsync(qnaPairId, answer, turnContext.Activity.From.AadObjectId, qnaPairEntity.UpdatedQuestion, qnaPairEntity.OriginalQuestion, searchResult.Metadata).ConfigureAwait(false);
+                this.logger.LogInformation($"Completed : Question updated by: {turnContext.Activity.Conversation.AadObjectId} QnA Pair Id : {qnaPairId}");
+
                 Attachment attachment = new Attachment();
                 if (qnaPairEntity.IsRichCard)
                 {
@@ -173,7 +173,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Components
                     attachment = MessagingExtensionQnaCard.ShowNormalCard(qnaPairEntity, turnContext.Activity.From.Name, actionPerformed: Strings.LastEditedText);
                 }
 
-                var activityId = this.activityStorageProvider.GetAsync(qnaAnswerResponse.Answers.First().Metadata.FirstOrDefault(x => x.Name == Constants.MetadataActivityReferenceId)?.Value).Result.FirstOrDefault().ActivityId;
+                var activityId = this.activityStorageProvider.GetAsync(qnaAnswerResponse.Answers.First().Metadata.FirstOrDefault(x => x.Key == Constants.MetadataActivityReferenceId).Value).Result.FirstOrDefault().ActivityId;
                 var updateCardActivity = new Activity(ActivityTypes.Message)
                 {
                     Id = activityId ?? throw new ArgumentNullException(nameof(activityId)),
@@ -231,7 +231,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Components
                 }
                 else
                 {
-                    var hasQuestionExist = await this.qnaServiceProvider.QuestionExistsInKbAsync(postedQnaPairEntity.UpdatedQuestion).ConfigureAwait(false);
+                    var hasQuestionExist = await this.questionAnswerServiceProvider.QuestionExistsInKbAsync(postedQnaPairEntity.UpdatedQuestion).ConfigureAwait(false);
                     if (hasQuestionExist)
                     {
                         // Shows the error message on task module, if question already exist.
@@ -265,7 +265,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Components
                 }
                 else
                 {
-                    var hasQuestionExist = await this.qnaServiceProvider.QuestionExistsInKbAsync(postedQnaPairEntity.UpdatedQuestion).ConfigureAwait(false);
+                    var hasQuestionExist = await this.questionAnswerServiceProvider.QuestionExistsInKbAsync(postedQnaPairEntity.UpdatedQuestion).ConfigureAwait(false);
                     if (hasQuestionExist)
                     {
                         // Shows the error message on task module, if question already exist.
@@ -315,7 +315,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Components
             else
             {
                 // Check if question exist in the production/test knowledgebase & exactly the same question.
-                var hasQuestionExist = await this.qnaServiceProvider.QuestionExistsInKbAsync(postedQnaPairEntity.UpdatedQuestion).ConfigureAwait(false);
+                var hasQuestionExist = await this.questionAnswerServiceProvider.QuestionExistsInKbAsync(postedQnaPairEntity.UpdatedQuestion).ConfigureAwait(false);
 
                 // Edit the question if it doesn't exist in the test knowledgebse.
                 if (hasQuestionExist)

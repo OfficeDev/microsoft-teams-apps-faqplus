@@ -1,18 +1,20 @@
-﻿// <copyright file="IQnaServiceProvider.cs" company="Microsoft">
+﻿// <copyright file="IQuestionAnswerServiceProvider.cs" company="Microsoft">
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
 {
+    using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker.Models;
+    using global::Azure;
+    using global::Azure.AI.Language.QuestionAnswering;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
 
     /// <summary>
-    /// Qna maker service provider interface.
+    /// Question Answering service provider interface.
     /// </summary>
-    public interface IQnaServiceProvider
+    public interface IQuestionAnswerServiceProvider
     {
         /// <summary>
         /// This method is used to add QnA pair in Kb.
@@ -23,21 +25,33 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         /// <param name="conversationId">Conversation id.</param>
         /// <param name="activityReferenceId">Activity reference id.</param>
         /// <returns>Operation status of performed action.</returns>
-        Task<Operation> AddQnaAsync(string question, string combinedDescription, string createdBy, string conversationId, string activityReferenceId);
+        Task<Operation<AsyncPageable<BinaryData>>> AddQnaAsync(string question, string combinedDescription, string createdBy, string conversationId, string activityReferenceId);
+
+        /// <summary>
+        /// Update Qna pair in knowledge base.
+        /// </summary>
+        /// <param name="questionId">Question id.</param>
+        /// <param name="answer">Answer text.</param>
+        /// <param name="updatedBy">Updated by user.</param>
+        /// <param name="updatedQuestion">Updated question text.</param>
+        /// <param name="question">Original question text.</param>
+        /// <param name="metadata">The metadata.</param>
+        /// <returns>Perfomed action task.</returns>
+        Task<Operation<AsyncPageable<BinaryData>>> UpdateQnaAsync(int questionId, string answer, string updatedBy, string updatedQuestion, string question, IReadOnlyDictionary<string, string> metadata);
 
         /// <summary>
         /// This method is used to delete Qna pair from KB.
         /// </summary>
         /// <param name="questionId">Question id.</param>
         /// <returns>Delete response.</returns>
-        Task DeleteQnaAsync(int questionId);
+        Task<Operation<AsyncPageable<BinaryData>>> DeleteQnaAsync(int questionId);
 
         /// <summary>
         /// This method returns the downloaded knowledgebase documents.
         /// </summary>
         /// <param name="knowledgeBaseId">Knowledgebase Id.</param>
         /// <returns>Json string.</returns>
-        Task<IEnumerable<QnADTO>> DownloadKnowledgebaseAsync(string knowledgeBaseId);
+        Task<IEnumerable<KnowledgeBaseAnswerDTO>> DownloadKnowledgebaseAsync(string knowledgeBaseId);
 
         /// <summary>
         /// Get answer from knowledgebase for a given question.
@@ -47,32 +61,19 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         /// <param name="previousQnAId">Id of previous question.</param>
         /// <param name="previousUserQuery">Previous question information.</param>
         /// <returns>QnaSearchResult object as response.</returns>
-        Task<QnASearchResultList> GenerateAnswerAsync(string question, bool isTestKnowledgeBase, string previousQnAId = null, string previousUserQuery = null);
-
-        /// <summary>
-        /// This method is used to update Qna pair in Kb.
-        /// </summary>
-        /// <param name="questionId">Question id.</param>
-        /// <param name="answer">Answer text.</param>
-        /// <param name="updatedBy">Updated by user.</param>
-        /// <param name="updatedQuestion">Updated question text.</param>
-        /// <param name="question">Original question text.</param>
-        /// <returns>Task of updated action.</returns>
-        Task UpdateQnaAsync(int questionId, string answer, string updatedBy, string updatedQuestion, string question);
+        Task<AnswersResult> GenerateAnswerAsync(string question, bool isTestKnowledgeBase, string previousQnAId = null, string previousUserQuery = null);
 
         /// <summary>
         /// Checks whether knowledgebase need to be published.
         /// </summary>
-        /// <param name="knowledgeBaseId">Knowledgebase id.</param>
         /// <returns>A <see cref="Task"/> of type bool where true represents knowledgebase need to be published while false indicates knowledgebase not need to be published.</returns>
-        Task<bool> GetPublishStatusAsync(string knowledgeBaseId);
+        Task<bool> GetPublishStatusAsync();
 
         /// <summary>
         /// Method is used to publish knowledgebase.
         /// </summary>
-        /// <param name="knowledgeBaseId">Knowledgebase Id.</param>
         /// <returns>Task for published data.</returns>
-        Task PublishKnowledgebaseAsync(string knowledgeBaseId);
+        Task<Operation<BinaryData>> PublishKnowledgebaseAsync();
 
         /// <summary>
         /// Get knowledgebase published information.

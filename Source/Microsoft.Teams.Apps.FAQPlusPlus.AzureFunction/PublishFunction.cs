@@ -13,11 +13,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers;
 
     /// <summary>
-    /// Azure Function to publish QnA Maker knowledge base.
+    /// Azure Function to publish Question Answering knowledge base.
     /// </summary>
     public class PublishFunction
     {
-        private readonly IQnaServiceProvider qnaServiceProvider;
+        private readonly IQuestionAnswerServiceProvider questionAnswerServiceProvider;
         private readonly IConfigurationDataProvider configurationProvider;
         private readonly ISearchServiceDataProvider searchServiceDataProvider;
         private readonly IKnowledgeBaseSearchService knowledgeBaseSearchService;
@@ -25,20 +25,20 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction
         /// <summary>
         /// Initializes a new instance of the <see cref="PublishFunction"/> class.
         /// </summary>
-        /// <param name="qnaServiceProvider">Qna service provider.</param>
+        /// <param name="questionAnswerServiceProvider">Question Answering service provider.</param>
         /// <param name="configurationProvider">Configuration service provider.</param>
         /// <param name="searchServiceDataProvider">Search service data provider.</param>
         /// <param name="knowledgeBaseSearchService">Knowledgebase search service.</param>
-        public PublishFunction(IQnaServiceProvider qnaServiceProvider, IConfigurationDataProvider configurationProvider, ISearchServiceDataProvider searchServiceDataProvider, IKnowledgeBaseSearchService knowledgeBaseSearchService)
+        public PublishFunction(IQuestionAnswerServiceProvider questionAnswerServiceProvider, IConfigurationDataProvider configurationProvider, ISearchServiceDataProvider searchServiceDataProvider, IKnowledgeBaseSearchService knowledgeBaseSearchService)
         {
-            this.qnaServiceProvider = qnaServiceProvider;
+            this.questionAnswerServiceProvider = questionAnswerServiceProvider;
             this.configurationProvider = configurationProvider;
             this.searchServiceDataProvider = searchServiceDataProvider;
             this.knowledgeBaseSearchService = knowledgeBaseSearchService;
         }
 
         /// <summary>
-        /// Function to get and publish QnA Maker knowledge base.
+        /// Function to get and publish Question Answering knowledge base.
         /// </summary>
         /// <param name="myTimer">Duration of publish operations.</param>
         /// <param name="log">Log.</param>
@@ -49,25 +49,29 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction
             try
             {
                 var knowledgeBaseId = await this.configurationProvider.GetSavedEntityDetailAsync(Constants.KnowledgeBaseEntityId).ConfigureAwait(false);
-                bool toBePublished = await this.qnaServiceProvider.GetPublishStatusAsync(knowledgeBaseId).ConfigureAwait(false);
+                bool toBePublished = await this.questionAnswerServiceProvider.GetPublishStatusAsync().ConfigureAwait(false);
                 log.LogInformation("To be published - " + toBePublished);
                 log.LogInformation("knowledge base id - " + knowledgeBaseId);
 
                 if (toBePublished)
                 {
                     log.LogInformation("Publishing knowledge base");
-                    await this.qnaServiceProvider.PublishKnowledgebaseAsync(knowledgeBaseId).ConfigureAwait(false);
+                    await this.questionAnswerServiceProvider.PublishKnowledgebaseAsync().ConfigureAwait(false);
+                    log.LogInformation("Successfully published the knowledge base" + knowledgeBaseId);
                 }
 
                 log.LogInformation("Setup azure search data");
                 await this.searchServiceDataProvider.SetupAzureSearchDataAsync(knowledgeBaseId).ConfigureAwait(false);
+                log.LogInformation("Successfully setup the azure search data");
 
                 log.LogInformation("Update azure search service");
                 await this.knowledgeBaseSearchService.InitializeSearchServiceDependencyAsync().ConfigureAwait(false);
+                log.LogInformation("Successfully updated azure search service");
+
             }
             catch (Exception ex)
             {
-                log.LogError(ex, "Exception occured while publishing knowledge base in QnA Maker.", SeverityLevel.Error);
+                log.LogError(ex, "Exception occured while publishing knowledge base.", SeverityLevel.Error);
                 throw;
             }
         }

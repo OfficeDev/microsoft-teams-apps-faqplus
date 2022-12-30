@@ -6,10 +6,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
 {
     using System;
     using System.Collections.Generic;
-    using System.Globalization;
     using System.Linq;
     using System.Threading.Tasks;
-    using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker.Models;
+    using global::Azure.AI.Language.QuestionAnswering;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.WindowsAzure.Storage;
     using Microsoft.WindowsAzure.Storage.Blob;
@@ -25,17 +24,18 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         /// </summary>
         private const string FaqPlusQnAFile = "/faqplusqnadata.json";
 
-        private readonly IQnaServiceProvider qnaServiceProvider;
+        private readonly IQuestionAnswerServiceProvider questionAnswerServiceProvider;
+
         private readonly string storageConnectionString;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SearchServiceDataProvider"/> class.
         /// </summary>
-        /// <param name="qnaServiceProvider">question and answer ServiceProvider.</param>
+        /// <param name="questionAnswerServiceProvider">question and answer ServiceProvider.</param>
         /// <param name="storageConnectionString">Azure web job storage.</param>
-        public SearchServiceDataProvider(IQnaServiceProvider qnaServiceProvider, string storageConnectionString)
+        public SearchServiceDataProvider(IQuestionAnswerServiceProvider questionAnswerServiceProvider, string storageConnectionString)
         {
-            this.qnaServiceProvider = qnaServiceProvider;
+            this.questionAnswerServiceProvider = questionAnswerServiceProvider;
             this.storageConnectionString = storageConnectionString;
         }
 
@@ -46,8 +46,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         /// <returns>Task of downloaded data.</returns>
         public async Task SetupAzureSearchDataAsync(string knowledgeBaseId)
         {
-            IEnumerable<QnADTO> qnaDocuments = await this.qnaServiceProvider.DownloadKnowledgebaseAsync(knowledgeBaseId).ConfigureAwait(false);
-            string azureJson = this.GenerateFormattedJson(qnaDocuments);
+            var downloadedQnaDocuments = await this.questionAnswerServiceProvider.DownloadKnowledgebaseAsync(knowledgeBaseId).ConfigureAwait(false);
+
+            string azureJson = this.GenerateFormattedJson(downloadedQnaDocuments);
             await this.AddDataToBlobStorageAsync(azureJson).ConfigureAwait(false);
         }
 
@@ -56,24 +57,27 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         /// </summary>
         /// <param name="qnaDocuments">Qna documents.</param>
         /// <returns>Create json format for search.</returns>
-        private string GenerateFormattedJson(IEnumerable<QnADTO> qnaDocuments)
+        private string GenerateFormattedJson(IEnumerable<KnowledgeBaseAnswerDTO> qnaDocuments)
         {
             IList<AzureSearchEntity> searchEntityList = new List<AzureSearchEntity>();
             foreach (var item in qnaDocuments)
             {
-                var createdDate = item.Metadata.FirstOrDefault(prop => prop.Name == Constants.MetadataCreatedAt);
-                var updatedDate = item.Metadata.FirstOrDefault(prop => prop.Name == Constants.MetadataUpdatedAt);
+                var createdDate = item.Metadata.FirstOrDefault(prop => prop.Key == Constants.MetadataCreatedAt).Value;
+                var updatedDate = item.Metadata.FirstOrDefault(prop => prop.Key == Constants.MetadataUpdatedAt).Value;
 
                 searchEntityList.Add(
                         new AzureSearchEntity()
                         {
-                            Id = item.Id.ToString(),
+                            Id = item.QnaId.ToString(),
                             Source = item.Source,
                             Questions = item.Questions,
                             Answer = item.Answer,
-                            CreatedDate = createdDate != null ? new DateTimeOffset(new DateTime(Convert.ToInt64(createdDate.Value))) : new DateTimeOffset(DateTime.MinValue, TimeSpan.Zero),
-                            UpdatedDate = updatedDate != null ? new DateTimeOffset(new DateTime(Convert.ToInt64(updatedDate.Value))) : new DateTimeOffset(DateTime.MinValue, TimeSpan.Zero),
-                            Metadata = item.Metadata,
+                            CreatedDate = createdDate != null ? new DateTimeOffset(new DateTime(Convert.ToInt64(createdDate))) : new DateTimeOffset(DateTime.MinValue, TimeSpan.Zero),
+                            UpdatedDate = updatedDate != null ? new DateTimeOffset(new DateTime(Convert.ToInt64(updatedDate))) : new DateTimeOffset(DateTime.MinValue, TimeSpan.Zero),
+
+                            // Create the serach service without MetaData.
+                            // MetaData in AzureSerach if of collection(Complex type) whereas the Json from KB is of Dictionary. Its throws error while serialization.
+                            // Metadata = item.Metadata
                         });
             }
 

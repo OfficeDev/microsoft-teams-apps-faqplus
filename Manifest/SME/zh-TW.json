@@ -1,6 +1,7 @@
 {
   "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.5/MicrosoftTeams.schema.json",
   "name.short": "常見問題集增強版 (專家團隊)",
+  "name.full": "常見問題集增強版 (專家團隊)",
   "description.short": "友善的常見問題集 Bot，能回答問題並讓您與專家聯繫。",
   "description.full": "友善的問答 Bot，可回答常見問題。若無法回答，它會協助您聯繫有空的專家。",
   "bots[0].commandLists[0].commands[0].title": "導覽",

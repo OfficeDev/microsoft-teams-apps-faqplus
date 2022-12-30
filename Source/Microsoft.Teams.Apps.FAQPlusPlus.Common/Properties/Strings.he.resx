@@ -229,7 +229,7 @@
   </data>
   <data name="ResponseHeaderText" xml:space="preserve">
     <value>הנה מה שמצאתי:</value>
-    <comment>Response header-letting the user know that a response is generated to their request from QnA Maker.</comment>
+    <comment>Response header-letting the user know that a response is generated to their request from Question Answering.</comment>
   </data>
   <data name="ClosedFactTitle" xml:space="preserve">
     <value>נסגר: </value>
@@ -587,7 +587,7 @@
   </data>
   <data name="ManuallyAddedQuestionMessage" xml:space="preserve">
     <value>שאלה שנוספה ידנית</value>
-    <comment>Question answer pair added manually in QnA Maker</comment>
+    <comment>Question answer pair added manually in Question Answering</comment>
   </data>
   <data name="UpdateHistoryDateHeaderText" xml:space="preserve">
     <value>תאריך</value>

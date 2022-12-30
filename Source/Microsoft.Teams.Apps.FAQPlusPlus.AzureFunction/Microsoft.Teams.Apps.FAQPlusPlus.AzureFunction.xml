@@ -6,7 +6,7 @@
     <members>
         <member name="T:Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.PublishFunction">
             <summary>
-            Azure Function to publish QnA Maker knowledge base.
+            Azure Function to publish Question Answering knowledge base.
             </summary>
         </member>
         <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.PublishFunction.#ctor(Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers.IQnaServiceProvider,Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers.IConfigurationDataProvider,Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers.ISearchServiceDataProvider,Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers.IKnowledgeBaseSearchService)">
@@ -20,7 +20,7 @@
         </member>
         <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.AzureFunction.PublishFunction.Run(Microsoft.Azure.WebJobs.TimerInfo,Microsoft.Extensions.Logging.ILogger)">
             <summary>
-            Function to get and publish QnA Maker knowledge base.
+            Function to get and publish Question Answering knowledge base.
             </summary>
             <param name="myTimer">Duration of publish operations.</param>
             <param name="log">Log.</param>

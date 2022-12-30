@@ -5,7 +5,6 @@
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
 {
     using System.Collections.Generic;
-    using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker.Models;
 
     /// <summary>
     /// Represents the payload of a response card.
@@ -25,7 +24,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         /// <summary>
         /// Gets or sets list of previous questions when a follow up prompt is selected.
         /// </summary>
-        public List<QnADTO> PreviousQuestions { get; set; }
+        public List<KnowledgeBaseAnswerDTO> PreviousQuestions { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether question is from prompt.

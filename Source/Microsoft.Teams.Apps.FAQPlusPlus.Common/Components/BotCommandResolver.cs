@@ -33,7 +33,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Components
         private const string ChangeStatus = "change status";
 
         private readonly IConfigurationDataProvider configurationProvider;
-        private readonly IQnaServiceProvider qnaServiceProvider;
+        private readonly IQuestionAnswerServiceProvider questionAnswerServiceProvider;
         private readonly IActivityStorageProvider activityStorageProvider;
         private readonly ILogger<BotCommandResolver> logger;
         private readonly IQnAPairServiceFacade qnaPairService;
@@ -45,14 +45,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Components
         /// </summary>
         /// <param name="configurationProvider">Configuration Provider.</param>
         /// <param name="activityStorageProvider">Activity storage provider.</param>
-        /// <param name="qnaServiceProvider">QnA service provider.</param>
+        /// <param name="questionAnswerServiceProvider">Question answer service provider.</param>
         /// <param name="logger">Instance to send logs to the Application Insights service.</param>
         /// <param name="qnaPairService">Instance of QnA pair service class to call add/update/get QnA pair.</param>
         /// <param name="botSettings">Represents a set of key/value application configuration properties for FaqPlusPlus bot.</param>
         /// <param name="conversationService">Conversation service to send adaptive card in personal and teams chat.</param>
         public BotCommandResolver(
             Common.Providers.IConfigurationDataProvider configurationProvider,
-            IQnaServiceProvider qnaServiceProvider,
+            IQuestionAnswerServiceProvider questionAnswerServiceProvider,
             IActivityStorageProvider activityStorageProvider,
             IQnAPairServiceFacade qnaPairService,
             IOptionsMonitor<BotSettings> botSettings,
@@ -60,7 +60,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Components
             IConversationService conversationService)
         {
             this.configurationProvider = configurationProvider ?? throw new ArgumentNullException(nameof(configurationProvider));
-            this.qnaServiceProvider = qnaServiceProvider ?? throw new ArgumentNullException(nameof(qnaServiceProvider));
+            this.questionAnswerServiceProvider = questionAnswerServiceProvider ?? throw new ArgumentNullException(nameof(questionAnswerServiceProvider));
             this.activityStorageProvider = activityStorageProvider ?? throw new ArgumentNullException(nameof(activityStorageProvider));
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.qnaPairService = qnaPairService ?? throw new ArgumentNullException(nameof(qnaPairService));
@@ -116,7 +116,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Components
             }
             else
             {
-                this.logger.LogInformation("Sending input to QnAMaker");
+                this.logger.LogInformation("Sending input to QuestionAnswer");
                 await this.qnaPairService.GetReplyToQnAAsync(turnContext, message).ConfigureAwait(false);
             }
         }
@@ -162,7 +162,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Components
 
                     case Constants.DeleteCommand:
                         this.logger.LogInformation($"Delete card submit in channel {message.Value?.ToString()}");
-                        await QnaHelper.DeleteQnaPair(turnContext, this.qnaServiceProvider, this.activityStorageProvider, this.logger, cancellationToken).ConfigureAwait(false);
+                        await QnaHelper.DeleteQnaPair(turnContext, this.questionAnswerServiceProvider, this.activityStorageProvider, this.logger, cancellationToken).ConfigureAwait(false);
                         break;
 
                     case Constants.NoCommand:
@@ -180,7 +180,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Components
                 if (((ErrorResponseException)ex).Response.StatusCode == HttpStatusCode.BadRequest)
                 {
                     var knowledgeBaseId = await this.configurationProvider.GetSavedEntityDetailAsync(Constants.KnowledgeBaseEntityId).ConfigureAwait(false);
-                    var hasPublished = await this.qnaServiceProvider.GetInitialPublishedStatusAsync(knowledgeBaseId).ConfigureAwait(false);
+                    var hasPublished = await this.questionAnswerServiceProvider.GetInitialPublishedStatusAsync(knowledgeBaseId).ConfigureAwait(false);
 
                     // Check if knowledge base has not published yet.
                     if (!hasPublished)
