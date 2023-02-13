@@ -207,7 +207,7 @@
     "configAppUrl": "[concat('https://', variables('configAppName'), '.azurewebsites.net')]",
     "configAppInsightsName": "[concat(parameters('baseResourceName'), '-config')]",
     "questionAnswerAccountName": "[parameters('baseResourceName')]",
-    "questionAnswerLocation": "westus",
+    "questionAnswerLocation": "[parameters('location')]",
     "questionAnswerAppServiceName": "[concat(parameters('baseResourceName'), '-questionAnswer')]",
     "questionAnswerAppInsightsName": "[concat(parameters('baseResourceName'), '-questionAnswer')]",
     "questionAnswerServiceSkuValue": "[parameters('questionAnswerServiceSku')]",
