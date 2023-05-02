@@ -119,6 +119,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
                 botSettings.UserAppId = this.Configuration["UserAppId"];
                 botSettings.UserAppPassword = this.Configuration["UserAppPassword"];
                 botSettings.TenantId = this.Configuration["TenantId"];
+
+                botSettings.AOAI_ENDPOINT = (this.Configuration["AOAI_ENDPOINT"]);
+                botSettings.AOAI_KEY = this.Configuration["AOAI_KEY"];
+                botSettings.AOAI_DEPLOYMENTID = this.Configuration["AOAI_DEPLOYMENTID"];
+                botSettings.SEARCH_INDEX_NAME = this.Configuration["SEARCH_INDEX_NAME"];
+                botSettings.SEARCH_SERVICE_NAME = this.Configuration["SEARCH_SERVICE_NAME"];
+                botSettings.SEARCH_QUERY_KEY = this.Configuration["SEARCH_QUERY_KEY"];
+                
             });
             services.AddSingleton<Common.Providers.IConfigurationDataProvider>(new Common.Providers.ConfigurationDataProvider(this.Configuration["StorageConnectionString"]));
             services.AddHttpClient();

@@ -43,5 +43,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models.Configuration
         /// Gets or sets access tenant id string.
         /// </summary>
         public string TenantId { get; set; }
+        public string AOAI_ENDPOINT { get; set; }
+        public string AOAI_KEY { get; set; }
+        public string AOAI_DEPLOYMENTID { get; set; }
+        public string SEARCH_INDEX_NAME { get; set; }
+        public string SEARCH_SERVICE_NAME { get; set; }
+        public string SEARCH_QUERY_KEY { get; set; }
     }
 }

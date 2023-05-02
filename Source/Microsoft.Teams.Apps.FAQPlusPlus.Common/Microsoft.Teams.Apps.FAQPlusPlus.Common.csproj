@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -11,9 +12,11 @@
   <ItemGroup>
     <PackageReference Include="AdaptiveCards" Version="2.5.0" />
     <PackageReference Include="Azure.AI.Language.QuestionAnswering" Version="1.1.0" />
-    <PackageReference Include="Azure.Core" Version="1.25.0" />
+    <PackageReference Include="Azure.AI.OpenAI" Version="1.0.0-beta.5" />
+    <PackageReference Include="Azure.Core" Version="1.31.0" />
+    <PackageReference Include="Azure.Search.Documents" Version="11.5.0-beta.2" />
     <PackageReference Include="Microsoft.ApplicationInsights" Version="2.18.0" />
-	<PackageReference Include="Microsoft.Azure.Search" Version="10.1.0" />
+    <PackageReference Include="Microsoft.Azure.Search" Version="10.1.0" />
 	<PackageReference Include="Microsoft.Bot.Builder" Version="4.14.1" />
 	<PackageReference Include="Microsoft.Bot.Connector" Version="4.14.1" />
     <PackageReference Include="Microsoft.Bot.Schema" Version="4.14.1" />

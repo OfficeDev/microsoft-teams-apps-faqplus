@@ -8,7 +8,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Components
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using global::Azure.Search.Documents.Models;
     using global::Azure.AI.Language.QuestionAnswering;
+    using global::Azure.Search.Documents;
+
     using Microsoft.Bot.Builder;
     using Microsoft.Bot.Schema;
     using Microsoft.Bot.Schema.Teams;
@@ -23,6 +26,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Components
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.TeamsActivity;
     using Newtonsoft.Json.Linq;
+    using System.IO;
+    using Newtonsoft.Json;
+    using global::Azure.AI.OpenAI;
 
     /// <summary>
     /// Class that handles get/add/update of QnA pairs.
@@ -35,6 +41,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Components
         private readonly ILogger<QnAPairServiceFacade> logger;
         private readonly string appBaseUri;
         private readonly BotSettings options;
+
+        private SearchClient srchclient;
+        private OpenAIClient openAIClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="QnAPairServiceFacade"/> class.
@@ -62,6 +71,20 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Components
 
             this.options = botSettings.CurrentValue;
             this.appBaseUri = this.options.AppBaseUri;
+
+            // Search service instance
+            Uri serviceEndpoint = new Uri($"https://" + botSettings.CurrentValue.SEARCH_SERVICE_NAME + ".search.windows.net/");
+            global::Azure.AzureKeyCredential credential = new global::Azure.AzureKeyCredential(botSettings.CurrentValue.SEARCH_QUERY_KEY);
+            srchclient = new SearchClient(serviceEndpoint, botSettings.CurrentValue.SEARCH_INDEX_NAME, credential);
+
+
+            // OpenAIClient instance
+            
+            var endpoint = new Uri(botSettings.CurrentValue.AOAI_ENDPOINT);
+            var credentials = new global::Azure.AzureKeyCredential(botSettings.CurrentValue.AOAI_KEY);
+            openAIClient = new OpenAIClient(endpoint, credentials);
+
+
         }
 
         /// <summary>
@@ -85,27 +108,35 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Components
                     payload = ((JObject)message.Value).ToObject<ResponseCardPayload>();
                 }
 
-                var queryResult = await this.questionAnswerServiceProvider.GenerateAnswerAsync(question: text, isTestKnowledgeBase: false, payload.PreviousQuestions?.Last().QnaId.ToString(), payload.PreviousQuestions?.Last().Questions.First()).ConfigureAwait(false);
-                bool answerFound = false;
 
-                foreach (KnowledgeBaseAnswer answerData in queryResult.Answers)
-                {
-                    bool isContextOnly = answerData.Dialog?.IsContextOnly ?? false;
-                    if (answerData.QnaId != -1 &&
-                        ((!isContextOnly && payload.PreviousQuestions == null) ||
-                            (isContextOnly && payload.PreviousQuestions != null)))
-                    {
-                        // This is the expected answer
-                        await turnContext.SendActivityAsync(MessageFactory.Attachment(ResponseCard.GetCard(answerData, text, this.appBaseUri, payload))).ConfigureAwait(false);
-                        answerFound = true;
-                        break;
-                    }
-                }
+                var answer = await ConsolidatedAnswer(text);
+                answer += "<ul><li>[Bing](https://www.bing.com/)</li><li>![Duck on a rock](http://aka.ms/Fo983c)</li></ul>";
+                IMessageActivity messageActivity = MessageFactory.Attachment(ResponseCard.GetCard(answer, text, this.appBaseUri, payload));
+                messageActivity.TextFormat = "markdown";
+                await turnContext.SendActivityAsync(messageActivity).ConfigureAwait(false);
 
-                if (!answerFound)
-                {
-                    await turnContext.SendActivityAsync(MessageFactory.Attachment(UnrecognizedInputCard.GetCard(text))).ConfigureAwait(false);
-                }
+                // Bu alandan sonrasi degisecek
+                //var queryResult = await this.questionAnswerServiceProvider.GenerateAnswerAsync(question: text, isTestKnowledgeBase: false, payload.PreviousQuestions?.Last().QnaId.ToString(), payload.PreviousQuestions?.Last().Questions.First()).ConfigureAwait(false);
+                //bool answerFound = false;
+
+                //foreach (KnowledgeBaseAnswer answerData in queryResult.Answers)
+                //{
+                //    bool isContextOnly = answerData.Dialog?.IsContextOnly ?? false;
+                //    if (answerData.QnaId != -1 &&
+                //        ((!isContextOnly && payload.PreviousQuestions == null) ||
+                //            (isContextOnly && payload.PreviousQuestions != null)))
+                //    {
+                //        // This is the expected answer
+                //        await turnContext.SendActivityAsync(MessageFactory.Attachment(ResponseCard.GetCard(answerData, text, this.appBaseUri, payload))).ConfigureAwait(false);
+                //        answerFound = true;
+                //        break;
+                //    }
+                //}
+
+                //if (!answerFound)
+                //{
+                //    await turnContext.SendActivityAsync(MessageFactory.Attachment(UnrecognizedInputCard.GetCard(text))).ConfigureAwait(false);
+                //}
             }
             catch (Exception ex)
             {
@@ -128,6 +159,142 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Components
                 throw;
             }
         }
+
+
+
+
+        async Task<string> ConsolidatedAnswer(string userMessage)
+        {
+            var question = "Jenkins ile otomatik database paketi nasıl oluştururum?";
+            var context = await GetSearchResult(question);
+            var promptText = CreateQuestionAndContext(question, context);
+
+            var responseFromGPT = await GetAnswerFromGPT(promptText);
+
+            return responseFromGPT;
+        }
+
+
+        // caglar - search query
+        public async Task<string> GetSearchResult(string searchQuery, int? count = null, int? skip = null)
+        {
+
+            global::Azure.Search.Documents.SearchOptions searchOptions = new global::Azure.Search.Documents.SearchOptions();
+            searchOptions.QueryLanguage = "tr-TR";
+            searchOptions.SemanticConfigurationName = "mergenmarkdown-config";
+            searchOptions.QueryCaption = "extractive";
+            searchOptions.QueryAnswer = "extractive";
+            searchOptions.QueryType = global::Azure.Search.Documents.Models.SearchQueryType.Semantic;
+            searchOptions.QueryAnswerCount = 10;
+
+            var returnData = srchclient.Search<SearchDocument>(searchQuery, searchOptions);
+
+            string searchResult = string.Empty;
+
+            if (returnData == null)
+            {
+                return searchResult;
+            }
+
+            var serializer = new JsonSerializer();
+
+            using (var sr = new StreamReader(returnData.GetRawResponse().Content.ToStream()))
+            using (var jsonTextReader = new JsonTextReader(sr))
+            {
+                var jsObj = serializer.Deserialize(jsonTextReader) as JObject;
+                var valueSection = jsObj["value"];
+
+                searchResult = valueSection.Children().First()["content"].Value<string>();
+                //searchResult = valueSection.Children().OrderByDescending(o => o["@search.rerankerScore"]).First()["content"].Value<string>();
+
+                //jsObj["value"].Children().OrderByDescending(o => o["@search.rerankerScore"]).First()["content"].Value<string>();
+
+            }
+
+
+            return searchResult;
+
+        }
+
+        string CreateQuestionAndContext(string question, string context)
+        {
+            return string.Format("[Question] {0} \r\n\r\n            [Context] {1} \r\n           ", question, context);
+        }
+
+        public async Task<string> GetAnswerFromGPT(string promptText)
+        {
+            //            var prompt =
+            //    @"
+
+            //    I am an assistant that helps users with software and IT questions using context provided in the prompt. I only respond in Turkish and format my response in Markdown language.    
+            //    I will answer the [Question] below objectively in a casual and friendly tone, using the [Context] below it, and information from my memory.
+
+            //    Q: [Question] Jenkins ile otomatik database paketi nasıl oluştururum?&nbsp; &nbsp; 
+
+            //[Context] Jenkins Konfigurasyonu Nasıl Yapılır?\r\n\r\nBu bölümde yaratılan jenkins projesinin, aşamalı olarak nasıl konfigürasyon edileceğini adım adım yapacağız.\r\n\r\nAşağıdaki görseldeki gibi öncelikle projenin adını tanımlarız, description bölümüne yazılacak tanım, adminin insiyatifine göre belirlenebilir.\r\n\r\nDiscard old builds kısmında tanımlanan log rotation sayesinde yapılan buildları belirlenen bir tarihe kadar saklama görevini gerçekleştirir.\r\n\r\nRestrict where this project can be run →  Eğer projeniz jenkins ana sunucu haricinde başka bir sunucuda çalışıyor ise, bu alanda projenin derleneceği sunucuyu projeye belirtmeniz gerekmektedir.\r\n\r\nBir üstteki sekmede belirtilen alanda advanced sekmesine tıkladığımızda Use custom workspace alanından projenin atılacak sunucudaki dizinini belirleriz.\r\n\r\n(Not:Tanımlanan projenin JenkinsWorkspace altında hangi ortama ait ise o dizin altında derlenmesi gerekmektedir.)\r\n\r\nSource Code Management → Bu alanda kaynağın nereden alınacağı belirtilir.Projelerimiz için TFS seçeneğini seçeriz.Seçtikten sonra çıkan alt dizinlerde; Collection URL kullandığımız tfs pathini gireriz.Project path 'de ise derlemek istenilen proje seçilir.(TFS'te gibi $ simgeli path girilmesi gerekmektedir.) Credentials otomatik olarak bırakılır.\r\n\r\nTeam foundation version control (tfvc)'te advanced sekmesini tıkladığımızda, aşağıdaki ek bölümler karşımıza çıkar.Use update bölümünü tiklersek, projeyi derlediğimizde mevcut olan proje dosyalarını tarar, farklı olan birşey varsa proje dizinine ekler.Use overwrite ise projeye yeni eklenen birşey olsun olmasın, projeyi her derlediğimizde mevcut olan tüm dosyaları siler ve yeniden oluşturur.Update, overwrite'a göre daha hızlı derlenir.\r\n\r\nWorkspace name → Tfs üzerinde mapping yapılırken bu isim kullanılır.Verilen bu isim her proje için unique(eşsiz) olmalıdır.Aşağıdaki örnekteki gibi yazım kurallarına dikkat edilerek manuel olarak oluşturulabilir yada aşağıdaki gibi standardizasyonlara uygun olması için parametrik olarak eklenilmesi önerilir.\r\n\r\nBuild Triggers → Derlemeyi tetikleyen zamanı ayarladığımız alt başlık bölümüdür.\r\n\r\nProjenin yapısına göre trigger belirlenir.Madde olarak sıralayacak olursak;\r\n\r\n1) Script ve diğer yollarla uzaktan build tetikleme\r\n\r\n2) Başka bir proje ile bağlantılı bir yapısı varsa, o proje tetiklendiğinde bu projenin de otomatik olarak derlenmesini sağlama\r\n\r\n3)Periyodik olarak tetikleme\r\n\r\n4) TFS'de yapılan değişiklikte tetikleme\r\n\r\n5) Github hook tetikleme\r\n\r\n6) Source Control Management (SCM) → projelerde en fazla kullanılanıdır.Schedule bölümünde projenin ne sıklıkla, taranması gerektiğini belirtiriz.Aşağıdaki örnekten yola çıkarsak, her 10 dakika bir projeyi taramasını belirtiyor.Eğer tarama sırasında yeni birşeyle karşılaşırsa, derlemeye başlar.\r\n\r\nCron schedule zaman formatını detaylı incelemek için linke göz atabilirsiniz. → http://www.scmgalaxy.com/tutorials/setting-up-the-cron-jobs-in-jenkins-using-build-periodically-scheduling-the-jenins-job/
+            //    A:
+            //    ";
+
+            var prompt =
+@"
+
+    I am an assistant that helps users with software and IT questions using context provided in the prompt. I only respond in Turkish and format my response in Markdown language.    
+    I will answer the [Question] below objectively in a casual and friendly tone, using the [Context] below it, and information from my memory.
+    Q:" + promptText + "" +
+    "A:";
+
+
+            //var completionOptions = new CompletionsOptions
+            //{
+            //    Prompts = { prompt },
+
+            //    MaxTokens = 4000,
+            //    Temperature = 0.7f,
+            //    FrequencyPenalty = 0.5f,
+            //    PresencePenalty = 0.0f,
+            //    NucleusSamplingFactor = 0.95F, // Top P
+            //    StopSequences = { "You:" }
+
+            //};
+
+
+
+            //Completions response = openAIClient.GetCompletions(AOAI_DEPLOYMENTID, completionOptions);
+
+            var chatMessageAsistant = new ChatMessage(ChatRole.Assistant, "I am an assistant that helps users with software and IT questions using context provided in the prompt. I only respond in Turkish and format my response in Markdown language.    \r\n    I will answer the [Question] below objectively in a casual and friendly tone, using the [Context] below it, and information from my memory.");
+            var chatMessageUser = new ChatMessage(ChatRole.User, promptText);
+
+
+            var completionOptions = new ChatCompletionsOptions
+            {
+                Messages = { chatMessageAsistant, chatMessageUser },
+
+                MaxTokens = 4000,
+                Temperature = 0.7f,
+                FrequencyPenalty = 0.5f,
+                PresencePenalty = 0.0f,
+                NucleusSamplingFactor = 0.95F, // Top P
+                StopSequences = { "You:" }
+
+            };
+
+            ChatCompletions response = openAIClient.GetChatCompletions(this.options.AOAI_DEPLOYMENTID, completionOptions);
+
+
+
+            var responseText = response.Choices.First().Message.Content;
+
+            return responseText;
+
+        }
+
+
+
+
+
+
+
+
 
         /// <summary>
         /// Method perform update operation of question and answer pair.

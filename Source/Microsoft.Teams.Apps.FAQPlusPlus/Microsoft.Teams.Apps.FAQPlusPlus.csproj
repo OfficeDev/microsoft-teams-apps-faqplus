@@ -4,10 +4,12 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <DocumentationFile>bin\Microsoft.Teams.Apps.FAQPlusPlus.xml</DocumentationFile>
     <LangVersion>latest</LangVersion>
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="AdaptiveCards" Version="2.5.0" />
+    <PackageReference Include="Azure.Search.Documents" Version="11.5.0-beta.2" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.18.0" />
     <PackageReference Include="Microsoft.Azure.Search" Version="10.1.0" />
     <PackageReference Include="Microsoft.Bot.Builder.Ai.QnA" Version="4.14.1" />

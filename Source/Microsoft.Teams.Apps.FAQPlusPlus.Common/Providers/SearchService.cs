@@ -7,6 +7,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Azure;
     using Microsoft.ApplicationInsights.DataContracts;
     using Microsoft.Azure.Search;
     using Microsoft.Azure.Search.Models;
@@ -208,5 +209,49 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         {
             return this.initializeTask.Value;
         }
+
+       
+
+        public async Task<IList<TicketEntity>> SearchQueryAsyncV2(string searchQuery, int? count = null, int? skip = null)
+        {
+            await this.EnsureInitializedAsync().ConfigureAwait(false);
+
+            IList<TicketEntity> tickets = new List<TicketEntity>();
+
+            SearchParameters searchParameters = new SearchParameters();
+
+
+            var indexName = "mergen-index";
+            var searchServiceName = "gsxcogsearch";
+            var querKey = "5WV8l16Ck2u63qlSwKNZaGRy8Ox0hH6XP68KeuNdwpAzSeBAR7P3";
+            var cred = new SearchCredentials(querKey);
+
+
+            searchParameters.Top = count ?? DefaultSearchResultCount;
+            searchParameters.Skip = skip ?? 0;
+            searchParameters.IncludeTotalResultCount = false;
+            //searchParameters.Select = new[] { "Timestamp", "Title", "Status", "AssignedToName", "AssignedToObjectId", "DateCreated", "RequesterName", "RequesterUserPrincipalName", "Description", "RequesterGivenName", "SmeThreadConversationId", "DateAssigned", "DateClosed", "LastModifiedByName", "UserQuestion", "KnowledgeBaseAnswer" };
+
+
+            var searchIndexClientV2 = new SearchIndexClient(
+               searchServiceName,
+               indexName,
+               new SearchCredentials(querKey))
+            {
+                SearchDnsSuffix = "search.windows.net",
+            };
+
+            var docs = await searchIndexClientV2.Documents.SearchAsync<TicketEntity>(searchQuery, searchParameters).ConfigureAwait(false);
+            if (docs != null)
+            {
+                foreach (SearchResult<TicketEntity> doc in docs.Results)
+                {
+                    tickets.Add(doc.Document);
+                }
+            }
+
+            return tickets;
+        }
+
     }
 }

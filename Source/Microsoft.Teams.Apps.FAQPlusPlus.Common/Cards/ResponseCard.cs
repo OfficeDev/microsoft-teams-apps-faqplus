@@ -74,6 +74,24 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Cards
             };
         }
 
+
+        public static Attachment GetCard(string answer, string userQuestion, string appBaseUri, ResponseCardPayload payload)
+        {
+            
+            
+            AdaptiveCard responseCard = new AdaptiveCard(new AdaptiveSchemaVersion(1, 2))
+            {
+                Body = BuildResponseCardBody(userQuestion, answer, appBaseUri, payload,true),
+                Actions = BuildListOfActions(userQuestion, answer),
+            };
+
+            return new Attachment
+            {
+                ContentType = AdaptiveCard.ContentType,
+                Content = responseCard,
+            };
+        }
+
         /// <summary>
         /// This method builds the body of the response card, and helps to render the follow up prompts if the response contains any.
         /// </summary>
@@ -216,6 +234,58 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Cards
 
             return cardBodyToConstruct;
         }
+
+        private static List<AdaptiveElement> BuildResponseCardBody(string userQuestion, string answer, string appBaseUri, ResponseCardPayload payload, bool isRichCard)
+        {
+            var textAlignment = CultureInfo.CurrentCulture.TextInfo.IsRightToLeft ? AdaptiveHorizontalAlignment.Right : AdaptiveHorizontalAlignment.Left;
+            //var answerModel = isRichCard ? JsonConvert.DeserializeObject<AnswerModel>(response?.Answer) : new AnswerModel();
+
+            var cardBodyToConstruct = new List<AdaptiveElement>()
+            {
+                new AdaptiveTextBlock
+                {
+                    Weight = AdaptiveTextWeight.Bolder,
+                    Text = Strings.ResponseHeaderText,
+                    Wrap = true,
+                    HorizontalAlignment = textAlignment,
+                },
+                new AdaptiveTextBlock
+                {
+                    Size = AdaptiveTextSize.Default,
+                    Wrap = true,
+                    Text = userQuestion,
+                    IsVisible = true,
+                    HorizontalAlignment = textAlignment,
+                },
+                //new AdaptiveTextBlock
+                //{
+                //    Wrap = true,
+                //    Text = answerModel.Title ?? string.Empty,
+                //    Size = AdaptiveTextSize.Large,
+                //    Weight = AdaptiveTextWeight.Bolder,
+                //    HorizontalAlignment = textAlignment,
+                //},
+                new AdaptiveTextBlock
+                {
+                    Text = string.Empty,
+                    Size = AdaptiveTextSize.Medium,
+                    HorizontalAlignment = textAlignment,
+                },
+            };
+
+         
+            cardBodyToConstruct.Add(new AdaptiveTextBlock
+            {
+                Text = answer,
+                Wrap = true,
+                Size = isRichCard ? AdaptiveTextSize.Small : AdaptiveTextSize.Default,
+                Spacing = AdaptiveSpacing.Medium,
+                HorizontalAlignment = textAlignment,
+            });
+
+            return cardBodyToConstruct;
+        }
+
 
         /// <summary>
         /// This method will build the necessary list of actions.
